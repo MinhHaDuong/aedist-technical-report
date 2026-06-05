@@ -14,7 +14,7 @@ from pathlib import Path
 import pandas as pd
 
 from .cleaner import PowerPlantDataframeCleaner
-from .config import DEFAULT_REFERENCE
+from .config import VN_THERMAL_PLANTS_RELEASE_CSV
 from .matching.lp import reconcile as reconcile_lp
 from .schema import MatchType, Plant, ReconciliationEntry
 
@@ -36,10 +36,10 @@ def _build_single_unit_names(reference_path: Path | None = None) -> frozenset[st
     Rule: name must end in " 1" AND no sibling unit exists in the reference.
     "An Khanh 1" qualifies; "Na Duong 1" does not (Na Duong 2 exists).
 
-    The reference defaults to ``config.DEFAULT_REFERENCE`` but may be overridden
+    The reference defaults to ``config.VN_THERMAL_PLANTS_RELEASE_CSV`` but may be overridden
     (e.g. when switching the pipeline to a regenerated reference table).
     """
-    ref = reference_path or DEFAULT_REFERENCE
+    ref = reference_path or VN_THERMAL_PLANTS_RELEASE_CSV
     if not ref.exists():
         return frozenset()
     cleaner = PowerPlantDataframeCleaner(config_path=str(_CLEANER_CONFIG))

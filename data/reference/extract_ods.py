@@ -169,8 +169,10 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--input",
         type=Path,
-        default=Path("data/reference/raw/pipeline.ods"),
-        help="Path to the master ODS snapshot (default: %(default)s).",
+        default=Path("data/reference/raw/pipeline-2026-05-26.ods"),
+        help="Path to the master ODS snapshot (default: %(default)s). "
+        "Non-authoritative fallback for standalone runs; the acquire.mk DAG "
+        "overrides this with config.VN_THERMAL_MASTER_SNAPSHOT_ODS.",
     )
     parser.add_argument(
         "--output",

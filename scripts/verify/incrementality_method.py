@@ -25,7 +25,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-from aedist.config import DEFAULT_REFERENCE
+from aedist.config import VN_THERMAL_PLANTS_RELEASE_CSV
 from aedist.evaluate import load_plants_csv
 from aedist.harness import make_client
 from aedist.prototype_v1_fusion import (
@@ -254,9 +254,9 @@ def main(argv: list[str] | None = None) -> None:
     p.add_argument(
         "--reference",
         type=Path,
-        default=DEFAULT_REFERENCE,
+        default=VN_THERMAL_PLANTS_RELEASE_CSV,
         metavar="FILE",
-        help=f"Reference CSV file (default: {DEFAULT_REFERENCE})",
+        help=f"Reference CSV file (default: {VN_THERMAL_PLANTS_RELEASE_CSV})",
     )
     p.add_argument("--verbose", action="store_true")
     args = p.parse_args(argv)

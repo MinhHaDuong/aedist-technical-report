@@ -13,7 +13,7 @@ import re
 from dataclasses import dataclass
 from pathlib import Path
 
-from .config import DEFAULT_REFERENCE
+from .config import VN_THERMAL_PLANTS_RELEASE_CSV
 from .evaluate import load_plants_csv, plants_from_dicts
 from .metrics import compute_metrics
 from .reconcile import reconcile
@@ -418,7 +418,7 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("--model", required=True)
     parser.add_argument("--run", required=True, type=int)
     parser.add_argument("--prompt-version", default="exp2")
-    parser.add_argument("--reference", type=Path, default=DEFAULT_REFERENCE)
+    parser.add_argument("--reference", type=Path, default=VN_THERMAL_PLANTS_RELEASE_CSV)
     parser.add_argument(
         "--output-csv",
         type=Path,

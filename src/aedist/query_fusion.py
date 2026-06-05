@@ -23,7 +23,7 @@ import logging
 import time
 from pathlib import Path
 
-from .config import DEFAULT_REFERENCE
+from .config import VN_THERMAL_PLANTS_RELEASE_CSV
 from .evaluate import load_plants_csv
 from .harness import load_experiments, make_client
 from .prototype_v1_fusion import (
@@ -98,7 +98,7 @@ def run_fusion(
     provider:
         Pin OpenRouter provider, e.g. ``"Alibaba"`` for DeepSeek.
     reference:
-        Path to reference CSV for F1 scoring (defaults to config.DEFAULT_REFERENCE).
+        Path to reference CSV for F1 scoring (defaults to config.VN_THERMAL_PLANTS_RELEASE_CSV).
 
     Returns
     -------
@@ -107,7 +107,7 @@ def run_fusion(
         ``n_fragments``, ``wall_seconds``.
     """
     if reference is None:
-        reference = DEFAULT_REFERENCE
+        reference = VN_THERMAL_PLANTS_RELEASE_CSV
 
     sequence = DEFAULT_SEQUENCE
     if fragments is not None:
@@ -260,7 +260,7 @@ def main(argv: list[str] | None = None) -> None:
     fragments = args.fragments or sweep_cfg.get("fragments")
     output_dir = Path(args.output or sweep_cfg.get("output", "derived/fusion_proto"))
     corpus_dir = Path(sweep_cfg.get("corpus", str(_DEFAULT_CORPUS)))
-    reference = Path(sweep_cfg.get("reference", str(DEFAULT_REFERENCE)))
+    reference = Path(sweep_cfg.get("reference", str(VN_THERMAL_PLANTS_RELEASE_CSV)))
     seed = sweep_cfg.get("seed")
     provider = sweep_cfg.get("provider")
 

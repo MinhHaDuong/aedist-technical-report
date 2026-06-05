@@ -210,7 +210,7 @@ def test_read_ods_keeps_zero_prefix_as_string(tmp_path):
 
 @pytest.mark.integration
 def test_tracked_ods_duplicate_fires(tmp_path):
-    """The tracked pipeline.ods contains 'Quảng Trị 1 Unit 2' twice.
+    """The tracked snapshot contains 'Quảng Trị 1 Unit 2' twice.
 
     extract_ods.py must refuse it (non-zero exit) with an actionable message
     naming the offending plant. This refusal is correct behaviour — a
@@ -219,8 +219,10 @@ def test_tracked_ods_duplicate_fires(tmp_path):
     """
     import subprocess
 
+    from aedist.config import VN_THERMAL_MASTER_SNAPSHOT_ODS
+
     repo_root = Path(__file__).resolve().parent.parent
-    ods = repo_root / "data" / "reference" / "raw" / "pipeline.ods"
+    ods = VN_THERMAL_MASTER_SNAPSHOT_ODS
     script = repo_root / "data" / "reference" / "extract_ods.py"
     out = tmp_path / "out.csv"
     result = subprocess.run(

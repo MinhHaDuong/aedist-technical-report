@@ -22,7 +22,7 @@ from pathlib import Path
 import numpy as np
 from scipy import stats as scipy_stats
 
-from .config import DEFAULT_REFERENCE
+from .config import VN_THERMAL_PLANTS_RELEASE_CSV
 from .evaluate import load_plants_csv
 from .measurements import SYNTHETIC_SUFFIXES, load, load_metrics
 from .metrics import compute_metrics
@@ -49,7 +49,7 @@ _MATCHED_TYPES = {
 
 
 def reconcile_references(
-    expert_path: Path = DEFAULT_REFERENCE,
+    expert_path: Path = VN_THERMAL_PLANTS_RELEASE_CSV,
     gem_path: Path = _GEM_REF,
 ) -> dict:
     """Reconcile expert and GEM references, return agreement summary."""
@@ -285,7 +285,7 @@ def main(argv: list[str] | None = None):
     parser.add_argument(
         "--expert-ref",
         type=Path,
-        default=DEFAULT_REFERENCE,
+        default=VN_THERMAL_PLANTS_RELEASE_CSV,
         help="Path to expert reference CSV (default: %(default)s)",
     )
     parser.add_argument(

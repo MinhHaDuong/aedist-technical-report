@@ -261,9 +261,11 @@ preflight:
 # tracked snapshot and writes a reference CSV, and HARD-FAILS on a dirty input
 # (duplicate names, Level/name inconsistency). Paths are ../-relative because
 # this makefile runs with cwd=experiments/ (UV_RUN uses --project ..).
+# The snapshot path is pinned in config.VN_THERMAL_MASTER_SNAPSHOT_ODS.
 extract-reference-ods:
-	$(UV_RUN) python ../data/reference/extract_ods.py \
-	    --input ../data/reference/raw/pipeline.ods \
+	$(UV_RUN) python -c 'from aedist.config import VN_THERMAL_MASTER_SNAPSHOT_ODS; print(VN_THERMAL_MASTER_SNAPSHOT_ODS)' | \
+	xargs -I {} $(UV_RUN) python ../data/reference/extract_ods.py \
+	    --input {} \
 	    --output ../data/reference/vietnam_thermal_units_v2.csv
 
 help:
@@ -287,7 +289,7 @@ help:
 	@echo "  make build-corpus QUERY='thermal power'     Build corpus from Zotero search"
 	@echo ""
 	@echo "  make preflight             Check env vars and services before long jobs"
-	@echo "  make extract-reference-ods Extract reference CSV from raw/pipeline.ods (validated)"
+	@echo "  make extract-reference-ods Extract reference CSV from the pinned raw/ snapshot (validated)"
 	@echo ""
 	@echo "Config in experiments.toml [sweeps.*] sections"
 	@echo "Job board in jobs/{pending,running,done,failed}/"

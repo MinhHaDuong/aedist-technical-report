@@ -2,7 +2,7 @@
 
 Exit criterion 1 of ticket 0419: a single source of truth for the default
 reference path. The literal filename may only live in ``src/aedist/config.py``;
-everywhere else modules import ``config.DEFAULT_REFERENCE``.
+everywhere else modules import ``config.VN_THERMAL_PLANTS_RELEASE_CSV``.
 
 The filename can only appear inside a Python string literal, so exempting all
 string literals would make this check vacuous. Instead we exempt only
@@ -81,9 +81,70 @@ def test_no_hardcoded_reference_path():
 
 
 def test_config_default_reference_exists():
-    """config.DEFAULT_REFERENCE must point to an existing file."""
-    from aedist.config import DEFAULT_REFERENCE  # noqa: PLC0415
+    """config.VN_THERMAL_PLANTS_RELEASE_CSV must point to an existing file."""
+    from aedist.config import VN_THERMAL_PLANTS_RELEASE_CSV  # noqa: PLC0415
 
-    assert DEFAULT_REFERENCE.exists(), (
-        f"config.DEFAULT_REFERENCE points to a non-existent file: {DEFAULT_REFERENCE}"
+    assert VN_THERMAL_PLANTS_RELEASE_CSV.exists(), (
+        f"config.VN_THERMAL_PLANTS_RELEASE_CSV points to a non-existent file: {VN_THERMAL_PLANTS_RELEASE_CSV}"
+    )
+
+
+def test_raw_snapshots_are_datestamped():
+    """All files in raw/ (except README.md, import.sh) must have -YYYY-MM-DD.ext pattern."""
+    import re
+
+    raw = REPO_ROOT / "data" / "reference" / "raw"
+    exempt = {"README.md", "import.sh"}
+    pat = re.compile(r"-\d{4}-\d{2}-\d{2}\.[a-z0-9]+$")
+    undated = [f.name for f in raw.iterdir()
+               if f.name not in exempt and not pat.search(f.name)]
+    assert undated == [], f"raw/ files without capture datestamp: {undated}"
+
+
+def test_config_snapshot_path_exists():
+    """config.VN_THERMAL_MASTER_SNAPSHOT_ODS must point to an existing file."""
+    from aedist.config import VN_THERMAL_MASTER_SNAPSHOT_ODS  # noqa: PLC0415
+
+    assert VN_THERMAL_MASTER_SNAPSHOT_ODS.exists(), (
+        f"config.VN_THERMAL_MASTER_SNAPSHOT_ODS points to a non-existent file: {VN_THERMAL_MASTER_SNAPSHOT_ODS}"
+    )
+
+
+def test_acquire_mk_snapshot_path_not_hardcoded():
+    """The acquire.mk extract recipe must consult the config snapshot pin.
+
+    Ratchet for ticket 0430 (extends 0419's single-source-of-truth guard to the
+    raw/ snapshot): the ``extract-reference-ods`` recipe must read its ODS input
+    from ``config.VN_THERMAL_MASTER_SNAPSHOT_ODS`` rather than hardcoding a
+    ``raw/pipeline*.ods`` literal. A hardcoded datestamped filename would silently
+    diverge from the config pin on the next re-import.
+    """
+    import re  # noqa: PLC0415
+
+    acquire_mk = REPO_ROOT / "experiments" / "acquire.mk"
+    source = acquire_mk.read_text()
+
+    # The recipe block: from the target line to the next blank line.
+    recipe = []
+    in_recipe = False
+    for line in source.splitlines():
+        if line.startswith("extract-reference-ods:"):
+            in_recipe = True
+            continue
+        if in_recipe:
+            if line.strip() == "":
+                break
+            recipe.append(line)
+    assert recipe, "extract-reference-ods recipe not found in acquire.mk"
+
+    recipe_text = "\n".join(recipe)
+    # Recipe lines (not comments) must not hardcode a raw/pipeline*.ods literal.
+    hardcoded = re.search(r"raw/pipeline[-.][^\s'\"]*\.ods", recipe_text)
+    assert hardcoded is None, (
+        "acquire.mk extract-reference-ods hardcodes a snapshot path "
+        f"({hardcoded.group(0)!r}); read it from config.VN_THERMAL_MASTER_SNAPSHOT_ODS instead"
+    )
+    assert "VN_THERMAL_MASTER_SNAPSHOT_ODS" in recipe_text, (
+        "acquire.mk extract-reference-ods must consult "
+        "config.VN_THERMAL_MASTER_SNAPSHOT_ODS for the snapshot path"
     )
