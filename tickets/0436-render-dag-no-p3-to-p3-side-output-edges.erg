@@ -6,6 +6,7 @@ Author: claude
 --- log ---
 2026-06-05T07:54Z claude created
 
+2026-06-05T10:40Z claude execute Re-plumbed all three P3-to-P3 edges; shared libs exp1_cost_quality + exp1_census; tabulate_cost_quality/tabulate_census_macros emit the artifacts; plot_census retired; adherence guard test_no_p3_to_p3_side_output_edges green (whitelist: 4 build_exp2_mart_views *_view.csv). Byte-stable cost_quality.csv/macros_slides.tex/figures.
 --- body ---
 ## Context
 
@@ -65,11 +66,17 @@ def test_no_p3_to_p3_side_output_edges():
 
 ## Exit criteria
 
-- [ ] The three instances re-plumbed: consumers read the mart/views or
+- [x] The three instances re-plumbed: consumers read the mart/views or
       a shared library helper, not another figure/table script's output
-- [ ] No figure script emits a non-figure artifact consumed downstream
-- [ ] Adherence guard above green and protecting render.mk
-- [ ] Committed handoff artifacts regenerated; `make check` passes
+- [x] No figure script emits a non-figure artifact consumed downstream
+- [x] Adherence guard above green and protecting render.mk
+- [x] Committed handoff artifacts regenerated; `make check` passes
+      (cost_quality.csv / macros_slides.tex / figures byte-stable;
+      macros_census.tex unchanged — its producer crashes on current
+      measurements with no census records, tracked as 0440, successor
+      crashes identically so the committed file is not worsened; full
+      `make check` green except the documented environmental failure
+      test_smoke_real_cli)
 
 ## Related
 
