@@ -173,8 +173,14 @@ def test_smoke_real_cli():
             timeout=60.0,
         )
     except RuntimeError as exc:
-        if "Not logged in" in str(exc):
+        # Environment problems are skips, not failures: the test validates the
+        # adapter, not the account state. Observed strings: "Not logged in"
+        # (CLI auth) and "Credit balance is too low" (API 400, 2026-06-05).
+        msg = str(exc)
+        if "Not logged in" in msg:
             pytest.skip("claude CLI not logged in")
+        if "Credit balance is too low" in msg:
+            pytest.skip("Anthropic API credits exhausted")
         raise
     assert result["content"].strip().lower().startswith("pong")
     assert result["usage"]["completion_tokens"] > 0
