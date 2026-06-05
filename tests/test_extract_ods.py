@@ -1,11 +1,13 @@
 """Tests for data/reference/extract_ods.py — the ODS -> CSV extraction step.
 
 The validators are the heart of this module: they refuse a bad input file
-rather than silently producing a corrupt reference list. The exit criterion
-(ticket 0420) is explicit that name duplication is checked *modulo diacritics*
-— two names that differ only by diacritical marks are the SAME entry and must
-trigger a hard stop. The integration test anchors this to the real tracked
-ODS, which contains a genuine duplicate.
+rather than silently producing a corrupt reference list. Since ticket 0439
+the master carries a three-column address (Complex | Plant | Unit); the
+designation is derived (Plant + Unit concatenated) and duplicate detection
+runs on it *modulo diacritics* — two designations that differ only by
+diacritical marks are the SAME entry and must trigger a hard stop. The
+integration test anchors acceptance to the real tracked ODS, which is clean
+post-0439.
 
 All extraction is dtype=str (no coercion ever): the zero-prefix preservation
 principle that bit ires_code (0121 -> 121) applies to every column here.
@@ -18,133 +20,193 @@ import pandas as pd
 import pytest
 
 from data.reference.extract_ods import (
+    derive_level,
+    derive_name,
     read_ods,
     select_columns,
+    validate_address_shape,
     validate_input,
     validate_no_duplicate_names,
-    validate_unit_level_consistency,
 )
 
 
-def _df(names: list[str], **extra: list) -> pd.DataFrame:
-    data = {"Project name": names}
+def _df(rows: list[tuple[str, str, str]], **extra: list) -> pd.DataFrame:
+    """A frame of (Complex, Plant, Unit) address rows; '' becomes a real cell."""
+    data = {
+        "Complex": [r[0] for r in rows],
+        "Plant": [r[1] for r in rows],
+        "Unit": [r[2] for r in rows],
+    }
     data.update(extra)
     return pd.DataFrame(data)
 
 
-# --- validate_no_duplicate_names ---------------------------------------------
+# --- derive_name / derive_level -----------------------------------------------
 
 
-def test_duplicate_name_raises():
-    """An exact duplicate Project name must raise ValueError naming the offender."""
-    df = _df(["Quảng Trị 1 Unit 2", "Plant B", "Quảng Trị 1 Unit 2"])
+def test_derive_name_concatenates_plant_and_unit():
+    """A unit row's designation is Plant + Unit — exactly the attested string."""
+    df = _df([("", "An Khánh 1", "Unit 1")])
+    assert derive_name(df.iloc[0]) == "An Khánh 1 Unit 1"
+
+
+def test_derive_name_plant_grain_is_bare_plant():
+    """Unit empty -> the row IS the plant; designation is the Plant cell."""
+    df = _df([("", "Bà Rịa GT", "")])
+    assert derive_name(df.iloc[0]) == "Bà Rịa GT"
+
+
+def test_derive_name_complex_grain_is_bare_complex():
+    """Complex alone -> complex-grain row; designation is the Complex cell."""
+    df = _df([("LNG Mỹ Giang", "", "")])
+    assert derive_name(df.iloc[0]) == "LNG Mỹ Giang"
+
+
+def test_derive_level_finest_nonempty_wins():
+    """Level is the finest non-empty address column (ticket 0401 derivation)."""
+    df = _df(
+        [
+            ("LNG X", "Plant P", "Unit 1"),
+            ("", "Plant P", ""),
+            ("LNG X", "", ""),
+        ]
+    )
+    assert [derive_level(r) for _, r in df.iterrows()] == ["unit", "plant", "complex"]
+
+
+# --- validate_address_shape ----------------------------------------------------
+
+
+def test_unit_without_plant_raises():
+    """A Unit with no Plant is an unfinished split — hard stop naming the row."""
+    df = _df([("", "", "An Khánh 1 Unit 1")])
+    with pytest.raises(ValueError, match="without a Plant"):
+        validate_address_shape(df)
+
+
+def test_empty_address_raises():
+    """A row with all three address columns empty is unreferencable."""
+    df = _df([("", "", "")])
+    with pytest.raises(ValueError, match="no address"):
+        validate_address_shape(df)
+
+
+def test_valid_shapes_pass():
+    """Unit rows, plant-grain rows, and complex-grain rows are all accepted."""
+    df = _df(
+        [
+            ("", "Plant A", "Unit 1"),
+            ("", "Plant B", ""),
+            ("LNG C", "", ""),
+            ("LNG D", "Plant E", "Unit 2"),
+        ]
+    )
+    validate_address_shape(df)  # must not raise
+
+
+# --- validate_no_duplicate_names ------------------------------------------------
+
+
+def test_duplicate_designation_raises():
+    """An exact duplicate designation must raise ValueError naming the offender."""
+    df = _df(
+        [
+            ("", "Quảng Trị 1", "Unit 2"),
+            ("", "Plant B", ""),
+            ("", "Quảng Trị 1", "Unit 2"),
+        ]
+    )
     with pytest.raises(ValueError, match="Quảng Trị 1 Unit 2"):
         validate_no_duplicate_names(df)
 
 
 def test_no_duplicate_passes():
     """A clean DataFrame is accepted silently (no over-eager rejection)."""
-    validate_no_duplicate_names(_df(["Plant A", "Plant B", "Plant C"]))
+    validate_no_duplicate_names(_df([("", "Plant A", ""), ("", "Plant B", ""), ("", "Plant C", "")]))
 
 
 def test_diacritic_variants_are_duplicates():
-    """Names that differ ONLY by diacritics fold to the same key -> duplicate.
+    """Designations that differ ONLY by diacritics fold to the same key -> duplicate.
 
-    This is the concrete meaning of the exit criterion's "modulo diacritiques":
     'Duyen Hai 2 Unit 1' and 'Duyên Hải 2 Unit 1' are the same unit recorded
     twice. The validator must catch this even though the raw strings differ.
     A validator that only does exact-string matching would pass the other
     tests but fail this one — this is the discriminator.
     """
-    df = _df(["Duyen Hai 2 Unit 1", "Duyên Hải 2 Unit 1"])
+    df = _df([("", "Duyen Hai 2", "Unit 1"), ("", "Duyên Hải 2", "Unit 1")])
     with pytest.raises(ValueError):
         validate_no_duplicate_names(df)
 
 
 def test_duplicate_message_reports_original_surface_form():
-    """The error reports the original (diacritic-bearing) name, not the folded key."""
-    df = _df(["Quang Tri 1", "Quảng Trị 1"])
+    """The error reports the original (diacritic-bearing) designation, not the folded key."""
+    df = _df([("", "Quang Tri 1", ""), ("", "Quảng Trị 1", "")])
     with pytest.raises(ValueError, match="Quảng Trị 1"):
         validate_no_duplicate_names(df)
 
 
 def test_case_only_difference_is_duplicate():
     """Folding is case-insensitive: case-only variants are duplicates."""
-    df = _df(["Vung Ang 2", "vung ang 2"])
+    df = _df([("", "Vung Ang 2", ""), ("", "vung ang 2", "")])
     with pytest.raises(ValueError):
         validate_no_duplicate_names(df)
 
 
-# --- validate_unit_level_consistency -----------------------------------------
+def test_plant_grain_vs_unit_row_same_plant_not_duplicate():
+    """'Plant A' (plant-grain elsewhere impossible by exclusivity, but the
+    validator itself only compares full designations): 'Plant A' vs
+    'Plant A Unit 1' are distinct designations — no false positive."""
+    df = _df([("", "Plant A", ""), ("", "Plant A", "Unit 1")])
+    validate_no_duplicate_names(df)  # must not raise
 
 
-def test_level_absent_is_noop():
-    """With no Level column the consistency rule is a graceful no-op."""
-    df = _df(["Plant A Unit 1", "Plant B"])
-    validate_unit_level_consistency(df)  # must not raise
-
-
-def test_level_present_violation_raises():
-    """A 'Unit' name with a non-unit Level fails with an actionable message."""
-    df = _df(["Plant A Unit 1", "Plant B"], Level=["plant", "plant"])
-    with pytest.raises(ValueError, match="Plant A Unit 1"):
-        validate_unit_level_consistency(df)
-
-
-def test_level_present_consistent_passes():
-    """A 'Unit' name with a unit-level Level is accepted."""
-    df = _df(["Plant A Unit 1", "Plant B"], Level=["unité", "plant"])
-    validate_unit_level_consistency(df)  # must not raise
-
-
-def test_validate_input_runs_both_checks():
-    """validate_input composes the two validators (duplicate still caught)."""
-    df = _df(["Dup", "Dup"])
+def test_validate_input_runs_shape_then_duplicates():
+    """validate_input composes the validators (duplicate still caught)."""
+    df = _df([("", "Dup", ""), ("", "Dup", "")])
     with pytest.raises(ValueError):
         validate_input(df)
 
 
-# --- select_columns: success path (projection, rename, Level passthrough) ----
+# --- select_columns: projection, rename, derivations ---------------------------
 
 
-def _full_raw_frame(with_level: bool = False) -> pd.DataFrame:
+def _full_raw_frame() -> pd.DataFrame:
     """A raw frame carrying every source column select_columns expects."""
-    data = {
-        "Project name": ["Plant A"],
-        "Province / Tỉnh": ["Hà Nội"],
-        "Asset type": ["Power plant"],
-        "Capacity (MW)": ["650"],
-        "Project stage": ["Operating"],
-    }
-    if with_level:
-        data["Level"] = ["plant"]
-    return pd.DataFrame(data)
+    return pd.DataFrame(
+        {
+            "Complex": [""],
+            "Plant": ["Plant A"],
+            "Unit": ["Unit 1"],
+            "Province / Tỉnh": ["Hà Nội"],
+            "Asset type": ["Power plant"],
+            "Capacity (MW)": ["650"],
+            "Project stage": ["6 operating"],
+        }
+    )
 
 
-def test_select_columns_renames_to_snake_case():
-    """Source columns are projected and renamed; unmapped columns are dropped."""
+def test_select_columns_schema_and_derivations():
+    """name leads, address columns follow, level is always derived."""
     out = select_columns(_full_raw_frame())
-    assert list(out.columns) == ["name", "province", "asset_type", "capacity_mwe", "status"]
-    assert out["name"].iloc[0] == "Plant A"
+    assert list(out.columns) == [
+        "name",
+        "complex",
+        "plant",
+        "unit",
+        "province",
+        "asset_type",
+        "capacity_mwe",
+        "status",
+        "level",
+    ]
+    assert out["name"].iloc[0] == "Plant A Unit 1"
+    assert out["level"].iloc[0] == "unit"
     assert out["capacity_mwe"].iloc[0] == "650"
-
-
-def test_select_columns_level_passthrough_when_present():
-    """A Level column passes through, renamed to `level` (exit criterion)."""
-    out = select_columns(_full_raw_frame(with_level=True))
-    assert "level" in out.columns
-    assert out["level"].iloc[0] == "plant"
-
-
-def test_select_columns_omits_level_when_absent():
-    """No `level` column when the source has no Level (graceful no-op)."""
-    out = select_columns(_full_raw_frame(with_level=False))
-    assert "level" not in out.columns
 
 
 def test_select_columns_missing_source_column_raises():
     """A missing expected source column is an actionable error, not silent NaN."""
-    df = pd.DataFrame({"Project name": ["Plant A"]})
+    df = pd.DataFrame({"Plant": ["Plant A"]})
     with pytest.raises(ValueError, match="absent"):
         select_columns(df)
 
@@ -195,8 +257,8 @@ def test_read_ods_keeps_zero_prefix_as_string(tmp_path):
     _write_ods(
         ods,
         [
-            {"Project name": "Plant A", "ires_code": "0121", "Capacity (MW)": "650"},
-            {"Project name": "Plant B", "ires_code": "0007", "Capacity (MW)": "60"},
+            {"Plant": "Plant A", "ires_code": "0121", "Capacity (MW)": "650"},
+            {"Plant": "Plant B", "ires_code": "0007", "Capacity (MW)": "60"},
         ],
     )
     df = read_ods(ods)
@@ -205,17 +267,17 @@ def test_read_ods_keeps_zero_prefix_as_string(tmp_path):
     assert isinstance(df["Capacity (MW)"].iloc[0], str)
 
 
-# --- integration: the real tracked ODS must be refused -----------------------
+# --- integration: the real tracked ODS must be accepted -----------------------
 
 
 @pytest.mark.integration
-def test_tracked_ods_duplicate_fires(tmp_path):
-    """The tracked snapshot contains 'Quảng Trị 1 Unit 2' twice.
+def test_tracked_ods_extraction_green(tmp_path):
+    """The pinned snapshot passes extraction — the 0439 exit bar as a test.
 
-    extract_ods.py must refuse it (non-zero exit) with an actionable message
-    naming the offending plant. This refusal is correct behaviour — a
-    data-quality signal — not a bug to work around. The fix belongs in the
-    master file, not in this validator.
+    Post-0439 the master is migrated to the three-column address and its known
+    duplicates are fixed; extraction must accept it and write the v2 CSV with
+    the derived name/level columns. A regression here means either the
+    snapshot or the pin moved without the other.
     """
     import subprocess
 
@@ -230,7 +292,9 @@ def test_tracked_ods_duplicate_fires(tmp_path):
         capture_output=True,
         text=True,
     )
-    assert result.returncode != 0, (result.stdout, result.stderr)
-    combined = result.stdout + result.stderr
-    assert "Quảng Trị 1 Unit 2" in combined, combined
-    assert not out.exists(), "no CSV must be written when validation fails"
+    assert result.returncode == 0, (result.stdout, result.stderr)
+    assert out.exists(), "extraction must write the CSV on success"
+    df = pd.read_csv(out, dtype=str)
+    assert {"name", "complex", "plant", "unit", "level"} <= set(df.columns)
+    assert len(df) > 200
+    assert not df["name"].duplicated().any()

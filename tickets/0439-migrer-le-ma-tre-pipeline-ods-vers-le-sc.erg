@@ -8,6 +8,9 @@ Label: needs-human
 2026-06-05T09:11Z HDMX-coding-agent created
 
 2026-06-05T09:12Z claude note — design ratified in raid Imagine dialogue; enforcement layers in 0416 contrat v2
+2026-06-05T09:59Z claude note three-column split applied to editing copy (176 rows via reviewed CSV proposal, XML surgery, full-grid diff clean); status case normalized (4 construction x14); structural checks V-A..V-G all green; Conventions sheet pending
+2026-06-05T10:01Z claude note Conventions sheet injected (5 conventions + vocab statut x10, fuel x5, record-status); full checker green 0 violations; awaiting author LibreOffice pass (validity dropdowns, cond. formatting, eyeball) before snapshot
+2026-06-05T10:25Z claude note snapshot pipeline-2026-06-05.ods cut and pinned; extract_ods.py migrated to three-column schema (name/level derived, shape validator); 23 tests green incl. integration acceptance; stages renumbered by author (0-6,9,10); exit criteria amended per author footprint decision (assist script stays throwaway)
 --- body ---
 ## Contexte
 
@@ -56,10 +59,16 @@ dérivation (colonne non-vide la plus fine).
 
 ## Exit criteria
 
-- [ ] Instantané daté committé, extraction V1–V7 verte dessus
-- [ ] Feuille Conventions présente (vocabulaires + 5 conventions)
-- [ ] Script d'assistance committé sous scripts/ (quarantaine ratchet)
-- [ ] PROVENANCE.md : entrée migration (date, motif, lien design)
+- [x] Instantané daté committé, extraction verte dessus (couche validateurs
+      actuelle : forme d'adresse + doublons de désignation ; V1–V7 contrat v2
+      reste 0416, Blocked-by ce ticket)
+- [x] Feuille Conventions présente (vocabulaires + 5 conventions)
+- [x] Script d'assistance : AMENDÉ (décision auteur 2026-06-05, handoff) —
+      jetable en /tmp, jamais committé ; l'empreinte repo est exactement
+      instantané + pin + PROVENANCE + logs ticket. La quarantaine nominale
+      (parsing des noms) n'a plus d'objet : le découpage est appliqué au
+      maître, le parsing n'existe plus nulle part dans le repo.
+- [x] PROVENANCE.md : entrée migration (date, motif, lien design)
 
 ## Related
 
