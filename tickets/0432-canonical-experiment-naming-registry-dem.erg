@@ -1,0 +1,85 @@
+%erg 0.1
+Title: Canonical experiment naming: registry, demote 2025 probes, epithets at first mention
+Created: 2026-06-05
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-05T07:23Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Author decision (raid Imagine, 2026-06-05): "Experiment N" numbers no longer
+carry unicity. Three things have been called « Expérience 2 » — report.tex
+§sec:exp2 (approche conversationnelle, probe jan-2025), the talk's
+Experiment 2 (SOTA frontier, as-run), and the pre-registered protocol
+(protocol_05). report.tex §sec:exp1 (single-shot, fév-2025) likewise
+collides with the talk's Experiment 1 (plafond paramétrique, mai-2026).
+Root cause: the report numbered its early-2025 probes, then the talk minted
+a new canon (Exp 1/2/3 + case study) without reconciling.
+
+Fix: one authority assigns numbers; epithets disambiguate; the 2025 probes
+are demoted out of the numbered series. No codenames (VIRGO-style rejected).
+This gates the Expérience 2 chapter (0253/0254): the chapter must be born
+under the canonical name « Expérience 2 (frontière SOTA) : protocole
+pré-enregistré, déviations et résultats » — NOT « Expérience 2.0 »
+(pseudo-experiment, rejected).
+
+## Canon (author-ratified)
+
+| N | Epithet (FR) | Data | Write-up |
+|---|---|---|---|
+| 1 | plafond paramétrique | exp1_batch2 (16 modèles × 5 reps) | main.md Annex B |
+| 2 | frontière SOTA | sota_exp2_naive_arm + sota_exp2_brerun1 | main.md §4 + Annex C ; report.tex chapter (0253/0254) |
+| 3 | reconstruction | exp3_reconstruction | (0202 spec) |
+| — | étude préliminaire : requête directe | probe fév-2025 | report.tex (ex-« Expérience 1 ») |
+| — | étude préliminaire : approche conversationnelle | probe jan-2025 | report.tex (ex-« Expérience 2 ») |
+
+## Relevant files
+
+- `report/report.tex` — §sec:exp1 l.126, §sec:exp2 l.141 to retitle; keep
+  `\label{sec:exp1}`/`\label{sec:exp2}` so internal `\ref`s survive (l.663)
+- `docs/EXPERIMENTS.md` — NEW: the registry table (≤15 lines), single source
+  of truth for canonical numbers/epithets/data dirs/write-up locations
+- `AGENTS.md` — one pointer line to the registry (optional, if cheap)
+
+## Actions
+
+1. Write `docs/EXPERIMENTS.md` with the canon table above.
+2. Retitle report.tex sections: « Expérience 1 : requête directe
+   (single-shot) » → « Étude préliminaire : requête directe (single-shot) » ;
+   « Expérience 2 : approche conversationnelle avec relances » → « Étude
+   préliminaire : approche conversationnelle avec relances ». Labels unchanged.
+3. Sweep report.tex prose for « [Ee]xpérience[s]? ~?[12] » references to the
+   demoted sections (e.g. « l'expérience~2 se lit comme un plan factoriel »,
+   l.663) and reword to « l'étude préliminaire » where they refer to the
+   probes; leave references to the canonical experiments intact.
+4. Verify `make report` still builds (clean-room: no uv run).
+
+## Test
+
+Grep-based: after the edit, `grep -c 'Expérience 1\|Expérience 2' report/report.tex`
+counts only canonical-experiment mentions (frontière SOTA chapter, once it
+lands) — no section titles numbering the 2025 probes. Build check: report PDF
+compiles.
+
+## Invariants
+
+- `\label{sec:exp1}` / `\label{sec:exp2}` keep resolving (no broken \ref)
+- Talk-side artifacts untouched: slides/, main.md keep their Exp 1/2/3 usage
+  (it matches the canon)
+- Artifact/machine namespace untouched: exp1_*, exp2_*, sota_exp2_*, exp3_*
+  file names are out of scope
+
+## Exit criteria
+
+- [ ] `docs/EXPERIMENTS.md` registry exists and matches the table above
+- [ ] report.tex 2025-probe sections demoted to « Étude préliminaire : … »
+- [ ] No prose in report.tex refers to the probes as « Expérience 1/2 »
+- [ ] `make report` builds; no broken cross-references
+- [ ] Merged BEFORE 0253/0254 chapter PRs (sequencing constraint)
+
+## Related
+
+- 0253/0254 (chapter gated on this), 0251 (umbrella — log note added)
+- AGENTS.md skills-catalogue sibling hygiene: 0425/0426

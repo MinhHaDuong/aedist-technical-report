@@ -73,3 +73,24 @@ one FP bar per arm; assert every negative bar's facecolor is
 
 - One FP-bar colour convention (red) across all live Exp2 figures, with
   a regression test on each figure builder
+
+## Imagine (raid 2026-06-05) — PROCEED, facts re-verified
+
+- FP bar is `plot_exp2_arms_comparison.py:178` (ticket said ~176); import
+  at line 27. Builder is `make_figure(rows, output) -> None` (l.254) —
+  still needs the `-> Figure` return for the clone test.
+- CAPTION EDIT CONFIRMED: `slides/manuscript/main.md:91` (Figure 3) says
+  "FP bars (orange, downward, …)" → change to red. Panel-title string at
+  code l.201 already says red — will match after the swap.
+- `rg COLOR_HALLUC src/`: 3 consumers. Target file (swap);
+  `plot_method_convergence.py:359` text label (legit, leave);
+  `plot_scaling_curve.py:181` reference-line colour (legit, leave).
+  → KEEP `semantic.halluc` in palette.toml (two live non-FP uses); list
+  survivors in the PR.
+- Regen path (committed mart, NOT make):
+  `uv run python -m aedist.build_exp2_mart_views --mart-jsonl <committed
+  exp2_mart.jsonl> --output-dir report/inputs/generated --repo-root .`
+  then `uv run python -m aedist.plot_exp2_arms_comparison --input
+  report/inputs/generated/tab_exp2_arms_runs_view.csv --output
+  report/inputs/generated/fig_exp2_arms_comparison.pdf`. Commit ONLY the
+  PDF (the view CSVs are uncommitted intermediates — keep it that way).

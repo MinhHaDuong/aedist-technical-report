@@ -7,7 +7,9 @@ Blocked-by: 0383
 --- log ---
 2026-05-23T17:30Z Copilot created
 
+2026-06-05T07:25Z claude note — raid Imagine 2026-06-05: target = same report.tex chapter as 0253 (containment decision); committed artifacts only (tab_exp2_bib_quality.tex, tab_exp2_2x2.csv); no turns/wall-time (not in committed artifacts); gated on 0432.
 2026-06-05T07:36Z claude note Blocked-by 0383 added — descriptive statistics must quote post-re-baseline numbers (mart staleness evidence in 0383 log)
+2026-06-05T07:50Z claude note — raid: 0254 PULLED from night-queue execute wave (newly Blocked-by 0383, supersedes the committed-artifacts-only plan below); 0253 proceeds alone, chapter stub for §donnees stays TODO(0254)
 --- body ---
 ## Context
 Write the Dataset and Descriptive Statistics section from `docs/exp2-analysis-v0.md`.
@@ -22,3 +24,64 @@ Verify all described numbers map to generated artifacts and source JSON summarie
 
 ## Exit criteria
 Dataset section reports descriptive statistics clearly and reproducibly without inferential overreach.
+
+## Imagine (raid 2026-06-05, author-ratified)
+
+- TARGET: the report.tex chapter created by 0253 (« Expérience 2 (frontière
+  SOTA) : protocole pré-enregistré, déviations et résultats ») — fill its
+  dataset/descriptives stub subsection. SEQUENCING: after 0253 merges
+  (same file); both gated on 0432.
+- COMMITTED ARTIFACTS ONLY (0383 mart-staleness bars full-DAG runs):
+  - `report/inputs/generated/tab_exp2_bib_quality.tex` — run counts +
+    exclusions spine; valid-run fractions per agent×arm (e.g. 4/5;
+    Claude optimized arm = 0/5, excluded).
+  - `experiments/derived/tab_exp2_2x2.csv` (git-tracked) +
+    `report/inputs/generated/tab_exp2_2x2.tex` — F1/cost aggregates,
+    n_f1/n_total.
+  - Committed figure PDFs: fig_exp2_arms_comparison, fig_exp2_cost,
+    fig_exp2_coverage, fig_exp2_coverage_certainty, fig_exp2_turn_trajectory.
+  - DO NOT cite/build: tab_exp2_arms_runs_view.csv,
+    tab_exp2_bib_quality_view.csv (full-DAG outputs); the sota_exp2 summary
+    JSONs named in the outline are absent from the tree.
+- NO turns/wall-time descriptives — present only in the orphaned
+  placeholder `tab_exp2_outline_dataset.tex` (contains <to fill> cells —
+  must not ship), not in any committed artifact.
+- ARMS FRAMING: the registered design is TWO arms (naive vs optimized).
+  If committed artifacts expose additional arms, report the registered two
+  as primary and any extras explicitly as exploratory/deviation — do not
+  silently choose.
+- Data-level exclusions narrative (Claude-optimized 0/5, declined runs)
+  lives HERE; protocol-level deviations live in 0253's section.
+- French prose; every number traces to a named committed artifact
+  (memory: verify prose claims against raw data).
+
+## Plan (raid 2026-06-05)
+
+- Fill §sec:exp2-sota:donnees (stub created by 0253).
+- NUMBERS (committed artifacts, quoted by the plan agent):
+  - tab_exp2_bib_quality.tex valid-fractions (validity = ≥1 parsed
+    inventory row): Claude naïf 4/5, Claude optimisé 0/5 (exclu),
+    Qwen optimisé 4/5, Qwen arm4 4/5; autres 5/5.
+  - tab_exp2_2x2 (PRIMARY = naïf+optimisé): naïf F1=0.507±0.106;
+    optimisé F1=0.442±0.164. Per-agent (CSV): anthropic 0.589/0.573,
+    openai 0.611/0.628, mistral 0.485/0.338, qwen 0.343/0.230 (n_f1=5).
+- CRITICAL DISTINCTION: Claude-optimisé 0/5 is BIB-PARSE validity
+  (n_rows>0 in bib_quality), NOT F1-scorability (2x2 shows n_f1=5/5,
+  F1=0.573 via the row-matching path). Name the dimension explicitly —
+  a flat "Claude excluded" would contradict the 2x2 cell.
+- ARMS: registered two arms (naïf/optimisé) PRIMARY; arm3/arm4
+  (with-docs) are unregistered → label « exploratoire », never mixed.
+- RELOCATE (containment-entailed, flagged to author 2026-06-05, no veto):
+  move the SOTA factorial paragraph + `tab:exp2-2x2` table (currently
+  l.194–203, inside the demoted « Étude préliminaire : approche
+  conversationnelle ») into this chapter's §donnees, reframed: registered
+  arms primary, docs-axis exploratory. Leave no SOTA content in the
+  demoted probe section; keep label `tab:exp2-2x2` (refs survive).
+- INCLUDES: \input tab_exp2_bib_quality (committed, generated each build);
+  reference tab:exp2-2x2; figures via \includegraphics on committed
+  fig_exp2_*.pdf only. NEVER tab_exp2_outline_dataset (<to fill> cells),
+  never *_view.csv, no turns/wall-time stats.
+- FIRST TEST (red): clean-room report build; pdftotext/grep for the 0/5
+  exclusion prose naming the dimension (« parsable »/« n_rows ») AND
+  « exploratoire » on arm3/arm4; every \includegraphics target exists in
+  inputs/generated/.

@@ -9,6 +9,7 @@ Author: HDMX-coding-agent
 2026-06-04T13:16Z claude note — final author doctrine folded in: OUTPUT validation = plant name is the key, strictly UNIQUE; same-name multi-status groups are an ERROR to resolve in the master (source-attested designations only); Blocked-by 0420 added
 2026-06-04T13:35Z claude note — attribution nuance: the master DID carry defects 1-2 (both now fixed there by the author); input guards are thus the primary catch for master regressions, not just defense in depth
 2026-06-04T20:05Z HDMX-coding-agent note blocker 0420 closed — Blocked-by removed.
+2026-06-05T07:27Z claude note — raid 2026-06-05 Imagine: ESCALATE — grouping contract unspecified under no-synthesis rule (Q1/Q2 in body, § Imagine review). On hold for author; 0401 held with it.
 --- body ---
 ## Contexte
 
@@ -76,3 +77,45 @@ RÈGLES AUTEUR (2026-06-04) :
   0413 (adoption v2)
 - `data/reference/HDM_aggregate.py` (à remplacer),
   `data/reference/add_classifications.py`, `PROVENANCE.md`
+
+## Imagine review (raid 2026-06-05, read-only) — ESCALATE
+
+Why-now: confirmed — 0420 merged, 0395 (add-plants) routes through this
+aggregator; fixing before 0395 is correct sequencing.
+
+BLOCKER (criterion 1 unspecified, not criterion 5). The no-synthesis rule
+has no field to key on. extract_ods output cols = name, province,
+asset_type, capacity_mwe, status (+level only when present — ABSENT in the
+current snapshot). To group "Dong Nai Formosa Unit 1/2/3" into one plant
+the code must strip "Unit N" from the name — i.e. resurrect the forbidden
+normalize_plant_name(). Verified the ODS carries no plant-identity field:
+`Project alias` is NaN for Dong Nai Formosa, Quảng Trị 1, Duyên Hải 2
+(only sporadically set). So the core algorithm is unwriteable against the
+named input without violating non-negotiable #1.
+
+Q1 (author, before Execute): how does a unit row declare its parent plant
+without name-synthesis — a new plant-key/Level column in the forthcoming
+master, or an existing field? Until answered the aggregator can't be
+written.
+Q2 (author): who owns fuel-derivation (ODS `Fuel source`/`Asset type` →
+`fuel`) and status normalization (ODS `5 operating` → plant `operational`)?
+Neither extract_ods, the old aggregator, nor add_classifications does
+these, yet add_classifications NEEDS `fuel` and the oracle target
+(vietnam_thermal_v1.csv = DEFAULT_REFERENCE) has clean status + fuel. Is
+this 0416's job, a 0420 follow-up, or is v2-plant a different schema
+(making the oracle a field-subset compare)?
+
+PROCEED-able facts for the eventual Execute agent:
+- pipeline.ods present locally (144.6K) but UNTRACKED; absent in CI by
+  design. The extract→aggregate→classify chain must stay .PHONY utility
+  verbs mirroring extract-reference-ods — NEVER a file dependency in
+  score.mk/render.mk.
+- Extraction currently REFUSES this snapshot (defects 1–2 not re-imported),
+  so no vietnam_thermal_units_v2.csv exists; criterion 5 is un-runnable
+  until the author re-imports the fixed master (with Level).
+- Wiring must NOT repoint DEFAULT_REFERENCE — v2 adoption is 0413.
+- YAGNI/abstraction: ticket clean (flat validators like extract_ods, two
+  functions, pandas groupby). Do NOT port GEM_aggregate.py's
+  Phase/Extension regex — synthesis-adjacent, violates doctrine.
+
+DRIFT CHECK: no exit criterion dropped/reworded/added.

@@ -6,6 +6,7 @@ Author: Copilot
 --- log ---
 2026-05-23T17:30Z Copilot created
 
+2026-06-05T07:25Z claude note — raid Imagine 2026-06-05: target resolved by author (containment): standalone chapter in report.tex « Expérience 2 (frontière SOTA) : protocole pré-enregistré, déviations et résultats ». Gated on 0432 (canonical naming) merging first.
 --- body ---
 ## Context
 Write the Context and Protocol Lock section from `docs/exp2-analysis-v0.md`.
@@ -20,3 +21,60 @@ Cross-check every sentence against protocol section 3.5.1 and 3.8 mapping table.
 
 ## Exit criteria
 Context/protocol section is complete with no drift from registered tests and falsifiers.
+
+## Imagine (raid 2026-06-05, author-ratified)
+
+- TARGET (was unnamed): NEW standalone chapter in `report/report.tex` (FR),
+  title « Expérience 2 (frontière SOTA) : protocole pré-enregistré,
+  déviations et résultats ». NOT main.md, NOT the existing §sec:exp2 (that
+  is the demoted jan-2025 conversational probe). Gated on 0432 (canonical
+  naming + registry) merging FIRST.
+- SOURCE OF TRUTH: `experiments/sota/protocol_05_experiment.md` — §3.2.0
+  (two arms naive/optimized, N=5 per agent per arm, 4 agents), §3.5.1
+  (H1–H6 table, exclusion criteria, Bonferroni α=0.05/3 for H1–H3, Wilson
+  for H4/H5, H6 exploratory), §3.8. The ticket's "protocol section 3.5.1
+  and 3.8" lives THERE — `docs/exp2-analysis-v0.md` is only the outline.
+- SCOPE per author (containment): this section = registration story +
+  initial plan + protocol-level deviations (N=3 → two-arm N=5; dollar cap →
+  dual-axis 50K tokens + $3; any others found in protocol amendments).
+  Data-level exclusions (Claude-optimized 0/5 etc.) belong to 0254.
+- Chapter skeleton: create the chapter with stub subsections for dataset
+  (0254), H1–H6 outcomes (0255–0260, possibly consolidated), synthesis
+  (0261) — \subsection stubs with one-line TODO comments, so sibling
+  tickets append without restructuring. H6 noted as gated on 0171.
+- `report/inputs/generated/tab_exp2_outline_hypotheses_map.tex` exists
+  (generated) but is \input NOWHERE — candidate for the H-table; verify its
+  content against protocol §3.5.1 before wiring.
+- SEQUENCING: 0253 lands before 0254 (same chapter file; 0254 appends).
+
+## Plan (raid 2026-06-05)
+
+- INSERTION: new `\chapter{Expérience 2 (frontière SOTA)~: protocole
+  pré-enregistré, déviations et résultats}\label{chap:exp2-sota}` at the
+  blank line BEFORE `\chapter{Documents sources et RAG}` — anchor on that
+  STRING, not a line number (0432 shifts lines). House style: `~:`.
+- SKELETON (stubs = \section + \label + one-line `% TODO(ticket)`):
+  §Enregistrement et verrouillage du protocole \label{sec:exp2-sota:protocole}
+  (0253 fills) · §Jeu de données et statistiques descriptives
+  \label{sec:exp2-sota:donnees} `% TODO(0254)` · §Résultats par hypothèse
+  (H1–H6) \label{sec:exp2-sota:hypotheses} with one \subsection stub per H,
+  H6 `% gated on 0171` `% TODO(0255–0260)` · §Synthèse
+  \label{sec:exp2-sota:synthese} `% TODO(0261)`.
+- CONTENT §protocole: two-arm registration story (bras naïf/optimisé,
+  4 sujets, N=5/sujet/bras — protocol §3.2.0; plan locked before live
+  batch); H1–H6 table as INLINE tabular built from §3.5.1 (claim/test/
+  échantillon/falsifiant) — do NOT \input tab_exp2_outline_hypotheses_map
+  (orphaned placeholder + tectonic include trap); Bonferroni α=0.0167
+  H1–H3, Wilson H4/H5, H6 exploratoire; PROTOCOL-level deviations with
+  evidence: (a) N=3→N=5 two-arm, (b) cap dollar→dual-axe 50K tokens+$3
+  guard, (c) classifieur tiers Nemotron, (d) ban Wikipedia/Wikidata +
+  audit. Each stated as registered amendment, not silent change.
+  Data-level exclusions = one-line cross-ref to §donnees (0254's).
+- FR terms: bras naïf/optimisé, hypothèse pré-enregistrée, falsifiant,
+  intervalle de Wilson, « nous n'avons pas détecté » (jamais « il n'y a
+  pas »).
+- FIRST TEST (red): build report (clean-room make report), then
+  `grep chap:exp2-sota report/report.aux` + grep ≥1 of
+  Bonferroni/Wilson/dual-axe in the chapter source (guards against an
+  empty shell passing). Adherence: no \begin{axis}, ZERO new
+  \InputIfFileExists/\input of outline_* files.
