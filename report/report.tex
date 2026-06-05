@@ -191,11 +191,11 @@ Les sweeps direct, RAG, direct+multiturn, rag\_livesearch et rag\_per\_fuel (211
 
 \InputIfFileExists{inputs/generated/tab_relances}{}{}
 
-Au-delà des relances, l'expérience~2 se lit comme un plan factoriel $2\times2$ croisant l'architecture (requête unique vs.\ conversation multi-tours) et la documentation (sans documents vs.\ RAG), soit les quatre conditions 1N/5N/1D/5D. Le tableau~\ref{tab:exp2-2x2} en résume l'effet sur la qualité (F1) et le coût~: l'apport des documents (RAG) domine celui du multi-tours --- fournir un corpus de référence augmente le F1 d'environ 0,11~point, tandis que multiplier les tours le dégrade légèrement tout en accroissant le coût.
+Au-delà des relances, l'Expérience~2 (frontière SOTA) se lit comme un plan factoriel $2\times2$ croisant l'architecture (requête unique vs.\ conversation multi-tours) et la documentation (sans documents vs.\ RAG), soit les quatre conditions 1N/5N/1D/5D. Le tableau~\ref{tab:exp2-2x2} en résume l'effet sur la qualité (F1) et le coût~: l'apport des documents (RAG) domine celui du multi-tours --- fournir un corpus de référence augmente le F1 d'environ 0,11~point, tandis que multiplier les tours le dégrade légèrement tout en accroissant le coût.
 
 \begin{table}[h]
 \centering
-\caption{Expérience~2 en plan factoriel $2\times2$~: qualité (F1, moyenne~$\pm$~écart-type) et coût relatif par condition (architecture~$\times$~documentation), avec les effets marginaux de chaque facteur. Quatre agents, 5~répétitions.}
+\caption{Expérience~2 (frontière SOTA) en plan factoriel $2\times2$~: qualité (F1, moyenne~$\pm$~écart-type) et coût relatif par condition (architecture~$\times$~documentation), avec les effets marginaux de chaque facteur. Quatre agents, 5~répétitions.}
 \label{tab:exp2-2x2}
 \InputIfFileExists{inputs/generated/tab_exp2_2x2}{}{}
 \end{table}
