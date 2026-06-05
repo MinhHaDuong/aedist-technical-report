@@ -11,6 +11,7 @@ Label: needs-human
 2026-06-05T09:59Z claude note three-column split applied to editing copy (176 rows via reviewed CSV proposal, XML surgery, full-grid diff clean); status case normalized (4 construction x14); structural checks V-A..V-G all green; Conventions sheet pending
 2026-06-05T10:01Z claude note Conventions sheet injected (5 conventions + vocab statut x10, fuel x5, record-status); full checker green 0 violations; awaiting author LibreOffice pass (validity dropdowns, cond. formatting, eyeball) before snapshot
 2026-06-05T10:25Z claude note snapshot pipeline-2026-06-05.ods cut and pinned; extract_ods.py migrated to three-column schema (name/level derived, shape validator); 23 tests green incl. integration acceptance; stages renumbered by author (0-6,9,10); exit criteria amended per author footprint decision (assist script stays throwaway)
+2026-06-05T10:30Z claude note for 0416: extract dedup invariant is derived-designation uniqueness (Plant+Unit); throwaway session checker also enforced composite-key (Complex,Plant,Unit) uniqueness — contrat v2 must pick the canonical one. v1/v2 status ladders differ post-renumber (5 operating -> 6 operating etc.); 0413 adoption diff must map them
 --- body ---
 ## Contexte
 
