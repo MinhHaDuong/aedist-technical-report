@@ -19,6 +19,7 @@ Usage:
 import argparse
 import csv
 import logging
+import os
 import re
 from collections import defaultdict
 from pathlib import Path
@@ -86,6 +87,42 @@ _METHOD_LABELS = {
 }
 
 
+def _normalize_record_path(path: str) -> str:
+    """Normalize a record path for prefix comparison.
+
+    ``ANALYSIS_REPO_ROOT`` defaults to ``.`` in the Makefiles, so a
+    ``--result-dir`` expands to ``./experiments/...`` while records store the
+    bare ``experiments/...`` form. ``os.path.normpath`` collapses the ``./``
+    prefix (and redundant ``//`` / trailing slashes) on both sides so the
+    comparison is cwd-invariant. Because normpath strips trailing slashes, the
+    call sites compare with ``norm == prefix or norm.startswith(prefix + os.sep)``
+    rather than a bare ``startswith`` — otherwise ``experiments/outputs/exp1``
+    would falsely match ``experiments/outputs/exp1_batch2``.
+    """
+    return os.path.normpath(path)
+
+
+def _zero_match_error(
+    *,
+    prompt_version: str | None,
+    result_dir: str | None,
+    sample_paths: list[str],
+) -> ValueError:
+    """Build an actionable error for a filter that selected zero records."""
+    filters = []
+    if prompt_version is not None:
+        filters.append(f"prompt_version={prompt_version!r}")
+    if result_dir is not None:
+        filters.append(f"result_dir={result_dir!r} (normalized {_normalize_record_path(result_dir)!r})")
+    sample = "\n  ".join(sample_paths[:8]) or "(no records with a result_file)"
+    return ValueError(
+        "No measurement records matched the active filter "
+        f"({', '.join(filters)}). This would emit an empty figure or crash on "
+        "min() of an empty sequence. Check the filter against the available "
+        f"record result_file paths, e.g.:\n  {sample}"
+    )
+
+
 def load_convergence_data(
     prompt_version: str | None = None,
     result_dir: str | None = None,
@@ -96,9 +133,18 @@ def load_convergence_data(
     Returns list of dicts with keys: method, model, tp, fp, fn.
     prompt_version: if set, only records with that prompt_version are included.
     result_dir: if set, only records whose result_file starts with this prefix.
+
+    Raises ValueError if ``prompt_version`` or ``result_dir`` is set but selects
+    zero records — a silent empty result is a silent-wrong-artifact hazard
+    (ticket 0440). The error names the active filters and a sample of available
+    result_file paths.
     """
+    norm_result_dir = _normalize_record_path(result_dir) if result_dir is not None else None
     rows = []
+    all_result_files: list[str] = []
     for record in load():
+        if record.result_file:
+            all_result_files.append(record.result_file)
         method = record.method.value
         if method not in _METHOD_ORDER:
             continue
@@ -106,9 +152,11 @@ def load_convergence_data(
             pv = getattr(record.method_params, "prompt_version", None)
             if pv != prompt_version:
                 continue
-        if result_dir is not None:
-            rf = record.result_file or ""
-            if not rf.startswith(result_dir):
+        if norm_result_dir is not None:
+            rf = _normalize_record_path(record.result_file or "")
+            # Match the directory itself or anything beneath it; guard against
+            # sibling-prefix false positives (exp1 vs exp1_batch2).
+            if rf != norm_result_dir and not rf.startswith(norm_result_dir + os.sep):
                 continue
         model = normalize_model(record.method_params.model)
         if excluded_models and model in excluded_models:
@@ -129,6 +177,12 @@ def load_convergence_data(
                 "local": ex.get("provider") == "Ollama/Padme",
                 "size_class": ex.get("size_class", ""),
             }
+        )
+    if not rows and (prompt_version is not None or result_dir is not None):
+        raise _zero_match_error(
+            prompt_version=prompt_version,
+            result_dir=result_dir,
+            sample_paths=all_result_files,
         )
     return rows
 
@@ -401,6 +455,7 @@ def _build_macros(
         f"\\newcommand{{\\CensusFPMax}}{{{max(fps)}}}",
     ]
     if prompt_version is not None or result_dir is not None:
+        norm_result_dir = _normalize_record_path(result_dir) if result_dir is not None else None
         raw = load()
         subset = []
         for r in raw:
@@ -408,8 +463,10 @@ def _build_macros(
                 pv = getattr(r.method_params, "prompt_version", None)
                 if pv != prompt_version:
                     continue
-            if result_dir is not None and not (r.result_file or "").startswith(result_dir):
-                continue
+            if norm_result_dir is not None:
+                rf = _normalize_record_path(r.result_file or "")
+                if rf != norm_result_dir and not rf.startswith(norm_result_dir + os.sep):
+                    continue
             model = normalize_model(r.method_params.model)
             if excluded_models and model in excluded_models:
                 continue

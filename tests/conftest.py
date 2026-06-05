@@ -47,7 +47,7 @@ def write_measurements(path: Path, metrics: list[dict]) -> None:
                     cost_usd=entry.get("cost_usd"),
                     wall_s=entry.get("wall_seconds"),
                 ),
-                result_file=f"{label}.csv",
+                result_file=entry.get("result_file", f"{label}.csv"),
                 result_summary=ResultSummary(
                     n_plants=entry.get("n_system", tp + fp),
                     tp=tp,

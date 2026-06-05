@@ -438,8 +438,14 @@ $(ANALYSIS_GEN)/fig_direct_p1_base.pdf $(ANALYSIS_GEN)/macros_p1_base.tex &: $(A
 	    --title "How do models recall Vietnam's thermal power assets? Not well." \
 	    --ui-scale 1.35 \
 	    --fig-width 12 --fig-height-min 8 --fig-height-per-run 0.06 --fig-height-per-method 0.35 \
-	    --result-dir $(ANALYSIS_EXPERIMENTS_DIR)/outputs/exp1_batch2/ \
+	    --result-dir experiments/outputs/exp1_batch2/ \
 	    --output-macros $(dir $@)macros_p1_base.tex
+# --result-dir is a repo-root-relative constant, NOT $(ANALYSIS_EXPERIMENTS_DIR):
+# record result_file paths are always stored repo-root-relative (loaded via the
+# package-anchored measurements._REPO_ROOT, cwd-invariant), so the prefix filter
+# must be too. Wiring it to ANALYSIS_EXPERIMENTS_DIR made the filter track cwd
+# (./experiments/... under the default ANALYSIS_REPO_ROOT=.), failing the match →
+# 0 rows → degenerate figure (ticket 0440; cf. exp1_cost_quality.EXP1_BATCH2_DIR).
 
 # Exp1 recognition matrix (ticket 0373): plants aligned vertically on the
 # reference list, plus a top-40 false-positive panel. Derives per-(run x plant)

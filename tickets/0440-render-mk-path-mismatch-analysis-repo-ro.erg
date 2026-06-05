@@ -6,6 +6,7 @@ Author: claude
 --- log ---
 2026-06-05T09:41Z claude created
 
+2026-06-05T11:25Z claude execute normalized prefix matching (normpath), repo-root-relative --result-dir constant in render.mk, loud zero-match ValueError, 5 regression tests
 --- body ---
 ## Context
 
@@ -35,10 +36,17 @@ cwd quietly commits an empty figure (the stale-PDF trap's cousin).
 
 ## Exit criteria
 
-- [ ] `make -f experiments/render.mk <fig targets>` produces identical
+- [x] `make -f experiments/render.mk <fig targets>` produces identical
       figures from repo root and from experiments/ cwd
-- [ ] Zero-match is a hard error with diagnostic, not a degenerate PDF
-- [ ] Regression tests green; `make check` passes
+      (--result-dir is now a repo-root-relative constant, byte-identical
+      across ANALYSIS_REPO_ROOT=. / .. / /abs; record paths load via the
+      package-anchored measurements._REPO_ROOT, cwd-invariant)
+- [x] Zero-match is a hard error with diagnostic, not a degenerate PDF
+      (load_convergence_data raises ValueError naming the active filters and
+      a sample of available result_file paths; covers the census min()-empty
+      path from PR #754)
+- [x] Regression tests green; `make check` passes (only known environmental
+      failure test_smoke_real_cli — live CLI, no credit/API spend)
 
 ## Related
 
