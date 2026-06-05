@@ -1,0 +1,37 @@
+%erg 0.1
+Title: Name-parsing ratchet: no name synthesis anywhere in the reference pipeline (covers GEM_aggregate.py)
+Created: 2026-06-05
+Author: claude
+
+--- log ---
+2026-06-05T11:39Z claude created
+
+--- body ---
+## Context
+
+Author rule (0416, absolute): a project name is never synthesized —
+parentage and identity are data, not inference. 0416 (PR #760) removed
+the last name-parsing from the HDM chain, but `GEM_aggregate.py` still
+parses/normalizes names, and nothing prevents name synthesis from
+creeping back in.
+
+## Quoi faire
+
+1. Adherence ratchet: no name-derivation operations (regex/split/strip
+   building a Name value) in data/reference/*.py outside an allowlist;
+   start with GEM_aggregate.py allowlisted-with-comment (its rework is
+   0429, OUT of preprint perimeter) so the ratchet covers the HDM/v2
+   chain immediately and tightens when 0429 lands.
+2. Mechanics: AST or source-grep test in tests/, @pytest.mark.adherence,
+   same pattern as test_no_hardcoded_reference_path.py.
+
+## Exit criteria
+
+- [ ] Ratchet test green on current tree, red on injected name synthesis
+- [ ] GEM_aggregate.py allowlisted with reference to 0429
+- [ ] `make check` passes
+
+## Related
+
+- 0416 (the rule, PR #760), 0429 (GEM rework inherits the ratchet),
+  0419/0430 (ratchet mechanics precedents).
