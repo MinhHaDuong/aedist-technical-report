@@ -2,11 +2,14 @@
 Title: Annex table: reference status composition vs run recognition rate
 Created: 2026-06-05
 Author: claude
+Closed: delivered by PR #749 — status difficulty table, gate APPROVED with FR-label unification
 
 --- log ---
 2026-06-05T07:33Z claude created
 2026-06-05T08:05Z claude respec — author: table and figure each build from their OWN view of the data mart (common-cause consistency); no side-output chaining; Blocked-by 0373 removed
 
+2026-06-05T09:43Z claude execute tabulate_status_difficulty.py imports exp1_recognition (own mart view); STATUS_ORDER/LABELS moved to shared lib; render.mk rule + report-tables; annex table after matrix figure, stale forward-refs fixed
+2026-06-05T09:59Z HDMX-coding-agent closed — delivered by PR #749 — status difficulty table, gate APPROVED with FR-label unification
 --- body ---
 ## Context
 
@@ -65,11 +68,11 @@ def test_status_difficulty_rates():
 
 ## Exit criteria
 
-- [ ] Table generated from its own mart view + reference, no
+- [x] Table generated from its own mart view + reference, no
       hardcoded counts, no consumption of 0373 artifacts
-- [ ] Committed handoff artifact + report annex inclusion after the
+- [x] Committed handoff artifact + report annex inclusion after the
       matrix figure
-- [ ] Unit test above green; `make check` passes
+- [x] Unit test above green; `make check` passes
 
 ## Related
 

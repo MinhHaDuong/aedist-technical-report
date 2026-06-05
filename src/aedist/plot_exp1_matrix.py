@@ -37,24 +37,22 @@ import numpy as np
 from matplotlib.colors import ListedColormap
 
 from .config import VN_THERMAL_PLANTS_RELEASE_CSV
-from .exp1_recognition import load_exp1_recognition, top_false_positives
+from .exp1_recognition import (
+    STATUS_LABELS,
+    STATUS_ORDER,
+    load_exp1_recognition,
+    top_false_positives,
+)
 from .plot_method_convergence import _model_size_b
 from .util import COLOR_ALERT, COLOR_MATCHED, model_family
 
 log = logging.getLogger(__name__)
 
-# Status column ordering (author-ratified 2026-06-05): operational assets
-# first (easiest to recall), then the pipeline statuses, ending with the
-# historical/retired tail. Matches the status difficulty table (0434).
-_STATUS_ORDER = ["operational", "proposed", "planned", "constructing", "cancelled", "retired"]
-_STATUS_LABELS = {
-    "operational": "Operational",
-    "proposed": "Proposed",
-    "planned": "Planned",
-    "constructing": "Constructing",
-    "cancelled": "Cancelled",
-    "retired": "Retired",
-}
+# Status column ordering and labels come from the shared exp1_recognition
+# library (author-ratified 2026-06-05) so the matrix's column bands and the
+# status difficulty table (0434) order statuses identically.
+_STATUS_ORDER = STATUS_ORDER
+_STATUS_LABELS = STATUS_LABELS
 
 
 def _order_runs(model_runs: list[tuple[str, int]], size_by_model: dict[str, float]) -> list:

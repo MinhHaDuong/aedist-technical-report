@@ -397,7 +397,8 @@ report-tables: \
 	$(ANALYSIS_GEN)/tab_coherence.tex \
 	$(ANALYSIS_GEN)/tab_reconciliation.tex \
 	$(ANALYSIS_GEN)/tab_converter_benchmark.tex \
-	$(ANALYSIS_GEN)/tab_source_grounding.tex
+	$(ANALYSIS_GEN)/tab_source_grounding.tex \
+	$(ANALYSIS_GEN)/tab_status_difficulty.tex
 
 report-figures: $(ANALYSIS_EXP1_SPIDER_FAMILIES)
 
@@ -445,6 +446,18 @@ $(ANALYSIS_GEN)/fig_exp1_recognition_matrix.pdf $(ANALYSIS_GEN)/macros_exp1_matr
 	    --reference $(ANALYSIS_EXPERT_REF) \
 	    --output $(ANALYSIS_GEN)/fig_exp1_recognition_matrix.pdf \
 	    --output-macros $(ANALYSIS_GEN)/macros_exp1_matrix.tex
+
+# Exp1 status difficulty table (ticket 0434): reference-list composition by
+# status vs mean recognition rate. Annex companion to the matrix figure above;
+# derives the same per-(run x plant) recognition independently from the records
+# + reference via aedist.exp1_recognition (shared library, no side-output). The
+# status group order is shared with the matrix's column bands.
+$(ANALYSIS_GEN)/tab_status_difficulty.tex: $(ANALYSIS_EXP1_BATCH2_RECORDS) $(ANALYSIS_EXPERT_REF) $(ANALYSIS_REPO_ROOT)/src/aedist/tabulate_status_difficulty.py $(ANALYSIS_REPO_ROOT)/src/aedist/exp1_recognition.py
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.tabulate_status_difficulty \
+	    --records-glob "$(ANALYSIS_EXPERIMENTS_DIR)/outputs/exp1_batch2/*.record.json" \
+	    --reference $(ANALYSIS_EXPERT_REF) \
+	    --output $(ANALYSIS_GEN)/tab_status_difficulty.tex
 
 $(ANALYSIS_GEN)/fig_regimes_scatter.pdf: $(ANALYSIS_MEASUREMENTS) $(ANALYSIS_EXPERIMENTS_DIR)/figures.toml
 	@mkdir -p $(dir $@)

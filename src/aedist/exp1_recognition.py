@@ -25,6 +25,33 @@ from .reconcile import reconcile
 from .schema import MatchType
 from .util import normalize_model
 
+# Status group ordering (author-ratified 2026-06-05): operational assets first
+# (easiest to recall), then the pipeline statuses, ending with the
+# historical/retired tail. Shared by the recognition matrix figure (0373,
+# column bands) and the status difficulty table (0434, row order) so both
+# consumers order statuses identically from one source — common cause, no
+# producer-consumer chaining.
+STATUS_ORDER = ["operational", "proposed", "planned", "constructing", "cancelled", "retired"]
+# French display labels — shared by the recognition matrix figure (0373, column
+# band annotations) and the status difficulty table (0434, row labels) so both
+# consumers render the same language in the French-language report annex.
+STATUS_LABELS = {
+    "operational": "Opérationnelle",
+    "proposed": "En projet",
+    "planned": "Planifiée",
+    "constructing": "En construction",
+    "cancelled": "Annulée",
+    "retired": "Retirée",
+}
+
+
+def status_rank(status: str) -> int:
+    """Sort rank for a status group; unknown statuses sort last (stable tail)."""
+    try:
+        return STATUS_ORDER.index(status)
+    except ValueError:
+        return len(STATUS_ORDER)
+
 
 @dataclass(frozen=True)
 class RecognitionCell:
