@@ -70,22 +70,20 @@ Cleanup worktrees and branches, summarize what was accomplished, reflect on less
 | `/start-ticket N` | Starting work on a GitHub issue | Create worktree, write first test, transition to Execute |
 | `/celebrate` | After completing a ticket | Reflect, update STATE, clean up |
 | `/end-session` | User ends a work session | Push branches, run tests, refresh STATE |
-| `/new-ticket` | Creating a GitHub issue | Write handoff document with test spec |
+| `/ticket-new` | Creating a ticket | Write handoff document with test spec |
 | `/review-pr N` | Reviewing a merge request (code) | Multi-perspective agent review |
 | `/review-pr-prose N` | Reviewing a merge request (prose) | Simulated peer review panel |
 | `/memory` | Writing or sweeping persistent memory | Enforce caps, TTLs, staleness |
-| `/autonomous` | Unsupervised autonomous session | Imperial Dragon cycles with 60/40 balance |
-| `/submission-branch` | Creating a submission branch | Sprout, freeze, revision lifecycle |
-| `/submission-readiness` | Pre-submission gate | Checklist before sprouting |
-| `/update-publist` | Adding/updating a publication | Edit Ha-Duong.bib, deposit on HAL via SWORD |
+| `/raid` | Unsupervised autonomous raid across multiple tickets | Picks targets, manages waves, enforces isolation |
+| `/update-publist` | Adding/updating a publication (à créer, IDH 0214) | Edit Ha-Duong.bib, deposit on HAL via SWORD |
 
 ### Chore tooling
 
 For one-shot chore PRs (tickets/, docs/, .claude/, top-level docs, .github/workflows/, *.md) use `scripts/quickpr.sh "<message>" <files...>` — one command branches off main, commits, pushes, opens a PR with auto-merge, and restores the starting branch. Refuses src/, tests/, experiments/ so implementation work still goes through `/start-ticket` → `/celebrate`.
 
-## Autonomous workflow (details in /orchestrator skill)
+## Autonomous workflow (details in /raid skill)
 
-Orchestrator runs tickets in waves with isolated worktrees and one ordered loop:
+The `/raid` skill runs tickets in waves with isolated worktrees and one ordered loop:
 1. Imagine: challenge ticket scope, motivation, and alternatives.
 2. Plan + Verify: produce plans, then independently check assumptions and feasibility.
 3. Execute + Verify: deliver a merge request, then fix all review findings.
