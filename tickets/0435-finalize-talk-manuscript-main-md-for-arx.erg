@@ -8,6 +8,7 @@ Label: needs-human
 2026-06-05T07:33Z claude created
 2026-06-05T08:10Z claude respec — author: conference comments are already absorbed (they ARE what led to the perimeter tickets); no separate comment dump needed. Integration = short acknowledgements crediting Econom'IA participants with a glose on the additions
 
+2026-06-05T07:53Z claude note acknowledgements wording blessed by author 2026-06-05; Discussion future-work citation of the annex matrix added to scope (mirrors 0373 respec)
 --- body ---
 ## Context
 
@@ -39,23 +40,28 @@ This is the milestone ticket; the supporting perimeter
    they are what led to the perimeter tickets — the up-to-date
    reference list, the recognition matrix + status table annex, the
    FP-as-unrecognized framing. No separate comment dump to integrate.
-2. **Acknowledgements**: add a short rationale crediting the
-   participants, e.g. "We thank Econom'IA 2026 participants for their
-   comments, in particular those that led to the updated reference
-   list, the per-plant recognition matrix, and the status-composition
-   analysis of task difficulty in the annex." Glose to match what
-   actually lands; author validates wording.
+2. **Acknowledgements — wording BLESSED by the author (2026-06-05)**:
+   "We thank Econom'IA 2026 participants for their comments, in
+   particular those that led to the updated reference list, the
+   per-plant recognition matrix, and the status-composition analysis
+   of task difficulty in the annex." Adjust the glose only if what
+   lands diverges.
 3. Speech-notes polish of main.md — no restructure.
 4. Refresh quoted numbers AFTER 0413 + 0383 land (the v2 reference and
    the re-baselined mart change them).
-5. Reference the annex figure + table (0373/0434).
+5. Reference the annex figure + table (0373/0434), and cite the annex
+   matrix in the Discussion future-work paragraph (information fusion,
+   truth discovery, inter-run / inter-model coherence — anchors at
+   main.md "External coherence ... remains future work" and the future
+   research paragraph; preview of research track 0396-0400).
 6. arXiv-ready build (pandoc/tectonic path of slides/Makefile — verify;
    clean-room rule applies).
 
 ## Exit criteria
 
-- [ ] Acknowledgements credit Econom'IA participants with glose on the
-      additions (author-validated wording)
+- [ ] Acknowledgements credit Econom'IA participants with the blessed
+      glose (re-validate only if the landed additions diverge)
+- [ ] Discussion future-work paragraph cites the annex matrix
 - [ ] Numbers consistent with post-v2, post-re-baseline artifacts
 - [ ] Annex figure + table referenced
 - [ ] Reproducible arXiv-ready PDF build

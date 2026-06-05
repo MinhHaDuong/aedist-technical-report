@@ -8,6 +8,7 @@ Author: minh
 2026-06-05T07:35Z claude respec — author ratified: all 5 reps (not min/median/max), X-order = status group then capacity desc, NEW 40-most-common-FP left panel, annex placement, per-cell CSV side-output feeds 0434; NOT blocked on 0413 (build on v1, DAG rebuild refreshes)
 2026-06-05T08:05Z claude respec — author: NO side-output pattern; figure builds from its own view of the data mart, 0434 builds from its own; consistency by common cause (shared mart), shared derivation as library code only
 
+2026-06-05T07:52Z claude respec — author: figure+0434 table go in a NEW annex; cite from Discussion future-work para (fusion/truth discovery/inter-run inter-model coherence) as preview of research track 0396-0400
 --- body ---
 ## Context
 
@@ -43,8 +44,19 @@ A filled cell means "this model recalled this plant"; an empty cell means
   shuffled with a fixed seed** (rebuild-stable). Shows matcher/list
   issues and hallucinating runs. Visually separate from the reference
   columns (gap or rule); FP marks use the red FP convention (0403).
-- **Placement: report annex** (companion — `fig_direct_p1_base.pdf`
-  stays in the main text).
+- **Placement: a NEW annex** holding this figure together with the
+  status difficulty table (0434) — companion material;
+  `fig_direct_p1_base.pdf` stays in the main text.
+- **Cite from the Discussion** (author 2026-06-05): reference the annex
+  figure in the future-work paragraph of the Discussion section, where
+  information fusion, truth discovery, and coherence between runs and
+  between models are mentioned — the matrix previews that research
+  direction (tickets 0396-0400: row coherence, internal/external
+  composites, latent-truth PU fusion, run-quality gate,
+  capture-recapture; design notes in
+  docs/2026-06-03-list-fusion-litreview.md). Each column is a plant
+  observed by many noisy runs — exactly the input object of truth
+  discovery and capture-recapture estimation.
 - **Own mart view, no side-output** (author 2026-06-05): the figure
   derives its per-(run x plant) recognition from the mart/records
   layer directly. The status table (0434) derives the same data
@@ -61,8 +73,11 @@ A filled cell means "this model recalled this plant"; an empty cell means
    primitive than plot_method_convergence; reference path from config,
    0419 ratchet).
 2. Implement spec above; wire the figure in render.mk.
-3. Include in the report annex; keep `fig_direct_p1_base.pdf` in place.
-4. Commit the generated PDF as handoff artifact.
+3. Create the new annex (figure + slot for 0434's table); keep
+   `fig_direct_p1_base.pdf` in place.
+4. Add the Discussion future-work citation (fusion / truth discovery /
+   inter-run, inter-model coherence) pointing to the annex.
+5. Commit the generated PDF as handoff artifact.
 
 ## Test
 `tests/test_plot_exp1_matrix.py` — golden test on synthetic fixture:
@@ -79,7 +94,10 @@ A filled cell means "this model recalled this plant"; an empty cell means
 - [ ] FP panel: 40 most common FPs, count-sorted, seeded tie-shuffle
 - [ ] No side-output: derivation via library helper, no intermediate
       file consumed by 0434
-- [ ] Generated PDF committed as handoff artifact, included in annex
+- [ ] Generated PDF committed as handoff artifact, included in a NEW
+      annex shared with 0434's table
+- [ ] Discussion future-work paragraph cites the annex figure (fusion /
+      truth discovery / inter-run, inter-model coherence preview)
 - [ ] `make check` passes
 
 ## Invariants
