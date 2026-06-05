@@ -1,0 +1,74 @@
+%erg 0.1
+Title: Scientific record cites its reference: propagate reference identity into metrics
+Created: 2026-06-05
+Author: claude
+
+--- log ---
+2026-06-05T06:31Z claude created
+
+--- body ---
+## Context
+
+Audit 2026-06-05 (design dialogue with the author, sibling of 0430):
+`records_to_metrics()` — the ADR-7 "complete scientific record" — carries
+model, method, prompt_version, temperature, seed… but **no field naming
+which reference the scores were computed against**. `evaluate.py` consumes
+`--reference` (default `config.DEFAULT_REFERENCE`) and drops it;
+tp/fp/fn land in the RunRecord with no citation. `exp2_mart.jsonl` rows
+likewise have no ref key.
+
+The reference is an experimental condition: when v2 is adopted (0413),
+tp/fp/fn change, and nothing in the records distinguishes pre- from
+post-adoption rows except timestamps. ADR-7 says the metrics dict must
+let one diagnose confounds without re-reading raw JSON — this one it
+cannot.
+
+## Quoi faire
+
+1. **RunRecord** gains a `reference` field (release filename, e.g.
+   `"vietnam_thermal_v1.csv"`) stamped at evaluation time.
+2. **Audit all scorer entry points** that write a result_summary and make
+   each stamp it: evaluate.py, score_exp1.py, score_mechanical.py,
+   self_consistency.py, query_verification.py, query_fusion.py —
+   parametric/semantic-completeness sweep, not a hand-picked subset
+   (cf. PR #380 lesson).
+3. **Project into `records_to_metrics()` in the same MR** (ADR-7 wiring
+   rule), omit-when-absent for legacy rows — the 0139-fields precedent.
+   Do NOT run `make rebuild-measurements` to backfill: it destroys all
+   .record.json. Legacy rows simply lack the field.
+4. **Exp2 mart**: carry the reference identity wherever exp2 tp/fp/fn
+   are computed (mart_schema_version bump if the row schema changes;
+   keep `check_exp2_mart_parity` green).
+5. **Sequencing**: this should land BEFORE 0413 adopts v2, so the
+   reference switch is visible in the record. Recommend the author add
+   `Blocked-by: 0431` to 0413 (not added unilaterally — 0413's blocker
+   chain is curated for the night raid).
+
+## First test
+
+```python
+def test_metrics_record_cites_reference():
+    rec = make_run_record(reference="vietnam_thermal_v1.csv")
+    [m] = records_to_metrics([rec])
+    assert m["reference"] == "vietnam_thermal_v1.csv"
+
+def test_metrics_record_legacy_row_omits_reference():
+    rec = make_run_record(reference=None)  # pre-0431 row
+    [m] = records_to_metrics([rec])
+    assert "reference" not in m
+```
+
+## Exit criteria
+
+- [ ] Scoring rows record the reference they were computed against
+      (RunRecord field + records_to_metrics projection, omit-when-absent)
+- [ ] Every scorer entry point stamps it (sweep documented in the MR)
+- [ ] Exp2 mart rows carry reference identity; parity check green
+- [ ] No rebuild-measurements; legacy rows untouched
+- [ ] `make check` passes
+
+## Related
+
+- 0430 (snapshot policy — the upstream half of traceability), 0413
+  (v2 adoption — should sequence after this), ADR-7
+  (measurements.py docstring), 0139 (omit-when-absent precedent).

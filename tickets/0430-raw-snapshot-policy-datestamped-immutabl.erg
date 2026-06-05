@@ -1,0 +1,93 @@
+%erg 0.1
+Title: raw/ snapshot policy: datestamped immutable captures, pinned consumers
+Created: 2026-06-05
+Author: claude
+
+--- log ---
+2026-06-05T06:31Z claude created
+
+--- body ---
+## Context
+
+Design dialogue 2026-06-05, ratified by the author. **Snapshot ≠ release.**
+A snapshot's identity is *when it was captured* (datestamp); a release's
+identity is *what the project adopted* (v1, v2 — a deliberate act with a
+diff audit, cf. 0413). The current layout blurs this:
+
+- `data/reference/raw/pipeline.ods` is a **rolling filename for a
+  snapshot** of a rolling master ("Market report on Gas to Power"
+  project). Re-running `import.sh` silently replaces its content; the
+  capture date (26 May) lives only in PROVENANCE.md prose. Provenance is
+  by git archaeology on an opaque binary.
+- A fresh import + DAG run would silently change what the v2 extraction
+  produces — the same hazard class as mart staleness (0383), one level
+  upstream.
+- `vietnam_thermal_units_v2.csv` carries release semantics correctly;
+  releases keep semantic versions, do NOT datestamp them.
+
+## Quoi faire
+
+1. **Datestamped immutable captures.** Every imported file in
+   `data/reference/raw/` is named `<name>-YYYY-MM-DD.<ext>` (capture
+   date — the only date one can honestly assert about a rolling master).
+   Once committed, a snapshot is never overwritten; a same-day re-import
+   before commit may overwrite. Rename the existing snapshot:
+   `git mv raw/pipeline.ods raw/pipeline-2026-05-26.ods` (capture date
+   per PROVENANCE.md; verify against git history before stamping).
+2. **import.sh** writes `pipeline-$(date +%F).ods` and refuses to
+   overwrite a snapshot already known to git.
+3. **Pins in config.py, explicit key names** (author: key names must
+   encode the snapshot/release distinction):
+   - `SNAPSHOT_PIPELINE_ODS` — the pinned capture the v2 extraction reads.
+   - Rename `DEFAULT_REFERENCE` → release-explicit name (e.g.
+     `REFERENCE_RELEASE`); sweep all consumers (~10 files; ruff
+     import-strip trap: replace_all first, import edits with a usage).
+   - Coordinate naming with 0428 (`DEFAULT_GEM_REFERENCE` should follow
+     the same scheme).
+4. **Single source for the Make side.** `acquire.mk`
+   `extract-reference-ods` input must agree with the config pin —
+   extend the 0419 ratchet (`tests/test_no_hardcoded_reference_path.py`)
+   to the snapshot path.
+5. **No hash machinery** (author-ratified KISS): git content-addresses
+   the blob; datestamp + git history is sufficient identity. Snapshot
+   weight (~145 KB/import, occasional) is a non-issue.
+6. **Docs**: `raw/README.md` and `PROVENANCE.md` adopt the
+   snapshot/release vocabulary; each release entry cites
+   "extractor @ commit X applied to snapshot YYYY-MM-DD".
+7. **Uniformity**: the policy covers ALL raw/ imports. GEM's raw input
+   arrives via 0429 (now Blocked-by this ticket) and must be born
+   datestamped.
+
+## First test
+
+```python
+@pytest.mark.adherence
+def test_raw_snapshots_are_datestamped():
+    raw = REPO_ROOT / "data" / "reference" / "raw"
+    exempt = {"README.md", "import.sh"}
+    pat = re.compile(r"-\d{4}-\d{2}-\d{2}\.[a-z0-9]+$")
+    undated = [f.name for f in raw.iterdir()
+               if f.name not in exempt and not pat.search(f.name)]
+    assert undated == [], f"raw/ files without capture datestamp: {undated}"
+```
+
+## Exit criteria
+
+- [ ] `raw/pipeline.ods` renamed to its datestamped capture name (git mv,
+      so NOT a quickpr — quickpr cannot rename)
+- [ ] `import.sh` produces datestamped destinations, refuses overwrite of
+      committed snapshots
+- [ ] `SNAPSHOT_PIPELINE_ODS` in config.py; extraction + acquire.mk agree
+      with it, ratchet-guarded
+- [ ] `DEFAULT_REFERENCE` renamed release-explicit, all consumers swept
+- [ ] Adherence test above green
+- [ ] README.md / PROVENANCE.md use the snapshot/release vocabulary
+- [ ] `make check` passes
+
+## Related
+
+- 0419 (single reference path — this extends its ratchet), 0420 (ODS
+  extraction), 0428 (GEM config dedup — naming coordination), 0429
+  (GEM raw input — inherits this policy, Blocked-by added), 0431
+  (scoring rows cite their reference — the downstream half of
+  traceability), 0383 (mart staleness — sibling hazard).
