@@ -2,12 +2,14 @@
 Title: Canonical experiment naming: registry, demote 2025 probes, epithets at first mention
 Created: 2026-06-05
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #731
 
 --- log ---
 2026-06-05T07:23Z HDMX-coding-agent created
 
 2026-06-05T07:54Z verify-gate bump verify-reroll — round 1: EC3 — report.tex l.105/l.113 still number demoted probes « expérience~1/2 »
 2026-06-05T08:01Z verify-gate ESCALATE — round 2: EC3 still MISSING. l.194 « l'expérience~2 se lit comme un plan factoriel » + l.198 caption « Expérience~2 » sit INSIDE demoted §sec:exp2 (l.141-205), dated 27-28 jan 2025 (jan-2025 probe) per l.202 note — NOT canonical SOTA Exp2. Ticket Action 3 names this exact phrase as a reword target. PR's 'documented exception' rationale is factually wrong.
+2026-06-05T08:21Z HDMX-coding-agent closed — autoclosed — PR #731
 --- body ---
 ## Context
 
