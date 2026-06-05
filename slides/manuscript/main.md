@@ -25,7 +25,7 @@ Submitting a direct query to a large language model produces an inventory-shaped
 
 ![Figure 1](../report/inputs/generated/fig_direct_p1_base.pdf)
 
-*Figure 1. Direct-query performance across 16 models and 80 runs on the 163-plant Vietnam thermal reference. Each bar is one run; blue segments are correctly identified plants (TP), orange segments are fabricated plants (FP). The dashed green line marks the 163-plant reference. Models are grouped on the vertical axis. Five qualitative failure modes are visible: Récalcitrant (refusal), Incomplet (systematic under-coverage), Hallucinant (fabricated plants), Non-déterministe (high within-model variance), Non-monotone (no cost–quality ordering).*
+*Figure 1. Direct-query performance across 16 models and 80 runs on the 163-plant Vietnam thermal reference. Each bar is one run; family-coloured segments to the right are correctly identified plants (TP), red segments to the left are unrecognized plants (FP). The dashed green line marks the 163-plant reference. Models are grouped on the vertical axis. Five qualitative failure modes are visible: Récalcitrant (refusal), Incomplet (systematic under-coverage), Hallucinant (fabricated plants), Non-déterministe (high within-model variance), Non-monotone (no cost–quality ordering).*
 
 ![Figure 2](../report/inputs/generated/fig_direct_cost_quality.pdf)
 <!-- raw data: report/inputs/generated/cost_quality.csv -->

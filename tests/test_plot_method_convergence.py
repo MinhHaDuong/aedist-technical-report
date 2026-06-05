@@ -152,3 +152,52 @@ def test_main_writes_csv(tmp_path, monkeypatch):
     rows = list(reader)
     assert len(rows) > 0
     assert set(reader.fieldnames) == {"method", "model", "tp", "fp", "fn", "local", "size_class"}
+
+
+def test_fp_segments_are_red(tmp_path):
+    """0438: false-positive (negative-x) dots use red (COLOR_ALERT).
+
+    Goes red on revert — if the FP scatter reverts to per-family colour,
+    the negative-x collections stop matching COLOR_ALERT and this fails.
+    """
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from matplotlib.colors import to_rgba
+
+    from aedist.plot_method_convergence import write_pdf
+    from aedist.util import COLOR_ALERT
+
+    rows = [{"method": "direct", "model": "modelX", "tp": 50, "fp": 7, "fn": 100}]
+    alert_rgba = to_rgba(COLOR_ALERT)
+
+    captured = {}
+    orig_savefig = plt.Figure.savefig
+
+    def _capture(self, *a, **k):
+        captured["fig"] = self
+        return orig_savefig(self, *a, **k)
+
+    plt.Figure.savefig = _capture
+    try:
+        write_pdf(rows, tmp_path / "fig.pdf")
+    finally:
+        plt.Figure.savefig = orig_savefig
+
+    ax = captured["fig"].axes[0]
+    neg = [
+        c
+        for c in ax.collections
+        if len(c.get_offsets()) and (c.get_offsets()[:, 0] < 0).all()
+    ]
+    assert neg, "expected at least one FP (negative-x) scatter collection"
+    for coll in neg:
+        colors = coll.get_edgecolor()
+        if not len(colors):
+            colors = coll.get_facecolor()
+        for c in colors:
+            assert tuple(c) == alert_rgba, (
+                f"FP dots must be red (COLOR_ALERT={COLOR_ALERT}); got {tuple(c)}"
+            )
+    plt.close(captured["fig"])
