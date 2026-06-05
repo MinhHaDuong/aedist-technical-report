@@ -2,6 +2,7 @@
 Title: Aligner verticalement les plants sur la liste de référence dans la figure Exp 1
 Created: 2026-05-28
 Author: minh
+Closed: delivered by PR #744 — recognition matrix, new annex, Discussion citation; gate APPROVED
 
 --- log ---
 2026-05-28T19:46Z minh created — current Exp 1 figure left-packs each row's recalled plants, hiding which gold-list plants each model missed
@@ -10,6 +11,7 @@ Author: minh
 
 2026-06-05T07:52Z claude respec — author: figure+0434 table go in a NEW annex; cite from Discussion future-work para (fusion/truth discovery/inter-run inter-model coherence) as preview of research track 0396-0400
 2026-06-05T08:52Z claude execute delivered: shared library aedist.exp1_recognition (single-pass reconcile -> recognition cells + per-run FP presence, TP=_MATCHED_TYPES, name+capacity column key fixes 161->163), plot_exp1_matrix figure (all 5 reps, status x capacity columns, top-40 FP red panel, palette colors, count macros), wired in render.mk, new report annex + Discussion future-work citation; committed PDF handoff; 8 tests + adherence + make check pass (only slow claude-cli smoke fails on exhausted credits, env)
+2026-06-05T09:25Z HDMX-coding-agent closed — delivered by PR #744 — recognition matrix, new annex, Discussion citation; gate APPROVED
 --- body ---
 ## Context
 
