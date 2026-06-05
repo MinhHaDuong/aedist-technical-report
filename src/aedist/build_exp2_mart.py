@@ -249,6 +249,8 @@ def _build_run_records(
                 run_summary=RunSummary(
                     n_rows=legacy_n_rows,
                     classification=meta.get("classification"),
+                    class_trace=meta.get("class_trace"),
+                    n_bib_entries=meta.get("n_bib_entries"),
                     turns=meta.get("turns", 1 if arm in _SINGLE_TURN_ARMS else None),
                     tokens_out=meta.get("tokens_out"),
                     wall_s=meta.get("wall_s"),
