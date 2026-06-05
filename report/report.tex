@@ -233,6 +233,72 @@ On teste si l'augmentation par recherche web améliore l'extraction par rapport 
 
 Les résultats sont décevants~: F1 médian de 0,39 sur les 15~runs, avec un maximum de 0,53 (Gemini). Le nombre de centrales retournées varie de 34 à 58, soit moins que l'expérience single-shot pour la plupart des modèles. Aucun faux positif n'est observé (précision 100\,\%), mais le rappel reste faible (21--36\,\%). La recherche web retrouve des sources pertinentes mais ne parvient pas à en extraire des données tabulaires structurées~: les résultats Tavily contiennent du texte narratif, pas des tables, et les modèles ne compensent pas cette limitation.
 
+\chapter{Expérience 2 (frontière SOTA)~: protocole pré-enregistré, déviations et résultats}\label{chap:exp2-sota}
+
+\section{Enregistrement et verrouillage du protocole}\label{sec:exp2-sota:protocole}
+
+L'Expérience~2 confronte quatre agents de recherche profonde à la frontière de l'état de l'art (SOTA) à la tâche d'inventaire des centrales thermiques du Vietnam. Les quatre sujets sont \emph{Mistral~Large~2512} (Mistral, France), \emph{Qwen3-Max} (Alibaba, Chine), \emph{GPT-5.5} (OpenAI, États-Unis) et \emph{Claude~Opus~4.6} (Anthropic, États-Unis), interrogés chacun via l'API directe du fournisseur afin d'isoler le comportement et la facturation de recherche web propres à chaque agent.
+
+\paragraph{Plan à deux bras.} Chaque sujet est exécuté \textbf{deux fois} dans l'expérience~: une fois dans le \textbf{bras naïf}, une fois dans le \textbf{bras optimisé}. Les deux bras ne diffèrent que par la couche de protocole placée au-dessus du modèle~; le modèle, la tâche, le jeu de référence, le plafond de budget et l'environnement d'outils sont par ailleurs identiques. Dans le bras naïf, l'énoncé de tâche est envoyé verbatim comme unique message utilisateur, sans \emph{system prompt}, recherche web activée~; il partage l'énoncé de tâche et les critères de qualité du bras optimisé mais aucune de sa méthodologie (règles de budget, marge de planification, admissibilité des sources, vocabulaire de confiance calibré, règles de ligne d'actif). Dans le bras optimisé, l'agent conçoit d'abord son propre prompt par une méta-requête (phase~A), puis les sessions de production (phase~B) déroulent ce prompt à travers une machine à états multi-tours avec relances classifiées \textsc{encourage}~/ \textsc{verify}~/ \textsc{terminal}. Le bras optimisé porte la contribution méthodologique~; le bras naïf est le comparateur qui autorise les énoncés causaux sur les éléments du protocole qui portent l'effet. Sans le bras naïf, une affirmation de la forme «~la passe de vérification a augmenté la traçabilité par ligne de tant~» n'aurait pas de référent.
+
+\paragraph{Réplication.} Chaque sujet est répété $N{=}5$ fois par bras, soit 4~sujets $\times$ 2~bras $\times$ 5~répétitions $=$ 40~sessions. Le plan d'analyse complet, décrit ci-dessous, a été verrouillé \textbf{avant} le lancement du batch de production~: les hypothèses, les tests statistiques, les tailles d'effet attendues, les falsifiants, les critères d'exclusion et la politique de correction pour comparaisons multiples sont tous fixés en amont. Aucune analyse intermédiaire n'est conduite~; les 40~sessions sont complétées avant toute analyse. Une porte qualité (\emph{phase~B-0}, une session par agent) vérifie l'intégrité des artefacts avant de lancer la vague complète, mais il s'agit d'un contrôle d'artefact, non d'une analyse intermédiaire au sens statistique.
+
+\paragraph{Hypothèses pré-enregistrées.} Six hypothèses pré-enregistrées (H1--H6) sont associées à des tests spécifiques et à des falsifiants explicites (tableau~\ref{tab:exp2-sota:hypotheses-map}). Tout test absent de ce plan --- comparaisons par paires non listées, tests paramétriques, régressions, analyses de sous-groupes \emph{post-hoc} --- ne serait rapporté que comme \textbf{exploratoire}.
+
+\begin{table}[h]
+\centering
+\caption{Hypothèses pré-enregistrées de l'Expérience~2 (frontière SOTA), verrouillées avant le batch de production. Chaque hypothèse est associée à son test statistique et à son falsifiant. Le bras désigne le bras optimisé sauf mention contraire~; les tailles d'échantillon sont indiquées dans la colonne du test.}
+\label{tab:exp2-sota:hypotheses-map}
+\small
+\begin{tabular}{@{}p{0.06\linewidth}p{0.34\linewidth}p{0.27\linewidth}p{0.21\linewidth}@{}}
+\toprule
+Hyp. & Affirmation & Test & Falsifiant \\
+\midrule
+H1 & Le bras optimisé produit un F1 par ligne plus élevé que le bras naïf (regroupé sur les 4~agents) & Mann-Whitney U bilatéral, $n{=}20$ vs $20$ & $p \geq 0{,}05$ et $r < 0{,}2$ \\
+H2 & Les quatre agents diffèrent sur les rangs de F1 par ligne au sein du bras optimisé & Test de Friedman, $k{=}4$, $n{=}5$ blocs & $p > 0{,}10$ \\
+H3 & La passe de vérification améliore le taux de traçabilité par ligne dans le bras optimisé (tour~3 $\geq$ tour~2 d'une même session) & Wilcoxon apparié des rangs signés, $n{=}20$ paires & Les quatre agents montrent $d \leq 0{,}2$ \\
+H4 & Au moins un agent présente un taux de \emph{bounce} en bras naïf supérieur à 50\,\% & Borne supérieure de Wilson par agent, binomial sur 5 & Toutes les bornes supérieures des quatre agents $< 50$\,\% \\
+H5 & Les citations Wikipedia~/ Wikidata~/ miroirs sont absentes (audit de conformité \emph{post-hoc}) & Borne supérieure de Wilson par agent sur les cellules citant Wikipedia & Un agent présente des citations Wikipedia non nulles \\
+H6 & Les rangs de l'évaluation croisée (phase~C) concordent avec les rangs des métriques mécaniques (par dimension) & Corrélation de Spearman $\rho$ sur les rangs des 4~agents, $n{=}4$ & $|\rho| < 0{,}3$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Critères d'exclusion (verrouillés).} Une session dont le harnais a planté avant toute réponse du modèle est exclue et remplacée par une nouvelle exécution, jusqu'à 2~reprises par créneau. Une session dont le modèle renvoie un refus classifié \texttt{no\_report} sans aucun octet d'inventaire est comptée comme \emph{bounce} en H4 et n'est pas notée sur H1/H2/H3 (F1 non calculable). Une session où le modèle a produit un inventaire mais où le classifieur de dialogue s'est trompé est rattachée à H1/H2/H3 par inspection de l'artefact, indépendamment du verdict du classifieur, les erreurs de classification étant elles-mêmes rapportées. Aucune session n'est écartée pour des raisons de coût ou de temps d'exécution~: le plafond à double axe \emph{est} la condition expérimentale.
+
+\paragraph{Correction pour comparaisons multiples.} H1--H3 utilisent un seuil de Bonferroni $\alpha{=}0{,}05/3 \approx 0{,}0167$ pour les tests principaux. H4 et H5 reposent sur des intervalles de Wilson par agent (sans test de significativité). H6 est exploratoire à $\alpha{=}0{,}05$. Les résultats nuls (non-rejet de $\mathrm{H}_0$) sont rapportés comme tels et jamais comme preuve d'absence~: le manuscrit emploie la formule explicite «~nous n'avons pas détecté~» plutôt que «~il n'y a pas~».
+
+\paragraph{Révisions pré-enregistrées issues de la revue round-1.} Quatre révisions du plan, motivées par la première vague de revue (Doc~06, journal des modifications par réservation), ont été intégrées au protocole \textbf{avant} son verrouillage et le lancement du batch~; chacune est enregistrée avec sa justification. (a)~La taille d'échantillon passe de $N{=}3$ à $N{=}5$ et le plan adopte explicitement les deux bras~: l'enquête a montré que la contrainte de coût et de temps qui motivait $N{=}3$ ne liait pas réellement (au coût pilote observé, le différentiel entre $N{=}3$ et $N{=}5$ est de l'ordre de 2\,\$ pour l'ensemble du batch), $N{=}3$ étant un substitut sans calcul de puissance. (b)~Le plafond de budget passe d'un cap en dollars seul à un \textbf{double axe} de 50\,000~tokens \emph{et} d'une garde de 3\,\$~: un cap en dollars seul désavantage les modèles aux tokens de sortie coûteux, tandis que le cap en tokens borne la capacité de raisonnement de manière comparable~; le premier des deux seuils atteint déclenche la terminaison. (c)~Le classifieur de dialogue est confié à un \textbf{tiers}, \texttt{nvidia/nemotron-nano-9b-v2}, modèle à poids ouverts non affilié aux quatre fournisseurs sujets, afin d'éviter les paires d'auto-évaluation propres à un classifieur de même fournisseur. (d)~Une \textbf{interdiction de citer Wikipedia, Wikidata et leurs miroirs} comme Source~1 ou Source~2 est ajoutée, assortie d'un audit de conformité \emph{post-hoc} comptant les citations Wikipedia/Wikidata par sortie (zéro étant conforme)~; cette règle découle de la divulgation selon laquelle un dérivé du jeu de référence a été publié sur Wikipedia avant l'expérience, constituant un risque de contamination par fuite de données d'entraînement comme par fuite via la recherche web.
+
+Les exclusions au niveau des données --- sessions individuelles retirées sur la base des sorties observées --- relèvent du jeu de données et sont décrites à la section~\ref{sec:exp2-sota:donnees}.
+
+\section{Jeu de données et statistiques descriptives}\label{sec:exp2-sota:donnees}
+% TODO(0254 — Blocked-by 0383: post-re-baseline numbers)
+
+\section{Résultats par hypothèse (H1--H6)}\label{sec:exp2-sota:hypotheses}
+
+\subsection{H1~: F1 par ligne, bras optimisé vs naïf}
+% TODO(0255)
+
+\subsection{H2~: différences inter-agents sur les rangs de F1}
+% TODO(0256)
+
+\subsection{H3~: apport de la passe de vérification sur la traçabilité}
+% TODO(0257)
+
+\subsection{H4~: taux de bounce du bras naïf}
+% TODO(0258)
+
+\subsection{H5~: audit de conformité Wikipedia/Wikidata}
+% TODO(0259)
+
+\subsection{H6~: concordance évaluation croisée vs métriques mécaniques}
+% gated on 0171 (Phase C cross-eval)
+% TODO(0260)
+
+\section{Synthèse}\label{sec:exp2-sota:synthese}
+% TODO(0261)
+
 \chapter{Documents sources et RAG}\label{chap:rag}
 
 Ce chapitre traite de la découverte et préparation des documents sources, puis de leur rôle dans le pipeline de fusion incrémentale. Le Retrieval Augmented Generation (RAG) est ici un \emph{composant de récupération}~: il extrait des fragments depuis le corpus documentaire, fragments qui deviennent les entrées d'une fusion contrôlée produisant la table maître. Séparer l'extraction (RAG) de la fusion (pipeline) garantit la reproductibilité~: la fusion peut être déterministe même quand l'extraction ne l'est pas.
