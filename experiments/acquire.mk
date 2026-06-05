@@ -194,7 +194,8 @@ CORPUS_VISION  ?= gemma4:31b
 CORPUS_SCORER  ?= qwen3.5:9b
 CORPUS_REF     ?= ../report/inputs/README.md
 
-.PHONY: pdf2md build-corpus preflight help extract-reference-ods
+.PHONY: pdf2md build-corpus preflight help extract-reference-ods \
+        aggregate-reference-plants classify-reference-plants reference-pipeline
 
 pdf2md:
 ifndef PDF
@@ -268,6 +269,30 @@ extract-reference-ods:
 	    --input {} \
 	    --output ../data/reference/vietnam_thermal_units_v2.csv
 
+# Aggregate the unit-grain v2 CSV up to plant grain (ticket 0416). A utility
+# verb (.PHONY): pure groupby(Plant) on data-carried parentage, with hard input
+# (no duplicate units, numeric capacity) and output (unique plant key) guards.
+# Replaces the lost HDM_aggregate.py / HDM.csv hand chain.
+aggregate-reference-plants:
+	$(UV_RUN) python ../data/reference/aggregate_units.py \
+	    --input ../data/reference/vietnam_thermal_units_v2.csv \
+	    --output ../data/reference/vietnam_thermal_plants_v2.csv
+
+# Add IRES/ISIC/PyPSA classification columns to the plant CSV (ticket 0416).
+# Input -> output transform (never in-place): reads the aggregated plants,
+# writes the classified release artifact.
+classify-reference-plants:
+	$(UV_RUN) python ../data/reference/add_classifications.py \
+	    --input ../data/reference/vietnam_thermal_plants_v2.csv \
+	    --output ../data/reference/vietnam_thermal_plants_v2_classified.csv \
+	    --fuel-col fuel
+
+# Full reference regeneration pipe: extract -> aggregate -> classify. Each step
+# is an independent .PHONY verb; this orders them. It reads a tracked snapshot
+# and writes reference CSVs — NEVER a dependency of score.mk/render.mk (the
+# snapshot is absent from CI by design).
+reference-pipeline: extract-reference-ods aggregate-reference-plants classify-reference-plants
+
 help:
 	@echo "Sweeps (manager + worker pipeline):"
 	@echo "  make census               Generate jobs + run workers (model census)"
@@ -289,7 +314,10 @@ help:
 	@echo "  make build-corpus QUERY='thermal power'     Build corpus from Zotero search"
 	@echo ""
 	@echo "  make preflight             Check env vars and services before long jobs"
-	@echo "  make extract-reference-ods Extract reference CSV from the pinned raw/ snapshot (validated)"
+	@echo "  make extract-reference-ods Extract unit CSV from the pinned raw/ snapshot (validated)"
+	@echo "  make aggregate-reference-plants  Roll units up to plants (validated)"
+	@echo "  make classify-reference-plants   Add IRES/ISIC/PyPSA columns (in->out)"
+	@echo "  make reference-pipeline    extract -> aggregate -> classify (full regen)"
 	@echo ""
 	@echo "Config in experiments.toml [sweeps.*] sections"
 	@echo "Job board in jobs/{pending,running,done,failed}/"

@@ -14,10 +14,30 @@ Ground truth for evaluating model outputs.
 | `gem_thermal.csv` | GEM database plant-level extract (columns: `Name,Province,Fuel,Capacity,Status,Aggregated Units` + classification columns) |
 | `gem_units.csv` | GEM database unit-level extract |
 | `GEM_aggregate.py` | Aggregates GEM unit rows into plant-level rows |
-| `HDM_aggregate.py` | Normalizes plant names and aggregates units into plants |
-| `add_classifications.py` | Adds IRES, ISIC, and PyPSA classification columns to plant-level CSVs |
+| `extract_ods.py` | Extracts the unit CSV from the pinned master ODS snapshot (ticket 0420) |
+| `aggregate_units.py` | Rolls the unit CSV up to plant grain — pure `groupby(Plant)`, no name parsing (ticket 0416) |
+| `add_classifications.py` | Adds IRES, ISIC, and PyPSA classification columns (input → output, never in-place) |
 
 Referenced in `experiments/experiments.toml` as `paths.reference`.
+
+### v2 reference pipeline (tickets 0420 → 0416)
+
+The v2 release is regenerated from the pinned master snapshot by three
+`.PHONY` verbs in `experiments/acquire.mk`, in order:
+
+```
+make -C experiments -f acquire.mk reference-pipeline
+#   extract-reference-ods       raw/pipeline-*.ods   → vietnam_thermal_units_v2.csv
+#   aggregate-reference-plants  units_v2.csv         → vietnam_thermal_plants_v2.csv
+#   classify-reference-plants   plants_v2.csv        → vietnam_thermal_plants_v2_classified.csv
+```
+
+Parentage is data (the `Plant` address column), never inferred from name
+strings: `aggregate_units.py` replaces the lost `HDM_aggregate.py`, whose
+`normalize_plant_name` parsed "X Unit N" off the name — a forbidden name
+synthesis. The whole chain reads and writes all-text so a zero-prefixed
+`ires_code` ("0121") never coerces to `121`. These v2 CSVs are NEW artifacts;
+adoption as the scoring reference is a separate act (ticket 0413).
 
 ### International classification columns
 
