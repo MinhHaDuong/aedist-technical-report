@@ -426,6 +426,7 @@ $(ANALYSIS_GEN)/fig_direct_p1_base.pdf $(ANALYSIS_GEN)/macros_p1_base.tex &: $(A
 	    --output $(ANALYSIS_GEN)/fig_direct_p1_base.pdf --methods direct \
 	    --label-x 100 --label-ha left \
 	    --xlabel "Assets identified (1 dot = 1 power plant / project)" \
+	    --fp-label "Unrecognized" \
 	    --title "How do models recall Vietnam's thermal power assets? Not well." \
 	    --ui-scale 1.35 \
 	    --fig-width 12 --fig-height-min 8 --fig-height-per-run 0.06 --fig-height-per-method 0.35 \

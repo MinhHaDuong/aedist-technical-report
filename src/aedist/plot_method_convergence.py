@@ -4,10 +4,12 @@ Pipeline phase: P3 (analyze & render) — invoked by experiments/render.mk.
 
 For each method (Y axis), plots every run as a horizontal bar.
 Each bar is a row of dots: 1 dot = 1 plant.
-Blue dots = correctly identified (TP). Orange dots = hallucinated (FP).
+Family-coloured dots (right of 0) = correctly identified (TP).
+Red dots (left of 0) = unrecognized (FP), using the repo-wide
+COLOR_ALERT false-positive convention.
 Dashed green line at 163 = complete inventory.
 
-A good method drives all bars to 163 with nothing in orange.
+A good method drives all bars to 163 with nothing in red.
 
 Usage:
     uv run python -m aedist.plot_method_convergence \
@@ -23,7 +25,7 @@ from pathlib import Path
 
 from .measurements import SYNTHETIC_SUFFIXES, load
 from .util import (
-    COLOR_HALLUC,
+    COLOR_ALERT,
     COLOR_REFERENCE,
     model_family,
     model_family_color,
@@ -184,6 +186,7 @@ def write_pdf(
     model_label_x: float = -5,
     model_label_ha: str = "right",
     x_label: str = "Nombre de centrales bien identifiées",
+    fp_label: str = "Non-reconnues",
     title: str | None = None,
     fig_width: float = 10.0,
     fig_height_min: float = 4.2,
@@ -193,9 +196,9 @@ def write_pdf(
 ) -> None:
     """Generate the method convergence strip plot as PDF.
 
-    Each run becomes a thin horizontal line: blue segment from 0 to TP,
-    orange segment from 0 to -FP. Within each method band, runs are
-    stacked vertically and sorted by TP descending.
+    Each run becomes a thin horizontal line: family-coloured dots from 0 to TP
+    (right), red dots (COLOR_ALERT) from 0 to -FP (left). Within each method
+    band, runs are stacked vertically and sorted by TP descending.
     """
     import matplotlib.pyplot as plt
     import numpy as np
@@ -279,7 +282,9 @@ def write_pdf(
                     zorder=3,
                 )
 
-            # FP dots (left of 0) — 1 dot = 1 hallucinated plant
+            # FP dots (left of 0) — 1 dot = 1 unrecognized plant.
+            # Red (COLOR_ALERT) per the repo-wide false-positive colour
+            # convention (ticket 0438; mirrors Exp2 figures from 0403).
             if fp > 0:
                 xs = -np.arange(1, fp + 1)
                 ys = np.full_like(xs, y, dtype=float)
@@ -287,7 +292,7 @@ def write_pdf(
                     xs,
                     ys,
                     s=4 * ui_scale,
-                    color=color,
+                    color=COLOR_ALERT,
                     marker="|",
                     linewidths=0.5 * ui_scale,
                     zorder=3,
@@ -298,7 +303,7 @@ def write_pdf(
                         y,
                         f"({fp_raw})",
                         fontsize=5 * ui_scale,
-                        color=color,
+                        color=COLOR_ALERT,
                         va="center",
                         ha="right",
                     )
@@ -355,8 +360,8 @@ def write_pdf(
     ax.text(
         -75,
         y_top,
-        "Hallucinations",
-        color=COLOR_HALLUC,
+        fp_label,
+        color=COLOR_ALERT,
         fontsize=16 * ui_scale,
         va="bottom",
         ha="center",
@@ -485,6 +490,11 @@ def main() -> None:
         help="X-axis label text.",
     )
     parser.add_argument(
+        "--fp-label",
+        default="Non-reconnues",
+        help="Label for the false-positive (red) region (default: Non-reconnues).",
+    )
+    parser.add_argument(
         "--title",
         default=None,
         help="Optional figure title.",
@@ -548,6 +558,7 @@ def main() -> None:
             model_label_x=args.label_x,
             model_label_ha=args.label_ha,
             x_label=args.xlabel,
+            fp_label=args.fp_label,
             title=args.title,
             fig_width=args.fig_width,
             fig_height_min=args.fig_height_min,
