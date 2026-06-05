@@ -2,11 +2,13 @@
 Title: English-label variants of slide figures for slides-en.tex
 Created: 2026-05-27
 Author: HDMX-coding-agent
+Closed: obsolete — talk delivered 2026-05-27, slides frozen (precedent 0152)
 
 --- log ---
 2026-05-27T10:45Z HDMX-coding-agent created
 2026-05-27T14:30Z HDMX-coding-agent note slides-en.tex crops the fig_spider_exp1_families baked-in title ("Source is the universal failure mode") with trim+clip (PR #621) — a band-aid. When regenerating that figure, drop its title so the crop hack can be removed.
 
+2026-06-05T11:11Z HDMX-coding-agent closed — obsolete — talk delivered 2026-05-27, slides frozen (precedent 0152)
 --- body ---
 ## Context
 `slides/slides-en.tex` (English Econom'IA deck, added in PR #620) reuses the
