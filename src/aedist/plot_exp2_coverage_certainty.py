@@ -31,11 +31,15 @@ import logging
 from collections import defaultdict
 from pathlib import Path
 
+from .evaluate import reference_plant_count
 from .util import SLIDE_FIGSIZE_FULL, model_family_color
 
 log = logging.getLogger(__name__)
 
-_N_REFERENCE_PLANTS = 163
+# Coverage-ratio denominator — derived from the adopted release (ticket 0413,
+# single source of truth). Used to reconstruct n_matched = coverage × N below;
+# coverage is itself computed over this same count, so they must agree.
+_N_REFERENCE_PLANTS = reference_plant_count()
 
 _AGENT_SLUG = {
     "anthropic": "claude",

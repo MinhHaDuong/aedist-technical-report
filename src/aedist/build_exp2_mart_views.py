@@ -10,11 +10,17 @@ import logging
 import re
 from pathlib import Path
 
+from .evaluate import reference_plant_count
 from .extract_exp2_bib import parse_md
 
 log = logging.getLogger(__name__)
 
 _DEFAULT_OUTPUT_DIR = Path("report/inputs/generated")
+
+# Coverage-ratio denominator — derived from the adopted release (ticket 0413,
+# single source of truth). Used to reconstruct n_matched = coverage × N; the
+# coverage ratio is itself computed over this same count, so they must agree.
+_N_REFERENCE_PLANTS = reference_plant_count()
 
 _ARMS_RUNS_FIELDS = [
     "arm",
@@ -29,8 +35,6 @@ _ARMS_RUNS_FIELDS = [
     "wall_s",
     "turns",
 ]
-
-_N_REFERENCE_PLANTS = 163
 
 _BIB_FIELDS = [
     "agent",

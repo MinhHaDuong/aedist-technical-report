@@ -17,6 +17,7 @@ import logging
 import statistics
 from pathlib import Path
 
+from .evaluate import reference_plant_count
 from .stats import bootstrap_ci
 from .tabulate_utils import strip_label as slug_from_label
 from .tabulate_utils import titlecase_slug
@@ -120,8 +121,9 @@ def generate_macros(
         best_local_slug = "none"
         best_local_f1 = 0.0
 
-    # Plant range (based on 163 reference plants)
-    ref_plants = 163
+    # Plant range — denominator is the adopted reference inventory size
+    # (single source of truth, ticket 0413; v1 = 163, v2 = 170).
+    ref_plants = reference_plant_count()
     f1_values = [v["median_f1"] for v in summary.values()]
     min_plants = round(min(f1_values) * ref_plants)
     max_plants = round(max(f1_values) * ref_plants)

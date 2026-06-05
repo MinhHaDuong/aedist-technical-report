@@ -24,6 +24,7 @@ from pathlib import Path
 
 from matplotlib.figure import Figure
 
+from .evaluate import reference_plant_count
 from .extract import count_best_table_rows
 from .util import (
     COLOR_ALERT,
@@ -34,7 +35,9 @@ from .util import (
 
 log = logging.getLogger(__name__)
 
-N_REFERENCE_PLANTS = 163
+# Reference inventory size — derived from the adopted release (ticket 0413,
+# single source of truth). Used at the axhline reference line below.
+N_REFERENCE_PLANTS = reference_plant_count()
 
 _AGENT_LABELS = {
     "anthropic": "Anthropic\nOpus 4.6",

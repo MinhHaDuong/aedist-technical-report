@@ -1,6 +1,6 @@
 {
-  "run_id": "35a662490c9b",
-  "timestamp": "2026-05-25T14:01:45.505672Z",
+  "run_id": "dd54d1deacb1",
+  "timestamp": "2026-06-05T12:52:08.451601Z",
   "method": "direct",
   "method_params": {
     "model": "anthropic/claude-opus-4.6",
@@ -31,13 +31,14 @@
   "result_summary": {
     "status": "ok",
     "n_plants": 88,
-    "tp": 80,
-    "fp": 8,
-    "fn": 83,
-    "f1": 0.6375,
-    "fuel_accuracy": 0.575,
-    "status_accuracy": 0.7125,
-    "province_accuracy": 0.9
+    "tp": 84,
+    "fp": 4,
+    "fn": 86,
+    "f1": 0.6512,
+    "fuel_accuracy": 0.5833,
+    "status_accuracy": 0.7024,
+    "province_accuracy": 0.8916
   },
-  "finish_reason": "stop"
+  "finish_reason": "stop",
+  "reference": "vietnam_thermal_plants_v2_classified.csv"
 }

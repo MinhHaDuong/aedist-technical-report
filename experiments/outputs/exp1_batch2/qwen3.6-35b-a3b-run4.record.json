@@ -1,6 +1,6 @@
 {
-  "run_id": "924e16b30228",
-  "timestamp": "2026-05-25T14:03:02.434999Z",
+  "run_id": "d1fd92393755",
+  "timestamp": "2026-06-05T12:52:15.018108Z",
   "method": "direct",
   "method_params": {
     "model": "qwen/qwen3.6-35b-a3b",
@@ -31,13 +31,14 @@
   "result_summary": {
     "status": "ok",
     "n_plants": 71,
-    "tp": 22,
-    "fp": 49,
-    "fn": 141,
-    "f1": 0.188,
-    "fuel_accuracy": 0.3182,
-    "status_accuracy": 0.4091,
-    "province_accuracy": 0.9091
+    "tp": 28,
+    "fp": 43,
+    "fn": 142,
+    "f1": 0.2324,
+    "fuel_accuracy": 0.2857,
+    "status_accuracy": 0.4643,
+    "province_accuracy": 0.9286
   },
-  "finish_reason": "stop"
+  "finish_reason": "stop",
+  "reference": "vietnam_thermal_plants_v2_classified.csv"
 }

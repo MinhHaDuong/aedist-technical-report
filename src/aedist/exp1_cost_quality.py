@@ -19,6 +19,7 @@ and status-difficulty table 0434 share their derivation the same way).
 import statistics
 from pathlib import Path
 
+from .evaluate import reference_plant_count
 from .tabulate_utils import strip_label as slug_from_label
 from .util import model_family
 
@@ -27,8 +28,10 @@ from .util import model_family
 # excluded upstream because they never landed under exp1_batch2/.
 EXP1_BATCH2_DIR = "experiments/outputs/exp1_batch2/"
 
-# Vietnam thermal reference inventory size (Annex A, line 72).
-N_REFERENCE_PLANTS = 163
+# Vietnam thermal reference inventory size — derived from the adopted release
+# (single source of truth, ticket 0413). v1 = 163, v2 = 170. Kept as a
+# module-level name because plot_cost_quality and plot_exp2_arms_split import it.
+N_REFERENCE_PLANTS = reference_plant_count()
 
 # CSV/handoff column order — the audit artifact and any consumer reading it must
 # agree on this schema. ``cost_usd`` is an alias for ``mean_cost`` kept for CSV

@@ -34,7 +34,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from matplotlib.figure import Figure
 
-from .exp1_cost_quality import load_cost_quality_rows, summary_by_slug
+from .exp1_cost_quality import N_REFERENCE_PLANTS, load_cost_quality_rows, summary_by_slug
 from .util import (
     COLOR_ALERT,
     COLOR_REFERENCE,
@@ -43,8 +43,9 @@ from .util import (
 )
 
 log = logging.getLogger(__name__)
-
-N_REFERENCE_PLANTS = 163
+# N_REFERENCE_PLANTS (reference inventory size) imported above from
+# exp1_cost_quality — single source of truth (ticket 0413); used at the
+# axhline reference line below.
 
 _AGENT_LABELS = {
     "anthropic": "Anthropic\nOpus 4.6",

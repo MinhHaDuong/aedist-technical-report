@@ -17,6 +17,7 @@ The ``assemble`` command concatenates record JSON files into a single
 
 import argparse
 import csv
+import functools
 import json
 import logging
 import re
@@ -180,6 +181,20 @@ def load_plants_csv(path: Path) -> list[Plant]:
             except (ValueError, ValidationError):
                 continue
     return plants
+
+
+@functools.lru_cache(maxsize=4)
+def reference_plant_count(reference_path: Path = VN_THERMAL_PLANTS_RELEASE_CSV) -> int:
+    """Number of plants in the adopted reference release.
+
+    Single source of truth for the "full inventory" constant used as a figure
+    reference line and as the coverage-ratio denominator. Derived from the
+    reference CSV (lazy + cached) rather than hardcoded, so it tracks the
+    adopted release automatically — v1 (163) → v2 (170) on the 0413 switch,
+    with no constant to chase. A drift guard lives in
+    ``tests/test_reference_count.py``.
+    """
+    return len(load_plants_csv(reference_path))
 
 
 def plants_from_dicts(rows: list[dict]) -> list[Plant]:
