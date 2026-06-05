@@ -2,7 +2,6 @@
 Title: Reference v2: add verified missing plants (Kiên Lương, Hòa Phát, Kim Sơn, Yên Hưng, Rạng Đông)
 Created: 2026-06-03
 Author: claude
-Blocked-by: 0416
 Label: needs-human
 
 --- log ---
@@ -13,6 +12,7 @@ Label: needs-human
 2026-06-04T12:19Z claude note — Blocked-by candidate: 0416 fixes the aggregator that will regenerate plant rows when plants are added; adding via the unfixed aggregator reintroduces duplicate-name collisions
 2026-06-04T12:58Z claude note — Blocked-by 0416 formalized: additions flow through the master ods + validated pipe (0418→0416), not hand-appends to CSVs
 2026-06-04T13:37Z HDMX-coding-agent note blocker 0394 closed — Blocked-by removed.
+2026-06-05T11:59Z HDMX-coding-agent note blocker 0416 closed — Blocked-by removed.
 --- body ---
 ## Context
 

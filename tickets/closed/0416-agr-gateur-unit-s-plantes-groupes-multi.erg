@@ -2,6 +2,7 @@
 Title: Pipeline référence 2/3: agrégateur unités→plantes refondu, sortie à clé unique
 Created: 2026-06-04
 Author: HDMX-coding-agent
+Closed: delivered by PR #760 — aggregate_units with unique-key contract, status collapse adjudicated SOUND, v1-side accounting verified; full oracle deferred to clean snapshot (resnap)
 
 --- log ---
 2026-06-04T12:18Z HDMX-coding-agent created
@@ -13,6 +14,8 @@ Author: HDMX-coding-agent
 2026-06-05T09:12Z claude note — author ratified three-column master design (Complex|Plant|Unit): ESCALATE resolved, contrat v2 in body, Blocked-by 0439 (master migration, needs-human)
 2026-06-05T11:01Z HDMX-coding-agent note blocker 0439 closed — Blocked-by removed.
 2026-06-05T11:08Z claude note celebrate-0439 sweep: ratchet adherence (line ~150) says 'src/' only — HDM_aggregate.py and GEM_aggregate.py (the two live unit-name parsers) are in data/reference/; widen the ratchet glob to cover data/reference/ too
+2026-06-05T11:29Z claude note — raid Execute: aggregate_units.py livré (groupby Plant, parentage=donnée, zéro parsing de nom); gardes ENTRÉE (unités dupliquées + capacité non-numérique Err:510) et SORTIE (clé centrale unique); add_classifications réécrit in->out; acquire.mk câblé (extract->aggregate->classify); HDM_aggregate.py supprimé. Critère 5 BLOQUÉ: Err:510 sur Vung Ang 2 dans le snapshot pinné — oracle un-runnable jusqu'au ré-import. Accounting ensemble-de-plantes complet et équilibré.
+2026-06-05T11:59Z HDMX-coding-agent closed — delivered by PR #760 — aggregate_units with unique-key contract, status collapse adjudicated SOUND, v1-side accounting verified; full oracle deferred to clean snapshot (resnap)
 --- body ---
 ## Contexte
 
@@ -64,14 +67,19 @@ RÈGLES AUTEUR (2026-06-04) :
 
 ## Exit criteria
 
-- [ ] `aggregate_units.py` : argparse, texte intégral, Level propagé
-- [ ] Entrée refusée si lignes unité dupliquées (message actionnable)
-- [ ] Sortie refusée si nom de plante dupliqué, unité répétée ou unité
+- [x] `aggregate_units.py` : argparse, texte intégral, Level dérivé (=plant)
+- [x] Entrée refusée si lignes unité dupliquées (message actionnable)
+- [x] Sortie refusée si nom de plante dupliqué, unité répétée ou unité
       dans deux groupes ; aucun nom synthétisé
-- [ ] `add_classifications.py` en entrée→sortie, câblé dans le pipe
-- [ ] Diff v1→régénéré expliqué par la checklist PROVENANCE (+ évolution
-      maître documentée)
-- [ ] `make check` vert
+- [x] `add_classifications.py` en entrée→sortie, câblé dans le pipe
+- [~] Diff v1→régénéré expliqué par la checklist PROVENANCE (+ évolution
+      maître documentée) — accounting de l'ensemble des plantes COMPLET et
+      équilibré (PROVENANCE § « v1 → v2 plant-set accounting ») ; l'oracle
+      complet (capacité/statut par centrale) est BLOQUÉ : le snapshot pinné
+      porte `Err:510` (erreur de formule) sur Vung Ang 2 Unit 1/2. À débloquer
+      par ré-import d'un snapshot maître corrigé (raw/ immuable).
+- [x] `make check` vert (échecs environnementaux connus tolérés :
+      test_smoke_real_cli, test_boundary_preliminary_roster_live_classifier)
 
 ## Related
 

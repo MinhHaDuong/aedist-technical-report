@@ -38,7 +38,9 @@ Le benchmark effectue le matching sur l'ensemble du dataset, sans grouper par (p
 
 Le benchmark opère au niveau **centrale** (plant). La référence est `HDM_aggregated.csv` (164 entrées), pas `HDM.csv` (251 unités).
 
-**Justification** : Les LLMs produisent quasi-systématiquement au niveau central. C'est aussi le niveau pertinent pour la modélisation énergie (PyPSA). La règle d'agrégation (strip "Unit N", somme des capacités par nom+statut) est documentée dans `HDM_aggregate.py`.
+**Justification** : Les LLMs produisent quasi-systématiquement au niveau central. C'est aussi le niveau pertinent pour la modélisation énergie (PyPSA).
+
+**Mise à jour (ticket 0416, 2026-06-05)** : la règle d'agrégation originale (strip "Unit N", somme par nom+statut, dans `HDM_aggregate.py`) inventait l'identité de centrale à partir du nom — interdit. Le pipeline v2 (`aggregate_units.py`) groupe sur la colonne d'adresse `Plant` (le parentage est une donnée, jamais une inférence de nom) et somme les capacités par centrale. `HDM_aggregate.py` / `HDM_aggregated.csv` sont supprimés.
 
 ---
 

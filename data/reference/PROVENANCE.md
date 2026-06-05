@@ -227,3 +227,65 @@ by this extraction step.
 
 Each release entry should cite: "extractor @ commit X applied to snapshot
 YYYY-MM-DD" (per ticket 0430 traceability discipline).
+
+## Aggregation + classification (ticket 0416) — units → plants
+
+`aggregate_units.py` rolls the unit-grain CSV up to plant grain, replacing the
+lost `HDM_aggregate.py` (whose `normalize_plant_name` parsed "X Unit N" off the
+name to find the parent — a forbidden name synthesis). Under the three-column
+address contract parentage is DATA: grouping is a pure `groupby(Plant)` (or
+`Complex` for the 19 complex-grain LNG rows). The output plant name is the
+`Plant`/`Complex` cell verbatim — never invented.
+
+**Hard guards (no tolerance, master-fix doctrine).**
+- INPUT: a duplicated unit designation aborts (the "Quảng Trị 1 Unit 2" x2 →
+  1320 defect can never be summed).
+- INPUT: a non-numeric, non-empty capacity aborts (`validate_capacity_numeric`).
+  An empty cell is legitimately-unknown capacity (summed as 0, v1-consistent —
+  `NĐ LNG miền Bắc` = 0.0); a spreadsheet error value is corruption.
+- Per-plant invariants: all units of a plant must agree on `province` and
+  `asset_type` (a disagreement is a master error). **Status is NOT asserted
+  constant** — units commission and retire in phases (Dong Nai Formosa
+  operating+announced, Uong Bi I operating+retired), so status is collapsed
+  (operating wins; else the most-advanced pre-operating stage).
+- OUTPUT: plant name unique, no unit repeated within one plant's `Units
+  Included`, no unit in two groups.
+
+Fuel is derived from `asset_type` (pipe-owned, contrat v2): Coal/Coal cogen →
+coal, Gas → gas, Gas/Oil → gas/oil. `add_classifications.py` (rewritten to an
+input→output transform, ticket 0416) then adds the IRES/ISIC/PyPSA columns. The
+whole chain is `make -C experiments -f acquire.mk reference-pipeline`.
+
+**Known defect of the 2026-06-05 snapshot — BLOCKS criterion 5.** The `Vung Ang
+2` Unit 1 and Unit 2 capacity cells carry `Err:510` (a leaked spreadsheet
+formula error; v1 records 665 + 665 = 1330 MW). The aggregator correctly
+refuses the snapshot with an actionable message. The v1→v2 oracle (criterion 5)
+cannot run on a clean full extract until the author fixes the formula in the
+master and re-imports a clean snapshot. raw/ snapshots are immutable — the fix
+is upstream, not in this repo.
+
+**v1 → v2 plant-set accounting (oracle, computed with Vung Ang 2 patched to its
+v1 value for the count only).** Every delta is explained by a documented class;
+the balance closes exactly. v1 = 161 unique plant names (163 rows − 2 defect-3
+duplicates: Dong Nai Formosa, Ha Tinh Formosa, each two same-name rows in v1,
+one plant in v2); v2 = 170 plants.
+
+| Class | Δ | Detail |
+|---|---|---|
+| Common (unchanged identity) | 150 v1 names → 149 v2 plants | name present as a plant in both (one fold-collision, next row) |
+| Defect-1 dedup (Duyên Hải romanization ×2 → ×1) | −1 | `Duyên Hải 2` and ASCII `Duyen Hai 2` are two v1 names that fold to one v2 plant; the ASCII duplicate was merged in the master (PROVENANCE defect 1) |
+| Defect-3 dedup (Formosa ×2 → ×1) | −2 rows in v1 | `Dong Nai Formosa`, `Ha Tinh Formosa` each two same-name multi-status rows in v1, one plant in v2 (PROVENANCE defect 3) |
+| Absorbed as unit (master split) | −4 from v1 | `Duyen Hai 3 Extension / Uong Bi I extension / Uong Bi II extension / Vinh Tan 4 extension` were standalone v1 plant rows; the master made each a UNIT of its parent plant |
+| LNG combined → split | 7 v1 → 12 v2 | `LNG Cà Mau 2,3 → 2 + 3`, `LNG Cà Ná II+III → II + III`, `LNG Hải Lăng / (2 and 3) → (1)/2/3`, `LNG Long Sơn / II+III → (I)/II/III`, `LNG Mũi Kê Gà 2,3 → 2 + 3` |
+| Genuinely new master rows | +9 | `Bảo Đài`, `Long Son Chemical`, `Luc Nam`, `NĐ Miền Bắc 1/2/3`, `NĐ khí dư Hòa Phát II`, `Rang Dong cogeneration`, `Uong Bi II` |
+
+Balance (closes exactly): v1 = 161 unique names (163 rows − 2 defect-3
+duplicates). Of those 161: 150 are still present as a plant name in v2 (but two
+of them — defect 1, the Duyên Hải romanization pair — fold to a single v2 plant,
+so 149 distinct surviving plants), 4 became units of their parent, 7 were LNG
+combined designations. v2 = **149 surviving v1 plants + 12 LNG-split + 9
+genuinely new = 170**. No unexplained delta in the plant SET; every difference
+maps to a PROVENANCE "Known defects of v1" entry (defects 1 and 3) or the
+master's own evolution (extension-as-unit splits, LNG splits, new rows).
+Per-plant capacity/status diffs are deferred to the 0413 adoption ceremony and
+require the clean (Err-free) snapshot.

@@ -2,7 +2,6 @@
 Title: Schema: add `level` enum (Unit/Block/Plant/Complex/Unknown) + derive reference Level + taxonomy audit
 Created: 2026-06-03
 Author: claude
-Blocked-by: 0416
 
 --- log ---
 2026-06-04T20:30Z claude note — Blocked-by 0416 added (raid curation): the aggregator rework propagates Level through the pipe; derive/audit reference Level on its output, not on the soon-replaced v1
@@ -10,6 +9,7 @@ Blocked-by: 0416
 
 2026-06-05T07:27Z claude note — raid 2026-06-05: held with 0416 (ESCALATE on grouping contract); Level derivation targets the post-0416 pipe output, re-validate paths/columns once 0416 unblocks.
 2026-06-05T09:12Z claude note — three-column master ratified (0439/0416 contrat v2): Level derivation reduces to finest-non-empty address column on the v2 unit CSV; re-validate columns when 0416 lands; still OUT of preprint perimeter (0435)
+2026-06-05T11:59Z HDMX-coding-agent note blocker 0416 closed — Blocked-by removed.
 --- body ---
 ## Context
 
