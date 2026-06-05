@@ -6,6 +6,7 @@ Blocked-by: 0384
 
 --- log ---
 2026-05-29T00:00Z Claude created — finding #3 from the mart audit (0383); real data loss
+2026-06-05T10:00Z Claude wired both fields in _build_run_records; removed PR #740 strict-xfail; regenerated mart (80/80 run records flip null->populated, all other fields byte-identical to #743 baseline); make check green (only env failure test_smoke_real_cli)
 
 --- body ---
 ## Context
@@ -42,10 +43,11 @@ populated (not None).
 
 ## Definition of done
 
-- [ ] `_build_run_records` wires `class_trace` and `n_bib_entries`
-- [ ] `experiments/derived/exp2_mart.jsonl` regenerated; class_trace and
+- [x] `_build_run_records` wires `class_trace` and `n_bib_entries`
+- [x] `experiments/derived/exp2_mart.jsonl` regenerated; class_trace and
       n_bib_entries non-null where the source has them
-- [ ] 0384's adherence guard passes for these two keys
-- [ ] Unit test added; Makefile DAG prerequisites/targets still match the
+- [x] 0384's adherence guard passes for these two keys
+- [x] Unit test added; Makefile DAG prerequisites/targets still match the
       script's actual reads/writes
-- [ ] `make check` green
+- [x] `make check` green (modulo documented env-only failure
+      test_smoke_real_cli — claude CLI credit balance)
