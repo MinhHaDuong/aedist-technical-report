@@ -2,6 +2,7 @@
 Title: Write Exp2 dataset and descriptive statistics section
 Created: 2026-05-23
 Author: Copilot
+Closed: delivered by PR #758 — dataset & descriptive stats section, 15-number audit clean, gate APPROVED
 
 --- log ---
 2026-05-23T17:30Z Copilot created
@@ -11,6 +12,7 @@ Author: Copilot
 2026-06-05T07:50Z claude note — raid: 0254 PULLED from night-queue execute wave (newly Blocked-by 0383, supersedes the committed-artifacts-only plan below); 0253 proceeds alone, chapter stub for §donnees stays TODO(0254)
 2026-06-05T10:55Z HDMX-coding-agent note blocker 0383 closed — Blocked-by removed.
 2026-06-05T11:12Z claude note section written from committed post-rebaseline artifacts (tab_exp2_2x2_fr, tab_exp2_bib_quality, exp2_mart); every number traced; 0/5 named as bib-parse validity vs 5/5 F1; arm3/arm4 exploratoire; relocation of tab:exp2-2x2 done; PR opened
+2026-06-05T11:35Z HDMX-coding-agent closed — delivered by PR #758 — dataset & descriptive stats section, 15-number audit clean, gate APPROVED
 --- body ---
 ## Context
 Write the Dataset and Descriptive Statistics section from `docs/exp2-analysis-v0.md`.
