@@ -6,6 +6,7 @@ Author: claude
 --- log ---
 2026-06-03T21:55Z claude created
 
+2026-06-05T08:13Z claude execute FP bars switched to COLOR_ALERT red; regression test + caption fix; PDF regenerated from committed mart
 --- body ---
 ## Context
 
@@ -57,11 +58,11 @@ one FP bar per arm; assert every negative bar's facecolor is
 
 ## Verification
 
-- [ ] Both live Exp2 figures use red for FP bars
-- [ ] Test passes; `make check-fast` green
-- [ ] Committed PDF regenerated from committed mart data (no mart churn
+- [x] Both live Exp2 figures use red for FP bars
+- [x] Test passes; `make check-fast` green
+- [x] Committed PDF regenerated from committed mart data (no mart churn
       in the diff)
-- [ ] Caption wording consistent if it names the colour
+- [x] Caption wording consistent if it names the colour
 
 ## Invariants
 
