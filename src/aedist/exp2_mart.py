@@ -10,7 +10,9 @@ from typing import Literal
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 _MART_SCHEMA_NAME = "exp2_mart"
-_MART_SCHEMA_VERSION = 1
+# v2 (ticket 0431): Exp2ScoreMartRecord carries ``reference`` — the release
+# filename of the dataset the accuracy metrics were computed against.
+_MART_SCHEMA_VERSION = 2
 _SHA256_PATTERN = r"^[0-9a-f]{64}$"
 
 
@@ -131,7 +133,7 @@ class Exp2MartBase(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     mart_schema: Literal["exp2_mart"] = _MART_SCHEMA_NAME
-    mart_schema_version: Literal[1] = _MART_SCHEMA_VERSION
+    mart_schema_version: Literal[2] = _MART_SCHEMA_VERSION
     record_kind: Literal["run", "probe", "score"]
     record_id: str = Field(..., min_length=1)
     parent_record_id: str | None = Field(default=None)
@@ -170,6 +172,16 @@ class Exp2ScoreMartRecord(Exp2MartBase):
     record_kind: Literal["score"] = "score"
     score_summary: ScoreSummary
     result_file: ArtifactPointer
+    # Reference release filename (e.g. the VN thermal v1 CSV) the accuracy
+    # metrics were scored against; None on legacy rows scored before 0431.
+    reference: str | None = Field(
+        default=None,
+        description=(
+            "Release filename of the reference dataset the accuracy metrics "
+            "were computed against (ticket 0431). None on legacy score rows "
+            "scored before the reference was stamped."
+        ),
+    )
 
 
 Exp2MartRecord = Exp2RunMartRecord | Exp2ProbeMartRecord | Exp2ScoreMartRecord

@@ -45,7 +45,7 @@ def test_run_record_carries_mart_version_and_result_pointer() -> None:
     )
 
     assert record.mart_schema == "exp2_mart"
-    assert record.mart_schema_version == 1
+    assert record.mart_schema_version == 2
     assert record.record_kind == "run"
     assert record.run_summary.classification == "report"
     assert record.result_file.path.endswith("anthropic_run01.json")
@@ -111,3 +111,41 @@ def test_score_record_rejects_verbatim_chat_payload_fields() -> None:
         assert "raw_payload" in str(exc)
     else:
         raise AssertionError("verbatim payload fields must be rejected")
+
+
+def _minimal_score_summary() -> dict:
+    return {
+        "n_rows": 79,
+        "accuracy": {"coverage": {"value": 0.5, "annotation": ""}},
+    }
+
+
+def test_score_record_carries_reference() -> None:
+    """Ticket 0431: a v2 score record stamps the reference dataset the
+    accuracy metrics were computed against."""
+    record = Exp2ScoreMartRecord(
+        record_id="exp2-naive/anthropic/01/score",
+        arm="naive",
+        agent="anthropic",
+        model="claude-opus-4-6",
+        run=1,
+        score_summary=_minimal_score_summary(),
+        result_file=_pointer("experiments/outputs/sota_exp2_naive_arm/anthropic_run01.json"),
+        reference="vietnam_thermal_v1.csv",
+    )
+    assert record.mart_schema_version == 2
+    assert record.reference == "vietnam_thermal_v1.csv"
+
+
+def test_score_record_reference_optional_for_legacy() -> None:
+    """Legacy score rows (scored before 0431) carry reference=None."""
+    record = Exp2ScoreMartRecord(
+        record_id="exp2-naive/anthropic/01/score",
+        arm="naive",
+        agent="anthropic",
+        model="claude-opus-4-6",
+        run=1,
+        score_summary=_minimal_score_summary(),
+        result_file=_pointer("experiments/outputs/sota_exp2_naive_arm/anthropic_run01.json"),
+    )
+    assert record.reference is None

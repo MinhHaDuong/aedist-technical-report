@@ -338,8 +338,13 @@ def _results_to_records(
     run_metrics_by_model: dict[str, list[BenchmarkMetrics]],
     run_paths_by_model: dict[str, list[Path]],
     output_dir: Path,
+    reference: str | None = None,
 ) -> list[RunRecord]:
-    """Convert analysis results to RunRecords for measurements.jsonl."""
+    """Convert analysis results to RunRecords for measurements.jsonl.
+
+    *reference* is the release filename of the dataset the scores were
+    computed against (ticket 0431), stamped onto every scored record.
+    """
     records: list[RunRecord] = []
 
     for r in results:
@@ -359,6 +364,7 @@ def _results_to_records(
                         prompt_version="rag",
                     ),
                     result_file=result_file,
+                    reference=reference,
                     result_summary=_metrics_to_result_summary(m),
                 )
             )
@@ -373,6 +379,7 @@ def _results_to_records(
                         prompt_version="rag_consistency",
                     ),
                     result_file=str(output_dir / f"{model}-consolidated.csv"),
+                    reference=reference,
                     result_summary=ResultSummary(
                         status="ok",
                         n_plants=r["majority_n_system"],
@@ -394,6 +401,7 @@ def _results_to_records(
                         prompt_version="rag_consistency",
                     ),
                     result_file=str(output_dir / f"{model}-union.csv"),
+                    reference=reference,
                     result_summary=ResultSummary(
                         status="ok",
                         n_plants=r["union_n_system"],
@@ -494,7 +502,7 @@ def main() -> None:
     # Write RunRecords to measurements.jsonl
     if args.measurements:
         records = _results_to_records(
-            results, run_metrics_by_model, run_paths_by_model, output_dir
+            results, run_metrics_by_model, run_paths_by_model, output_dir, reference=ref_path.name
         )
         write_measurements(records, Path(args.measurements))
 

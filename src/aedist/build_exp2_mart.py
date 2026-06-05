@@ -372,6 +372,7 @@ def build_exp2_mart(
                     run=run_record.run,
                     prompt_version=score_row.get("prompt_version") or run_record.prompt_version,
                     score_summary=_score_summary(score_row),
+                    reference=(score_row.get("reference") or None),
                     result_file=run_record.result_file,
                     parsed_table_file=run_record.parsed_table_file,
                 )

@@ -21,6 +21,7 @@ places, or empty string when null.
 | `model` | str | Provider model ID |
 | `run` | int (str in CSV) | Replication index (1-based) |
 | `prompt_version` | str | Prompt family tag, e.g. `exp2` |
+| `reference` | str | Release filename of the reference dataset the accuracy metrics were scored against, e.g. `vietnam_thermal_v1.csv` (ticket 0431) |
 | `n_rows` | int (str in CSV) | Plant rows extracted from run output |
 | `accuracy_coverage` | float\|null | Recall against reference |
 | `accuracy_coverage_annotation` | str | Annotation code or empty |
@@ -235,7 +236,8 @@ carry verbatim chat payloads.
 
 - `run` records summarize one Exp2 run and point to the run JSON artifact.
 - `probe` records summarize one turn/probe slice and point to the probe file.
-- `score` records carry the mechanical-score payload for one run and point to
+- `score` records carry the mechanical-score payload for one run, the
+	`reference` dataset the accuracy metrics were scored against, and point to
 	the source run artifact.
 
 #### Scorer columns intentionally outside the score-record payload (ticket 0386)
@@ -272,10 +274,20 @@ the Layer-2 completeness check (ticket 0384).
 ### Versioning
 
 - `mart_schema = "exp2_mart"`
-- `mart_schema_version = 1`
+- `mart_schema_version = 2`
 
 Any change that adds, removes, or renames mart fields must bump the schema
 version and ship a new validator model.
+
+**v2 (ticket 0431):** `Exp2ScoreMartRecord` gains a top-level `reference`
+field — the release filename of the dataset the accuracy metrics were
+computed against (e.g. `vietnam_thermal_v1.csv`). It is `None` on legacy
+score rows scored before the field was introduced. The reference is an
+experimental condition: when a v2 reference is adopted (ticket 0413) the
+tp/fp/fn change, and this field is what distinguishes pre- from
+post-adoption rows. The `sota_cross_eval.csv` carries the same value in a
+`reference` metadata column, and `build_exp2_mart_views.py` projects it
+back into the score view.
 
 ### Artifact pointers
 

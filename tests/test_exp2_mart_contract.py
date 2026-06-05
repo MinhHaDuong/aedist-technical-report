@@ -33,7 +33,9 @@ from aedist.score_mechanical import _CSV_COLUMNS
 MART = Path("experiments/derived/exp2_mart.jsonl")
 
 # Metadata columns that key/identify a score row rather than carry a metric.
-_METADATA_COLUMNS = {"arm", "model", "run", "prompt_version"}
+# ``reference`` (ticket 0431) names the dataset the scores were computed against;
+# it is a top-level Exp2ScoreMartRecord field, not a ScoreSummary metric.
+_METADATA_COLUMNS = {"arm", "model", "run", "prompt_version", "reference"}
 
 # CSV columns the scorer emits but the mart deliberately does NOT wire into a
 # ScoreSummary field. Each entry documents why. Finding #2 (these three metrics +
