@@ -30,7 +30,7 @@ from pathlib import Path
 
 from rapidfuzz import fuzz
 
-from .config import DEFAULT_REFERENCE
+from .config import VN_THERMAL_PLANTS_RELEASE_CSV
 
 log = logging.getLogger(__name__)
 
@@ -183,7 +183,7 @@ def verify_source_grounding(
         Directory containing the .md corpus files.
     reference_path : Path | None
         Path to the reference CSV with a ``name`` column.  Defaults to
-        ``config.DEFAULT_REFERENCE``.
+        ``config.VN_THERMAL_PLANTS_RELEASE_CSV``.
 
     Returns
     -------
@@ -195,7 +195,7 @@ def verify_source_grounding(
         and a 2x2 counts table.
     """
     if reference_path is None:
-        reference_path = DEFAULT_REFERENCE
+        reference_path = VN_THERMAL_PLANTS_RELEASE_CSV
 
     # Load reference names
     if reference_path.is_file():

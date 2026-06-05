@@ -36,7 +36,7 @@ from typing import Any
 
 from rapidfuzz import fuzz
 
-from .config import DEFAULT_REFERENCE
+from .config import VN_THERMAL_PLANTS_RELEASE_CSV
 from .evaluate import load_plants_csv
 from .extract import extract_fenced_blocks, fallback_extract_inline_csv, parse_and_canonicalize
 from .harness import load_experiments, make_client, query_model
@@ -730,7 +730,7 @@ def main(argv: list[str] | None = None) -> None:
         help="[md] Prompt for each incremental md fusion step. Default: built-in.",
     )
     p.add_argument("--corpus", type=Path, default=_DEFAULT_CORPUS)
-    p.add_argument("--reference", type=Path, default=DEFAULT_REFERENCE)
+    p.add_argument("--reference", type=Path, default=VN_THERMAL_PLANTS_RELEASE_CSV)
     p.add_argument("--output", type=Path, default=_DEFAULT_OUTPUT)
     p.add_argument(
         "--seed",

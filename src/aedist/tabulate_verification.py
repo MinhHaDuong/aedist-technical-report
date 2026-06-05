@@ -22,7 +22,7 @@ import re
 from collections import defaultdict
 from pathlib import Path
 
-from .config import DEFAULT_REFERENCE
+from .config import VN_THERMAL_PLANTS_RELEASE_CSV
 from .evaluate import load_plants_csv, plants_from_dicts
 from .metrics import compute_metrics
 from .reconcile import reconcile
@@ -93,7 +93,7 @@ def compute_tradeoff(verification_dir: Path, reference: Path | None = None) -> l
 
     Returns list of dicts ready for CSV output.
     """
-    ref_path = reference or DEFAULT_REFERENCE
+    ref_path = reference or VN_THERMAL_PLANTS_RELEASE_CSV
     ref_plants = load_plants_csv(ref_path)
 
     by_mode = _load_annotated_csvs(verification_dir)
@@ -214,7 +214,7 @@ def main():
     parser.add_argument(
         "--reference",
         type=Path,
-        default=DEFAULT_REFERENCE,
+        default=VN_THERMAL_PLANTS_RELEASE_CSV,
         help="Reference CSV path",
     )
     args = parser.parse_args()

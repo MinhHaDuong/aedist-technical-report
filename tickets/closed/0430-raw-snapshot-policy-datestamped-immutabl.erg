@@ -2,11 +2,14 @@
 Title: raw/ snapshot policy: datestamped immutable captures, pinned consumers
 Created: 2026-06-05
 Author: claude
+Closed: delivered by PR #737 — snapshot policy, gate APPROVED
 
 --- log ---
 2026-06-05T06:31Z claude created
 
 2026-06-05T06:45Z claude note author directive — config key names state dataset+role; 'REFERENCE' too large a word, bare 'PIPELINE' collides with data-pipeline vocabulary; body updated with concrete proposals
+2026-06-05T08:12Z claude note completed snapshot policy: pipeline.ods git mv to pipeline-2026-05-26.ods, import.sh datestamps + refuses overwrite, config pins VN_THERMAL_MASTER_SNAPSHOT_ODS + VN_THERMAL_PLANTS_RELEASE_CSV (DEFAULT_REFERENCE swept across 16 files), acquire.mk reads pin, ratchet test_acquire_mk_snapshot_path_not_hardcoded + datestamp adherence test added, docs updated
+2026-06-05T08:36Z HDMX-coding-agent closed — delivered by PR #737 — snapshot policy, gate APPROVED
 --- body ---
 ## Context
 
@@ -83,17 +86,21 @@ def test_raw_snapshots_are_datestamped():
 
 ## Exit criteria
 
-- [ ] `raw/pipeline.ods` renamed to its datestamped capture name (git mv,
+- [x] `raw/pipeline.ods` renamed to its datestamped capture name (git mv,
       so NOT a quickpr — quickpr cannot rename)
-- [ ] `import.sh` produces datestamped destinations, refuses overwrite of
+- [x] `import.sh` produces datestamped destinations, refuses overwrite of
       committed snapshots
-- [ ] `VN_THERMAL_MASTER_SNAPSHOT_ODS` in config.py; extraction +
+- [x] `VN_THERMAL_MASTER_SNAPSHOT_ODS` in config.py; extraction +
       acquire.mk agree with it, ratchet-guarded
-- [ ] `DEFAULT_REFERENCE` renamed dataset+role-explicit (no "REFERENCE"
+- [x] `DEFAULT_REFERENCE` renamed dataset+role-explicit (no "REFERENCE"
       head noun), all consumers swept
-- [ ] Adherence test above green
-- [ ] README.md / PROVENANCE.md use the snapshot/release vocabulary
-- [ ] `make check` passes
+- [x] Adherence test above green
+- [x] README.md / PROVENANCE.md use the snapshot/release vocabulary
+- [x] `make check` / CI passes. CI on the PR is fully green (5/5). Local
+      `make check` runs the slow/live tier (`test-slow`) which needs API
+      budget absent in this environment, so test_smoke_real_cli and
+      test_boundary_preliminary_roster_live_classifier fail there by
+      design — both are outside this diff's code paths.
 
 ## Related
 

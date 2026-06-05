@@ -19,7 +19,7 @@ from pathlib import Path
 
 import yaml
 
-from .config import DEFAULT_REFERENCE
+from .config import VN_THERMAL_PLANTS_RELEASE_CSV
 from .evaluate import load_plants_csv
 from .harness import BudgetTracker
 from .metrics import compute_metrics
@@ -381,7 +381,7 @@ def main():
     cross_verifier = config.get("cross_verifier")
     verifier_panel = config.get("verifier_panel")
     ref_path_str = config.get("reference")
-    reference_path = Path(ref_path_str) if ref_path_str else DEFAULT_REFERENCE
+    reference_path = Path(ref_path_str) if ref_path_str else VN_THERMAL_PLANTS_RELEASE_CSV
 
     tavily_key = os.environ.get("TAVILY_API_KEY")
 

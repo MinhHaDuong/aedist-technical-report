@@ -26,7 +26,7 @@ from pathlib import Path
 
 from rapidfuzz import fuzz
 
-from .config import DEFAULT_REFERENCE
+from .config import VN_THERMAL_PLANTS_RELEASE_CSV
 from .evaluate import load_plants_csv, plants_from_dicts
 from .extract import (
     extract_fenced_blocks,
@@ -720,7 +720,7 @@ def main():
     if args.mode == "unverified":
         annotated, summary = verify_unverified(rows)
     elif args.mode == "tool":
-        ref_path = Path(args.reference) if args.reference else DEFAULT_REFERENCE
+        ref_path = Path(args.reference) if args.reference else VN_THERMAL_PLANTS_RELEASE_CSV
         annotated, summary = verify_tool(rows, ref_path)
     elif args.mode == "self":
         model_id = record.get("model")

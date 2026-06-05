@@ -25,7 +25,7 @@ from pathlib import Path
 
 from pydantic import ValidationError
 
-from .config import DEFAULT_REFERENCE
+from .config import VN_THERMAL_PLANTS_RELEASE_CSV
 from .metrics import BenchmarkMetrics, compute_metrics, format_metrics
 from .reconcile import reconcile
 from .schema import (
@@ -319,7 +319,7 @@ def cmd_evaluate(args: argparse.Namespace) -> None:
     reconciliation CSV.
     """
     system_path = Path(args.system_file)
-    ref_path = Path(args.reference) if args.reference else DEFAULT_REFERENCE
+    ref_path = Path(args.reference) if args.reference else VN_THERMAL_PLANTS_RELEASE_CSV
 
     if system_path.suffix == ".json":
         _evaluate_qualitative(system_path, args)

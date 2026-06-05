@@ -43,7 +43,7 @@ from pathlib import Path
 from rapidfuzz import fuzz, process
 
 from aedist.cleaner import PowerPlantDataframeCleaner
-from aedist.config import DEFAULT_REFERENCE
+from aedist.config import VN_THERMAL_PLANTS_RELEASE_CSV
 from aedist.evaluate import load_plants_csv, plants_from_dicts
 from aedist.extract import _extract_pipe_tables, parse_and_canonicalize, score_csv_like_block
 from aedist.reconcile import reconcile
@@ -170,7 +170,7 @@ def main() -> None:
     ap.add_argument(
         "--reference",
         type=Path,
-        default=DEFAULT_REFERENCE,
+        default=VN_THERMAL_PLANTS_RELEASE_CSV,
         help="reference CSV to reconcile against (default: frozen v1)",
     )
     ap.add_argument(
