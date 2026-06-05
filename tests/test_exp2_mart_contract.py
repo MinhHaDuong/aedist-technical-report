@@ -37,15 +37,26 @@ _METADATA_COLUMNS = {"arm", "model", "run", "prompt_version"}
 
 # CSV columns the scorer emits but the mart deliberately does NOT wire into a
 # ScoreSummary field. Each entry documents why. Finding #2 (these three metrics +
-# their annotations) is a *scope decision* deferred to ticket 0386; until then
-# they are documented out-of-scope rather than silently dropped.
+# their annotations) was a *scope decision*: ticket 0386 ratified Option B — they
+# are Exp1 quality-spider metrics intentionally OUT OF the Exp2 mart's scope,
+# consumed from exp1_cross_eval.csv directly by plot_quality_spider_exp1.py
+# (recomputed via score_exp1.py), never via the mart. See docs/scoring-contract.md
+# "Scorer columns intentionally outside the score-record payload (ticket 0386)".
+# The annotation siblings ride along with their metric. This encodes the decision,
+# it is not a silent allow: a NEW unlisted scorer column still fails
+# test_scorer_columns_reach_mart_or_documented_out_of_scope (ticket 0384).
+_EXP1_SPIDER_REASON = (
+    "0386/Option B — Exp1 quality-spider metric, intentionally out of the Exp2 "
+    "mart scope; consumed from exp1_cross_eval.csv, not the mart "
+    "(see docs/scoring-contract.md, ticket 0386 carve-out)"
+)
 SCORER_OUT_OF_SCOPE = {
-    "provenance_source_diversity": "0386 — dropped scorer column, scope decision pending",
-    "provenance_source_diversity_annotation": "0386 — dropped scorer column, scope decision pending",
-    "provenance_source_spread": "0386 — dropped scorer column, scope decision pending",
-    "provenance_source_spread_annotation": "0386 — dropped scorer column, scope decision pending",
-    "temporality_cod_plausible": "0386 — dropped scorer column, scope decision pending",
-    "temporality_cod_plausible_annotation": "0386 — dropped scorer column, scope decision pending",
+    "provenance_source_diversity": _EXP1_SPIDER_REASON,
+    "provenance_source_diversity_annotation": _EXP1_SPIDER_REASON,
+    "provenance_source_spread": _EXP1_SPIDER_REASON,
+    "provenance_source_spread_annotation": _EXP1_SPIDER_REASON,
+    "temporality_cod_plausible": _EXP1_SPIDER_REASON,
+    "temporality_cod_plausible_annotation": _EXP1_SPIDER_REASON,
 }
 
 # Source-JSON keys that ``extract_arm_*.py`` may emit and that the mart wiring in

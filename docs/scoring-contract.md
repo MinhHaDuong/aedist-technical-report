@@ -238,6 +238,37 @@ carry verbatim chat payloads.
 - `score` records carry the mechanical-score payload for one run and point to
 	the source run artifact.
 
+#### Scorer columns intentionally outside the score-record payload (ticket 0386)
+
+The "mechanical-score payload for one run" above is the *Exp2* payload, and it
+is deliberately not a 1:1 image of every column `score_mechanical.py` can emit.
+Three scorer columns (each with its `_annotation` sibling) are
+**intentionally excluded** from the Exp2 mart's `score_summary`:
+
+- `provenance_source_diversity` (+ `_annotation`)
+- `provenance_source_spread` (+ `_annotation`)
+- `temporality_cod_plausible` (+ `_annotation`)
+
+These are Exp1 quality-spider metrics, not Exp2 mart fields. Their real chain
+does not pass through the mart:
+
+- `score_mechanical.py` computes them via `score_source_diversity`,
+  `score_source_spread`, `score_cod_plausible` and writes them into
+  `experiments/derived/sota_cross_eval.csv`.
+- `score_exp1.py` recomputes them with the same `score_mechanical` helpers into
+  its own `exp1_cross_eval.csv` cross-eval table.
+- `plot_quality_spider_exp1.py` reads those columns *directly from the
+  cross-eval CSV* to draw the Exp1 quality spider.
+
+No mart consumer reads these three (audit in 0383/0386 found none), so wiring
+them into `score_summary` would add schema surface with no reader. Per the
+ratified Option B decision on ticket 0386, they stay out of scope: a lighter,
+guarded omission rather than a `mart_schema_version` bump (the schema-extension
+path that ticket 0431 can own if a mart consumer ever needs them). The
+exclusion is encoded — not silently allowed — in `SCORER_OUT_OF_SCOPE` in
+`tests/test_exp2_mart_contract.py`; a *new* unlisted scorer column still fails
+the Layer-2 completeness check (ticket 0384).
+
 ### Versioning
 
 - `mart_schema = "exp2_mart"`

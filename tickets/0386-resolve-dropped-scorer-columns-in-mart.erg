@@ -7,6 +7,7 @@ Blocked-by: 0384
 --- log ---
 2026-05-29T00:00Z Claude created — finding #2 from the mart audit (0383); scope decision required
 
+2026-06-05T09:52Z Claude decision Option B — out of scope; rationale: Exp1-spider metrics consumed from sota_cross_eval.csv directly (score_exp1.py, plot_quality_spider_exp1.py); audit found no mart consumer; lighter than a schema bump that 0431 can own.
 --- body ---
 ## Context
 
@@ -45,10 +46,13 @@ found none.
 
 ## Definition of done
 
-- [ ] Decision recorded (A or B) with rationale in the log
+- [x] Decision recorded (A or B) with rationale in the log
 - [ ] If A: schema fields added, `_score_summary` + views wired,
       `mart_schema_version` bumped, validator updated, mart regenerated
-- [ ] If B: scoring-contract.md documents the exclusion; 0384 OUT_OF_SCOPE
+      (N/A — Option B chosen)
+- [x] If B: scoring-contract.md documents the exclusion; 0384 OUT_OF_SCOPE
       updated to reference it
-- [ ] 0384's completeness check reflects the decision (no silent drop)
-- [ ] `make check` green
+- [x] 0384's completeness check reflects the decision (no silent drop;
+      verified by temporary anti-rot injection — a new unlisted scorer
+      column still fails the Layer-2 completeness test)
+- [x] `make check` green
