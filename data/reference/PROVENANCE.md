@@ -1,15 +1,53 @@
-# Reference dataset provenance — vietnam_thermal_v1.csv
+# Reference dataset provenance — Vietnam thermal fleet
 
-## Scope and version lock
+## Adopted release (v2, ticket 0413, 2026-06-05)
+
+**The frozen reference is now `vietnam_thermal_plants_v2_classified.csv`**
+(170 plants), pipe-regenerated from the master snapshot
+`pipeline-2026-06-05.ods` by `extract_ods.py → aggregate_units.py →
+add_classifications.py` (`make -C experiments -f acquire.mk
+reference-pipeline`). Status distribution (v1-compat projection, see below):
+operational 54, proposed 67, planned 21, constructing 10, cancelled 17,
+retired 1. Provenance: extractor @ this commit applied to snapshot 2026-06-05.
+
+The adoption ceremony (before/after gate, single-switch flip, official
+re-score) is recorded in `data/reference/v1_v2_adoption_comparison.md`: every
+v1→v2 delta in every reference-dependent report artifact traces to a "Known
+defects of v1" entry (now fixed, below) or the documented master evolution
+(extension-as-unit absorption, LNG splits, +9 new rows). The v2 release carries
+the master's unified **ordinal status ladder** ("0 exploring" … "6 operating",
+"9 cancelled", "10 retired"); consumers project it to the v1 four-bucket
+vocabulary at load time via `evaluate.project_status` (≤2→proposed, 3–4→planned,
+5→constructing, 6→operational, 9→cancelled, 10→retired). The 4 zero-capacity
+placeholder rows (1 "0 exploring" `NĐ LNG miền Bắc`, carried from v1; 3 "9
+cancelled" `NĐ Miền Bắc 1/2/3`, new) are **retained** in the scoring reference:
+v1 already scored a zero-cap row, the LP matcher is name-dominant (capacity
+weight 0.001, ADR-3), and excluding them would be undocumented hand-curation.
+The 3 new cancelled placeholders are therefore guaranteed reference-only misses
+(FN) for every model — intended.
+
+**Re-score scope.** The v2 re-score covers Experiment 1 (the exp1_batch2
+baseline, scored records + measurements rows carry
+`reference=vietnam_thermal_plants_v2_classified.csv`) and Experiments 2–3 (the
+`exp2_mart.jsonl` / `sota_cross_eval.csv` arms, scored against v2). The earlier
+**model-census** rows (`direct`/`rag`/`multiturn`/`ablation`, `prompt_version`
+absent / `census`) remain v1-era record (no `reference` field): their raw
+replies live in `experiments/archive/outputs/`, there is no live DAG edge to
+re-score them, and they are not displayed in the manuscript's Exp1–3 figures.
+The `\input`'d census macros (`macros_census`, `macros_p1_base`, `tab_census`)
+and the orphan `scaling_curve`/`regimes_scatter` figures therefore still reflect
+v1-era scoring; their v2 re-score is deferred (ticket 0444).
+
+## v1 (retired) — scope and version lock
 
 163 thermal generation assets >30 MWe in Vietnam (coal, gas, gas/oil),
 covering all lifecycle statuses. Status distribution:
 operational 57, proposed 62, planned 21, constructing 10, cancelled 11,
 retired 2.
 
-This file is frozen at commit `85a0e6c7c9690fa327f6a8b5d4ba024110653945`
-as of 2026-05-20 for Experiments 1–3. Any later edit to the CSV requires
-a new version tag and a corresponding entry in this file.
+v1 was frozen at commit `85a0e6c7c9690fa327f6a8b5d4ba024110653945`
+as of 2026-05-20 and scored Experiments 1–3 until the 0413 v2 adoption. It is
+retained in-tree (`vietnam_thermal_v1.csv`) as the pre-adoption record.
 
 ## Compilation method
 
@@ -111,15 +149,25 @@ reviewer reconstruct the compilation row by row. Closing that gap
 is the motivation for the source-citation infrastructure in
 Experiments 2–3.
 
-## Known defects of v1 (2026-06-04, ticket 0394)
+## Known defects of v1 (2026-06-04, ticket 0394) — FIXED IN v2 (0413)
 
-The frozen v1 files keep scoring Exp1–3 **as-is**. The defects below are
-documented, their scoring impact is measured (nil for FP), and their
-correction is deliberately delegated to the master + regeneration
-pipeline (tickets 0420 → 0416 → 0419; adoption in 0413 after the Cergy
-archive 0412). An interim patched copy ("fix1", PR #699 first versions)
-was built, measured, and then dropped: it duplicated upstream truth
-downstream and nothing consumed it.
+**Status: closed.** All three defects below are corrected in the v2 release
+adopted by ticket 0413 (2026-06-05): defects 1–2 were fixed in the master
+(DH2 romanization removed 2026-06-03, Quảng Trị 1 duplicate Unit renamed
+2026-06-04) and defect 3 is structurally impossible under the three-column
+address contract (the aggregator groups by the data-carried `Plant`/`Complex`
+cell, never by a name string, and hard-fails on a duplicate plant key). The
+before/after gate confirmed every v1→v2 difference maps to these defects or the
+documented master evolution; see `v1_v2_adoption_comparison.md`. The section is
+retained below as the historical record and the expected-delta checklist used
+at adoption.
+
+The frozen v1 files kept scoring Exp1–3 **as-is** until adoption. The defects
+below were documented, their scoring impact measured (nil for FP), and their
+correction deliberately delegated to the master + regeneration pipeline
+(tickets 0420 → 0416 → 0419; adoption in 0413 after the Cergy archive 0412). An
+interim patched copy ("fix1", PR #699 first versions) was built, measured, and
+then dropped: it duplicated upstream truth downstream and nothing consumed it.
 
 Adjudicated by the author on 2026-06-03/04:
 

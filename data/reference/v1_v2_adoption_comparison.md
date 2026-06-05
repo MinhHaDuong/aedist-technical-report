@@ -105,6 +105,35 @@ The 0394 non-finding (FP 399→399) was measured against a *defect-only-correcte
 v1 variant, not the full v2 with 12 LNG splits + 9 new plants — so it correctly
 does not predict zero FP delta here. Each FP delta is explained.
 
+## Official re-score deltas (measurements + mart)
+
+After the gate passed and the defaults flipped, Exp1 records and the Exp2/3 mart
+were re-scored against v2 from existing archived outputs (LP matcher only, zero
+API spend).
+
+**Exp1 (exp1_batch2, 70 runs), record-level v1→v2** — the honest like-for-like
+v2 effect (same records, same runs, only the reference changed):
+
+| Metric | v1 → v2 | Δ | Explanation |
+|---|---|---|---|
+| TP (summed) | 2894 → 3106 | +212 | LNG-split / new plants convert former FPs to matches |
+| FP (summed) | 1989 → 1777 | −212 | exact mirror of the TP gain (each FP→TP is one of each) |
+| FN (summed) | 8516 → 8794 | +278 | +9 new plants (incl. 3 zero-cap placeholders) + LNG-split granularity add unmatched reference rows |
+
+The measurements.jsonl mart shows a larger raw shift (+305/−305/+185) because its
+committed exp1 baseline was **stale** relative to the committed records (mart TP
+2801 vs record TP 2894 — a pre-existing record/mart desync, ticket 0444). The
+re-score also corrected that drift for exp1; the +212/−212/+278 above is the
+v2-only delta. exp1_batch2 mart rows now carry
+`reference=vietnam_thermal_plants_v2_classified.csv`.
+
+**Exp2/3 (exp2_mart.jsonl, 160 records)** — re-scored via the `sota_cross_eval.csv`
+→ `exp2_mart.jsonl` DAG. 160 → 160 records, record_ids byte-identical, only the
+accuracy metrics + `reference` field moved. Coverage drops slightly per run
+(e.g. arm3 claude run01 0.3006 → 0.2706) because v2's larger 170-plant
+denominator lowers the coverage ratio at equal TP. Every row now cites
+`reference=vietnam_thermal_plants_v2_classified.csv`.
+
 ## Zero-capacity placeholder rows — decision: RETAIN all 4
 
 v2 carries 4 zero-capacity rows: `NĐ LNG miền Bắc` (0 exploring; carried from

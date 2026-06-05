@@ -1,0 +1,69 @@
+%erg 0.1
+Title: Re-score legacy model-census against v2 + reconcile committed mart drift
+Created: 2026-06-05
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-05T13:00Z claude created — deferred from 0413 (v2 adoption); author greenlit "nice-to-have, ticket it for later"
+
+--- body ---
+## Context
+
+Ticket 0413 adopted the v2 reference and re-scored Experiments 1–3 (exp1_batch2
+records + measurements rows, and the exp2_mart.jsonl / sota_cross_eval.csv arms).
+It deliberately left the earlier **model-census** rows on v1-era scoring, with the
+author's explicit agreement that full mart coherence is nice-to-have, not a
+blocker for the v2 adoption PR.
+
+While adopting v2, four pre-existing drifts surfaced (none v2-caused — all
+predate 0413):
+
+1. **Census rows not re-scored.** measurements.jsonl rows with
+   `method ∈ {direct, rag, direct+multiturn}` (the pre-experiment census,
+   "$5 burned on 26 models from memory") carry no `reference` field and still
+   reflect v1-era scoring. Their raw replies live in
+   `experiments/archive/outputs/{direct_extract,rag_extract,direct_multiturn,
+   ablation,...}` — re-scoreable, but there is **no live DAG edge**: the
+   `%.record.json: %.csv` pattern in score.mk resolves to `experiments/outputs/`,
+   not `archive/`. An archive-sourced score path must be wired.
+2. **Record/mart desync.** The committed `exp1_batch2/*.record.json` files and
+   the committed measurements.jsonl disagreed on exp1 v1 scores (mart TP 2801 vs
+   record TP 2894) before 0413. (0413's exp1 re-score incidentally fixed this for
+   exp1; the broader desync class remains.)
+3. **Stale census macros.** `tabulate_macros` regenerated from the current
+   committed measurements yields `\NumModelsTested` 103 where committed
+   macros.tex said 86 — the committed file was stale vs its own committed source.
+4. **106 uncommitted-to-mart records.** `find … -name '*.record.json'` yields 668
+   records on disk; the committed measurements.jsonl has 562 (frontier /
+   direct_complete records present on disk, absent from the mart).
+
+## Affected artifacts
+
+- `macros_census.tex`, `macros_p1_base.tex`, `tab_census.tex` (`\input`'d by
+  report.tex / slides — they currently render v1-era census numbers).
+- Orphan figures `fig_scaling_curve.pdf`, `fig_regimes_scatter.pdf` (generated,
+  not included in the manuscript) consume `result_summary.f1/tp` from census rows.
+- The `prompt_version='census'` render path (`plot_method_convergence`,
+  `tabulate_census_macros`) currently raises "No measurement records matched the
+  active filter" against the committed measurements — broken at HEAD, not by 0413.
+
+## Exit criteria
+
+- [ ] Wire an archive-sourced score path so census raw replies in
+      `experiments/archive/outputs/` can be re-scored against v2 (no
+      `rebuild-measurements`, which deletes records).
+- [ ] Re-score census rows against v2; every re-scored measurements row carries
+      `reference=vietnam_thermal_plants_v2_classified.csv`.
+- [ ] Reconcile the committed mart with its committed sources (decide membership
+      of the 106 extra records explicitly; row count documented, not accidental).
+- [ ] Regenerate `macros_census` / `macros_p1_base` / `tab_census` / scaling /
+      regimes from the v2-scored mart; centralize the `tabulate_macros`
+      `ref_plants` constant via `evaluate.reference_plant_count()` (deferred from
+      0413 to keep the census source+output revert mutually consistent).
+- [ ] `make check` green.
+
+## Related
+
+- 0413 (v2 adoption — this ticket's parent; covers Exp1–3, defers the census)
+- `data/reference/v1_v2_adoption_comparison.md` (records the re-score scope split)
+- `data/reference/PROVENANCE.md` § "Re-score scope" (names this ticket)
