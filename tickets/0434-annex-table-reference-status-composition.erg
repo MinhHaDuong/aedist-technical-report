@@ -2,10 +2,10 @@
 Title: Annex table: reference status composition vs run recognition rate
 Created: 2026-06-05
 Author: claude
-Blocked-by: 0373
 
 --- log ---
 2026-06-05T07:33Z claude created
+2026-06-05T08:05Z claude respec — author: table and figure each build from their OWN view of the data mart (common-cause consistency); no side-output chaining; Blocked-by 0373 removed
 
 --- body ---
 ## Context
@@ -30,17 +30,23 @@ Counts come from the reference at build time (no hardcoded 163 / 62 —
 the v2 adoption (0413) will change them and the DAG rebuild must pick
 them up).
 
-## Data path
+## Data path (author directive 2026-06-05)
 
-Consume the per-(run x plant) boolean CSV that 0373 emits as a side
-artifact (hence Blocked-by) — guarantees figure and table tell the
-same story from the same matrix. Join with the reference status column.
+Build from this table's **own view of the data mart** — the same
+upstream source 0373 reads, queried independently. Figure and table
+agree by **common cause** (shared mart), not by producer-consumer
+chaining: NO side-output consumption, no coupling to 0373's artifacts.
+Derive the per-(run x plant) recognition from the mart/records layer
+and join with the reference status column. If a shared derivation
+helper is warranted, it lives in `src/aedist/` as library code both
+scripts import — never as an intermediate file one script writes for
+the other.
 
 ## Implementation
 
 - `src/aedist/tabulate_status_difficulty.py` — argparse
-  (--matrix-csv, --reference, --output), reference path from config
-  (0419 ratchet applies).
+  (--measurements/--records inputs, --reference, --output), reference
+  path from config (0419 ratchet applies).
 - Wire in render.mk as a committed handoff artifact
   `report/inputs/generated/tab_status_difficulty.tex`; include in the
   report annex right after the matrix figure.
@@ -59,13 +65,13 @@ def test_status_difficulty_rates():
 
 ## Exit criteria
 
-- [ ] Table generated from the 0373 matrix CSV + reference, no
-      hardcoded counts
+- [ ] Table generated from its own mart view + reference, no
+      hardcoded counts, no consumption of 0373 artifacts
 - [ ] Committed handoff artifact + report annex inclusion after the
       matrix figure
 - [ ] Unit test above green; `make check` passes
 
 ## Related
 
-- 0373 (matrix figure — data producer), 0413 (v2 adoption — rebuild
-  refreshes counts), 0403 (FP colour convention).
+- 0373 (matrix figure — annex companion, same mart upstream), 0413
+  (v2 adoption — rebuild refreshes counts), 0403 (FP colour convention).
