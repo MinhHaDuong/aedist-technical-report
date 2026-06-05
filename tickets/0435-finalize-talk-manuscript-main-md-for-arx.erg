@@ -1,0 +1,60 @@
+%erg 0.1
+Title: Finalize talk manuscript (main.md) for arXiv: integrate conference comments
+Created: 2026-06-05
+Author: claude
+Label: needs-human
+
+--- log ---
+2026-06-05T07:33Z claude created
+
+--- body ---
+## Context
+
+Author decision (2026-06-05): the working paper IS the existing talk
+manuscript `slides/manuscript/main.md` ("Beyond RAG: Stateful-Agentic
+Architectures for Reliable Economic Statistics", Econom'IA 2026,
+delivered Thema/Cergy 2026-05-27). **Nothing new, no restructure** —
+finalize the speech notes by integrating the main comments received at
+the conference. Destination: **arXiv** (peer-review submission
+undecided; CIRED WP route deprioritised — in AI/IT, conference papers
+are the prestige venue).
+
+This is the milestone ticket; the supporting perimeter
+(author-ratified):
+
+- Reference v2 pipeline: 0430, 0431, 0416 -> 0413 (adoption; surviving
+  FPs reframed as "unrecognized — possibly real, absent from the list")
+- De-hazard the data flow before numbers are quoted: 0383 -> 0384 ->
+  {0385, 0386} (mart re-baseline + guards)
+- Annex: recognition matrix (0373) + status difficulty table (0434)
+- Exp2 sections: 0253, 0254 (then 0255-0262 as needed by the text)
+- Figure hygiene: 0403
+- OUT (post-preprint): level column (0401, 0402), research track
+  (0396-0400), GEM rework (0429)
+
+## Quoi faire
+
+1. needs-human: the author supplies the main conference comments
+   (notes, questions from the room, panel feedback). Existing inputs:
+   `slides/manuscript/synopsys-experiment-comments-{chatgpt,claude}.md`,
+   `docs/2026-05-26-panel-review-state.md`, tour-2 panel review
+   (PR #683).
+2. Integrate the comments into main.md — speech-notes polish, no
+   restructure.
+3. Refresh quoted numbers AFTER 0413 + 0383 land (the v2 reference and
+   the re-baselined mart change them).
+4. Reference the annex figure + table (0373/0434).
+5. arXiv-ready build (pandoc/tectonic path of slides/Makefile — verify;
+   clean-room rule applies).
+
+## Exit criteria
+
+- [ ] Conference comments integrated (author-validated)
+- [ ] Numbers consistent with post-v2, post-re-baseline artifacts
+- [ ] Annex figure + table referenced
+- [ ] Reproducible arXiv-ready PDF build
+- [ ] Author sign-off for upload
+
+## Related
+
+- All perimeter tickets above; STATE.md milestone.

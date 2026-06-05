@@ -1,0 +1,71 @@
+%erg 0.1
+Title: Annex table: reference status composition vs run recognition rate
+Created: 2026-06-05
+Author: claude
+Blocked-by: 0373
+
+--- log ---
+2026-06-05T07:33Z claude created
+
+--- body ---
+## Context
+
+Author-ratified design (2026-06-05), companion to the recognition matrix
+(0373): an annex table placed AFTER the matrix figure, explaining why
+the recall task is hard. The reference list composition by status
+(vietnam_thermal_v1.csv, n=163): proposed 62, operational 57,
+planned 21, cancelled 11, constructing 10, retired 2. 38% of the list
+is *proposed* plants — exactly what memory-based recall won't know.
+
+## Spec (ratified)
+
+One row per status, columns:
+- status
+- n plants in the reference list (and share of list)
+- mean recognition rate across runs — over all (run x plant) cells
+  where the plant has this status: fraction recognized (TP). Same run
+  set as the matrix: Exp 1 direct/p1-base, all models x all 5 reps.
+
+Counts come from the reference at build time (no hardcoded 163 / 62 —
+the v2 adoption (0413) will change them and the DAG rebuild must pick
+them up).
+
+## Data path
+
+Consume the per-(run x plant) boolean CSV that 0373 emits as a side
+artifact (hence Blocked-by) — guarantees figure and table tell the
+same story from the same matrix. Join with the reference status column.
+
+## Implementation
+
+- `src/aedist/tabulate_status_difficulty.py` — argparse
+  (--matrix-csv, --reference, --output), reference path from config
+  (0419 ratchet applies).
+- Wire in render.mk as a committed handoff artifact
+  `report/inputs/generated/tab_status_difficulty.tex`; include in the
+  report annex right after the matrix figure.
+
+## First test
+
+```python
+def test_status_difficulty_rates():
+    # synthetic: 2 statuses, 2 plants each, 2 runs
+    # plant A (operational) hit in 2/2 runs, B (operational) 1/2,
+    # C, D (proposed) 0/2 -> operational 0.75, proposed 0.0
+    rows = build_status_table(matrix_fixture, reference_fixture)
+    assert rows["operational"] == (2, 0.75)
+    assert rows["proposed"] == (2, 0.0)
+```
+
+## Exit criteria
+
+- [ ] Table generated from the 0373 matrix CSV + reference, no
+      hardcoded counts
+- [ ] Committed handoff artifact + report annex inclusion after the
+      matrix figure
+- [ ] Unit test above green; `make check` passes
+
+## Related
+
+- 0373 (matrix figure — data producer), 0413 (v2 adoption — rebuild
+  refreshes counts), 0403 (FP colour convention).

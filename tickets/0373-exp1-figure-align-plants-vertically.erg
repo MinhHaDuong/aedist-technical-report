@@ -5,6 +5,7 @@ Author: minh
 
 --- log ---
 2026-05-28T19:46Z minh created — current Exp 1 figure left-packs each row's recalled plants, hiding which gold-list plants each model missed
+2026-06-05T07:35Z claude respec — author ratified: all 5 reps (not min/median/max), X-order = status group then capacity desc, NEW 40-most-common-FP left panel, annex placement, per-cell CSV side-output feeds 0434; NOT blocked on 0413 (build on v1, DAG rebuild refreshes)
 
 --- body ---
 ## Context
@@ -27,17 +28,35 @@ A filled cell means "this model recalled this plant"; an empty cell means
 - `experiments/outputs/exp1_batch2/*.record.json` — per-run hits
 - `report/inputs/generated/fig_direct_p1_base.pdf` — committed handoff artifact
 
+## Spec refresh (author-ratified 2026-06-05)
+
+- **Rows (Y): every run** — all models x all 5 reps, NOT the
+  min/median/max trio of `_select_min_median_max`. Row ordering: same as
+  the existing figure (models by effective parameter count; within a
+  model, reps by run number).
+- **Columns (X): the reference plants** ordered by **status group, then
+  capacity descending** — the column bands then line up with the status
+  difficulty table (0434) that follows the figure in the annex.
+- **NEW — FP panel on the left**: the 40 most common false positives
+  across all runs, sorted by occurrence count descending, **ties
+  shuffled with a fixed seed** (rebuild-stable). Shows matcher/list
+  issues and hallucinating runs. Visually separate from the reference
+  columns (gap or rule); FP marks use the red FP convention (0403).
+- **Placement: report annex** (companion — `fig_direct_p1_base.pdf`
+  stays in the main text).
+- **Side artifact**: emit the per-(run x plant) boolean matrix as a CSV
+  (committed, P2) — 0434 consumes it.
+- **No hardcoded plant count**: read the reference at build time
+  (caption count via macro). NOT blocked on 0413; after v2 adoption the
+  DAG rebuild regenerates figure + CSV.
+
 ## Actions
-1. Decide whether to extend `plot_method_convergence.py` with a new mode
-   (`--layout matrix`) or write a sibling script (`plot_exp1_matrix.py`).
-   Sibling is likely cleaner — different visual primitive.
-2. Define column ordering. Options: by status group then by capacity, by
-   famousness proxy (recall frequency across all models), or alphabetical.
-   Order will significantly shape the reader's takeaway — pick deliberately.
-3. Implement and wire as an analysis.mk chart-figures target.
-4. Swap `\includegraphics{fig_direct_p1_base.pdf}` in the report (and slides
-   if applicable) to the new figure, or use as a companion.
-5. Commit the generated PDF as a handoff artifact.
+1. Sibling script `src/aedist/plot_exp1_matrix.py` (different visual
+   primitive than plot_method_convergence; reference path from config,
+   0419 ratchet).
+2. Implement spec above; wire figure + CSV side-output in render.mk.
+3. Include in the report annex; keep `fig_direct_p1_base.pdf` in place.
+4. Commit the generated PDF + CSV as handoff artifacts.
 
 ## Test
 `tests/test_plot_exp1_matrix.py` — golden test on synthetic fixture:
@@ -47,9 +66,13 @@ A filled cell means "this model recalled this plant"; an empty cell means
   matrix matches the input hits
 
 ## Verification
-- [ ] Figure produces a boolean matrix with plants aligned vertically
-- [ ] Column ordering documented in caption and ticket log
-- [ ] Generated PDF committed as handoff artifact
+- [ ] Figure produces a boolean matrix with plants aligned vertically,
+      all 5 reps per model
+- [ ] Columns ordered status group then capacity desc; documented in
+      caption
+- [ ] FP panel: 40 most common FPs, count-sorted, seeded tie-shuffle
+- [ ] Per-(run x plant) CSV side-output committed (feeds 0434)
+- [ ] Generated PDF committed as handoff artifact, included in annex
 - [ ] `make check` passes
 
 ## Invariants
