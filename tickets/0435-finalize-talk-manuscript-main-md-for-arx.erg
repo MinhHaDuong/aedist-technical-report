@@ -9,6 +9,7 @@ Label: needs-human
 2026-06-05T08:10Z claude respec — author: conference comments are already absorbed (they ARE what led to the perimeter tickets); no separate comment dump needed. Integration = short acknowledgements crediting Econom'IA participants with a glose on the additions
 
 2026-06-05T07:53Z claude note acknowledgements wording blessed by author 2026-06-05; Discussion future-work citation of the annex matrix added to scope (mirrors 0373 respec)
+2026-06-05T07:57Z claude note 0436 (render DAG side-output sweep) added to the perimeter per author
 --- body ---
 ## Context
 
@@ -31,6 +32,8 @@ This is the milestone ticket; the supporting perimeter
 - Annex: recognition matrix (0373) + status difficulty table (0434)
 - Exp2 sections: 0253, 0254 (then 0255-0262 as needed by the text)
 - Figure hygiene: 0403
+- Render DAG hygiene: 0436 (no P3-to-P3 side-output edges — figures and
+  tables each read their own mart view; adherence guard)
 - OUT (post-preprint): level column (0401, 0402), research track
   (0396-0400), GEM rework (0429)
 
