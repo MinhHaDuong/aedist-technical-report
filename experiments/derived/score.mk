@@ -13,7 +13,7 @@
 # SOURCES (consumed, never produced here — they appear only as prerequisites,
 # and score.mk carries NO rule able to (re)acquire them):
 #   * experiments/outputs/**           (P1 raw model replies + flat arm dirs)
-#   * data/reference/vietnam_thermal_v1.csv  (expert reference)
+#   * data/reference/vietnam_thermal_plants_v2_classified.csv  (expert reference)
 #
 # OUTCOMES (produced):
 #   * measurements.jsonl               (mart v0 — do NOT move or rename it,
@@ -55,7 +55,7 @@ include $(dir $(lastword $(MAKEFILE_LIST)))../paths.mk
 # the acquire-only ENV policy in experiments/common.mk.
 
 SCORE_EVAL      := uv run python -m aedist.evaluate
-SCORE_REFERENCE := $(ANALYSIS_REPO_ROOT)/data/reference/vietnam_thermal_v1.csv
+SCORE_REFERENCE := $(ANALYSIS_REPO_ROOT)/data/reference/vietnam_thermal_plants_v2_classified.csv
 SCORE_SRC       := $(ANALYSIS_REPO_ROOT)/src/aedist
 SCORE_OUTPUTS   := $(ANALYSIS_OUTPUTS_DIR)
 SCORE_DERIVED   := $(ANALYSIS_DERIVED_DIR)

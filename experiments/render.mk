@@ -79,7 +79,7 @@ ANALYSIS_DECOMP_BEFORE :=
 ANALYSIS_DECOMP_AFTER  :=
 # Raw rag_extract CSVs moved to archive/ by edda724b.
 ANALYSIS_RAG_CSVS      := $(wildcard $(ANALYSIS_EXPERIMENTS_DIR)/archive/outputs/rag_extract/*.csv)
-ANALYSIS_EXPERT_REF    := $(ANALYSIS_REPO_ROOT)/data/reference/vietnam_thermal_v1.csv
+ANALYSIS_EXPERT_REF    := $(ANALYSIS_REPO_ROOT)/data/reference/vietnam_thermal_plants_v2_classified.csv
 ANALYSIS_GEM_REF       := $(ANALYSIS_REPO_ROOT)/data/reference/gem_thermal.csv
 
 ANALYSIS_CONVERTER_TEST := $(ANALYSIS_EXPERIMENTS_DIR)/data/converter_test

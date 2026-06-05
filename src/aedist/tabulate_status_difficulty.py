@@ -24,7 +24,7 @@ matrix's column bands.
 Usage:
     uv run python -m aedist.tabulate_status_difficulty \\
         --records-glob "experiments/outputs/exp1_batch2/*.record.json" \\
-        --reference data/reference/vietnam_thermal_v1.csv \\
+        --reference data/reference/vietnam_thermal_plants_v2_classified.csv \\
         --output report/inputs/generated/tab_status_difficulty.tex
 """
 

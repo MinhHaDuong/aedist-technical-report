@@ -1,8 +1,10 @@
-"""No hardcoded 'vietnam_thermal_v1.csv' outside config.py, docstrings, comments.
+"""No hardcoded default-reference filename outside config.py, docstrings, comments.
 
-Exit criterion 1 of ticket 0419: a single source of truth for the default
-reference path. The literal filename may only live in ``src/aedist/config.py``;
-everywhere else modules import ``config.VN_THERMAL_PLANTS_RELEASE_CSV``.
+Exit criterion 1 of ticket 0419 (extended by 0413's v2 adoption): a single
+source of truth for the default reference path. The literal filename may only
+live in ``src/aedist/config.py``; everywhere else modules import
+``config.VN_THERMAL_PLANTS_RELEASE_CSV``. ``TARGET`` tracks the *current*
+adopted default (v2) so the guard stays live.
 
 The filename can only appear inside a Python string literal, so exempting all
 string literals would make this check vacuous. Instead we exempt only
@@ -21,7 +23,11 @@ pytestmark = pytest.mark.adherence
 REPO_ROOT = Path(__file__).resolve().parent.parent
 SRC_DIR = REPO_ROOT / "src" / "aedist"
 CONFIG_MODULE = SRC_DIR / "config.py"
-TARGET = "vietnam_thermal_v1.csv"
+# The adopted default reference filename (ticket 0413: v2 replaced v1). Tracking
+# the *current* default keeps the guard live — if it lagged on the retired v1
+# name, nothing would reference it and the check would pass while protecting
+# nothing.
+TARGET = "vietnam_thermal_plants_v2_classified.csv"
 
 
 def _docstring_lines(tree: ast.Module) -> set[int]:
