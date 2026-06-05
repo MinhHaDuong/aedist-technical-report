@@ -118,6 +118,8 @@ We also aim to refine the method to ensure the per-cell provenance tracking, not
 
 **External coherence.** The §2 coherence criterion distinguishes internal consistency (within the dataset) from external consistency (against world knowledge). The experiments in this paper measure internal coherence. Measuring external coherence is harder for three compounding reasons. First, the reference knowledge base is undefined: checking whether a stated capacity is plausible requires specifying which knowledge pool to check against — the RAG corpus, the model's parametric memory, official statistics, or physical engineering constraints — and these pools overlap imperfectly and carry different reliability. Second, the checker's capability matters: a small model used as evaluator has poor recall of world knowledge and will miss genuine inconsistencies; a large frontier model has better recall but may introduce its own confabulations as apparent corrections. Third, the depth of reasoning required varies by claim: detecting that a 6000 MW gas plant in a province with no pipeline access is incoherent requires multi-step inference, not lookup. Phase C cross-evaluation (Exp 2) partially engages external coherence — the judging agents bring parametric world knowledge — but does so implicitly and unsystematically. A principled external-coherence metric remains future work.
 
+**From noisy runs to fused estimates.** The per-plant recognition matrix in Annex E prefigures the research programme this benchmark opens: each reference plant becomes a column observed by many noisy runs — precisely the input object of latent-truth discovery and capture–recapture estimation. Within-model and across-model coherence can be read directly from the column densities (famous plants form dense columns, obscure ones sparse), and the operational core separates visibly from the project-dominated tail. Fusing such incomplete, differently-reliable lists into a single estimate — and bounding the residual share of plants that no source mentions by linear programming against a control total, such as the regulator's installed capacity per fuel [@HaDuong2005] — is the axis of research these column densities invite.
+
 ---
 
 ## Annex A — Related-work due diligence: methodology and disclosure
@@ -365,6 +367,30 @@ The present paper scopes to T1. T2 is acknowledged as the stronger requirement f
 The narrative inventory component of §5 handles longitudinal aspects pragmatically: plant histories, PDP-cycle reclassifications, and developer-name changes appear as free-text annotations rather than as structured event records. This is a deliberate scoping decision, not an architectural commitment.
 
 *See ticket 0245 for extension of this note to international energy statistics methodology guidebooks (IEA, UNSD, Eurostat, IRENA).*
+
+---
+
+## Annex E — Experiment 1: per-plant recognition matrix and the status composition of task difficulty
+
+Figure 7 aligns each of the 170 reference plants on a fixed column, for the 70 Experiment 1 runs (14 models × 5 repetitions, ordered as in Figure 1: by architectural family, then by decreasing effective parameter count). A blue cell marks a recognized plant (true positive); an empty cell, a miss. Reference columns are ordered by status group, then by decreasing capacity, so the status bands align with the difficulty table below. The left panel shows the 40 most frequent false positives across all runs, sorted by decreasing occurrence; red follows the paper's false-positive convention (unrecognized — possibly real, not necessarily fabricated). Unlike Figure 1, which packs recognized plants leftward, the fixed-column alignment reveals *which* plants each model misses: famous plants form dense columns, obscure ones sparse columns.
+
+![Figure 7](../report/inputs/generated/fig_exp1_recognition_matrix.pdf)
+
+*Figure 7. Experiment 1 recognition matrix: 170 reference plants (columns, ordered by status then decreasing capacity) against 70 runs (rows, 14 models × 5 repetitions). Blue = plant recognized; left panel: the 40 most frequent false positives (red).*
+
+The table below shares the same data derivation as the figure (library `aedist.exp1_recognition` — common cause, no producer–consumer chaining) and decomposes the difficulty by status. The reference list is dominated by proposed plants — the largest share — which parametric memory cannot know; their mean recognition rate is far below that of operational plants. The low overall recognition is therefore structural, a property of the list's composition, not merely a model failure.
+
+| Status | n | Share of list | Recognition rate |
+|---|---:|---:|---:|
+| Operational | 54 | 31.8% | 46.9% |
+| Proposed | 67 | 39.4% | 7.8% |
+| Planned | 21 | 12.4% | 29.7% |
+| Under construction | 10 | 5.9% | 40.7% |
+| Cancelled | 17 | 10.0% | 16.9% |
+| Retired | 1 | 0.6% | 62.9% |
+| **All** | **170** | **100.0%** | **26.1%** |
+
+*Table: composition of the reference list by status, and mean recognition rate (Experiment 1, direct method: 14 models × 5 repetitions). The rate is the share of run × plant cells recognized among plants of that status.*
 
 ---
 
