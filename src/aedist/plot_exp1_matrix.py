@@ -120,9 +120,12 @@ def write_pdf(
     """
     data = load_exp1_recognition(records_glob, reference_path)
     if models is not None or exclude_models is not None:
-        keep = lambda m: (models is None or m in models) and (  # noqa: E731
-            exclude_models is None or m not in exclude_models
-        )
+
+        def keep(m: str) -> bool:
+            return (models is None or m in models) and (
+                exclude_models is None or m not in exclude_models
+            )
+
         data.cells = [c for c in data.cells if keep(c.model)]
         data.fp_presence = {k: v for k, v in data.fp_presence.items() if keep(k[0])}
     if not data.cells:
