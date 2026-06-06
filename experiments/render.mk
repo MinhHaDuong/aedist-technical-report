@@ -46,6 +46,9 @@ ANALYSIS_EXP2_COVERAGE_SPLIT := $(ANALYSIS_GEN)/fig_exp2_coverage.pdf
 ANALYSIS_EXP2_COST_SPLIT := $(ANALYSIS_GEN)/fig_exp2_cost.pdf
 ANALYSIS_SLIDE_MACROS := $(ANALYSIS_GEN)/macros_slides.tex
 
+ANALYSIS_EXP2_WIKI_CSV := $(ANALYSIS_GEN)/tab_exp2_wiki_compliance.csv
+ANALYSIS_EXP2_WIKI_MACROS := $(ANALYSIS_GEN)/macros_wiki_compliance.tex
+
 ANALYSIS_EXP1_SPIDER_FAMILIES := $(ANALYSIS_GEN)/fig_spider_exp1_families.pdf
 ANALYSIS_EXP1_SPIDER_CLAUDE := $(ANALYSIS_GEN)/fig_spider_exp1_claude.pdf
 
@@ -249,6 +252,22 @@ $(ANALYSIS_SLIDE_MACROS): $(ANALYSIS_MEASUREMENTS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.tabulate_macros --census --output $@
 
+# --- Exp2 Wikipedia/Wikidata compliance audit (protocol §3.4 H5 count) ------
+# Scans Source 1/Source 2 cells and bibliography sections of all 40 registered
+# runs for banned-domain citations. Co-produces CSV + macros (grouped &: rule).
+# Prerequisites: two separate wildcard calls (Make wildcard has no brace
+# expansion) over the flattened arm dirs (P1 sources via flatten, P3 audit).
+$(ANALYSIS_EXP2_WIKI_CSV) $(ANALYSIS_EXP2_WIKI_MACROS) &: \
+		$(wildcard $(ANALYSIS_DERIVED_DIR)/arm1_flat/*.md) \
+		$(wildcard $(ANALYSIS_DERIVED_DIR)/arm2_flat/*.md) \
+		$(ANALYSIS_REPO_ROOT)/src/aedist/audit_exp2_wiki_citations.py
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.audit_exp2_wiki_citations \
+	    --naive-dir $(ANALYSIS_DERIVED_DIR)/arm1_flat \
+	    --optimised-dir $(ANALYSIS_DERIVED_DIR)/arm2_flat \
+	    --output $(ANALYSIS_EXP2_WIKI_CSV) \
+	    --output-macros $(ANALYSIS_EXP2_WIKI_MACROS)
+
 .PHONY: exp2-analysis-report exp1-analysis-figures report-tables report-figures chart-figures
 
 exp2-analysis-report: $(ANALYSIS_EXP2_REPORT_TARGETS) \
@@ -400,7 +419,8 @@ report-tables: \
 	$(ANALYSIS_GEN)/tab_reconciliation.tex \
 	$(ANALYSIS_GEN)/tab_converter_benchmark.tex \
 	$(ANALYSIS_GEN)/tab_source_grounding.tex \
-	$(ANALYSIS_GEN)/tab_status_difficulty.tex
+	$(ANALYSIS_GEN)/tab_status_difficulty.tex \
+	$(ANALYSIS_EXP2_WIKI_CSV)
 
 report-figures: $(ANALYSIS_EXP1_SPIDER_FAMILIES)
 

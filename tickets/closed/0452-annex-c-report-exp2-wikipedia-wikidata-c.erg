@@ -1,0 +1,217 @@
+%erg 0.1
+Title: Annex C: report Exp2 Wikipedia/Wikidata citation compliance count (H5 audit)
+Created: 2026-06-06
+Author: claude
+Closed: autoclosed — PR #773
+
+--- log ---
+2026-06-06T08:54Z claude created
+
+2026-06-06T09:09Z claude imagine raid reimagine PASS — approach: standalone P3 script importing extract_exp2_bib helpers; macro = grouped co-output (0436 rule); DATA FINDING: ban violated in optimised arm (Mistral cites en.wikipedia.org in S1+bib) — per-agent zero phrasing only
+2026-06-06T09:22Z claude plan raid plan committed — script/CSV/macros/render-rule/tests specified against source; execution order test-one-before-blasting
+2026-06-06T09:31Z claude verify feasibility PASS after corrections — OpenAI arm2 run01 also violates (prose names both agents); make-wildcard no-brace fix; skip notes key; anchor = 2nd heading occurrence l.337
+2026-06-06T11:30Z claude execute delivered — 5/20 optimised runs banned (Mistral 4, OpenAI 1); 1/20 naive; 30 total instances; 1999 tests passed
+2026-06-06T10:13Z HDMX-coding-agent closed — autoclosed — PR #773
+--- body ---
+## Context
+
+Protocol_05 §3.4 (pre-registered revision (d)) bans Wikipedia / Wikidata /
+DBpedia / mirrors / aggregator re-syndication as Source 1 or Source 2,
+because a derivative of the reference dataset was published on Wikipedia
+before the experiment. The protocol states: "Compliance is auditable:
+Phase D synthesis counts Wikipedia/Wikidata citations in each output's
+bibliography. Zero is compliant."
+
+`slides/manuscript/main.md` (the arXiv preprint) discloses the
+contamination risk but never answers the reader's next question: *did the
+ban hold?* Author decision 2026-06-06: the compliance COUNT goes into
+Annex C. It is a descriptive disclosure (a count, not an inferential
+test), so it amends — not violates — ticket 0433's "no statistics in
+Annex C" invariant. The full pre-registered H5 treatment (Wilson upper
+bounds per agent) stays deferred to the report.tex chapter (ticket 0259).
+
+## Scope
+
+Three deliverables: script, macro, prose.
+
+1. **Script** `src/aedist/audit_exp2_wiki_citations.py` (argparse,
+   logging, no hardcoded paths — defaults from the same conventions as
+   `src/aedist/extract_exp2_bib.py`, which already parses these files and
+   whose helpers should be reused). Scan the 40 registered runs in
+   `experiments/derived/arm1_flat/` (naive) and `arm2_flat/` (optimised):
+   inventory Source 1 / Source 2 cells AND bibliography entries. Count
+   citations whose URL/domain matches the banned set from protocol_05
+   §3.4: `*.wikipedia.org` (any language subdomain, incl. `*.m.*`
+   mirrors), `wikidata.org`, `dbpedia.org`, plus an explicit short list of
+   known Wikipedia mirrors. Mechanical domain matching only; do NOT
+   attempt LLM judgement of "aggregator re-syndication" — out of scope,
+   note it as a limitation. Output: per-run CSV
+   `report/inputs/generated/tab_exp2_wiki_compliance.csv`
+   (agent, arm, run, n_cells_s1s2, n_banned_s1s2, n_bib_entries,
+   n_banned_bib).
+
+2. **Macro**: emit the aggregate values (total banned-citation count per
+   arm, n runs scanned) as `\newcommand` macros for report/slides reuse.
+   Per `.claude/rules/writing.md`: ≤3 new values → append to the existing
+   generated macros file (e.g. `macros_slides.tex` generator), do NOT
+   create a new `\InputIfFileExists` include (tectonic bundle trap).
+   NOTE: `main.md` builds via pandoc and inputs no macro file — the prose
+   quotes the literal number; guard it with an adherence/consistency test
+   asserting the literal in main.md matches the generated CSV (pattern of
+   ratchet ticket 0447).
+
+3. **Prose**: one or two sentences in Annex C of
+   `slides/manuscript/main.md` (l.256–339), adjacent to the existing
+   leakage/contamination discussion. Report the count per arm. Phrasing
+   discipline: if zero in the optimised arm, write "we did not detect any
+   banned-domain citation across the N parsable optimised-arm outputs" —
+   never "there are none" (protocol_05 reporting rule + writing.md
+   epistemic humility). Naive-arm counts are NOT violations — the naive
+   prompt (Doc-07) carries no source taxonomy; report them as unaided
+   baseline behaviour, the contrast being itself informative.
+
+## Makefile DAG
+
+Wire the script into `experiments/render.mk` (P3 render workpackage) as
+its own one-output-per-rule target; prerequisites must match the script's
+actual reads (`arm1_flat`, `arm2_flat`) and writes. No P3-to-P3
+side-output edges (ticket 0436 rule). Commit the generated CSV/macros
+(handoff artifacts — never gitignored).
+
+## First test
+
+`tests/test_audit_exp2_wiki_citations.py`: feed a synthetic run markdown
+containing (a) an inventory row citing `https://en.wikipedia.org/wiki/X`
+in Source 1, (b) a bibliography entry citing
+`https://vi.m.wikipedia.org/...`, (c) a clean row citing `moit.gov.vn`.
+Assert counts: n_banned_s1s2 == 1, n_banned_bib == 1, clean row not
+counted. Plus the main.md literal-consistency adherence test.
+
+## Exit criteria
+
+- [x] Script counts banned-domain citations per run across the 40
+      registered runs; CSV + macro artifacts generated and committed
+- [x] `experiments/render.mk` target added; DAG prerequisites match the
+      script's actual reads/writes
+- [x] Annex C sentence(s) report the per-arm count with "we did not
+      detect" phrasing for any zero; consistency test guards the quoted
+      literal against the CSV
+- [x] Unit tests for the domain matcher; `make check` passes
+
+## Imagine verdict (raid 2026-06-06) — binding refinements
+
+- **Approach**: standalone P3 script importing parsing helpers from
+  `extract_exp2_bib` (`_parse_table_rows`, `_find_source_columns`,
+  `_find_bib_section`, `_RUN_RE`). Do NOT extend the P2 script (CSV
+  schema blast radius: `_FIELDS`, tabulator `_load_rows`, mart views).
+- **Inputs**: `experiments/derived/arm1_flat/` + `arm2_flat/` (canonical
+  P3 inputs; precedent `tabulate_exp2_2x2.py`, render.mk ~l.216).
+  Bibliography source of truth = the main `<agent>_runNN.md` via
+  `_find_bib_section`; some `_bib.md` sidecars are 1 byte.
+- **Macro mechanism**: emit `macros_wiki_compliance.tex` as a grouped
+  `&:` co-output of the audit rule (precedent render.mk l.236/431/455).
+  Do NOT append to `macros_slides.tex` (different input tree —
+  forbidden P3-to-P3 coupling, ticket 0436). No document \inputs it yet;
+  consumer is deferred 0259.
+- **Banned set** (suffix match `host == d or host.endswith("." + d)`):
+  frozenset {wikipedia.org, wikidata.org, dbpedia.org, wikiwand.com}.
+  Covers language + m-dot subdomains. NEAR-MISS: `gem.wiki` (Global
+  Energy Monitor) is an ALLOWED secondary source — suffix rule excludes
+  it; add an explicit regression test.
+- **Scan only** Source 1 / Source 2 cells and bibliography entries.
+  NEVER Notes/prose — Notes contain compliance signals like
+  "Lead: Wikipedia (inadmissible)" that are the OPPOSITE of violations.
+- **DATA FINDING (changes the prose; CORRECTED by feasibility pass)**:
+  the ban did NOT fully hold, in TWO agents. Mistral optimised arm:
+  runs 01-04 cite `en.wikipedia.org` (S1/S2 and/or bibliography),
+  run05 clean. OpenAI optimised arm: run01 cites `en.wikipedia.org` in
+  a Source 2 cell (`arm2_flat/openai_run01.md` l.30). Anthropic and
+  Qwen arm2 are clean. Naive arm baseline: OpenAI run05 cites Wikipedia
+  in Source 2. Per protocol §3.4 non-zero is reported as a
+  protocol-compliance violation alongside F1. "We did not detect"
+  phrasing applies ONLY per agent×arm cells that are genuinely zero.
+  No blanket compliance claim. PROSE MUST BE DERIVED FROM THE GENERATED
+  CSV, not from this enumeration.
+
+## Plan (raid 2026-06-06) — verified against source
+
+1. `src/aedist/audit_exp2_wiki_citations.py`: import `_parse_table_rows`
+   (l.171), `_find_source_columns` (l.157), `_find_bib_section` (l.219),
+   `_RUN_RE` (l.27) from `extract_exp2_bib` (module-level; ruff has no
+   PLC2701; precedent: tests import `_FIELDS`). `BANNED_DOMAINS`
+   frozenset {wikipedia.org, wikidata.org, dbpedia.org, wikiwand.com};
+   `is_banned_domain(url)` = urlparse + suffix match; `audit_run(path)`
+   counts banned URLs in Source 1/2 cells (NOT Notes) + bibliography
+   section; `audit_all(naive_dir, optimised_dir)` → 40 rows. CLI:
+   `--naive-dir` (default arm1_flat), `--optimised-dir` (arm2_flat),
+   `--output` CSV, `--output-macros` .tex. Logging, not print.
+2. CSV `report/inputs/generated/tab_exp2_wiki_compliance.csv`
+   (agent,arm,run,n_cells_s1s2,n_banned_s1s2,n_bib_entries,n_banned_bib);
+   macros `macros_wiki_compliance.tex`: \ExpTwoWikiRunsScanned,
+   \ExpTwoWikiBannedOptimised, \ExpTwoWikiBannedNaive,
+   \ExpTwoWikiBannedTotal (CamelCase no-digit convention, cf.
+   macros_exp1_matrix.tex). Banned{Arm} = runs with any banned cite.
+3. render.mk: grouped `&:` rule (precedent l.236/358/431/455), prereqs =
+   `$(wildcard $(ANALYSIS_DERIVED_DIR)/arm{1,2}_flat/*.md)` + script;
+   no .done stamps (score.mk artifacts). Add CSV to report-tables list.
+4. Tests `tests/test_audit_exp2_wiki_citations.py` (imitate
+   test_extract_exp2_bib.py): unit is_banned_domain (en/vi.m wikipedia
+   TRUE, wikidata TRUE, wikiwand TRUE, dbpedia TRUE, gem.wiki FALSE,
+   moit.gov.vn FALSE, bare word FALSE); synthetic 3-row fixture →
+   n_banned_s1s2 == 2 exactly (Notes with "Wikipedia" text must NOT
+   inflate — catches column-index bugs), n_banned_bib == 1; integration
+   (marked): mistral arm2 run02 n_banned_s1s2 > 0 (pins finding),
+   anthropic optimised total == 0 (pins Notes exclusion), 40 rows;
+   adherence: independent regex over main.md literal vs CSV aggregate
+   (no import of script formatting — anti-tautology).
+5. ORDER (test-one-before-blasting): script+unit tests → run on real
+   data → INSPECT CSV → prose with actual numbers → consistency test →
+   make check. Expected from grep: Mistral arm2 runs 01-04 banned >0,
+   run05 = 0; OpenAI arm1 run05 S2 wikipedia; others zero in S1/S2.
+6. Prose: insert after "What this experiment does and does not test"
+   paragraph (main.md ~l.339, before ---): ban rationale (1 sentence,
+   reference-derivative-on-Wikipedia disclosure), audit method
+   (mechanical URL-domain match, 40 runs), optimised-arm finding
+   ("we detected ... in N of the 20 optimised-arm runs, concentrated in
+   Mistral; the remaining three agents' optimised runs contained no
+   banned-domain citation"), naive-arm count as unaided baseline (no ban
+   applied there), mechanical-matching limitation sentence.
+
+## Feasibility (raid 2026-06-06) — verdict PASS after corrections
+
+Verified: paths.mk vars `ANALYSIS_GEN` (l.27) / `ANALYSIS_DERIVED_DIR`
+(l.29) / `ANALYSIS_REPO_ROOT` (l.23); invocation `uv run python -m
+aedist.X` + `@mkdir -p $(dir $@)` (exemplar render.mk l.216-222);
+`&:` precedents l.236/358/431/455; 20+20 run files; pyproject
+`packages = ["src/aedist"]`; markers integration/adherence defined;
+no conflicting commits or claims (0433 open, unclaimed).
+
+Binding corrections for the executor:
+1. **OpenAI arm2 run01 violates too** (S2 cell, l.30) — integration
+   tests must pin `mistral arm2 > 0`, `openai arm2 run01 > 0`,
+   `anthropic arm2 == 0`, `qwen arm2 == 0`. Prose names BOTH agents.
+2. **Make wildcard has no brace expansion**: two separate
+   `$(wildcard .../arm1_flat/*.md)` `$(wildcard .../arm2_flat/*.md)`
+   prerequisites.
+3. `_find_source_columns` returns dict with `src1`, `src2`, AND
+   `notes` keys — iterate ONLY src1/src2.
+4. main.md anchor: the heading "What this experiment does and does not
+   test" occurs TWICE (l.252 §4 body, l.337 Annex C) — insert after the
+   SECOND, before the `---` at l.341.
+5. Consistency-test regex must not collide with the existing l.133
+   "CACM Wikidata-overview DOI" mention — anchor the regex on the
+   compliance sentence's own wording (e.g. "of the 20 optimised-arm
+   runs"), and keep that wording in the prose.
+6. `_RUN_RE` is at l.26 (not 27). Wire the macros .tex co-output (or
+   the CSV var) into `report-tables` (l.390) or `exp2-analysis-report`
+   (l.254) — follow how `$(ANALYSIS_EXP2_2X2_TEX)` is listed (l.395).
+
+## Related
+
+- 0259 (H5 report.tex section, deferred) — will reuse this script's
+  artifacts; do not write the Wilson-bound analysis here
+- 0433 (Annex C as-run rewrite, open) — whichever lands second preserves
+  the other's content; this count is disclosure, exempted from 0433's
+  "no statistics" invariant by author decision 2026-06-06
+- 0435 (arXiv finalization umbrella)
+- protocol_05_experiment.md §3.4 and §3.5.1 H5 (source of truth)

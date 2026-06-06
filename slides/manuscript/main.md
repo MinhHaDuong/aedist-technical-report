@@ -338,6 +338,8 @@ Phase B outputs are evaluated against the 170-plant reference using the same `sr
 
 This experiment tests whether removing the §1 handicaps (no web, no tools, no documents) — by handing the task to a commercially available deep-research surface — clears the §2 quality bar. It does not test custom workflows or local models; that is §5. It does not test how the four dimensions trade off under a fixed budget; that is §5 + ticket 0201 once the composite-quality scorers exist. It does not test browser-automated surfaces (ChatGPT.com, Claude.ai chat UI) — only direct vendor APIs.
 
+**Wikipedia/Wikidata compliance.** Because a derivative of the reference dataset was published on Wikipedia before the experiment, Protocol §3.4 bans Wikipedia, Wikidata, DBpedia, and mirrors as admissible sources — the risk is both training-data and web-search contamination. We audited compliance mechanically: URL-domain matching over every Source 1 and Source 2 cell and every bibliography entry of all 40 registered runs. We detected banned-domain citations in 5 of the 20 optimised-arm runs, concentrated in Mistral (runs 1–4) and OpenAI (run 1); we did not detect banned-domain citations in the Anthropic or Qwen optimised runs. In the naive arm, where the prompt carries no source ban, 1 of the 20 runs (OpenAI run 5) cited a banned domain. This audit is mechanical only: paraphrased Wikipedia content without a URL is not detected.
+
 ---
 
 ## Annex D — Temporality: state representations vs. event representations
