@@ -2,10 +2,12 @@
 Title: Test plot_exp1_matrix cohort/lang/page-aspect flags (ratchet from PR #771)
 Created: 2026-06-06
 Author: HDMX-coding-agent
+Closed: Superseded by PR #771: test added directly in test(0446) commit 9127fc3d (test_cohort_filter_selects_models + test_plot_cohort_and_lang_render). Ratchet no longer needed.
 
 --- log ---
 2026-06-06T00:00Z claude created — /gaze ratchet on PR #771: adherence + review-pr both flagged that the new write_pdf parameters have no committed test; non-blocking only because the build that produces the _fr/_strong/_top PDFs exercises them and they render clean. File the test to close the coding-python.md#testing gap.
 
+2026-06-06T11:54Z HDMX-coding-agent closed — Superseded by PR #771: test added directly in test(0446) commit 9127fc3d (test_cohort_filter_selects_models + test_plot_cohort_and_lang_render). Ratchet no longer needed.
 --- body ---
 ## Context
 
