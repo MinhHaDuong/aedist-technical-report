@@ -7,6 +7,7 @@ Author: HDMX-coding-agent
 2026-06-05T14:30Z claude created — author flagged extension-as-unit as an uninformed master choice during 0413 adoption; measure-then-decide upstream rather than revert mid-adoption
 
 2026-06-06T08:38Z author re-raised during 0446 FP review (2026-06-06): mo-rong/extension suffix FPs visible in the matrix; investigate FPs via this ticket's net measurement
+2026-06-06T13:24Z claude note net measurement done: 70 exp1_batch2 runs rescored under both variants; raw FP+FN absorbed wins +78 (denominator-driven), F1 favors standalone 0.3703 vs 0.3673; count is 173 not 174 (Uong Bi II was extension-only); see data/reference/extensions_standalone_vs_absorbed.md
 --- body ---
 ## Context
 
