@@ -32,9 +32,11 @@ from .util import normalize_model
 # order) so both consumers order statuses identically from one source —
 # common cause, no producer-consumer chaining.
 STATUS_ORDER = ["proposed", "planned", "constructing", "operational", "retired", "cancelled"]
-# French display labels — shared by the recognition matrix figure (0373, column
+# Display labels — shared by the recognition matrix figure (0373, column
 # band annotations) and the status difficulty table (0434, row labels) so both
-# consumers render the same language in the French-language report annex.
+# consumers render the same language per document. FR serves the report annex;
+# EN serves the preprint (author 2026-06-06: all preprint figures in English)
+# and matches the EN difficulty table in slides/manuscript/main.md.
 STATUS_LABELS = {
     "operational": "Opérationnelle",
     "proposed": "En projet",
@@ -42,6 +44,14 @@ STATUS_LABELS = {
     "constructing": "En construction",
     "cancelled": "Annulée",
     "retired": "Retirée",
+}
+STATUS_LABELS_EN = {
+    "operational": "Operational",
+    "proposed": "Proposed",
+    "planned": "Planned",
+    "constructing": "Under construction",
+    "cancelled": "Cancelled",
+    "retired": "Retired",
 }
 
 

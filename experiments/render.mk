@@ -480,6 +480,16 @@ $(ANALYSIS_GEN)/fig_exp1_recognition_matrix.pdf $(ANALYSIS_GEN)/macros_exp1_matr
 	    --output $(ANALYSIS_GEN)/fig_exp1_recognition_matrix.pdf \
 	    --output-macros $(ANALYSIS_GEN)/macros_exp1_matrix.tex
 
+# French-label version for the report annex (the unsuffixed PDF is English,
+# preprint-first — author 2026-06-06: all preprint figures in English).
+$(ANALYSIS_GEN)/fig_exp1_recognition_matrix_fr.pdf: $(ANALYSIS_EXP1_BATCH2_RECORDS) $(ANALYSIS_EXPERT_REF) $(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp1_matrix.py $(ANALYSIS_REPO_ROOT)/src/aedist/exp1_recognition.py
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.plot_exp1_matrix \
+	    --records-glob "$(ANALYSIS_EXPERIMENTS_DIR)/outputs/exp1_batch2/*.record.json" \
+	    --reference $(ANALYSIS_EXPERT_REF) \
+	    --output $@ \
+	    --lang fr
+
 # Model-subset versions of the recognition matrix (0446, author observation 2):
 # the FP top-40 and macros are recomputed for each cohort. `strong` drops the
 # weakest models (haiku, both gpt-oss, the two small qwen3.6); `top` keeps only
@@ -545,6 +555,7 @@ chart-figures: \
 	$(ANALYSIS_GEN)/cost_quality.csv \
 	$(ANALYSIS_GEN)/fig_direct_p1_base.pdf \
 	$(ANALYSIS_GEN)/fig_exp1_recognition_matrix.pdf \
+	$(ANALYSIS_GEN)/fig_exp1_recognition_matrix_fr.pdf \
 	$(ANALYSIS_GEN)/fig_exp1_recognition_matrix_strong.pdf \
 	$(ANALYSIS_GEN)/fig_exp1_recognition_matrix_top.pdf \
 	$(ANALYSIS_GEN)/fig_capability_timeline.pdf \

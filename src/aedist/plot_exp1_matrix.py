@@ -46,6 +46,7 @@ from matplotlib.colors import ListedColormap
 from .config import VN_THERMAL_PLANTS_RELEASE_CSV
 from .exp1_recognition import (
     STATUS_LABELS,
+    STATUS_LABELS_EN,
     STATUS_ORDER,
     load_exp1_recognition,
     top_false_positives,
@@ -57,9 +58,11 @@ log = logging.getLogger(__name__)
 
 # Status column ordering and labels come from the shared exp1_recognition
 # library (author-ratified 2026-06-05) so the matrix's column bands and the
-# status difficulty table (0434) order statuses identically.
+# status difficulty table (0434) order statuses identically. Band labels are
+# language-parametric: EN for the preprint (author 2026-06-06: all preprint
+# figures in English), FR for the report annex.
 _STATUS_ORDER = STATUS_ORDER
-_STATUS_LABELS = STATUS_LABELS
+_STATUS_LABELS_BY_LANG = {"en": STATUS_LABELS_EN, "fr": STATUS_LABELS}
 
 
 def _order_runs(model_runs: list[tuple[str, int]], size_by_model: dict[str, float]) -> list:
@@ -107,6 +110,7 @@ def write_pdf(
     page_aspect: float = 1.7,
     models: list[str] | None = None,
     exclude_models: list[str] | None = None,
+    lang: str = "en",
 ) -> None:
     """Render the Exp1 recognition matrix as a PDF (and optional macros).
 
@@ -249,8 +253,9 @@ def write_pdf(
     levels_y = [-0.8, -2.9, -5.0]
     pad_cols = 3  # minimum clearance between same-level labels
     level_end = [float("-inf")] * len(levels_y)
+    status_labels = _STATUS_LABELS_BY_LANG[lang]
     for first, last, status in bands:
-        label = _STATUS_LABELS.get(status, status)
+        label = status_labels.get(status, status)
         cx = (first + last) / 2
         # Approximate label width in column units (0.6 em per char).
         half_w = len(label) * band_fontsize * 0.6 / 72.0 / cell_size / 2
@@ -270,6 +275,12 @@ def write_pdf(
                 break
         else:
             log.warning("Band label %r dropped: no free level", label)
+    # The leader lines above autoscale the y-limits to the annotation zone,
+    # silently compressing this panel's rows relative to the FP panel
+    # (author-spotted misalignment, 0446). Pin both panels to the matrix
+    # rows; annotations live outside thanks to clip_on=False.
+    for a in (ax_fp, ax):
+        a.set_ylim(n_runs - 0.5, -0.5)
 
     # Row separators: light between models, stronger between architectural
     # families (horizontal rules across both panels).
@@ -360,6 +371,12 @@ def main(argv: list[str] | None = None) -> None:
         default=None,
         help="Exclude these models (FP list and macros recomputed for the subset)",
     )
+    parser.add_argument(
+        "--lang",
+        choices=["en", "fr"],
+        default="en",
+        help="Band label language: en for the preprint (default), fr for the report annex",
+    )
     args = parser.parse_args(argv)
 
     write_pdf(
@@ -373,6 +390,7 @@ def main(argv: list[str] | None = None) -> None:
         page_aspect=args.page_aspect,
         models=args.models,
         exclude_models=args.exclude_models,
+        lang=args.lang,
     )
 
 
