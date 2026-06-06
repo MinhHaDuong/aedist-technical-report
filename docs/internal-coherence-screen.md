@@ -38,10 +38,20 @@ of the raw result table:
 
 - **Spearman(cap_distinct, accuracy_f1) = 0.904** across the 70 runs
   (status_distinct: 0.677).
-- Rule `cap_distinct ≤ 4 OR status_distinct ≤ 1`: rejects **23 runs, zero
-  false rejections** (no run with F1 ≥ 0.25 is rejected). 3 weak escapes sit
-  just above threshold (cap_distinct 5–6, F1 0.10–0.20): qwen3.6-flash r2 r3,
-  gpt-oss-120b r2.
+- **Not an output-length artifact.** cap_distinct is bounded by the row
+  count n, and n itself tracks F1 (Spearman 0.47), so the pooled correlation
+  could mix "many rows" with "varied rows". It does not: the partial Spearman
+  of cap_distinct vs F1 controlling for n is **0.887**, and the fixed-n
+  contrast is decisive — gpt-oss-20b and gpt-5.5 both emit ~84 rows (medians
+  83 vs 85) with cap_distinct 1 vs 37 and F1 0.000 vs 0.611. The normalized
+  ratio cap_distinct/n alone scores 0.643.
+- Rule `cap_distinct ≤ 4 OR status_distinct ≤ 1`: rejects **23 runs with no
+  false rejection in-sample** (no run with F1 ≥ 0.25 is rejected). Caveat:
+  the cutoffs were tuned on the same 70 runs they are scored against — this
+  is an existence proof, not a validated detector; 0453 should hold out data
+  (e.g. fit on 3 reps, test on 2, or validate on Exp2/Exp3 outputs). 3 weak
+  escapes sit just above threshold (cap_distinct 5–6, F1 0.10–0.20):
+  qwen3.6-flash r2 r3, gpt-oss-120b r2.
 - Model-level medians separate the weak five **exactly** and with a wide
   margin: claude-haiku-4.5, gpt-oss-120b, gpt-oss-20b, qwen3.6-flash,
   qwen3.6-35b-a3b have median cap_distinct **1–4**; the strong nine have
@@ -53,7 +63,8 @@ of the raw result table:
 Illustration — `gpt-oss-20b-run4.csv` is 100 rows of pure template
 fabrication: invented sequential names (Trung Nam 1/2/3, …), every row
 600.0 MW / "Operating" / sequential CODs / dual fake sources / confidence
-HIGH. `qwen3.6-flash-run5.csv`: 496 rows, every one 1200.0 MW.
+HIGH. `qwen3.6-flash-run5.csv`: 496 rows, every one 1200.0 MW and
+"Operating" (verified).
 
 ### 2. The currently computed indicators do NOT suffice
 
