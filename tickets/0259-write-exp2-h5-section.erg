@@ -10,6 +10,7 @@ Blocked-by: 0435
 
 2026-06-06T08:56Z HDMX-coding-agent label deferred
 2026-06-06T08:56Z claude defer pre-registered Exp2 report.tex work, post-arXiv (author 2026-06-06); kept open: H1-H6 are pre-registered commitments owed to the report chapter / journal
+2026-06-06T11:30Z claude note 0452 (PR #773) built the citation-counting evidence path: src/aedist/audit_exp2_wiki_citations.py -> report/inputs/generated/tab_exp2_wiki_compliance.csv + macros_wiki_compliance.tex (render.mk). Consume that artifact; do not re-enumerate runs by hand (rules/workflow.md, PR #774)
 --- body ---
 ## Context
 Write the H5 section from `docs/exp2-analysis-v0.md`.
