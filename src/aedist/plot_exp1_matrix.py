@@ -18,7 +18,7 @@ Layout:
       columns by a gap and a rule. Red follows the FP convention (ticket 0403).
 
 Readability (ticket 0446, author-arbitrated 2026-06-06): the figure targets a
-full landscape page (aspect ``page_aspect``). All 170 plant-name labels and all
+full landscape page (aspect ``page_aspect``). All reference plant-name labels and all
 70 rep rows are kept — at print scale the names are texture, not text. The
 y axis carries one label per model (centred on its 5-rep block); status-band
 labels sit above the matrix on collision-avoiding levels and replace the old

@@ -1,0 +1,54 @@
+%erg 0.1
+Title: Replay the 8-cell standalone-extensions edit on the master pipeline.ods
+Created: 2026-06-06
+Author: HDMX-coding-agent
+Label: needs-human
+Label: deferred
+
+--- log ---
+2026-06-06T13:56Z HDMX-coding-agent created
+2026-06-06T13:57Z claude note protect the 0445 standalone adoption: the pinned snapshot carries an edit the master does not
+
+--- body ---
+## Context
+
+Ticket 0445 adopted the standalone-extensions reference (v2.1, 173 plants).
+The pinned snapshot `data/reference/raw/pipeline+extensions-as-plants-2026-06-05.ods`
+is the 2026-06-05 capture **plus an 8-cell edit applied on the analysis
+machine**, because the master lives on the author's other machine and firing
+it up for every master edit is impractical.
+
+Until the edit is replayed on the master, any fresh `import.sh` snapshot will
+NOT carry it — re-pinning `config.VN_THERMAL_MASTER_SNAPSHOT_ODS` to such an
+import silently reverts the v2.1 adoption (count 173 → 170, extensions
+re-absorbed). A guard comment sits at the config pin; this ticket is the
+durable reminder. No urgency while the pin stays put.
+
+## The edit to replay (master `Power plants` sheet)
+
+For each of the four extension rows: set `Plant` to the full extension name,
+clear `Unit` (row-is-the-plant semantics):
+
+| Row (2026-06-05 layout) | Plant | Unit |
+|---|---|---|
+| 34  | `Duyen Hai 3` → `Duyen Hai 3 extension` | `Extension` → empty |
+| 235 | `Uong Bi I` → `Uong Bi I extension` | `extension` → empty |
+| 238 | `Uong Bi II` → `Uong Bi II extension` | `extension` → empty |
+| 249 | `Vinh Tan 4` → `Vinh Tan 4 extension` | `extension` → empty |
+
+Also log the change in the master's own `Change log` sheet (master
+discipline; the analysis-side edit could not touch it meaningfully).
+
+## Exit criteria
+
+- [ ] Master pipeline.ods carries the 4-row standalone-extensions edit
+- [ ] Fresh `import.sh` snapshot extracts to 173 plants byte-identical to
+      `vietnam_thermal_plants_v2_classified.csv` (modulo later master edits)
+- [ ] `config.VN_THERMAL_MASTER_SNAPSHOT_ODS` re-pinned to the new datestamped
+      snapshot; the 0445 exception comment removed
+- [ ] PROVENANCE.md "Snapshot provenance exception" paragraph resolved
+
+## Related
+
+- 0445 (the adoption this protects)
+- `data/reference/extensions_standalone_vs_absorbed.md` (measurement + edit spec)

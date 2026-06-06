@@ -122,7 +122,7 @@ def generate_macros(
         best_local_f1 = 0.0
 
     # Plant range — denominator is the adopted reference inventory size
-    # (single source of truth, ticket 0413; v1 = 163, v2 = 170).
+    # (single source of truth, ticket 0413; v1 = 163, v2 = 170, v2.1 = 173).
     ref_plants = reference_plant_count()
     f1_values = [v["median_f1"] for v in summary.values()]
     min_plants = round(min(f1_values) * ref_plants)

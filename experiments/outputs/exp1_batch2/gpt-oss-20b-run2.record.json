@@ -1,6 +1,6 @@
 {
-  "run_id": "4b49dc39cb2f",
-  "timestamp": "2026-06-05T12:52:10.749718Z",
+  "run_id": "79f51e4f338c",
+  "timestamp": "2026-06-06T14:18:57.078082Z",
   "method": "direct",
   "method_params": {
     "model": "openai/gpt-oss-20b",
@@ -34,8 +34,8 @@
     "n_plants": 40,
     "tp": 13,
     "fp": 27,
-    "fn": 157,
-    "f1": 0.1238,
+    "fn": 160,
+    "f1": 0.1221,
     "fuel_accuracy": 0.4615,
     "status_accuracy": 0.3846,
     "province_accuracy": 1.0

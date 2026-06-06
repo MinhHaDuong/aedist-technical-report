@@ -190,7 +190,7 @@ def reference_plant_count(reference_path: Path = VN_THERMAL_PLANTS_RELEASE_CSV) 
     Single source of truth for the "full inventory" constant used as a figure
     reference line and as the coverage-ratio denominator. Derived from the
     reference CSV (lazy + cached) rather than hardcoded, so it tracks the
-    adopted release automatically — v1 (163) → v2 (170) on the 0413 switch,
+    adopted release automatically — v1 (163) → v2 (170) → v2.1 (173, ticket 0445),
     with no constant to chase. A drift guard lives in
     ``tests/test_reference_count.py``.
     """
