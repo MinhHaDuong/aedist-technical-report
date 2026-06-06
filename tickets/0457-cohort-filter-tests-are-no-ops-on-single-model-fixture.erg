@@ -1,0 +1,49 @@
+%erg 0.1
+Title: Cohort-filter tests in test_plot_exp1_matrix are no-ops on the single-model fixture
+Created: 2026-06-06
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-06T00:00Z claude created — /gaze round-2 on PR #771: verify-gate APPROVED but flagged that the cohort-filter tests added in commit 9127fc3d are smoke-level no-ops; this ticket restores the tracking the APPROVED verdict relied on (gate recommendation: keep a tracker open). Supersedes the prematurely-closed 0456.
+
+--- body ---
+## Context
+
+PR #771 (ticket 0446) extended `src/aedist/plot_exp1_matrix.py` with
+`--models` / `--exclude-models` cohort filtering (recomputes the FP top-N
+and `fp_presence` for the selected models). The round-1 /gaze REROLL
+required a test. Commit 9127fc3d added two tests, but `/verify-gate`
+round 2 found they do not actually exercise the filter:
+
+- The shared `fixture_dir` contains only **one model** (`modelA`).
+- `test_plot_cohort_and_lang_render` calls `exclude_models=["nonexistent"]`
+  (excludes nothing) and `models=["modelA"]` (keeps the only model) — both
+  are no-ops. Deleting the filter block in `write_pdf` would not fail it.
+- `test_cohort_filter_selects_models` re-implements the keep predicate in
+  the test body without calling `write_pdf` — a tautology.
+
+So the cohort-filter behaviour (and the `fp_presence` recompute at
+`plot_exp1_matrix.py` ~line 130) remains untested despite the "covers the
+cohort filter" framing. The `lang="fr"` render path *is* genuinely
+exercised; this ticket is only about the cohort filter.
+
+The gate dispositioned this non-blocking (smoke coverage + tracker) and
+APPROVED PR #771. This is the tracker.
+
+## Exit criteria
+
+- [ ] A multi-model fixture (>= 2 distinct models) for the plot test
+- [ ] A test that runs `write_pdf(..., exclude_models=[<a real model>])`
+      (or `models=[<subset>]`) and asserts the excluded model's rows are
+      absent / the surviving cohort is exactly the expected set — verified
+      against `write_pdf` output or its derived data, not a re-implemented
+      predicate
+- [ ] The test FAILS if the filter block in `write_pdf` is removed
+      (fang check)
+- [ ] `make check-fast` + `pytest -m adherence` green
+
+## Related
+
+- PR #771, ticket 0446 (matrix rework, merged/closing)
+- 0456 (first ratchet attempt, closed-superseded)
+- .claude/rules/coding-python.md#testing
