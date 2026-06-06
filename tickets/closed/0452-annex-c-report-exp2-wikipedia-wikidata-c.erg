@@ -2,6 +2,7 @@
 Title: Annex C: report Exp2 Wikipedia/Wikidata citation compliance count (H5 audit)
 Created: 2026-06-06
 Author: claude
+Closed: autoclosed — PR #773
 
 --- log ---
 2026-06-06T08:54Z claude created
@@ -10,6 +11,7 @@ Author: claude
 2026-06-06T09:22Z claude plan raid plan committed — script/CSV/macros/render-rule/tests specified against source; execution order test-one-before-blasting
 2026-06-06T09:31Z claude verify feasibility PASS after corrections — OpenAI arm2 run01 also violates (prose names both agents); make-wildcard no-brace fix; skip notes key; anchor = 2nd heading occurrence l.337
 2026-06-06T11:30Z claude execute delivered — 5/20 optimised runs banned (Mistral 4, OpenAI 1); 1/20 naive; 30 total instances; 1999 tests passed
+2026-06-06T10:13Z HDMX-coding-agent closed — autoclosed — PR #773
 --- body ---
 ## Context
 
