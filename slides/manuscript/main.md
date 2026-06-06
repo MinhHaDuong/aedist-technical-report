@@ -1,10 +1,12 @@
 ---
 header-includes:
+  - \usepackage{pdflscape}
   - \usepackage{newunicodechar}
   - \newunicodechar{✕}{\ensuremath{\times}}
   - \newunicodechar{≤}{\ensuremath{\leq}}
   - \newunicodechar{≥}{\ensuremath{\geq}}
   - \newunicodechar{≈}{\ensuremath{\approx}}
+  - \newunicodechar{ρ}{\ensuremath{\rho}}
 ---
 
 # Synopsis — Beyond RAG: Stateful-Agentic Architectures for Reliable Economic Statistics
@@ -117,6 +119,8 @@ We also aim to refine the method to ensure the per-cell provenance tracking, not
 **Articulation as a confound in F1.** Articulation — the gap between analyst intent and model query — has a soft boundary with coverage. A model that retrieves the correct fact but paraphrases it in a form the downstream extractor does not recognise produces a missing value in the output table; the symptom is indistinguishable from a genuine coverage gap. F1 therefore conflates two distinct failure modes: facts the model never found, and facts the model found but failed to express in extractable form. The structured four-section prompt in §1 is designed to close the articulation gap; the residual F1 deficit is more likely to reflect true coverage and freshness limits than articulation failures. But this remains an assumption, not a measured separation.
 
 **External coherence.** The §2 coherence criterion distinguishes internal consistency (within the dataset) from external consistency (against world knowledge). The experiments in this paper measure internal coherence. Measuring external coherence is harder for three compounding reasons. First, the reference knowledge base is undefined: checking whether a stated capacity is plausible requires specifying which knowledge pool to check against — the RAG corpus, the model's parametric memory, official statistics, or physical engineering constraints — and these pools overlap imperfectly and carry different reliability. Second, the checker's capability matters: a small model used as evaluator has poor recall of world knowledge and will miss genuine inconsistencies; a large frontier model has better recall but may introduce its own confabulations as apparent corrections. Third, the depth of reasoning required varies by claim: detecting that a 6000 MW gas plant in a province with no pipeline access is incoherent requires multi-step inference, not lookup. Phase C cross-evaluation (Exp 2) partially engages external coherence — the judging agents bring parametric world knowledge — but does so implicitly and unsystematically. A principled external-coherence metric remains future work.
+
+**Internal coherence as a zero-reference screen.** The reference list grades runs from the outside; an exploratory analysis of the Experiment 1 outputs suggests the weakest runs can be rejected without any reference at all. Degenerate runs are template-like: near-constant capacity and status columns (one run emits 496 rows, every one 1200 MW and "Operating"). Within-run capacity variability — the number of distinct capacity values — correlates with reference-based F1 at Spearman ρ = 0.90 across the 70 runs, and the signal is not an output-length artifact: the partial correlation controlling for row count is ρ = 0.89, and at matched length the two ~84-row extremes span one distinct capacity value (F1 = 0.00) versus thirty-seven (F1 = 0.61). An in-sample threshold rule rejects 23 of the 26 weakest runs with no false rejection — an existence proof rather than a validated detector, as the cutoffs were tuned on the same 70 runs. Notably, the internal-coherence indicators we already compute carry no such signal: fabricated rows use impeccable controlled vocabulary and plausible dates. This points to a two-level scoring design. The run-level screen rates one output; above it, a model-level reliability grade aggregates the screen across repetitions — a model version whose five repetitions all fail is disqualified as a source, independently of any single run. In the vocabulary of intelligence evaluation (the NATO "Admiralty" grading of STANAG 2511), the run-level screen rates *information credibility* while the model-level grade rates *source reliability*. Making these scorers part of the standard pipeline is future work.
 
 **From noisy runs to fused estimates.** The per-plant recognition matrix in Annex E prefigures the research programme this benchmark opens: each reference plant becomes a column observed by many noisy runs — precisely the input object of latent-truth discovery and capture–recapture estimation. Within-model and across-model coherence can be read directly from the column densities (famous plants form dense columns, obscure ones sparse), and the operational core separates visibly from the project-dominated tail. Fusing such incomplete, differently-reliable lists into a single estimate — and bounding the residual share of plants that no source mentions by linear programming against a control total, such as the regulator's installed capacity per fuel [@HaDuong2005] — is the axis of research these column densities invite.
 
@@ -376,20 +380,28 @@ The narrative inventory component of §5 handles longitudinal aspects pragmatica
 
 Figure 7 aligns each of the 170 reference plants on a fixed column, for the 70 Experiment 1 runs (14 models × 5 repetitions, ordered as in Figure 1: by architectural family, then by decreasing effective parameter count). A blue cell marks a recognized plant (true positive); an empty cell, a miss. Reference columns are ordered by status group, then by decreasing capacity, so the status bands align with the difficulty table below. The left panel shows the 40 most frequent false positives across all runs, sorted by decreasing occurrence; red follows the paper's false-positive convention (unrecognized — possibly real, not necessarily fabricated). Unlike Figure 1, which packs recognized plants leftward, the fixed-column alignment reveals *which* plants each model misses: famous plants form dense columns, obscure ones sparse columns.
 
-![Figure 7](../report/inputs/generated/fig_exp1_recognition_matrix.pdf)
+```{=latex}
+\begin{landscape}
+```
 
-*Figure 7. Experiment 1 recognition matrix: 170 reference plants (columns, ordered by status then decreasing capacity) against 70 runs (rows, 14 models × 5 repetitions). Blue = plant recognized; left panel: the 40 most frequent false positives (red).*
+![Figure 7](../report/inputs/generated/fig_exp1_recognition_matrix.pdf){width=100% height=85%}\
+
+*Figure 7. Experiment 1 recognition matrix: 170 reference plants (columns, ordered by status then decreasing capacity) against 70 runs (rows, one label per model, 5 repetitions each). Blue = plant recognized; left panel: the 40 most frequent false positives (red).*
+
+```{=latex}
+\end{landscape}
+```
 
 The table below shares the same data derivation as the figure (library `aedist.exp1_recognition` — common cause, no producer–consumer chaining) and decomposes the difficulty by status. The reference list is dominated by proposed plants — the largest share — which parametric memory cannot know; their mean recognition rate is far below that of operational plants. The low overall recognition is therefore structural, a property of the list's composition, not merely a model failure.
 
 | Status | n | Share of list | Recognition rate |
 |---|---:|---:|---:|
-| Operational | 54 | 31.8% | 46.9% |
 | Proposed | 67 | 39.4% | 7.8% |
 | Planned | 21 | 12.4% | 29.7% |
 | Under construction | 10 | 5.9% | 40.7% |
-| Cancelled | 17 | 10.0% | 16.9% |
+| Operational | 54 | 31.8% | 46.9% |
 | Retired | 1 | 0.6% | 62.9% |
+| Cancelled | 17 | 10.0% | 16.9% |
 | **All** | **170** | **100.0%** | **26.1%** |
 
 *Table: composition of the reference list by status, and mean recognition rate (Experiment 1, direct method: 14 models × 5 repetitions). The rate is the share of run × plant cells recognized among plants of that status.*

@@ -1,0 +1,51 @@
+%erg 0.1
+Title: Preprint figure language sweep: all main.md figures in English
+Created: 2026-06-06
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-06T09:41Z HDMX-coding-agent created — author directive at 0446 review: "In preprint all figures should be in English"
+
+--- body ---
+## Context
+
+Author directive (2026-06-06): every figure in the arXiv preprint
+(`slides/manuscript/main.md`) must be in English. Historically figures kept
+their generated language (cf. 0356 for the EN slide deck — explicitly
+deferred regenerating figures in English).
+
+0446 already did the recognition matrix: `--lang {en,fr}` on
+`plot_exp1_matrix`, unsuffixed PDF = EN (preprint-first), `_fr` variant for
+the report annex (which cross-references the FR difficulty table).
+
+## Quoi faire
+
+1. Inventory every `![...](...)` figure in main.md; for each, list any
+   non-English text (titles, axis labels, legends, annotations, band
+   labels). Known suspects: the quality spider
+   (`plot_quality_spider_exp1.py`: "Vocabulaire respecté", "Exactitude",
+   "Cohérence", ... — entirely French), exp2 figures, regimes scatter.
+   `fig_direct_p1_base` already has an English title via `--title` /
+   `--fp-label "Unrecognized"` (0438).
+2. For each FR figure: follow the 0446 pattern — language-parametric
+   script, unsuffixed output EN, `_fr` variant only where the report
+   actually includes it (report is internal, "no future": do not produce
+   FR variants nobody includes).
+3. render.mk wiring, one output per rule; rebuild; visual check of every
+   converted figure IN the built manuscript (not just standalone).
+4. Adherence guard if cheap: a test greping committed preprint figures'
+   text layer for known French label strings would ratchet this.
+
+## Exit criteria
+
+- [ ] No French text in any figure included by main.md (verified on the
+      built PDF, figure by figure)
+- [ ] Report still builds with the labels its FR prose cross-references
+- [ ] `make check-fast` + `pytest -m adherence` green
+- [ ] Author flip-through of the rebuilt preprint figures
+
+## Related
+
+- 0446 (pattern set: --lang, _fr variant), PR #771
+- 0356 (EN slides — deferred the figure regeneration this ticket does)
+- 0435 (arXiv finalization — consumer)

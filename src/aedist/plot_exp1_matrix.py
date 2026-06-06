@@ -17,6 +17,13 @@ Layout:
       run emitted that false positive. Visually separated from the reference
       columns by a gap and a rule. Red follows the FP convention (ticket 0403).
 
+Readability (ticket 0446, author-arbitrated 2026-06-06): the figure targets a
+full landscape page (aspect ``page_aspect``). All 170 plant-name labels and all
+70 rep rows are kept — at print scale the names are texture, not text. The
+y axis carries one label per model (centred on its 5-rep block); status-band
+labels sit above the matrix on collision-avoiding levels and replace the old
+panel title. Fonts are sized to survive the ~0.4x shrink to page width.
+
 Derivation routes through ``aedist.exp1_recognition`` (shared library); the
 status difficulty table (ticket 0434) derives the same data independently from
 the same mart layer — consistency by common cause, no side-output file.
@@ -39,6 +46,7 @@ from matplotlib.colors import ListedColormap
 from .config import VN_THERMAL_PLANTS_RELEASE_CSV
 from .exp1_recognition import (
     STATUS_LABELS,
+    STATUS_LABELS_EN,
     STATUS_ORDER,
     load_exp1_recognition,
     top_false_positives,
@@ -50,9 +58,11 @@ log = logging.getLogger(__name__)
 
 # Status column ordering and labels come from the shared exp1_recognition
 # library (author-ratified 2026-06-05) so the matrix's column bands and the
-# status difficulty table (0434) order statuses identically.
+# status difficulty table (0434) order statuses identically. Band labels are
+# language-parametric: EN for the preprint (author 2026-06-06: all preprint
+# figures in English), FR for the report annex.
 _STATUS_ORDER = STATUS_ORDER
-_STATUS_LABELS = STATUS_LABELS
+_STATUS_LABELS_BY_LANG = {"en": STATUS_LABELS_EN, "fr": STATUS_LABELS}
 
 
 def _order_runs(model_runs: list[tuple[str, int]], size_by_model: dict[str, float]) -> list:
@@ -97,9 +107,27 @@ def write_pdf(
     fp_seed: int = 42,
     cell_size: float = 0.11,
     ui_scale: float = 1.0,
+    page_aspect: float = 1.7,
+    models: list[str] | None = None,
+    exclude_models: list[str] | None = None,
+    lang: str = "en",
 ) -> None:
-    """Render the Exp1 recognition matrix as a PDF (and optional macros)."""
+    """Render the Exp1 recognition matrix as a PDF (and optional macros).
+
+    ``models`` (include list) / ``exclude_models`` filter the run rows by
+    model *before* any derivation, so the FP top-N, row ordering, and macros
+    are all recomputed for the selected cohort (0446: model-subset versions).
+    """
     data = load_exp1_recognition(records_glob, reference_path)
+    if models is not None or exclude_models is not None:
+
+        def keep(m: str) -> bool:
+            return (models is None or m in models) and (
+                exclude_models is None or m not in exclude_models
+            )
+
+        data.cells = [c for c in data.cells if keep(c.model)]
+        data.fp_presence = {k: v for k, v in data.fp_presence.items() if keep(k[0])}
     if not data.cells:
         log.warning("No recognition data for pattern: %s", records_glob)
         return
@@ -142,12 +170,17 @@ def write_pdf(
                 fp_mat[i, fp_col[name]] = 1.0
 
     # --- figure geometry ----------------------------------------------------
-    # Size in inches directly from the cell counts so each cell stays roughly
-    # square and labels remain legible. `cell_size` is inches per cell.
+    # Width in inches directly from the column count (`cell_size` inches per
+    # column). Height follows `page_aspect`: the figure is meant to fill a
+    # rotated A4 page (usable slot ~9.7 x 6.3 in, aspect ~1.55), so rows take
+    # the full remaining budget instead of a per-row constant. `page_aspect`
+    # applies to the axes core and defaults above the slot ratio because the
+    # tight bounding box adds the label margins (plant names below, model
+    # names left) mostly to the height (0446).
     gap_cols = 2  # blank columns separating FP panel from the reference matrix
     total_cols = n_fps + gap_cols + n_plants
     fig_w = max(8.0, cell_size * total_cols) * ui_scale
-    fig_h = max(5.0, cell_size * n_runs * 1.6) * ui_scale
+    fig_h = fig_w / page_aspect
     fig, (ax_fp, ax) = plt.subplots(
         1,
         2,
@@ -158,14 +191,30 @@ def write_pdf(
     tp_cmap = ListedColormap([COLOR_MATCHED])
     fp_cmap = ListedColormap([COLOR_ALERT])
 
+    # Model blocks: contiguous 5-rep groups in row order. The y axis carries
+    # one label per model, centred on its block — 14 readable names instead of
+    # 70 unreadable `model · rN` repeats (0446).
+    model_blocks: list[tuple[str, int, int]] = []  # (model, first_row, last_row)
+    for i, (model, _run) in enumerate(runs):
+        if model_blocks and model_blocks[-1][0] == model:
+            model_blocks[-1] = (model, model_blocks[-1][1], i)
+        else:
+            model_blocks.append((model, i, i))
+
     # FP panel (left) — red marks.
     ax_fp.imshow(fp_mat, aspect="auto", cmap=fp_cmap, vmin=0, vmax=1, interpolation="nearest")
     ax_fp.set_xticks(range(n_fps))
     ax_fp.set_xticklabels(fp_names, rotation=90, fontsize=5.5 * ui_scale)
-    ax_fp.set_yticks(range(n_runs))
-    ax_fp.set_yticklabels([f"{m} · r{r}" for m, r in runs], fontsize=5.5 * ui_scale)
+    ax_fp.set_yticks([(first + last) / 2 for _m, first, last in model_blocks])
+    ax_fp.set_yticklabels([m for m, _f, _l in model_blocks], fontsize=16 * ui_scale)
+    # Title pad lifts both panel titles above the band-label levels so
+    # "En projet" (and friends) cannot collide with them (0446).
+    title_pad = 85 * ui_scale
     ax_fp.set_title(
-        f"{n_fps} most common false positives", fontsize=8 * ui_scale, color=COLOR_ALERT
+        f"{n_fps} most common false positives",
+        fontsize=16 * ui_scale,
+        color=COLOR_ALERT,
+        pad=title_pad,
     )
     ax_fp.tick_params(length=0)
     for s in ax_fp.spines.values():
@@ -173,15 +222,17 @@ def write_pdf(
     # Separating rule on the right edge of the FP panel.
     ax_fp.axvline(n_fps - 0.5 + gap_cols / 2, color="black", linewidth=1.0)
 
-    # Recognition matrix (right) — blue marks.
+    # Recognition matrix (right) — blue marks. Panel title raised above the
+    # band labels (author observation 4, 0446).
     ax.imshow(recog, aspect="auto", cmap=tp_cmap, vmin=0, vmax=1, interpolation="nearest")
     ax.set_xticks(range(n_plants))
     ax.set_xticklabels(plant_labels, rotation=90, fontsize=4.5 * ui_scale)
     ax.set_yticks([])
     ax.set_title(
         "Recognized reference plants (status group, then capacity descending)",
-        fontsize=8 * ui_scale,
+        fontsize=16 * ui_scale,
         color=COLOR_MATCHED,
+        pad=title_pad,
     )
     ax.tick_params(length=0)
     for s in ax.spines.values():
@@ -195,30 +246,69 @@ def write_pdf(
         if j == n_plants or plant_info[plant_order[j]][1] != plant_info[plant_order[start]][1]:
             bands.append((start, j - 1, plant_info[plant_order[start]][1]))
             if j < n_plants:
-                ax.axvline(j - 0.5, color="black", linewidth=0.6, alpha=0.6)
+                ax.axvline(j - 0.5, color="black", linewidth=1.2, alpha=0.9)
             start = j
+    # Band labels above the matrix on collision-avoiding levels: a label wider
+    # than the space left on a level moves one level up and gets a thin leader
+    # line down to its band, so narrow bands (Annulée, Retirée) never
+    # overprint their neighbours yet stay visually anchored (0446).
+    band_fontsize = 15 * ui_scale
+    levels_y = [-0.8, -2.9, -5.0]
+    pad_cols = 3  # minimum clearance between same-level labels
+    level_end = [float("-inf")] * len(levels_y)
+    status_labels = _STATUS_LABELS_BY_LANG[lang]
     for first, last, status in bands:
-        ax.text(
-            (first + last) / 2,
-            -1.5,
-            _STATUS_LABELS.get(status, status),
-            ha="center",
-            va="bottom",
-            fontsize=6 * ui_scale,
-        )
+        label = status_labels.get(status, status)
+        cx = (first + last) / 2
+        # Approximate label width in column units (0.6 em per char).
+        half_w = len(label) * band_fontsize * 0.6 / 72.0 / cell_size / 2
+        for li, ly in enumerate(levels_y):
+            if cx - half_w > level_end[li] + pad_cols:
+                ax.text(cx, ly, label, ha="center", va="bottom", fontsize=band_fontsize)
+                level_end[li] = cx + half_w
+                if li > 0:  # raised label: leader line down to its band
+                    ax.plot(
+                        [cx, cx],
+                        [ly + 0.1, -0.4],
+                        color="black",
+                        linewidth=0.6,
+                        alpha=0.6,
+                        clip_on=False,
+                    )
+                break
+        else:
+            log.warning("Band label %r dropped: no free level", label)
+    # The leader lines above autoscale the y-limits to the annotation zone,
+    # silently compressing this panel's rows relative to the FP panel
+    # (author-spotted misalignment, 0446). Pin both panels to the matrix
+    # rows; annotations live outside thanks to clip_on=False.
+    for a in (ax_fp, ax):
+        a.set_ylim(n_runs - 0.5, -0.5)
 
-    # Architectural-family separators (horizontal rules across both panels).
+    # Row separators: light between models, stronger between architectural
+    # families (horizontal rules across both panels).
     prev_fam = None
-    for i, (model, _run) in enumerate(runs):
+    for model, first, _last in model_blocks:
+        if first == 0:
+            prev_fam = model_family(model)
+            continue
         fam = model_family(model)
-        if prev_fam is not None and fam != prev_fam:
-            for a in (ax_fp, ax):
-                a.axhline(i - 0.5, color="black", linewidth=0.4, alpha=0.4)
+        heavy = fam != prev_fam
+        for a in (ax_fp, ax):
+            a.axhline(
+                first - 0.5,
+                color="black",
+                linewidth=1.0 if heavy else 0.3,
+                alpha=0.7 if heavy else 0.3,
+            )
         prev_fam = fam
 
+    # y > 1 lifts the suptitle clear of the panel titles (raised by
+    # `title_pad`); bbox_inches="tight" extends the canvas to include it.
     fig.suptitle(
         "Which Vietnamese thermal assets does each model recognize?",
-        fontsize=10 * ui_scale,
+        fontsize=20 * ui_scale,
+        y=1.02,
     )
     output.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(output, dpi=200, bbox_inches="tight")
@@ -266,6 +356,30 @@ def main(argv: list[str] | None = None) -> None:
         "--fp-seed", type=int, default=42, help="Seed for FP tie-breaking (rebuild-stable)"
     )
     parser.add_argument("--ui-scale", type=float, default=1.0, help="Global font/size scale")
+    parser.add_argument(
+        "--page-aspect",
+        type=float,
+        default=1.7,
+        help="Figure width/height ratio; default matches a full landscape A4 page",
+    )
+    parser.add_argument(
+        "--models",
+        nargs="+",
+        default=None,
+        help="Only include these models (FP list and macros recomputed for the subset)",
+    )
+    parser.add_argument(
+        "--exclude-models",
+        nargs="+",
+        default=None,
+        help="Exclude these models (FP list and macros recomputed for the subset)",
+    )
+    parser.add_argument(
+        "--lang",
+        choices=["en", "fr"],
+        default="en",
+        help="Band label language: en for the preprint (default), fr for the report annex",
+    )
     args = parser.parse_args(argv)
 
     write_pdf(
@@ -276,6 +390,10 @@ def main(argv: list[str] | None = None) -> None:
         fp_top_n=args.fp_top_n,
         fp_seed=args.fp_seed,
         ui_scale=args.ui_scale,
+        page_aspect=args.page_aspect,
+        models=args.models,
+        exclude_models=args.exclude_models,
+        lang=args.lang,
     )
 
 

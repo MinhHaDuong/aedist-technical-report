@@ -472,13 +472,44 @@ $(ANALYSIS_GEN)/fig_direct_p1_base.pdf $(ANALYSIS_GEN)/macros_p1_base.tex &: $(A
 # recognition from the records + reference via aedist.exp1_recognition (shared
 # library; the status table 0434 derives the same data independently — no
 # side-output). Emits a macros file for the caption's plant/run/FP counts.
-$(ANALYSIS_GEN)/fig_exp1_recognition_matrix.pdf $(ANALYSIS_GEN)/macros_exp1_matrix.tex &: $(ANALYSIS_EXP1_BATCH2_RECORDS) $(ANALYSIS_EXPERT_REF)
+$(ANALYSIS_GEN)/fig_exp1_recognition_matrix.pdf $(ANALYSIS_GEN)/macros_exp1_matrix.tex &: $(ANALYSIS_EXP1_BATCH2_RECORDS) $(ANALYSIS_EXPERT_REF) $(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp1_matrix.py $(ANALYSIS_REPO_ROOT)/src/aedist/exp1_recognition.py
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_exp1_matrix \
 	    --records-glob "$(ANALYSIS_EXPERIMENTS_DIR)/outputs/exp1_batch2/*.record.json" \
 	    --reference $(ANALYSIS_EXPERT_REF) \
 	    --output $(ANALYSIS_GEN)/fig_exp1_recognition_matrix.pdf \
 	    --output-macros $(ANALYSIS_GEN)/macros_exp1_matrix.tex
+
+# French-label version for the report annex (the unsuffixed PDF is English,
+# preprint-first — author 2026-06-06: all preprint figures in English).
+$(ANALYSIS_GEN)/fig_exp1_recognition_matrix_fr.pdf: $(ANALYSIS_EXP1_BATCH2_RECORDS) $(ANALYSIS_EXPERT_REF) $(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp1_matrix.py $(ANALYSIS_REPO_ROOT)/src/aedist/exp1_recognition.py
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.plot_exp1_matrix \
+	    --records-glob "$(ANALYSIS_EXPERIMENTS_DIR)/outputs/exp1_batch2/*.record.json" \
+	    --reference $(ANALYSIS_EXPERT_REF) \
+	    --output $@ \
+	    --lang fr
+
+# Model-subset versions of the recognition matrix (0446, author observation 2):
+# the FP top-40 and macros are recomputed for each cohort. `strong` drops the
+# weakest models (haiku, both gpt-oss, the two small qwen3.6); `top` keeps only
+# the strongest model of each architectural family. Exploration artifacts — not
+# yet referenced by the manuscript or report.
+$(ANALYSIS_GEN)/fig_exp1_recognition_matrix_strong.pdf: $(ANALYSIS_EXP1_BATCH2_RECORDS) $(ANALYSIS_EXPERT_REF) $(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp1_matrix.py $(ANALYSIS_REPO_ROOT)/src/aedist/exp1_recognition.py
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.plot_exp1_matrix \
+	    --records-glob "$(ANALYSIS_EXPERIMENTS_DIR)/outputs/exp1_batch2/*.record.json" \
+	    --reference $(ANALYSIS_EXPERT_REF) \
+	    --output $@ \
+	    --exclude-models claude-haiku-4.5 gpt-oss-120b gpt-oss-20b qwen3.6-flash qwen3.6-35b-a3b
+
+$(ANALYSIS_GEN)/fig_exp1_recognition_matrix_top.pdf: $(ANALYSIS_EXP1_BATCH2_RECORDS) $(ANALYSIS_EXPERT_REF) $(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp1_matrix.py $(ANALYSIS_REPO_ROOT)/src/aedist/exp1_recognition.py
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.plot_exp1_matrix \
+	    --records-glob "$(ANALYSIS_EXPERIMENTS_DIR)/outputs/exp1_batch2/*.record.json" \
+	    --reference $(ANALYSIS_EXPERT_REF) \
+	    --output $@ \
+	    --models claude-opus-4.6 deepseek-v4-pro gpt-5.5 mistral-large-2512 qwen3.7-max
 
 # Exp1 status difficulty table (ticket 0434): reference-list composition by
 # status vs mean recognition rate. Annex companion to the matrix figure above;
@@ -524,6 +555,9 @@ chart-figures: \
 	$(ANALYSIS_GEN)/cost_quality.csv \
 	$(ANALYSIS_GEN)/fig_direct_p1_base.pdf \
 	$(ANALYSIS_GEN)/fig_exp1_recognition_matrix.pdf \
+	$(ANALYSIS_GEN)/fig_exp1_recognition_matrix_fr.pdf \
+	$(ANALYSIS_GEN)/fig_exp1_recognition_matrix_strong.pdf \
+	$(ANALYSIS_GEN)/fig_exp1_recognition_matrix_top.pdf \
 	$(ANALYSIS_GEN)/fig_capability_timeline.pdf \
 	$(ANALYSIS_GEN)/fig_capability_dag.pdf \
 	$(ANALYSIS_GEN)/fig_spider_cross_exp.pdf \

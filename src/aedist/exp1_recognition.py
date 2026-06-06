@@ -25,16 +25,18 @@ from .reconcile import reconcile
 from .schema import MatchType
 from .util import normalize_model
 
-# Status group ordering (author-ratified 2026-06-05): operational assets first
-# (easiest to recall), then the pipeline statuses, ending with the
-# historical/retired tail. Shared by the recognition matrix figure (0373,
-# column bands) and the status difficulty table (0434, row order) so both
-# consumers order statuses identically from one source — common cause, no
-# producer-consumer chaining.
-STATUS_ORDER = ["operational", "proposed", "planned", "constructing", "cancelled", "retired"]
-# French display labels — shared by the recognition matrix figure (0373, column
+# Status group ordering (author-ratified 2026-06-06, ticket 0446): asset
+# lifecycle order — pipeline statuses from proposal to operation, then the
+# terminal states (retired, then cancelled). Shared by the recognition matrix
+# figure (0373, column bands) and the status difficulty table (0434, row
+# order) so both consumers order statuses identically from one source —
+# common cause, no producer-consumer chaining.
+STATUS_ORDER = ["proposed", "planned", "constructing", "operational", "retired", "cancelled"]
+# Display labels — shared by the recognition matrix figure (0373, column
 # band annotations) and the status difficulty table (0434, row labels) so both
-# consumers render the same language in the French-language report annex.
+# consumers render the same language per document. FR serves the report annex;
+# EN serves the preprint (author 2026-06-06: all preprint figures in English)
+# and matches the EN difficulty table in slides/manuscript/main.md.
 STATUS_LABELS = {
     "operational": "Opérationnelle",
     "proposed": "En projet",
@@ -42,6 +44,14 @@ STATUS_LABELS = {
     "constructing": "En construction",
     "cancelled": "Annulée",
     "retired": "Retirée",
+}
+STATUS_LABELS_EN = {
+    "operational": "Operational",
+    "proposed": "Proposed",
+    "planned": "Planned",
+    "constructing": "Under construction",
+    "cancelled": "Cancelled",
+    "retired": "Retired",
 }
 
 

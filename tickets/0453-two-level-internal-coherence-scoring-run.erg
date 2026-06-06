@@ -1,0 +1,82 @@
+%erg 0.1
+Title: Two-level internal-coherence scoring: run screen + model source-reliability grade
+Created: 2026-06-06
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-06T09:01Z HDMX-coding-agent created
+2026-06-06T09:55Z HDMX-coding-agent note — author conjecture verified during the 0446 session; analysis committed at docs/internal-coherence-screen.md
+
+2026-06-06T11:15Z author idea (2026-06-06): once screen columns land, overlay the verdict on the recognition matrix — draw a line across rejected runs (--mark-incoherent on plot_exp1_matrix); deferred from 0446 review: rule is in-sample and scoring belongs in P2, not the renderer
+--- body ---
+## Context
+
+Author conjecture verified 2026-06-06 (analysis committed at
+`docs/internal-coherence-screen.md`): degenerate Exp1 runs can be rejected
+*without the reference list* from within-run variability of the capacity and
+status columns. Spearman(cap_distinct, F1) = 0.904 over the 70 exp1_batch2
+runs; the rule `cap_distinct <= 4 OR status_distinct <= 1` rejects 23 runs
+with zero false rejections (3 weak escapes just above threshold). The
+indicators currently computed (vocab adherence, date plausibility,
+capacity non-negativity) carry no such signal — fabricated rows use
+impeccable vocabulary. Status-as-of variability must NOT be a criterion
+(strong models stamp the run date on every row).
+
+Author design (2026-06-06): **two-level scoring**, in NATO STANAG 2511
+("Admiralty") terms:
+
+1. **Run level — information credibility**: variability-based screen on one
+   output table (no reference needed).
+2. **Model level — source reliability**: aggregate across the 5 repetitions;
+   a model version producing 5/5 internally incoherent runs is disqualified
+   as a source altogether, independently of any single run.
+
+## Quoi faire
+
+1. New scorer components in `score_mechanical.py` (and `score_exp1.py`
+   passthrough): `coherence_capacity_variability` and
+   `coherence_status_variability` (distinct-count, or a normalized variant —
+   decide at Plan; record the raw distinct counts too so thresholds stay
+   tunable). Annotation columns per the existing scorer conventions.
+2. Wire into the metrics dict in the same merge request (ADR-7:
+   `records_to_metrics()` carries every experimental condition and result
+   metric).
+3. Model-level reliability grade: derived view (not a new side-output) that
+   aggregates the run screen per (model, prompt_version) — e.g. fraction of
+   reps failing the screen; 5/5 → disqualified. Where it lands (cross-eval
+   CSV column, mart view, or analysis-time derivation) is a Plan decision —
+   respect the render-DAG rule (0436).
+4. Spider/composite interaction: ticket 0201 (quality composite axis) should
+   consume the new components; coordinate, do not duplicate.
+5. Validate against the committed analysis: reproduce ρ ≈ 0.90 and the
+   23/0/3 confusion from the new columns; add the regression test.
+
+## First test (sketch)
+
+```python
+def test_capacity_variability_flags_template_runs():
+    rows = [{"name": f"P{i}", "capacity_mwe": "600.0", "status": "Operating"}
+            for i in range(50)]
+    s = score_coherence_variability(rows)
+    assert s.capacity_distinct == 1
+    assert s.status_distinct == 1
+```
+
+## Exit criteria
+
+- [ ] Variability scorer columns in the Exp1 scoring path + metrics dict
+      (same MR), with annotations
+- [ ] Model-level source-reliability aggregate derivable from committed
+      artifacts (5/5-fail rule expressible)
+- [ ] Regression test reproducing the docs/internal-coherence-screen.md
+      result (ρ ≈ 0.90, zero false rejections at the documented thresholds)
+- [ ] status-as-of variability explicitly NOT used (documented why)
+- [ ] `make check` green
+
+## Related
+
+- docs/internal-coherence-screen.md (the verified analysis)
+- 0201 (quality composite axis — consumer)
+- 0436 (render DAG discipline), 0445 (extension FPs — orthogonal FP track)
+- main.md Discussion "Internal coherence as a zero-reference screen"
+  (future-work paragraph added 2026-06-06)
