@@ -88,7 +88,12 @@ reconcile + metrics.py match-type classification, both arms identical code):
 **On Exp2, standalone wins the ticket's own decision rule** (−28 of 8778,
 ≈0.3%): web-enabled agents recall the extension plants 134/240 ≈ 56% of the
 time (vs 66/210 ≈ 31% parametric in Exp1), so the FP→TP flips outweigh the
-+3-row denominator. Per arm×agent cell: standalone better in 9/16, worse in
++3-row denominator. Cross-checked against the committed artifact after
+adoption: re-deriving raw counts from `exp2_mart.jsonl` `score_summary`
+ratios (TP = coverage × N, FP = TP(1−p)/p) reproduces the absorbed arm
+exactly (TP 5322 / FP 500 / FN 8278) and gives net **−36** for standalone
+(TP +138 / FP −138 / FN +102) — same sign, magnitude within the ±0.5/run
+rounding of 4-decimal ratios. Per arm×agent cell: standalone better in 9/16, worse in
 7/16 — anthropic and openai improve in every arm (−5 to −15), mistral worsens
 in every arm (+3 to +15, it emits few extension rows), qwen mixed.
 
@@ -160,6 +165,7 @@ Every reference-dependent artifact regenerated; each delta traces to the
 | `macros_p1_base.tex` | `\CensusTPMax` 113 → 116 (best run recalls the 3 extra plants) | re-score |
 | exp2 figures/tables (`fig_exp2_*`, `tab_exp2_2x2*`) | coverage denominators and scores re-derived | re-score |
 | `tab_census.tex`, `macros_census.tex` | **unchanged** — frozen v1-era relics (PROVENANCE re-score scope; deferred 0444). Their render recipes crash on the post-0422 mart (zero `census` rows) — pre-existing at HEAD, not introduced here | — |
+| `tab_self_consistency.tex`, `tab_verification.tex` | regenerated but **still render from v1-era mart rows** (rag_consistency 26, verification 4 — kept v1-scored, same scope as 0413; deferred 0444). Deliberate mixed vintage, not an oversight | — |
 
 Status distribution shift (v1-compat projection): operational 54 → 56,
 retired 1 → 2, others unchanged (sum 173) — verified from the release CSV.
