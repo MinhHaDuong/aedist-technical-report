@@ -9,6 +9,7 @@ Author: claude
 2026-06-06T09:09Z claude imagine raid reimagine PASS — approach: standalone P3 script importing extract_exp2_bib helpers; macro = grouped co-output (0436 rule); DATA FINDING: ban violated in optimised arm (Mistral cites en.wikipedia.org in S1+bib) — per-agent zero phrasing only
 2026-06-06T09:22Z claude plan raid plan committed — script/CSV/macros/render-rule/tests specified against source; execution order test-one-before-blasting
 2026-06-06T09:31Z claude verify feasibility PASS after corrections — OpenAI arm2 run01 also violates (prose names both agents); make-wildcard no-brace fix; skip notes key; anchor = 2nd heading occurrence l.337
+2026-06-06T11:30Z claude execute delivered — 5/20 optimised runs banned (Mistral 4, OpenAI 1); 1/20 naive; 30 total instances; 1999 tests passed
 --- body ---
 ## Context
 
@@ -86,14 +87,14 @@ counted. Plus the main.md literal-consistency adherence test.
 
 ## Exit criteria
 
-- [ ] Script counts banned-domain citations per run across the 40
+- [x] Script counts banned-domain citations per run across the 40
       registered runs; CSV + macro artifacts generated and committed
-- [ ] `experiments/render.mk` target added; DAG prerequisites match the
+- [x] `experiments/render.mk` target added; DAG prerequisites match the
       script's actual reads/writes
-- [ ] Annex C sentence(s) report the per-arm count with "we did not
+- [x] Annex C sentence(s) report the per-arm count with "we did not
       detect" phrasing for any zero; consistency test guards the quoted
       literal against the CSV
-- [ ] Unit tests for the domain matcher; `make check` passes
+- [x] Unit tests for the domain matcher; `make check` passes
 
 ## Imagine verdict (raid 2026-06-06) — binding refinements
 
