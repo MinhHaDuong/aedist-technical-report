@@ -1,4 +1,4 @@
-Last updated: 2026-06-05T18:00Z
+Last updated: 2026-06-06T09:05Z
 
 ## North star
 
@@ -20,7 +20,7 @@ Reference v2 (170 plants) adopted end-to-end: snapshot policy → aggregator (#7
 
 ## Next actions
 
-1. **0255–0262 arbitrage** — target report.tex; probably moot now (preprint = main.md). Close-or-requalify with author.
+1. **0452** — H5 Wikipedia-compliance count into Annex C (script, macro, prose); pulled into the preprint perimeter (author 2026-06-06). 0255–0262 arbitrage RESOLVED: deferred (`Label: deferred`, Blocked-by 0435; 0260 also 0171), kept open — pre-registered H1–H6 are owed to the report chapter / journal.
 2. **0435 finalization** — acknowledgements (blessed wording), author read, arXiv build.
 3. Backlog: 0444 (census re-score), 0445 (extension-as-unit, settles 170 vs 174 before macroizing literals), 0446 (matrix figure rework), 0447 (hardcoded-size ratchet), 0441–0443, 0377.
 

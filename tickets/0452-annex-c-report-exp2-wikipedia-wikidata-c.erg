@@ -1,0 +1,103 @@
+%erg 0.1
+Title: Annex C: report Exp2 Wikipedia/Wikidata citation compliance count (H5 audit)
+Created: 2026-06-06
+Author: claude
+
+--- log ---
+2026-06-06T08:54Z claude created
+
+--- body ---
+## Context
+
+Protocol_05 §3.4 (pre-registered revision (d)) bans Wikipedia / Wikidata /
+DBpedia / mirrors / aggregator re-syndication as Source 1 or Source 2,
+because a derivative of the reference dataset was published on Wikipedia
+before the experiment. The protocol states: "Compliance is auditable:
+Phase D synthesis counts Wikipedia/Wikidata citations in each output's
+bibliography. Zero is compliant."
+
+`slides/manuscript/main.md` (the arXiv preprint) discloses the
+contamination risk but never answers the reader's next question: *did the
+ban hold?* Author decision 2026-06-06: the compliance COUNT goes into
+Annex C. It is a descriptive disclosure (a count, not an inferential
+test), so it amends — not violates — ticket 0433's "no statistics in
+Annex C" invariant. The full pre-registered H5 treatment (Wilson upper
+bounds per agent) stays deferred to the report.tex chapter (ticket 0259).
+
+## Scope
+
+Three deliverables: script, macro, prose.
+
+1. **Script** `src/aedist/audit_exp2_wiki_citations.py` (argparse,
+   logging, no hardcoded paths — defaults from the same conventions as
+   `src/aedist/extract_exp2_bib.py`, which already parses these files and
+   whose helpers should be reused). Scan the 40 registered runs in
+   `experiments/derived/arm1_flat/` (naive) and `arm2_flat/` (optimised):
+   inventory Source 1 / Source 2 cells AND bibliography entries. Count
+   citations whose URL/domain matches the banned set from protocol_05
+   §3.4: `*.wikipedia.org` (any language subdomain, incl. `*.m.*`
+   mirrors), `wikidata.org`, `dbpedia.org`, plus an explicit short list of
+   known Wikipedia mirrors. Mechanical domain matching only; do NOT
+   attempt LLM judgement of "aggregator re-syndication" — out of scope,
+   note it as a limitation. Output: per-run CSV
+   `report/inputs/generated/tab_exp2_wiki_compliance.csv`
+   (agent, arm, run, n_cells_s1s2, n_banned_s1s2, n_bib_entries,
+   n_banned_bib).
+
+2. **Macro**: emit the aggregate values (total banned-citation count per
+   arm, n runs scanned) as `\newcommand` macros for report/slides reuse.
+   Per `.claude/rules/writing.md`: ≤3 new values → append to the existing
+   generated macros file (e.g. `macros_slides.tex` generator), do NOT
+   create a new `\InputIfFileExists` include (tectonic bundle trap).
+   NOTE: `main.md` builds via pandoc and inputs no macro file — the prose
+   quotes the literal number; guard it with an adherence/consistency test
+   asserting the literal in main.md matches the generated CSV (pattern of
+   ratchet ticket 0447).
+
+3. **Prose**: one or two sentences in Annex C of
+   `slides/manuscript/main.md` (l.256–339), adjacent to the existing
+   leakage/contamination discussion. Report the count per arm. Phrasing
+   discipline: if zero in the optimised arm, write "we did not detect any
+   banned-domain citation across the N parsable optimised-arm outputs" —
+   never "there are none" (protocol_05 reporting rule + writing.md
+   epistemic humility). Naive-arm counts are NOT violations — the naive
+   prompt (Doc-07) carries no source taxonomy; report them as unaided
+   baseline behaviour, the contrast being itself informative.
+
+## Makefile DAG
+
+Wire the script into `experiments/render.mk` (P3 render workpackage) as
+its own one-output-per-rule target; prerequisites must match the script's
+actual reads (`arm1_flat`, `arm2_flat`) and writes. No P3-to-P3
+side-output edges (ticket 0436 rule). Commit the generated CSV/macros
+(handoff artifacts — never gitignored).
+
+## First test
+
+`tests/test_audit_exp2_wiki_citations.py`: feed a synthetic run markdown
+containing (a) an inventory row citing `https://en.wikipedia.org/wiki/X`
+in Source 1, (b) a bibliography entry citing
+`https://vi.m.wikipedia.org/...`, (c) a clean row citing `moit.gov.vn`.
+Assert counts: n_banned_s1s2 == 1, n_banned_bib == 1, clean row not
+counted. Plus the main.md literal-consistency adherence test.
+
+## Exit criteria
+
+- [ ] Script counts banned-domain citations per run across the 40
+      registered runs; CSV + macro artifacts generated and committed
+- [ ] `experiments/render.mk` target added; DAG prerequisites match the
+      script's actual reads/writes
+- [ ] Annex C sentence(s) report the per-arm count with "we did not
+      detect" phrasing for any zero; consistency test guards the quoted
+      literal against the CSV
+- [ ] Unit tests for the domain matcher; `make check` passes
+
+## Related
+
+- 0259 (H5 report.tex section, deferred) — will reuse this script's
+  artifacts; do not write the Wilson-bound analysis here
+- 0433 (Annex C as-run rewrite, open) — whichever lands second preserves
+  the other's content; this count is disclosure, exempted from 0433's
+  "no statistics" invariant by author decision 2026-06-06
+- 0435 (arXiv finalization umbrella)
+- protocol_05_experiment.md §3.4 and §3.5.1 H5 (source of truth)
