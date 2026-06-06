@@ -1,6 +1,6 @@
 {
-  "run_id": "e734e39297ae",
-  "timestamp": "2026-06-05T12:52:12.439229Z",
+  "run_id": "f281b275759b",
+  "timestamp": "2026-06-06T14:18:58.353112Z",
   "method": "direct",
   "method_params": {
     "model": "mistralai/mistral-medium-3-5",
@@ -31,12 +31,12 @@
   "result_summary": {
     "status": "ok",
     "n_plants": 60,
-    "tp": 55,
-    "fp": 5,
-    "fn": 115,
-    "f1": 0.4783,
-    "fuel_accuracy": 0.5273,
-    "status_accuracy": 0.4909,
+    "tp": 56,
+    "fp": 4,
+    "fn": 117,
+    "f1": 0.4807,
+    "fuel_accuracy": 0.5357,
+    "status_accuracy": 0.4643,
     "province_accuracy": 1.0
   },
   "finish_reason": "stop",

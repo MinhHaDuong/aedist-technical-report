@@ -1,6 +1,6 @@
 {
-  "run_id": "1dc41f8e41bc",
-  "timestamp": "2026-06-05T12:52:13.421520Z",
+  "run_id": "5166418d38a3",
+  "timestamp": "2026-06-06T14:18:59.687007Z",
   "method": "direct",
   "method_params": {
     "model": "mistralai/mistral-small-2603",
@@ -33,8 +33,8 @@
     "n_plants": 48,
     "tp": 41,
     "fp": 7,
-    "fn": 129,
-    "f1": 0.3761,
+    "fn": 132,
+    "f1": 0.371,
     "fuel_accuracy": 0.6341,
     "status_accuracy": 0.4146,
     "province_accuracy": 0.9268

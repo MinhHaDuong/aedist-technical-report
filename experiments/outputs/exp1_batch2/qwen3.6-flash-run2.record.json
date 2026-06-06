@@ -1,6 +1,6 @@
 {
-  "run_id": "adf706ce5669",
-  "timestamp": "2026-06-05T12:52:13.332098Z",
+  "run_id": "391c258af41a",
+  "timestamp": "2026-06-06T14:18:58.989437Z",
   "method": "direct",
   "method_params": {
     "model": "qwen/qwen3.6-flash",
@@ -33,10 +33,10 @@
     "n_plants": 20,
     "tp": 11,
     "fp": 9,
-    "fn": 159,
-    "f1": 0.1158,
+    "fn": 162,
+    "f1": 0.114,
     "fuel_accuracy": 0.7273,
-    "status_accuracy": 0.4545,
+    "status_accuracy": 0.3636,
     "province_accuracy": 0.9091
   },
   "finish_reason": "stop",

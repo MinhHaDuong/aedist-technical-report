@@ -141,6 +141,21 @@ edit** — ticket 0458 (needs-human, deferred) tracks replaying it before any
 future import/re-pin; until then a fresh import would silently revert the
 adoption. `\NumRefPlants` (0444) macroizes at **173**.
 
+## Re-score protocol note (v2.1 flip)
+
+A reference flip changes *scores*, not the mart's *row universe*. The
+committed `measurements.jsonl` universe (562 rows) is not reproducible by a
+fresh `rebuild-measurements`: the census-era records are restorable-only
+(raw replies archived, 0422), and the Exp2 turn records — present in the
+tree but created *after* mart assembly in the canonical `all-outcomes`
+ordering — pollute any assemble that runs while they sit on disk (+149
+rows). The v2.1 re-score therefore re-evaluated the reference-dependent
+records in place (exp1_batch2, exp1/sota cross-evals, exp2_mart) and patched
+exactly those 70 exp1 rows into the committed mart, mirroring the 0413
+scope: census/SC rows remain v1-era record (deferred, 0444). Transient
+`reconciliation_*.csv` siblings must be cleaned from `outputs/exp1_batch2/`
+before `score_exp1` runs — its filename glob swallows them as models.
+
 ## Reproduction
 
 ```sh

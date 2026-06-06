@@ -1,6 +1,6 @@
 {
-  "run_id": "fcc0279af48f",
-  "timestamp": "2026-06-05T12:52:12.575980Z",
+  "run_id": "1fd717a68b09",
+  "timestamp": "2026-06-06T14:18:59.213741Z",
   "method": "direct",
   "method_params": {
     "model": "openai/gpt-oss-20b",
@@ -34,7 +34,7 @@
     "n_plants": 105,
     "tp": 0,
     "fp": 105,
-    "fn": 170,
+    "fn": 173,
     "f1": 0.0
   },
   "finish_reason": "stop",
