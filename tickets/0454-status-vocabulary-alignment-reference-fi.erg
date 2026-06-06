@@ -1,0 +1,67 @@
+%erg 0.1
+Title: Status vocabulary alignment: reference field vs prompt vs GEM standard vs display labels (imagine)
+Created: 2026-06-06
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-06T09:26Z HDMX-coding-agent created — author at 0446 review: "a 4-way diff too much for a Saturday morning"; fold the GEM discussion here
+
+--- body ---
+## Context
+
+Surfaced at the 0446 figure review (2026-06-06): the project speaks FOUR
+status vocabularies, projected into each other at different points:
+
+1. **Reference master** (`vietnam_thermal_plants_v2_classified.csv`):
+   9-class ordinal ladder — `0 exploring, 1 announced, 2 proposed,
+   3 added to PDP, 4 permitted, 5 construction, 6 operating, 9 cancelled,
+   10 retired`. "3 added to PDP" is Vietnam-specific (PDP inclusion is the
+   national lifecycle gate), not in any internal standard.
+2. **What the Exp1 prompt asks the models** (`prompt_complete.txt`):
+   GEM-style 8 classes — `Announced / Pre-permit / Permitted /
+   Construction / Operating / Shelved / Cancelled / Retired`.
+3. **GEM standard** (Global Energy Monitor trackers): announced,
+   pre-construction, permitted, construction, operating, mothballed,
+   cancelled, retired, shelved — the de-facto interchange vocabulary for
+   plant trackers; relevant for downstream comparability (PyPSA-VN, GEM
+   reconciliation 0428/0429).
+4. **Analysis + display**: the author-ratified 6-bucket v1-compat
+   projection (`_STATUS_ORDINAL_PROJECTION` in evaluate.py: ordinal ≤2 →
+   proposed, 3-4 → planned, 5 → constructing, 6 → operational, 9 →
+   cancelled, 10 → retired) with French display labels (STATUS_LABELS in
+   exp1_recognition.py) — used by the recognition matrix bands and the
+   status-difficulty table; band ORDER is lifecycle since 0446.
+
+Note the EN/FR wrinkle inside vocabulary 4: the same figure PDF serves the
+French report and the English preprint (figures keep their generated
+language — known limitation, cf. 0356 for slides).
+
+## Discussion to have (imagine — no immediate action)
+
+- Should the analysis buckets align on GEM classes (recognition scored at
+  GEM granularity), or stay at the coarser ratified 6? Changing granularity
+  re-touches the projection, the difficulty table, and every quoted
+  recognition-by-status number — post-preprint work at the earliest.
+- Should band/display labels show GEM English terms instead of (or
+  alongside) the French labels, given the preprint is in English?
+- Does "3 added to PDP" deserve to survive any projection (it is the
+  Vietnam-specific signal a GEM mapping would erase)?
+- Status is also a per-row match criterion (status_match in scoring) and a
+  controlled vocabulary in the coherence scorer (_ALLOWED_STATUSES) — a
+  5th and 6th place the vocabulary lives; inventory them in the same pass.
+
+## Exit criteria (to sharpen at Plan, after discussion)
+
+- [ ] One documented mapping table: master ordinal ↔ prompt ↔ GEM ↔
+      analysis bucket ↔ display label (EN+FR), committed under docs/
+- [ ] Author decision on analysis granularity and display language
+- [ ] Consumers inventoried (projection, matcher, coherence vocab,
+      figures, tables) with per-consumer impact of any change
+
+## Related
+
+- 0446 (band order; where the 4-way diff surfaced)
+- 0428/0429 (GEM reconciliation track — consumer of any GEM alignment)
+- 0449/0450/0451 (other 0446-review follow-ons)
+- evaluate.py `_STATUS_ORDINAL_PROJECTION`, exp1_recognition.py
+  STATUS_LABELS, prompt_complete.txt status line
