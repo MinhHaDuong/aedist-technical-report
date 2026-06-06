@@ -80,7 +80,7 @@ def _extract_urls(text: str) -> list[str]:
 
 
 def _count_banned_in_text(text: str) -> int:
-    """Count distinct banned-domain URL occurrences in *text*."""
+    """Count banned-domain URL occurrences in *text* (all occurrences, not deduped)."""
     urls = _extract_urls(text)
     return sum(1 for u in urls if is_banned_domain(u))
 
