@@ -70,25 +70,54 @@ membership under the variant, not just names.
   substitutes `mo rong|mr → extension` after diacritics stripping, so
   Vietnamese extension emissions normalize onto the standalone names exactly.
 
+## Net TP/FP/FN on Exp2 (80 runs, 4 arms × 4 agents × 5 reps)
+
+The author's objection to the Exp1 cut: the FN losses concentrate in small
+parametric-only models that Exp2 does not use. Exp2's agents are the big four
+(claude-opus-4-6, gpt-5.5, mistral-large-2512, qwen3.7-max), web-enabled.
+Same measurement on the Exp2 final plant tables
+(`experiments/derived/arm{1..4}_flat/*_run*.md`, the fp_audit sweep machinery,
+reconcile + metrics.py match-type classification, both arms identical code):
+
+| Arm | TP | FP | FN | FP+FN |
+|---|---|---|---|---|
+| Absorbed (170) | 5322 | 500 | 8278 | **8778** |
+| Standalone (173) | 5456 | 366 | 8384 | **8750** |
+| Δ (standalone − absorbed) | +134 | −134 | +106 | **−28** |
+
+**On Exp2, standalone wins the ticket's own decision rule** (−28 of 8778,
+≈0.3%): web-enabled agents recall the extension plants 134/240 ≈ 56% of the
+time (vs 66/210 ≈ 31% parametric in Exp1), so the FP→TP flips outweigh the
++3-row denominator. Per arm×agent cell: standalone better in 9/16, worse in
+7/16 — anthropic and openai improve in every arm (−5 to −15), mistral worsens
+in every arm (+3 to +15, it emits few extension rows), qwen mixed.
+
+For completeness, Exp1 restricted to the four Exp2 models: opus −5,
+gpt-5.5 −1, mistral-large +15, qwen3.7-max +3 → net **+12**, absorbed —
+the parametric regime under-emits extensions even for big models; web access
+is what changes the economics.
+
 ## Reading
 
-By the ticket's stated rule, **absorbed wins** (+78 of 10571, ≈0.7%; 10/14
-models; recall a wash). The case for standalone exists but requires
-*overriding that rule*: its margin comes from F1 (0.3673 → 0.3703, 35
-improve / 31 worsen — marginal) and from discounting the FN that the 3 extra
-reference rows generate. That discount is not a correction one can neutrally
-apply — whether those rows belong in the denominator **is** the ontological
-question under decision, made numerical. Scoring cannot discriminate here
-because scoring presupposes the answer.
+The decision rule's sign depends on the panel:
 
-What the measurement does settle: the original worry — "absorption only
-increased errors" — is **not supported**. Absorption costs the 66
-vetoed-extension FPs but matches 210 FN slots' worth of reference at the
-parent grain; the matching-quality gain of standalone is real (FP→TP flips,
-0–4% capacity diffs instead of 26% strained-parent matches) but confined to
-the 4 models that emit extensions at all. Neither variant buys a material
-scoring advantage; the choice rests on which grain is truer to the asset
-inventory (is "Vinh Tan 4 extension" a plant or a unit of Vinh Tan 4?).
+- **Exp1, full 14-model panel:** absorbed wins (+78 of 10571, ≈0.7%; 10/14
+  models). The margin comes from small parametric-only models that never
+  emit extensions and pay pure FN for the 3 extra rows.
+- **Exp2, the big four web-enabled agents:** standalone wins (−28 of 8778,
+  ≈0.3%), and every flip is FP→TP with zero new FPs there too.
+
+Both margins are sub-percent — scoring buys neither variant a material
+advantage, and the FN side of the ledger is not panel-neutral: whether the 3
+extra rows belong in the denominator **is** the ontological question under
+decision, made numerical. What the measurement does settle: the original
+worry — "absorption only increased errors" — is **not supported** (absorption
+costs the vetoed-extension FPs but matches the parent-grain reference rows);
+and conversely the standalone cost is borne almost entirely by models that
+Exp2 does not use. The matching-quality gain of standalone is real wherever
+extensions are emitted: 0–4% capacity diffs instead of 26% strained-parent
+matches, and on Exp2 the mở-rộng/extension FP class visible in the 0446
+matrix disappears into TPs.
 
 Cost asymmetry of the decision itself: keeping absorbed = zero further work,
 rule-consistent, count stays 170. Switching = master edit + new snapshot +
