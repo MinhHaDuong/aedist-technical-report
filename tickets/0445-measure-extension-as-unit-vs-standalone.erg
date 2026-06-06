@@ -9,6 +9,7 @@ Author: HDMX-coding-agent
 2026-06-06T08:38Z author re-raised during 0446 FP review (2026-06-06): mo-rong/extension suffix FPs visible in the matrix; investigate FPs via this ticket's net measurement
 2026-06-06T13:24Z claude note net measurement done: 70 exp1_batch2 runs rescored under both variants; raw FP+FN absorbed wins +78 (denominator-driven), F1 favors standalone 0.3703 vs 0.3673; count is 173 not 174 (Uong Bi II was extension-only); see data/reference/extensions_standalone_vs_absorbed.md
 2026-06-06T13:38Z claude note exp2 cut added: 80 exp2 runs (big-four web agents) rescored — standalone WINS the FP+FN rule there (-28; +134 TP, -134 FP); exp1 margin came from small parametric models exp2 does not use
+2026-06-06T13:47Z author decide STANDALONE adopted — exp2 net measurement (-28, FP->TP flips, FP-panel cleanup) carries the call; small-model FN losses immaterial (exp2 = big web-enabled agents only); settled count = 173
 --- body ---
 ## Context
 

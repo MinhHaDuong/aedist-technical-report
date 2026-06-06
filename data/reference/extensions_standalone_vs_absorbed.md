@@ -1,7 +1,7 @@
 # Extension-as-unit vs standalone: net error measurement (ticket 0445)
 
 **Date:** 2026-06-06. **Inputs:** master variant snapshot
-`pipeline-2026-06-05+extensions-as-plants.ods` (author hand edit of the
+`pipeline+extensions-as-plants-2026-06-05.ods` (author hand edit of the
 2026-06-05 master, NOT committed — see "Artifact path" below), scored against
 the 70 archived `exp1_batch2` run CSVs (14 models × 5 reps; declined runs have
 no CSV and are absent from both arms identically). Zero API spend: LP matcher
@@ -124,15 +124,22 @@ rule-consistent, count stays 170. Switching = master edit + new snapshot +
 PROVENANCE entry + before/after gate + re-score + figures, and 0444 macroizes
 at 173.
 
-## Artifact path (if standalone is adopted)
+## Decision and artifact path (author ruled standalone, 2026-06-06)
 
-`data/reference/raw/` is immutable/import-only: the hand-made
-`pipeline-2026-06-05+extensions-as-plants.ods` must NOT be committed there.
-Adoption path per 0445/0413 discipline: edit the master in the Gas-to-Power
-project, re-run `import.sh` for a new datestamped snapshot, new PROVENANCE
-version entry, before/after gate, re-score, figures — and the settled count
-for `\NumRefPlants` (0444) becomes **173**. If absorbed is kept, this note is
-the informed-choice justification and the settled count stays **170**.
+The author adopted **standalone** (v2.1, 173 plants): the Exp2 cut carries
+the call — the FN losses concentrate in small parametric-only models the SOTA
+experiment does not use, and the 0446-matrix mở-rộng FP class dissolves.
+
+The canonical path (edit the master, re-run `import.sh`) was impractical: the
+master lives on the author's other machine. The hand-derived variant is
+therefore committed as `raw/pipeline+extensions-as-plants-2026-06-05.ods`
+(datestamp = the underlying capture; the `+extensions-as-plants` infix keeps
+it out of the `pipeline-YYYY-MM-DD.ods` import-name family) and pinned by
+`config.VN_THERMAL_MASTER_SNAPSHOT_ODS`, with the provenance exception
+recorded in `PROVENANCE.md` § v2.1. **The master does not yet carry the
+edit** — ticket 0458 (needs-human, deferred) tracks replaying it before any
+future import/re-pin; until then a fresh import would silently revert the
+adoption. `\NumRefPlants` (0444) macroizes at **173**.
 
 ## Reproduction
 

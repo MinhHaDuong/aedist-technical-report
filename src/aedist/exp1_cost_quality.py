@@ -29,7 +29,7 @@ from .util import model_family
 EXP1_BATCH2_DIR = "experiments/outputs/exp1_batch2/"
 
 # Vietnam thermal reference inventory size — derived from the adopted release
-# (single source of truth, ticket 0413). v1 = 163, v2 = 170. Kept as a
+# (single source of truth, ticket 0413). v1 = 163, v2 = 170, v2.1 = 173. Kept as a
 # module-level name because plot_cost_quality and plot_exp2_arms_split import it.
 N_REFERENCE_PLANTS = reference_plant_count()
 

@@ -1,6 +1,35 @@
 # Reference dataset provenance — Vietnam thermal fleet
 
-## Adopted release (v2, ticket 0413, 2026-06-05)
+## Adopted release (v2.1, ticket 0445, 2026-06-06)
+
+**The frozen reference is `vietnam_thermal_plants_v2_classified.csv` at 173
+plants**: v2 with the four "extension" rows promoted from absorbed units back
+to standalone plants (`Duyen Hai 3 extension`, `Uong Bi I extension`,
+`Uong Bi II extension`, `Vinh Tan 4 extension`). Decision evidence: the net
+TP/FP/FN measurement in `extensions_standalone_vs_absorbed.md` — on Exp2 (the
+big-four web-enabled agents) standalone wins the net-error rule (−28; +134
+FP→TP flips, zero new FPs); the Exp1 full-panel margin for absorption came
+from small parametric-only models the SOTA experiment does not use. Author
+ruled standalone 2026-06-06.
+
+Deltas vs v2 (full gate in `extensions_standalone_vs_absorbed.md`):
+count 170 → 173 (+4 standalone extensions, −1 `Uong Bi II`, whose only
+constituent row was its extension); `Duyen Hai 3` 1904 → 1244 MW,
+`Vinh Tan 4` 1800 → 1200 MW, `Uong Bi I` 405 → 105 MW **and operating →
+retired** (its remaining Units 1–2 are retired; the extension was the
+operating part — status-filtered cohorts change membership). Status
+distribution (v1-compat projection): operational 56, proposed 67, planned 21,
+constructing 10, cancelled 17, retired 2.
+
+**Snapshot provenance exception.** The pinned snapshot
+`raw/pipeline+extensions-as-plants-2026-06-05.ods` is the 2026-06-05 capture
+plus the author's 8-cell edit (4 rows × {Plant, Unit} on the `Power plants`
+sheet), applied directly on the analysis machine because the master lives on
+another machine. The master does **not** yet carry this edit: replay it there
+before any future import/re-pin, or the adoption silently reverts (deferred
+ticket 0458; guard comment at `config.VN_THERMAL_MASTER_SNAPSHOT_ODS`).
+
+## v2 (superseded by v2.1) — adoption record (ticket 0413, 2026-06-05)
 
 **The frozen reference is now `vietnam_thermal_plants_v2_classified.csv`**
 (170 plants), pipe-regenerated from the master snapshot
