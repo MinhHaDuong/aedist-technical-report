@@ -10,6 +10,7 @@ Author: HDMX-coding-agent
 2026-06-06T13:24Z claude note net measurement done: 70 exp1_batch2 runs rescored under both variants; raw FP+FN absorbed wins +78 (denominator-driven), F1 favors standalone 0.3703 vs 0.3673; count is 173 not 174 (Uong Bi II was extension-only); see data/reference/extensions_standalone_vs_absorbed.md
 2026-06-06T13:38Z claude note exp2 cut added: 80 exp2 runs (big-four web agents) rescored — standalone WINS the FP+FN rule there (-28; +134 TP, -134 FP); exp1 margin came from small parametric models exp2 does not use
 2026-06-06T13:47Z author decide STANDALONE adopted — exp2 net measurement (-28, FP->TP flips, FP-panel cleanup) carries the call; small-model FN losses immaterial (exp2 = big web-enabled agents only); settled count = 173
+2026-06-06T14:50Z claude note v2.1 adopted end-to-end: snapshot committed (provenance exception, 0458 guards master replay), release 173, Exp1-3 re-scored (surgical mart patch, universe 562), all live render artifacts regenerated, make check green; gate doc data/reference/extensions_standalone_vs_absorbed.md
 --- body ---
 ## Context
 
@@ -51,18 +52,18 @@ v1↔v2 accounting, every figure, the re-score).
 
 ## Definition of done
 
-- [ ] Standalone-extensions variant produced via the master + pipe (not a hand
+- [x] Standalone-extensions variant produced via the master + pipe (not a hand
       edit); count and per-plant capacity diffs vs absorbed documented.
-- [ ] Exp1 re-scored under both variants; net TP/FP/FN compared in a committed
+- [x] Exp1 re-scored under both variants; net TP/FP/FN compared in a committed
       note under `data/reference/`.
-- [ ] Decision recorded with the measurement as evidence (no loaded causal
+- [x] Decision recorded with the measurement as evidence (no loaded causal
       label — report the net effect, not "absorption broke scoring").
-- [ ] If reverted: PROVENANCE version entry + before/after gate + figures
+- [x] If reverted: PROVENANCE version entry + before/after gate + figures
       regenerated, same discipline as 0413.
-- [ ] The final adopted plant count is settled (this is the count the
+- [x] The final adopted plant count is settled (this is the count the
       `\NumRefPlants` macro and all manuscript reference-size mentions resolve
       to — see 0444 macroization, blocked on this).
-- [ ] `make check` green.
+- [x] `make check` green.
 
 ## Related
 

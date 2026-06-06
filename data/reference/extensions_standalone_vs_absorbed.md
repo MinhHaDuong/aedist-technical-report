@@ -141,6 +141,29 @@ edit** — ticket 0458 (needs-human, deferred) tracks replaying it before any
 future import/re-pin; until then a fresh import would silently revert the
 adoption. `\NumRefPlants` (0444) macroizes at **173**.
 
+## Artifact-level deltas (adoption gate, v2 → v2.1)
+
+Every reference-dependent artifact regenerated; each delta traces to the
+4-row grain change or its re-score:
+
+| Artifact | Delta | Traces to |
+|---|---|---|
+| `vietnam_thermal_*_v2*.csv` | 254 units relabeled on 4 rows; 170 → 173 plants | the 8-cell edit |
+| `measurements.jsonl` | exactly 70 exp1_batch2 rows replaced (tp+fn ≡ 173); universe fixed at 562 | re-score |
+| `exp2_mart.jsonl` | 160 rows, `score_summary` changes on the 80 scored runs only | re-score |
+| `sota_cross_eval.csv` / `exp1_cross_eval.csv` | all rows re-scored, `reference=v2_classified` | re-score |
+| `macros.tex` / `macros_slides.tex` | `\NumRefPlants` 170 → 173 | count |
+| `macros_exp1_matrix.tex` | `\ExpOneMatrixPlants` 170 → 173; FP-panel count recomputed | count + FP→TP flips |
+| `fig_exp1_recognition_matrix*.pdf` (en/fr/strong/top) | +4 extension columns (−1 Uong Bi II), Uong Bi I moves to Retired band; recoverable mở-rộng FPs leave the top-40 panel | grain change |
+| `tab_reconciliation.tex` | Expert plants 170 → 173 | count |
+| `tab_status_difficulty.tex` | Ensemble 173; operational 56, retired 2 | status flip |
+| `macros_p1_base.tex` | `\CensusTPMax` 113 → 116 (best run recalls the 3 extra plants) | re-score |
+| exp2 figures/tables (`fig_exp2_*`, `tab_exp2_2x2*`) | coverage denominators and scores re-derived | re-score |
+| `tab_census.tex`, `macros_census.tex` | **unchanged** — frozen v1-era relics (PROVENANCE re-score scope; deferred 0444). Their render recipes crash on the post-0422 mart (zero `census` rows) — pre-existing at HEAD, not introduced here | — |
+
+Status distribution shift (v1-compat projection): operational 54 → 56,
+retired 1 → 2, others unchanged (sum 173) — verified from the release CSV.
+
 ## Re-score protocol note (v2.1 flip)
 
 A reference flip changes *scores*, not the mart's *row universe*. The

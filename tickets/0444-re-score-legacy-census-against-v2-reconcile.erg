@@ -9,6 +9,7 @@ Blocked-by: 0445
 2026-06-05T14:35Z claude note macroization criterion gated on 0445 (settle plant count via extension measurement) so the literal 163s are macroized once, against the final count — see criterion text
 2026-06-06T11:25Z claude note Blocked-by 0445 header added (author 2026-06-06: mark 0445 blocking) — dependency was documented in the log but missing from the header
 
+2026-06-06T14:50Z claude note 0445 settled the count: \NumRefPlants macroizes at 173 (v2.1, extensions standalone)
 --- body ---
 ## Context
 
