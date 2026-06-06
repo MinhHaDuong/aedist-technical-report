@@ -2,7 +2,7 @@
 
 **Date:** 2026-06-06. **Inputs:** master variant snapshot
 `pipeline+extensions-as-plants-2026-06-05.ods` (author hand edit of the
-2026-06-05 master, NOT committed — see "Artifact path" below), scored against
+2026-06-05 master, committed under `raw/` — see "Artifact path" below), scored against
 the 70 archived `exp1_batch2` run CSVs (14 models × 5 reps; declined runs have
 no CSV and are absent from both arms identically). Zero API spend: LP matcher
 re-runs only, both arms scored fresh with the same code
