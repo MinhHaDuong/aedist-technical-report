@@ -1,0 +1,56 @@
+%erg 0.1
+Title: Transposed portrait recognition matrix: plant rows, hierarchical run columns (imagine)
+Created: 2026-06-06
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-06T08:40Z HDMX-coding-agent created — author imagine on the 0446 figure review
+
+--- body ---
+## Context
+
+Author imagine (2026-06-06, during the 0446 figure review): "a transposed
+version, portrait mode. Asset names easier to read, column names displayed
+hierarchically on 3 lines: one model tag, then the version tag, then the
+run tag."
+
+Transposing puts the 170 plants on rows — names read horizontally (no 90°
+rotation), which is the only orientation where they have a chance of being
+genuinely readable. The 70 runs become columns with a 3-level hierarchical
+header: family tag (claude / deepseek / gpt / mistral / qwen), then version
+tag (opus-4.6, v4-pro, 5.5, ...), then run tag (r1..r5) — each level spans
+its children, like a pivot-table header.
+
+## Geometry to validate at Plan
+
+170 rows on a portrait A4 text block (~9.7 in usable height) gives
+~1.45 mm/row → plant labels at ~4 pt print. Readable is ~5-6 pt, so likely
+needs one of: two-page split (e.g. by status group), full-page portrait
+float with reduced margins, or a row subset. Measure before promising
+"easier to read" — the 0446 arbitration already accepted texture-level
+labels once; this variant only earns its keep if names become actually
+legible.
+
+## Pistes
+
+- Same derivation (`exp1_recognition`), same band logic transposed: status
+  bands become horizontal stripes with labels in the left margin (reading
+  direction is natural there).
+- Hierarchical header: family/version/run as three stacked text rows with
+  spanning rules (matplotlib: text + hlines on a header band; no table
+  machinery needed).
+- Keep the FP panel as a bottom (or top) block of 40 rows, red.
+- CLI: `--transpose` on plot_exp1_matrix, or a sibling script if the layout
+  diverges too much to share cleanly.
+
+## Exit criteria (to sharpen at Plan)
+
+- [ ] Portrait variant builds via the DAG alongside the landscape one
+- [ ] Plant names legible at print scale (measured, not asserted)
+- [ ] 3-line hierarchical run header (family / version / run)
+- [ ] Author picks which orientation ships in the manuscript annex
+
+## Related
+
+- 0446 (landscape matrix rework — shared derivation and conventions)
+- 0450 (interactive matcher spot-check — the other 0446-review imagine)

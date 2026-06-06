@@ -1,0 +1,47 @@
+%erg 0.1
+Title: Exp2 four-arm versions of the recognition matrix
+Created: 2026-06-06
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-06T08:38Z HDMX-coding-agent created — author observation 3 on the 0446 figure review
+
+--- body ---
+## Context
+
+Author direction (2026-06-06, 0446 review): "Code can be parametrized by
+experiment. Also produce the exp2 versions (four arms)." 0446 delivered the
+model-list parametrization (`--models` / `--exclude-models` on
+`aedist.plot_exp1_matrix`, with `strong` and `top` cohort versions wired in
+render.mk). Experiment parametrization is a separate lift: Exp2 records live
+in the exp2 mart layer (`exp2_mart.jsonl` / mart views), carry an *arm*
+dimension (naive comparator vs optimized × agents), and the per-run plant
+lists come out of a different derivation than
+`aedist.exp1_recognition.load_exp1_recognition` (which globs exp1_batch2
+record.json files).
+
+## Quoi faire
+
+1. Generalize the recognition derivation: either extend `exp1_recognition`
+   with an exp2 loader producing the same `RecognitionCell` /
+   `fp_presence` contract, or add a sibling `exp2_recognition` module on the
+   mart layer (respect the render-DAG rule: figures read their own mart
+   view, no P3-to-P3 side-outputs, cf. 0436).
+2. One matrix per arm (four figures), same layout as the Exp1 matrix
+   (lifecycle band order, model rows, FP panel recomputed per arm).
+3. Wire in render.mk (one output per rule) under `chart-figures`.
+4. Decide with the author where (if anywhere) they land in the manuscript —
+   exploration artifacts first.
+
+## Exit criteria
+
+- [ ] Four arm-specific matrix PDFs build from the mart layer via the DAG
+- [ ] Same visual conventions as the Exp1 matrix (0446 layout)
+- [ ] `make check-fast` + `pytest -m adherence` green
+- [ ] Author review of the four figures
+
+## Related
+
+- 0446 (Exp1 matrix rework — layout and parametrization base)
+- 0436 (render DAG: no P3-to-P3 side-output edges)
+- 0171 (Phase C cross-eval — same four-arm structure, journal delta)

@@ -55,9 +55,10 @@ def test_status_difficulty_rates():
 
 
 def test_status_order_follows_shared_library():
-    """Statuses are ordered by the shared STATUS_ORDER, operational before proposed."""
+    """Statuses are ordered by the shared STATUS_ORDER — lifecycle order
+    (author-ratified 2026-06-06, ticket 0446): proposed before operational."""
     rows = build_status_table(_fixture_cells())
-    assert list(rows.keys()) == ["operational", "proposed"]
+    assert list(rows.keys()) == ["proposed", "operational"]
 
 
 def test_count_is_distinct_plants_not_cells():

@@ -1,5 +1,6 @@
 ---
 header-includes:
+  - \usepackage{pdflscape}
   - \usepackage{newunicodechar}
   - \newunicodechar{✕}{\ensuremath{\times}}
   - \newunicodechar{≤}{\ensuremath{\leq}}
@@ -376,20 +377,28 @@ The narrative inventory component of §5 handles longitudinal aspects pragmatica
 
 Figure 7 aligns each of the 170 reference plants on a fixed column, for the 70 Experiment 1 runs (14 models × 5 repetitions, ordered as in Figure 1: by architectural family, then by decreasing effective parameter count). A blue cell marks a recognized plant (true positive); an empty cell, a miss. Reference columns are ordered by status group, then by decreasing capacity, so the status bands align with the difficulty table below. The left panel shows the 40 most frequent false positives across all runs, sorted by decreasing occurrence; red follows the paper's false-positive convention (unrecognized — possibly real, not necessarily fabricated). Unlike Figure 1, which packs recognized plants leftward, the fixed-column alignment reveals *which* plants each model misses: famous plants form dense columns, obscure ones sparse columns.
 
-![Figure 7](../report/inputs/generated/fig_exp1_recognition_matrix.pdf)
+```{=latex}
+\begin{landscape}
+```
 
-*Figure 7. Experiment 1 recognition matrix: 170 reference plants (columns, ordered by status then decreasing capacity) against 70 runs (rows, 14 models × 5 repetitions). Blue = plant recognized; left panel: the 40 most frequent false positives (red).*
+![Figure 7](../report/inputs/generated/fig_exp1_recognition_matrix.pdf){width=100% height=85%}\
+
+*Figure 7. Experiment 1 recognition matrix: 170 reference plants (columns, ordered by status then decreasing capacity) against 70 runs (rows, one label per model, 5 repetitions each). Blue = plant recognized; left panel: the 40 most frequent false positives (red).*
+
+```{=latex}
+\end{landscape}
+```
 
 The table below shares the same data derivation as the figure (library `aedist.exp1_recognition` — common cause, no producer–consumer chaining) and decomposes the difficulty by status. The reference list is dominated by proposed plants — the largest share — which parametric memory cannot know; their mean recognition rate is far below that of operational plants. The low overall recognition is therefore structural, a property of the list's composition, not merely a model failure.
 
 | Status | n | Share of list | Recognition rate |
 |---|---:|---:|---:|
-| Operational | 54 | 31.8% | 46.9% |
 | Proposed | 67 | 39.4% | 7.8% |
 | Planned | 21 | 12.4% | 29.7% |
 | Under construction | 10 | 5.9% | 40.7% |
-| Cancelled | 17 | 10.0% | 16.9% |
+| Operational | 54 | 31.8% | 46.9% |
 | Retired | 1 | 0.6% | 62.9% |
+| Cancelled | 17 | 10.0% | 16.9% |
 | **All** | **170** | **100.0%** | **26.1%** |
 
 *Table: composition of the reference list by status, and mean recognition rate (Experiment 1, direct method: 14 models × 5 repetitions). The rate is the share of run × plant cells recognized among plants of that status.*

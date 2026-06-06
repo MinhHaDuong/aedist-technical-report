@@ -1,0 +1,46 @@
+%erg 0.1
+Title: Global pandoc caption style: Figure N renders as 'Figure N: Figure N' in manuscript
+Created: 2026-06-06
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-06T08:38Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+In `slides/manuscript/main.md` figures are included as `![Figure N](path)`
+followed by a separate italic caption paragraph. Pandoc's implicit_figures
+turns the alt text into a LaTeX `\caption{Figure N}`, which the `figure`
+counter prefixes again: the PDF shows "Figure 6: Figure 6", "Figure 7:
+Figure 7". Spotted on Figure 6 and Figure 7 (ticket 0446 review); the fix is
+the caption *style*, global — not a per-figure patch.
+
+Author decision (2026-06-06, 0446 arbitration): separate ticket, out of the
+0446 figure-rework PR. Note: 0446 made Figure 7 an *inline* image (trailing
+`\ ` after the image) inside its landscape page, which suppresses the
+implicit figure there; the italic-paragraph caption is the visible caption.
+That is one candidate convention for the whole document.
+
+## Options to arbitrate
+
+1. Inline-image convention everywhere (`![](path){...}\` + italic caption
+   paragraph): kills the duplicated caption, loses LaTeX float/caption
+   machinery (acceptable: main.md already hand-numbers its captions).
+2. Real pandoc captions (`![Real caption text](path)`): drop the italic
+   paragraphs, let pandoc number figures; requires renumber-proofing the
+   inline "Figure N" cross-references.
+3. `link_attributes` + `{#fig:id}` with pandoc-crossref: heavier toolchain
+   change; probably overkill for an arXiv preprint.
+
+## Exit criteria
+
+- [ ] One convention chosen and applied to every figure in main.md
+- [ ] No "Figure N: Figure N" duplication anywhere in the built PDF
+- [ ] Inline "Figure N" references still resolve to the right figures
+- [ ] `make manuscript` green; visual check of every figure page
+
+## Related
+
+- 0446 (matrix figure rework — where the defect was confirmed live)
+- 0435 (arXiv finalization — consumes the fixed build)
