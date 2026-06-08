@@ -195,7 +195,8 @@ CORPUS_SCORER  ?= qwen3.5:9b
 CORPUS_REF     ?= ../report/inputs/README.md
 
 .PHONY: pdf2md build-corpus preflight help extract-reference-ods \
-        aggregate-reference-plants classify-reference-plants reference-pipeline
+        aggregate-reference-plants classify-reference-plants reference-pipeline \
+        aggregate-gem-plants classify-gem-plants gem-pipeline
 
 pdf2md:
 ifndef PDF
@@ -293,6 +294,29 @@ classify-reference-plants:
 # snapshot is absent from CI by design).
 reference-pipeline: extract-reference-ods aggregate-reference-plants classify-reference-plants
 
+# Aggregate the GEM unit-grain CSV up to plant grain (ticket 0429). A utility
+# verb (.PHONY): Phase-aware groupby on GEM's data model, with output uniqueness
+# guard (no duplicate plant Name). Replaces the lost GEM.csv -> GEM_aggregate.py
+# hand chain. The tracked raw input is ../data/reference/gem_units.csv.
+aggregate-gem-plants:
+	$(UV_RUN) python ../data/reference/GEM_aggregate.py \
+	    --input ../data/reference/gem_units.csv \
+	    --output ../data/reference/gem_thermal_aggregated.csv
+
+# Add IRES/ISIC/PyPSA classification columns to the aggregated GEM plant CSV.
+# Input -> output transform: reads gem_thermal_aggregated.csv, writes gem_thermal.csv
+# (the committed cross-check artifact). Fuel column in GEM is "Fuel" (title-case).
+classify-gem-plants:
+	$(UV_RUN) python ../data/reference/add_classifications.py \
+	    --input ../data/reference/gem_thermal_aggregated.csv \
+	    --output ../data/reference/gem_thermal.csv \
+	    --fuel-col Fuel
+
+# Full GEM pipe: aggregate -> classify. Each step is an independent .PHONY verb.
+# Reads the tracked gem_units.csv and writes gem_thermal.csv — NEVER a dependency
+# of score.mk/render.mk (gem_thermal.csv is a deferred cross-check artifact).
+gem-pipeline: aggregate-gem-plants classify-gem-plants
+
 help:
 	@echo "Sweeps (manager + worker pipeline):"
 	@echo "  make census               Generate jobs + run workers (model census)"
@@ -318,6 +342,9 @@ help:
 	@echo "  make aggregate-reference-plants  Roll units up to plants (validated)"
 	@echo "  make classify-reference-plants   Add IRES/ISIC/PyPSA columns (in->out)"
 	@echo "  make reference-pipeline    extract -> aggregate -> classify (full regen)"
+	@echo "  make aggregate-gem-plants  Aggregate GEM units to plants (uniqueness guard)"
+	@echo "  make classify-gem-plants   Add IRES/ISIC/PyPSA columns to GEM plants"
+	@echo "  make gem-pipeline          aggregate -> classify GEM cross-check data"
 	@echo ""
 	@echo "Config in experiments.toml [sweeps.*] sections"
 	@echo "Job board in jobs/{pending,running,done,failed}/"
