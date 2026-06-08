@@ -1,9 +1,14 @@
 metric,value,note
 stratified_kendall_tau_cap_distinct,0.215,"Model-stratified Kendall tau, cap_distinct vs F1 (pairs counted within model only)"
+tau_cap_concordant,65,Concordant pairs for cap_distinct tau
+tau_cap_discordant,42,Discordant pairs for cap_distinct tau
 stratified_kendall_tau_status_distinct,0.312,"Model-stratified Kendall tau, status_distinct vs F1"
+tau_status_concordant,61,Concordant pairs for status_distinct tau
+tau_status_discordant,32,Discordant pairs for status_distinct tau
 n_models_positive_cap_spearman,10/14,"Models with positive within-model Spearman(cap_distinct, F1)"
 n_mixed_models,3,Models with both vetoed and surviving runs
-within_model_vetoed_mean_f1,0.114,Mean F1 of vetoed runs (mixed models only)
-within_model_surviving_mean_f1,0.329,Mean F1 of surviving runs (mixed models only)
+per_model_binary_gap,0.162,Mean of per-model (surviving - vetoed) F1 gaps — confound-free within-model estimate
+within_model_vetoed_mean_f1,0.114,Pooled mean F1 of vetoed runs across mixed models (residual cross-model confound)
+within_model_surviving_mean_f1,0.329,Pooled mean F1 of surviving runs across mixed models (residual cross-model confound)
 pooled_vetoed_mean_f1,0.146,Pooled across-model mean F1 of vetoed runs (tautological baseline)
 pooled_surviving_mean_f1,0.481,Pooled across-model mean F1 of surviving runs (tautological baseline)

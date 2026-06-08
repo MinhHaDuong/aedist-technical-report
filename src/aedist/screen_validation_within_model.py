@@ -56,13 +56,22 @@ class WithinModelAccuracyGap:
 
     Attributes:
         is_within_model: True — strata are (model,) not pooled.
-        vetoed_mean_f1: Mean F1 of vetoed runs across all mixed models.
-        surviving_mean_f1: Mean F1 of surviving runs across all mixed models.
+        vetoed_mean_f1: Pooled mean F1 of vetoed runs (mixed models only;
+            still carries cross-model confound — use per_model_binary_gap
+            for the confound-free estimate).
+        surviving_mean_f1: Pooled mean F1 of surviving runs (mixed models only).
         n_mixed_models: Number of models with both vetoed and surviving runs.
+        per_model_binary_gap: Mean of per-model (surviving_mean − vetoed_mean)
+            gaps over mixed models — the true within-model estimate without
+            cross-model confound.
         stratified_kendall_tau_cap: Model-stratified Kendall tau,
             cap_distinct vs F1 (counts concordant/discordant pairs only
             within each model).
         stratified_kendall_tau_status: Same for status_distinct vs F1.
+        tau_cap_concordant: Number of concordant pairs for cap_distinct tau.
+        tau_cap_discordant: Number of discordant pairs for cap_distinct tau.
+        tau_status_concordant: Number of concordant pairs for status_distinct tau.
+        tau_status_discordant: Number of discordant pairs for status_distinct tau.
         n_models_positive_cap: Models with positive within-model Spearman
             rho(cap_distinct, F1).
         n_models_total: Total models with >= 2 scoreable runs.
@@ -75,8 +84,13 @@ class WithinModelAccuracyGap:
     vetoed_mean_f1: float | None
     surviving_mean_f1: float | None
     n_mixed_models: int
+    per_model_binary_gap: float | None
     stratified_kendall_tau_cap: float
     stratified_kendall_tau_status: float
+    tau_cap_concordant: int
+    tau_cap_discordant: int
+    tau_status_concordant: int
+    tau_status_discordant: int
     n_models_positive_cap: int
     n_models_total: int
     pooled_vetoed_mean_f1: float
@@ -212,25 +226,33 @@ def within_model_accuracy_gap(rows: list[dict]) -> WithinModelAccuracyGap:
     for r in rows:
         model_groups[r["model"]].append(r)
 
-    # Binary within-model gap (only models with both vetoed and surviving runs)
+    # Binary within-model gap (only models with both vetoed and surviving runs).
+    # Compute per-model gaps first, then average — this is the confound-free estimate.
+    # Pooling across models (extend) would still carry cross-model signal because
+    # high-quality models tend to have both higher F1 and more surviving runs.
     within_vetoed_f1: list[float] = []
     within_surv_f1: list[float] = []
+    per_model_gaps: list[float] = []
     n_mixed = 0
 
     for model_runs in model_groups.values():
         vetoed_runs = [r for r in model_runs if r["vetoed"] and r["f1"] is not None]
         surv_runs = [r for r in model_runs if not r["vetoed"] and r["f1"] is not None]
         if vetoed_runs and surv_runs:
+            v_mean = sum(r["f1"] for r in vetoed_runs) / len(vetoed_runs)  # type: ignore[operator]
+            s_mean = sum(r["f1"] for r in surv_runs) / len(surv_runs)  # type: ignore[operator]
             within_vetoed_f1.extend(r["f1"] for r in vetoed_runs)
             within_surv_f1.extend(r["f1"] for r in surv_runs)
+            per_model_gaps.append(s_mean - v_mean)
             n_mixed += 1
 
     vetoed_mean = sum(within_vetoed_f1) / len(within_vetoed_f1) if within_vetoed_f1 else None
     surv_mean = sum(within_surv_f1) / len(within_surv_f1) if within_surv_f1 else None
+    per_model_gap = sum(per_model_gaps) / len(per_model_gaps) if per_model_gaps else None
 
     # Model-stratified Kendall tau
     tau_cap, conc_cap, disc_cap = _stratified_kendall_tau(model_groups, "cap_distinct")
-    tau_status, _, _ = _stratified_kendall_tau(model_groups, "status_distinct")
+    tau_status, conc_status, disc_status = _stratified_kendall_tau(model_groups, "status_distinct")
 
     log.debug("Stratified tau(cap_distinct, F1): %.3f (%d C, %d D)", tau_cap, conc_cap, disc_cap)
 
@@ -259,8 +281,13 @@ def within_model_accuracy_gap(rows: list[dict]) -> WithinModelAccuracyGap:
         vetoed_mean_f1=vetoed_mean,
         surviving_mean_f1=surv_mean,
         n_mixed_models=n_mixed,
+        per_model_binary_gap=per_model_gap,
         stratified_kendall_tau_cap=tau_cap,
         stratified_kendall_tau_status=tau_status,
+        tau_cap_concordant=conc_cap,
+        tau_cap_discordant=disc_cap,
+        tau_status_concordant=conc_status,
+        tau_status_discordant=disc_status,
         n_models_positive_cap=n_pos,
         n_models_total=n_tot,
         pooled_vetoed_mean_f1=pooled_v,
@@ -296,9 +323,29 @@ def run_analysis(exp1_dir: Path, cross_eval: Path, output: Path) -> WithinModelA
                     "(pairs counted within model only)",
                 },
                 {
+                    "metric": "tau_cap_concordant",
+                    "value": str(result.tau_cap_concordant),
+                    "note": "Concordant pairs for cap_distinct tau",
+                },
+                {
+                    "metric": "tau_cap_discordant",
+                    "value": str(result.tau_cap_discordant),
+                    "note": "Discordant pairs for cap_distinct tau",
+                },
+                {
                     "metric": "stratified_kendall_tau_status_distinct",
                     "value": f"{result.stratified_kendall_tau_status:.3f}",
                     "note": "Model-stratified Kendall tau, status_distinct vs F1",
+                },
+                {
+                    "metric": "tau_status_concordant",
+                    "value": str(result.tau_status_concordant),
+                    "note": "Concordant pairs for status_distinct tau",
+                },
+                {
+                    "metric": "tau_status_discordant",
+                    "value": str(result.tau_status_discordant),
+                    "note": "Discordant pairs for status_distinct tau",
                 },
                 {
                     "metric": "n_models_positive_cap_spearman",
@@ -311,14 +358,19 @@ def run_analysis(exp1_dir: Path, cross_eval: Path, output: Path) -> WithinModelA
                     "note": "Models with both vetoed and surviving runs",
                 },
                 {
+                    "metric": "per_model_binary_gap",
+                    "value": f"{result.per_model_binary_gap:.3f}" if result.per_model_binary_gap is not None else "",
+                    "note": "Mean of per-model (surviving - vetoed) F1 gaps — confound-free within-model estimate",
+                },
+                {
                     "metric": "within_model_vetoed_mean_f1",
                     "value": f"{result.vetoed_mean_f1:.3f}" if result.vetoed_mean_f1 is not None else "",
-                    "note": "Mean F1 of vetoed runs (mixed models only)",
+                    "note": "Pooled mean F1 of vetoed runs across mixed models (residual cross-model confound)",
                 },
                 {
                     "metric": "within_model_surviving_mean_f1",
                     "value": f"{result.surviving_mean_f1:.3f}" if result.surviving_mean_f1 is not None else "",
-                    "note": "Mean F1 of surviving runs (mixed models only)",
+                    "note": "Pooled mean F1 of surviving runs across mixed models (residual cross-model confound)",
                 },
                 {
                     "metric": "pooled_vetoed_mean_f1",
@@ -378,10 +430,11 @@ def main(argv: list[str] | None = None) -> None:
         result.n_models_total,
     )
     log.info(
-        "Mixed models binary gap: vetoed=%.3f, surviving=%.3f (n_mixed=%d)",
+        "Mixed models binary gap: vetoed=%.3f, surviving=%.3f (n_mixed=%d) | per-model avg gap=%.3f",
         result.vetoed_mean_f1 or 0,
         result.surviving_mean_f1 or 0,
         result.n_mixed_models,
+        result.per_model_binary_gap or 0,
     )
     log.info(
         "Pooled gap (tautological): vetoed=%.3f, surviving=%.3f",
