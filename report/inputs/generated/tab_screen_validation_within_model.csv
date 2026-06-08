@@ -1,0 +1,9 @@
+metric,value,note
+stratified_kendall_tau_cap_distinct,0.215,"Model-stratified Kendall tau, cap_distinct vs F1 (pairs counted within model only)"
+stratified_kendall_tau_status_distinct,0.312,"Model-stratified Kendall tau, status_distinct vs F1"
+n_models_positive_cap_spearman,10/14,"Models with positive within-model Spearman(cap_distinct, F1)"
+n_mixed_models,3,Models with both vetoed and surviving runs
+within_model_vetoed_mean_f1,0.114,Mean F1 of vetoed runs (mixed models only)
+within_model_surviving_mean_f1,0.329,Mean F1 of surviving runs (mixed models only)
+pooled_vetoed_mean_f1,0.146,Pooled across-model mean F1 of vetoed runs (tautological baseline)
+pooled_surviving_mean_f1,0.481,Pooled across-model mean F1 of surviving runs (tautological baseline)
