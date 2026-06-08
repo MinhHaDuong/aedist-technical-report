@@ -145,3 +145,35 @@ def test_build_runner_pinned():
     assert wf["jobs"]["build"].get("runs-on") == "ubuntu-24.04", (
         "build job must pin runner to ubuntu-24.04 for reproducibility"
     )
+
+
+def test_chore_filter_is_single_brace_pattern():
+    """Guard against the predicate-quantifier: every + multi-pattern trap.
+
+    Under predicate-quantifier: every, each changed file must match ALL
+    patterns listed.  With mutually-exclusive positive patterns (tickets/**,
+    STATE.md, etc.) no file can satisfy all patterns, so chore is always
+    false.  The fix is exactly one brace-expansion pattern so the single
+    picomatch call returns true whenever the file is in any branch of the
+    brace set.  See ticket 0377.
+    """
+    wf = _load()
+    steps = wf["jobs"]["changes"].get("steps") or []
+    filter_step = next(
+        (s for s in steps if "dorny/paths-filter" in (s.get("uses") or "")),
+        None,
+    )
+    assert filter_step is not None, "dorny/paths-filter step not found"
+    raw_filters = (filter_step.get("with") or {}).get("filters", "")
+    parsed = yaml.safe_load(raw_filters)
+    chore_patterns = parsed.get("chore") or []
+    assert len(chore_patterns) == 1, (
+        f"chore filter must have exactly one brace-expansion pattern "
+        f"(predicate-quantifier: every requires this); found {len(chore_patterns)} patterns: "
+        f"{chore_patterns}"
+    )
+    pattern = chore_patterns[0]
+    assert pattern.startswith("{") and pattern.endswith("}"), (
+        f"chore filter pattern must be a brace expression like "
+        f"'{{tickets/**,...}}'; got: {pattern!r}"
+    )
