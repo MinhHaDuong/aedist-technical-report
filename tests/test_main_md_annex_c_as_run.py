@@ -104,6 +104,31 @@ def test_claude_0_of_5_names_the_parse_dimension():
     assert "f1" in lowered, "0/5 prose must reference the F1 path it does NOT exclude on"
 
 
+def test_classifier_named_as_run_not_pilot():
+    """The dialogue classifier paragraph must name the as-run choice.
+
+    The pre-reroll draft named the pilot `mistral-small-latest` as *the*
+    classifier and disclosed a (false, for the as-run experiment) same-vendor
+    Mistral pair. As run, the production classifier was deepseek-v4-pro
+    (cross-vendor with all four subjects); nemotron was the registered choice.
+    Guard: the as-run classifier is named, and mistral-small no longer stands
+    as the classifier.
+    """
+    annex = _annex_c()
+    lowered = annex.lower()
+    assert "deepseek-v4-pro" in lowered, (
+        "Annex C must name the as-run dialogue classifier (deepseek-v4-pro)"
+    )
+    # mistral-small may appear only as the pilot footnote, never as THE classifier.
+    # The false same-vendor-Mistral disclosure must be gone.
+    assert "both mistral models" not in lowered, (
+        "stale same-vendor-Mistral classifier disclosure still in Annex C"
+    )
+    assert "same-vendor pair" not in lowered, (
+        "stale same-vendor classifier framing still in Annex C"
+    )
+
+
 def test_references_report_chapter():
     annex = _annex_c().lower()
     assert "technical report" in annex and "chapter" in annex, (
