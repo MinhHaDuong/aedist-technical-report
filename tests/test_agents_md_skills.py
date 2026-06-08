@@ -77,6 +77,10 @@ def _parse_skill_refs(md_path: Path) -> list[tuple[str, str]]:
     return refs
 
 
+@pytest.mark.skipif(
+    not (Path.home() / ".claude" / "skills").is_dir(),
+    reason="IDH skills not installed (e.g. CI); AGENTS.md skill resolution is a local-only adherence check",
+)
 def test_agents_md_skill_refs_resolve():
     """Every non-exempt /skill reference in AGENTS.md must resolve."""
     known = _user_skills() | _project_skills() | _BUILTINS
