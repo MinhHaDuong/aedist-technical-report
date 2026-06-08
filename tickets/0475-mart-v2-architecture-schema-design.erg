@@ -5,15 +5,16 @@ Author: HDMX-coding-agent
 
 --- log ---
 2026-06-08T12:00Z HDMX-coding-agent created
+2026-06-08T23:00Z haduong decided Generalize: rename exp2_mart.py → mart.py, schema name "mart"; no shoehorn; raw counts (tp/fp/fn) as int|None on ScoreSummary directly
 --- body ---
 ## Context
 
 0297 (tracking ticket) wants to retire `measurements.jsonl` in favour of a unified mart.
-Before any code can land, two architectural questions must be resolved by the author:
+Two architectural questions are resolved:
 
 1. **Generalize or shoehorn?**
    The current mart is named `exp2_mart` (schema v3, `_MART_SCHEMA_NAME = "exp2_mart"`).
-   - *Generalize*: rename to `mart.py`, schema name `"mart"`, add experiment-generic
+   - *Generalize* (**chosen**): rename to `mart.py`, schema name `"mart"`, add experiment-generic
      record kinds. This is the clean approach for "all experiments" scope.
    - *Shoehorn*: keep `exp2_mart` naming, map exp1 to a synthetic arm value.
    Generalize is architecturally correct per the ticket's stated goal.
@@ -23,6 +24,7 @@ Before any code can land, two architectural questions must be resolved by the au
    The current `ScoreSummary` stores only ratios (f1, coverage, precision as
    `MetricValue`). Before an exp1 adapter can work, raw counts must be added.
    Where do they go: on `ScoreSummary` directly, or on a new `RawCountsSummary`?
+   **Decision**: raw counts (`tp`, `fp`, `fn` as `int | None`) go on `ScoreSummary` directly.
 
 ## Relevant files
 
