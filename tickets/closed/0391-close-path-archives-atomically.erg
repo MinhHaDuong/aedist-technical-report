@@ -2,11 +2,14 @@
 Title: Make the ticket-close path archive atomically (today it marks the ticket but leaves the file in the open dir)
 Created: 2026-05-29
 Author: Claude
+Closed: Skill deleted in bbd2670d — root cause removed; other close paths audited and correct
 
 --- log ---
 2026-05-29T14:20Z Claude created — prevention pair for 0388. The project ticket-close skill marks a ticket closed but never archives, and it edits a legacy Status: line that erg v1 does not use. This is the root cause of the closed-but-unarchived tickets (0370, 0378) the audit found.
 
 2026-06-04T07:30Z claude note re-triage vs erg 9c23c37 (0407): NOT native — erg close and erg archive remain two commands; mitigated by the native closed-not-archived check warning (0388 closed on that basis); keeping open
+2026-06-08T00:00Z HDMX-coding-agent note execute audit: .claude/skills/ticket-close/SKILL.md was deleted in bbd2670d (merged to main, today) alongside four other vestigial ticket-* wrapper skills — the root cause is removed. Other close paths audited: /merge uses erg-pr-merge (closes+archives); /molt uses erg close + erg archive; /hunt uses erg close + commit (archive via erg-pr-merge on PR merge); /roar step 7 is a post-merge fallback; healthcheck "Status: closed" is an example string, not a live close path. All canonical paths are correct. Decision: skill-only fix is obsoleted by deletion; binary-level change (erg close --archive-by-default) remains deferred per 0407 re-triage.
+2026-06-08T17:59Z HDMX-coding-agent closed — Skill deleted in bbd2670d — root cause removed; other close paths audited and correct
 --- body ---
 ## Context
 
