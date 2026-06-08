@@ -15,7 +15,9 @@ Usage::
     python -m aedist.prototype_v1_verify_agent --plant "Song Hau 1" --country Vietnam
 
 Requirements:
-    ANTHROPIC_API_KEY and TAVILY_API_KEY must be set (or in ~/.claude/.env).
+    ANTHROPIC_API_KEY and TAVILY_API_KEY must be set in the environment.
+    Use ``uv run --env-file ../.env python -m aedist.prototype_v1_verify_agent``
+    to inject them from the project .env file.
 
 Architecture:
     deepagents.create_deep_agent wraps a LangGraph react loop with:
@@ -264,13 +266,10 @@ def main():
 
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
 
-    # Load env from ~/.claude/.env if present
-    env_file = Path.home() / ".claude" / ".env"
-    if env_file.exists():
-        for line in env_file.read_text().splitlines():
-            if "=" in line and not line.startswith("#"):
-                key, _, val = line.partition("=")
-                os.environ.setdefault(key.strip(), val.strip())
+    if not os.environ.get("ANTHROPIC_API_KEY"):
+        raise SystemExit("ANTHROPIC_API_KEY is not set — run with uv run --env-file ../.env")
+    if not os.environ.get("TAVILY_API_KEY"):
+        raise SystemExit("TAVILY_API_KEY is not set — run with uv run --env-file ../.env")
 
     log.info("Verifying plant: %s (%s) with model %s", args.plant, args.country, args.model)
 
