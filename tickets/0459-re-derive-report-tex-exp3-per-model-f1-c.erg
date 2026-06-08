@@ -1,0 +1,143 @@
+%erg 0.1
+Title: Re-derive report.tex Exp3 per-model F1 comparison table against v2.1
+Created: 2026-06-08
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-08T09:07Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+PR #781 (ticket 0444) re-scored the legacy census against the v2.1 reference
+(173 plants) and corrected every census/RAG headline claim in `report.tex` —
+*except* the per-model decomposition comparison table (`tab:decomposition`,
+`report.tex` ~lines 428–447). That table is **hand-written** with v1-era F1
+values, so it is now internally inconsistent with the v2 prose around it
+(e.g. it still shows DeepSeek decomposed Méd. F1 = 87,3 % / best 98,8 %, while
+the §rag_per_fuel prose two paragraphs later — and `\HeadlineMeanFOne` — now
+say 68,6 % / best 76,5 %).
+
+Two coupled problems:
+1. **Stale values.** The five-model single-vs-decomposed grid carries v1 numbers.
+2. **No wiring.** It is a hand-curated `tabular` in the manuscript, with no
+   Makefile target deriving it from `measurements.jsonl`. This is exactly the
+   class the project rule forbids (`rules/coding-python.md` § Build: "No
+   hand-curated data in the pipeline. Every CSV/tex file referenced by slides or
+   report must have a Makefile target that generates it from measurements.jsonl
+   or another tracked source"). Re-typing v2 numbers by hand would re-arm the
+   same staleness trap on the next reference bump.
+
+`report.tex` is internal ("no future", the preprint is `slides/manuscript/
+main.md`), which is why 0444 deferred this rather than blocking the merge — but
+internal does not license a self-contradicting document, and the wiring fix is
+the durable answer.
+
+## Current table (v1, to be replaced)
+
+`tab:decomposition` — columns: Modèle | Requête unique (Méd. F1, Meilleur) |
+Décomposé (Méd. F1, Meilleur). Five rows: Mistral Small 4, GPT-5.4,
+Mistral Large 3, DeepSeek V3.2, Gemini 2.5 Flash Lite. Bold marks the
+decomposition winners.
+
+## v2.1 source data (verify by running the script, do NOT hand-copy these)
+
+Single query = `prompt_version='rag_extract'`; decomposed = `'rag_per_fuel'`
+(NOT `rag_per_fuel_v2`, which is a *different* model generation — see wrinkle).
+Surveyed 2026-06-08 from the merged v2 mart (median / best, n):
+
+- mistral-small-2603 : single 0.515/0.620 (n=3) · per_fuel 0.545/0.607 (n=3)
+- gpt-5.4            : single 0.713/0.713 (n=3) · per_fuel 0.655/0.659 (n=3)
+- mistral-large-2512 : single 0.612/0.649 (n=3) · per_fuel 0.762/0.763 (n=3)
+- deepseek-v3.2      : single 0.518/0.643 (n=3) · per_fuel 0.704/0.765 (n=4)
+- gemini-2.5-flash-lite : single 0.465/0.496 (n=3) · per_fuel 0.540/0.646 (n=3)
+
+These are hypotheses to confirm via the generated artifact, per
+`rules/workflow.md` (AEDIST) § "Derive prose from generated artifacts" — the
+adherence test below re-derives them independently.
+
+### Wrinkle to resolve
+
+The v1 table's "Décomposé" column mixes generations. `rag_per_fuel` is the
+2026-05 decomposition run; `rag_per_fuel_v2` is a later sweep on *newer* model
+slugs (gemini-3-flash-preview, kimi-k2.5, glm-4.7-flash, minimax-m2.7,
+qwen3.5-122b). The five table models all have `rag_per_fuel` rows, so use that
+for parity with "single query" on the *same* model. Decide explicitly whether
+to keep the v2 table to these five (recommended, preserves the
+single-vs-decomposed contrast) or expand it — document the membership choice in
+the script, not by accident.
+
+## Relevant files
+
+- `report/report.tex` (~428–447) — replace the hand-written `tabular` with an
+  `\input{inputs/generated/tab_decomposition}` (or append rows to an existing
+  generated file — beware the tectonic `\InputIfFileExists` wrong-file trap,
+  `rules/writing.md` (AEDIST) § LaTeX macro includes; a real generated target is
+  fine, that rule warns against *empty* placeholder includes).
+- `src/aedist/tabulate_decomposition.py` (NEW) — generator; mirror
+  `tabulate_census.py` / `tabulate_status_difficulty.py` structure
+  (argparse `--output`, load_metrics, group, emit LaTeX, log row count).
+- `experiments/render.mk` — add a `$(ANALYSIS_GEN)/tab_decomposition.tex:
+  $(ANALYSIS_MEASUREMENTS) <script>` rule and list it in the P3 aggregate
+  alongside `tab_census.tex` / `tab_status_difficulty.tex`.
+- `src/aedist/tabulate_macros.py::load_headline_result` — the n=4 DeepSeek
+  per_fuel result is already the single source of truth for the §-text CI;
+  reuse its filter semantics so the table's DeepSeek cell and the prose agree.
+- `measurements.jsonl` — the v2 mart (source).
+
+## Actions
+
+1. Write `tabulate_decomposition.py`: for the five models, compute median + best
+   F1 for `rag_extract` (single) and `rag_per_fuel` (decomposed) from
+   load_metrics(); exclude SYNTHETIC_SUFFIXES; emit the LaTeX table with the
+   same caption/label (`tab:decomposition`), bolding the per-model winner.
+2. Wire the `render.mk` target + aggregate membership.
+3. Replace the hand-written table in `report.tex` with the `\input`.
+4. Add the adherence test (below).
+5. `make -f experiments/render.mk report/inputs/generated/tab_decomposition.tex`,
+   then `make report` — confirm it builds and the DeepSeek decomposed cell
+   matches `\HeadlineMeanFOne` (68,6 %).
+
+## Test (write first — red)
+
+`tests/test_tabulate_decomposition.py`:
+- `test_decomposition_table_matches_mart`: load_metrics(), independently compute
+  median/best F1 for one model (e.g. deepseek-v3.2 rag_per_fuel) and assert the
+  generated `tab_decomposition.tex` contains that value formatted — re-deriving
+  from the artifact, not a hard-coded literal (guards against the
+  re-typed-number trap; mirrors `test_tabulate_census.py`).
+- `test_decomposition_no_v1_values`: assert the stale strings "98,8" and "94,8"
+  (v1 DeepSeek/Mistral-Large best) do NOT appear in the generated file.
+
+## Verification
+
+- [ ] `grep -n 'tabular' report/report.tex` no longer matches inside the
+      decomposition subsection (table is now `\input`ed).
+- [ ] `tab_decomposition.tex` has a `render.mk` target with `$(ANALYSIS_MEASUREMENTS)`
+      prerequisite; `make -f experiments/render.mk <target>` regenerates it.
+- [ ] DeepSeek decomposed Méd. F1 cell == 68,6 % (== `\HeadlineMeanFOne`).
+- [ ] `make report` builds; no "Missing $" / overfull errors from the new table.
+- [ ] `pytest tests/test_tabulate_decomposition.py` green.
+
+## Invariants
+
+- Do not touch `main.md` — it carries no per-model decomposition table; this is
+  report.tex-only.
+- Keep `tab:decomposition` label/caption stable (any `\ref` to it must resolve).
+- `make check` stays green; the new adherence test must catch a wrong value.
+
+## Exit criteria
+
+- [ ] `tab:decomposition` is a generated artifact produced by a `render.mk`
+      target from `measurements.jsonl`, `\input`ed by `report.tex`.
+- [ ] Its values match the v2.1 mart (re-derived, not hand-typed) and are
+      internally consistent with the surrounding v2 prose.
+- [ ] Adherence test re-derives at least one cell from the mart and rejects the
+      v1 values.
+- [ ] `make report` builds; `make check` green.
+
+## Related
+
+- 0444 (census re-score to v2.1 — deferred this table; PR #781)
+- 0447 (hardcoded reference-size ratchet — sibling "no stale literals" hardening)
+- `rules/coding-python.md` § Build ("No hand-curated data in the pipeline")
