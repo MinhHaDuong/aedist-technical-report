@@ -148,6 +148,25 @@ class CoherenceScores:
 
 
 @dataclass
+class VariabilityScores:
+    """Run-level internal-coherence screen (ticket 0453).
+
+    Counts distinct non-empty values in the capacity and status columns.
+    The VETO flag signals a degenerate run: capacity has ≤4 distinct values
+    OR status has ≤1 distinct value.
+
+    Note: ``status_as_of`` variability is intentionally NOT a criterion.
+    Strong models stamp the run date on every row (asof_distinct=1 is the
+    norm for top performers such as claude-sonnet-4.6), so a variability
+    requirement on status-as-of would produce false rejections.
+    """
+
+    capacity_distinct: int
+    status_distinct: int
+    veto: bool  # cap_distinct <= 4 OR status_distinct <= 1
+
+
+@dataclass
 class ProvenanceScores:
     source_presence: float | None
     source_presence_annotation: str | None
@@ -271,6 +290,86 @@ def score_cod_plausible(rows: list[dict[str, str]]) -> tuple[float | None, str |
             years.append(int(m.group(1)))
     plausible = sum(1 for y in years if 1960 <= y <= 2035)
     return round(plausible / len(cod_vals), 4), None
+
+
+def score_variability(rows: list[dict[str, str]]) -> VariabilityScores:
+    """Compute within-run capacity and status variability (ticket 0453).
+
+    Returns distinct-value counts plus the run-level VETO flag.
+
+    Spearman(cap_distinct, F1) ≈ 0.90 over Exp1 batch2 (70 runs).
+    The VETO rule ``cap_distinct <= 4 OR status_distinct <= 1`` was
+    calibrated in-sample on those 70 runs and is an existence proof,
+    not a cross-validated detector.
+    """
+    if not rows:
+        return VariabilityScores(capacity_distinct=0, status_distinct=0, veto=True)
+
+    cap_vals: set[str] = set()
+    for row in rows:
+        for key in _CAPACITY_KEYS:
+            v = (row.get(key) or "").strip()
+            if v:
+                cap_vals.add(v)
+                break
+
+    status_vals = {
+        (row.get("status") or "").strip().lower()
+        for row in rows
+        if (row.get("status") or "").strip()
+    }
+
+    cap_distinct = len(cap_vals)
+    status_distinct = len(status_vals)
+    veto = cap_distinct <= 4 or status_distinct <= 1
+    return VariabilityScores(
+        capacity_distinct=cap_distinct,
+        status_distinct=status_distinct,
+        veto=veto,
+    )
+
+
+def model_reliability_grade(
+    scored_runs: list[dict[str, str]],
+) -> dict[str, dict[str, float | int | bool]]:
+    """Aggregate run-level VETO flags to a model-level source-reliability grade.
+
+    Implements the NATO STANAG 2511 Level-2 ("source reliability") grade from
+    ticket 0453.  A model version that produces 5/5 incoherent runs is
+    disqualified as a source altogether.
+
+    Args:
+        scored_runs: rows from exp1_cross_eval.csv, each containing
+            ``model``, ``coherence_run_veto`` ("1"/"0"), and optionally
+            ``prompt_version``.
+
+    Returns:
+        Dict keyed by ``(model, prompt_version)`` with fields:
+        - ``n_total``: number of runs considered
+        - ``n_vetoed``: runs where coherence_run_veto == "1"
+        - ``veto_fraction``: n_vetoed / n_total
+        - ``disqualified``: True if n_vetoed == n_total (5/5 rule)
+    """
+    from collections import defaultdict
+
+    groups: dict[tuple[str, str], list[bool]] = defaultdict(list)
+    for row in scored_runs:
+        model = row.get("model", "")
+        pv = row.get("prompt_version", "")
+        veto = row.get("coherence_run_veto", "0") == "1"
+        groups[(model, pv)].append(veto)
+
+    result = {}
+    for (model, pv), vetoes in groups.items():
+        n_total = len(vetoes)
+        n_vetoed = sum(vetoes)
+        result[(model, pv)] = {
+            "n_total": n_total,
+            "n_vetoed": n_vetoed,
+            "veto_fraction": round(n_vetoed / n_total, 4) if n_total > 0 else 0.0,
+            "disqualified": n_vetoed == n_total and n_total > 0,
+        }
+    return result
 
 
 def score_accuracy(rows: list[dict[str, str]], ref_path: Path | None) -> AccuracyScores:

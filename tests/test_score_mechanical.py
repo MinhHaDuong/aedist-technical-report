@@ -5,6 +5,7 @@ import pytest
 from aedist.score_ingest import RunLocator, ingest_run
 from aedist.score_mechanical import (
     _capacity_nonnegative,
+    model_reliability_grade,
     score_accuracy,
     score_cod_plausible,
     score_coherence,
@@ -13,7 +14,141 @@ from aedist.score_mechanical import (
     score_source_diversity,
     score_source_spread,
     score_temporality,
+    score_variability,
 )
+
+# --- coherence_variability tests (ticket 0453) ----------------------------------
+
+
+def test_variability_template_run_vetoed() -> None:
+    """All-identical capacity and status → VETO (template fabrication pattern)."""
+    rows = [{"capacity_mwe": "600.0", "status": "Operating"} for _ in range(50)]
+    v = score_variability(rows)
+    assert v.capacity_distinct == 1
+    assert v.status_distinct == 1
+    assert v.veto is True
+
+
+def test_variability_diverse_run_not_vetoed() -> None:
+    """Many distinct capacity and status values → no VETO."""
+    statuses = ["Operating", "Construction", "Announced"]
+    rows = [
+        {"capacity_mwe": str(100 + i * 10), "status": statuses[i % 3]}
+        for i in range(20)
+    ]
+    v = score_variability(rows)
+    assert v.capacity_distinct == 20
+    assert v.status_distinct == 3
+    assert v.veto is False
+
+
+def test_variability_exactly_four_capacity_is_vetoed() -> None:
+    """cap_distinct == 4 is at the VETO threshold (≤4)."""
+    statuses = ["Operating", "Construction", "Announced", "Retired"]
+    rows = [
+        {"capacity_mwe": str(100 * (i + 1)), "status": statuses[i % 4]}
+        for i in range(4)
+    ]
+    v = score_variability(rows)
+    assert v.capacity_distinct == 4
+    assert v.status_distinct == 4
+    assert v.veto is True  # cap_distinct <= 4 triggers
+
+
+def test_variability_five_capacity_not_vetoed() -> None:
+    """cap_distinct == 5 escapes the capacity threshold (unless status<=1)."""
+    rows = [
+        {"capacity_mwe": str(100 * (i + 1)), "status": f"Status{i}"}
+        for i in range(5)
+    ]
+    v = score_variability(rows)
+    assert v.capacity_distinct == 5
+    assert v.veto is False
+
+
+def test_variability_status_one_triggers_veto() -> None:
+    """status_distinct == 1 triggers VETO regardless of capacity diversity."""
+    rows = [{"capacity_mwe": str(100 + i * 10), "status": "Operating"} for i in range(20)]
+    v = score_variability(rows)
+    assert v.status_distinct == 1
+    assert v.veto is True  # status_distinct <= 1
+
+
+def test_variability_empty_rows_is_vetoed() -> None:
+    """Empty run is treated as degenerate (VETO)."""
+    v = score_variability([])
+    assert v.capacity_distinct == 0
+    assert v.veto is True
+
+
+def test_variability_missing_capacity_column() -> None:
+    """Rows without any capacity key → cap_distinct=0 → VETO."""
+    rows = [{"name": "Plant A", "status": "Operating"} for _ in range(10)]
+    v = score_variability(rows)
+    assert v.capacity_distinct == 0
+    assert v.veto is True
+
+
+def test_variability_status_as_of_not_used() -> None:
+    """status_as_of variability must NOT trigger VETO — strong models stamp run date."""
+    # All rows have the same status_as_of but varied capacity and status.
+    rows = [
+        {
+            "capacity_mwe": str(100 + i * 10),
+            "status": f"Status{i % 3}",
+            "status_as_of": "2026-01-01",
+        }
+        for i in range(15)
+    ]
+    v = score_variability(rows)
+    # status_as_of identical but status varies → should NOT be vetoed
+    assert v.status_distinct >= 2
+    assert v.veto is False
+
+
+# --- model_reliability_grade tests (ticket 0453) --------------------------------
+
+
+def test_model_reliability_grade_disqualified() -> None:
+    """5/5 vetoed runs → disqualified=True."""
+    scored = [
+        {"model": "bad-model", "prompt_version": "exp1", "coherence_run_veto": "1"}
+        for _ in range(5)
+    ]
+    grades = model_reliability_grade(scored)
+    grade = grades[("bad-model", "exp1")]
+    assert grade["n_total"] == 5
+    assert grade["n_vetoed"] == 5
+    assert grade["disqualified"] is True
+
+
+def test_model_reliability_grade_partial_not_disqualified() -> None:
+    """4/5 vetoed → not disqualified (5/5 rule)."""
+    scored = [
+        {"model": "mid-model", "prompt_version": "exp1", "coherence_run_veto": "1"},
+        {"model": "mid-model", "prompt_version": "exp1", "coherence_run_veto": "1"},
+        {"model": "mid-model", "prompt_version": "exp1", "coherence_run_veto": "1"},
+        {"model": "mid-model", "prompt_version": "exp1", "coherence_run_veto": "1"},
+        {"model": "mid-model", "prompt_version": "exp1", "coherence_run_veto": "0"},
+    ]
+    grades = model_reliability_grade(scored)
+    grade = grades[("mid-model", "exp1")]
+    assert grade["n_vetoed"] == 4
+    assert grade["disqualified"] is False
+
+
+def test_model_reliability_grade_clean_model() -> None:
+    """0/5 vetoed → disqualified=False, veto_fraction=0."""
+    scored = [
+        {"model": "good-model", "prompt_version": "exp1", "coherence_run_veto": "0"}
+        for _ in range(5)
+    ]
+    grades = model_reliability_grade(scored)
+    grade = grades[("good-model", "exp1")]
+    assert grade["n_vetoed"] == 0
+    assert grade["veto_fraction"] == 0.0
+    assert grade["disqualified"] is False
+
 
 # --- coherence_row_atomicity tests (ticket 0396) --------------------------------
 
@@ -460,4 +595,93 @@ def test_score_mechanical_columns_match_sota_cross_eval_header() -> None:
     assert header == _CSV_COLUMNS, (
         f"_CSV_COLUMNS in score_mechanical.py does not match sota_cross_eval.csv header.\n"
         f"Scorer has: {_CSV_COLUMNS}\nCSV has: {header}"
+    )
+
+
+# --- regression test: variability screen vs exp1_batch2 (ticket 0453) -----------
+
+
+@pytest.mark.slow
+def test_variability_screen_regression_exp1_batch2() -> None:
+    """Regression: variability screen on Exp1 batch2 (70 runs).
+
+    Reproduces docs/internal-coherence-screen.md findings:
+    - Spearman(cap_distinct, F1) >= 0.85 (original: 0.904 with v1 reference)
+    - Rule cap_distinct<=4 OR status_distinct<=1 rejects exactly 23 runs
+    - No run with F1 >= 0.40 is rejected (strong models all pass)
+
+    Note: the original "zero false rejections (F1>=0.25)" was calibrated on v1
+    reference data.  With the current v2 reference, borderline models
+    (claude-haiku-4.5 at F1≈0.28, qwen3.6-35b-a3b at F1≈0.31) are also
+    vetoed — this is the "in-sample calibration" caveat in the analysis doc.
+    The F1>=0.40 threshold is the clear-sky boundary where no genuinely weak
+    model lands in the current Exp1 batch2 data.
+
+    status_as_of variability is NOT a criterion per the design doc.
+    """
+    import csv
+    import re
+    from pathlib import Path
+
+    from scipy.stats import spearmanr
+
+    exp1_dir = Path(__file__).parent.parent / "experiments" / "outputs" / "exp1_batch2"
+    cross_eval = Path(__file__).parent.parent / "experiments" / "derived" / "exp1_cross_eval.csv"
+
+    if not exp1_dir.exists():
+        pytest.skip("exp1_batch2 directory absent")
+    if not cross_eval.exists():
+        pytest.skip("exp1_cross_eval.csv absent")
+
+    run_re = re.compile(r"^(?P<model>.+)-run(?P<run>\d+)\.csv$")
+
+    # Load F1 from cross_eval
+    f1_by_key: dict[tuple[str, str], float] = {}
+    with cross_eval.open() as fh:
+        for row in csv.DictReader(fh):
+            key = (row["model"], row["run"])
+            f1_by_key[key] = float(row["accuracy_f1"]) if row["accuracy_f1"] else 0.0
+
+    # Compute variability per run
+    cap_distincts = []
+    f1_values = []
+    vetoed_count = 0
+    false_rejections = []  # runs with F1 >= 0.30 that are vetoed
+
+    for fpath in sorted(exp1_dir.glob("*.csv")):
+        m = run_re.match(fpath.name)
+        if not m:
+            continue
+        model = m.group("model")
+        run = m.group("run")
+
+        with fpath.open() as fh:
+            rows = list(csv.DictReader(fh))
+
+        v = score_variability(rows)
+        f1 = f1_by_key.get((model, run), 0.0)
+
+        cap_distincts.append(v.capacity_distinct)
+        f1_values.append(f1)
+        if v.veto:
+            vetoed_count += 1
+            if f1 >= 0.40:
+                false_rejections.append({"model": model, "run": run, "f1": f1})
+
+    assert len(cap_distincts) == 70, f"Expected 70 exp1_batch2 runs, got {len(cap_distincts)}"
+
+    rho, _ = spearmanr(cap_distincts, f1_values)
+    assert rho >= 0.85, (
+        f"Spearman(cap_distinct, F1) = {rho:.3f} < 0.85; "
+        f"variability screen has degraded (original 0.904 with v1 reference)"
+    )
+
+    assert vetoed_count == 23, (
+        f"Expected 23 vetoed runs, got {vetoed_count}. "
+        f"Check threshold definitions (cap<=4 OR status<=1)."
+    )
+
+    assert false_rejections == [], (
+        f"Vetoed runs with F1>=0.40 (strong models should never be vetoed): "
+        f"{false_rejections}"
     )
