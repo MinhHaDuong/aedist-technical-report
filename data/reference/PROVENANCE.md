@@ -1,5 +1,18 @@
 # Reference dataset provenance — Vietnam thermal fleet
 
+## Adopted release (v2.2, ticket 0472, 2026-06-08)
+
+**The frozen reference is `vietnam_thermal_plants_v2_classified.csv` at 176 plants**: v2.1 (173) plus the Kiên Lương complex (3 plants: Kiên Lương 1 = 1200 MW, Kiên Lương 2 = 1200 MW, Kiên Lương 3 = 2000 MW), all coal, all cancelled (investment certificate revoked April 2017). Evidence: GEM wiki (gem.wiki/Kien_Luong_power_station). Added via XML surgery on the ODS snapshot (`add_kien_luong.py`), re-extracted through the standard pipeline.
+
+Status distribution (v1-compat projection): operational 56, proposed 63, planned 16, constructing 10, cancelled 20, retired 2. (Note: 0 exploring = 4, 1 announced = 20, 2 proposed = 43, 3 added to PDP = 16, 4 permitted = 5, 5 construction = 10, 6 operating = 56, 9 cancelled = 20, 10 retired = 2.)
+
+**Snapshot provenance exception.** The pinned snapshot `raw/pipeline+KG-2026-06-08.ods` carries two un-replayed local edits that the master (on another machine) does not yet have:
+1. The author's 8-cell standalone-extensions edit (4 rows, ticket 0445; replay pending, ticket 0458).
+2. The 4-row Kiên Lương complex insertion (ticket 0472, `add_kien_luong.py`).
+Do NOT re-pin to a fresh master import until BOTH edits are replayed there, or the adoption silently reverts 176 → 170 (guard comment at `config.VN_THERMAL_MASTER_SNAPSHOT_ODS`).
+
+Extractor @ this commit applied to snapshot `pipeline+KG-2026-06-08.ods`.
+
 ## Adopted release (v2.1, ticket 0445, 2026-06-06)
 
 **The frozen reference is `vietnam_thermal_plants_v2_classified.csv` at 173

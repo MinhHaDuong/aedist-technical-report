@@ -15,10 +15,10 @@ from aedist.evaluate import load_plants_csv, reference_plant_count
 
 
 def test_reference_plant_count_matches_release():
-    """The derived count equals the adopted reference CSV row count (v2.1 = 173)."""
+    """The derived count equals the adopted reference CSV row count (v2.2 = 176 plants)."""
     n = len(load_plants_csv(VN_THERMAL_PLANTS_RELEASE_CSV))
     assert reference_plant_count() == n
-    assert n == 173, f"adopted reference has {n} plants, expected 173 (v2.1)"
+    assert n == 176, f"adopted reference has {n} plants, expected 176 (v2.2 = v2.1 + Kiên Lương complex 3 plants)"
 
 
 def test_all_module_constants_track_the_release():
