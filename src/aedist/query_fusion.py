@@ -197,6 +197,7 @@ def run_fusion(
     summary_path = output_dir / "fusion_summary.json"
     with summary_path.open("w", encoding="utf-8") as f:
         json.dump(summary, f, ensure_ascii=False, indent=2)
+        f.write("\n")
     log.info("Saved fusion summary: %s", summary_path)
 
     return summary

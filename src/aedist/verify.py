@@ -750,6 +750,7 @@ def main():
     summary_path = output_dir / f"{stem}_summary.json"
     with open(summary_path, "w") as f:
         json.dump(summary, f, indent=2)
+        f.write("\n")
     log.info("Wrote %s", summary_path)
     log.info(
         "Verification complete. Mean evidence score: %.2f", summary.get("mean_evidence_score", 0)

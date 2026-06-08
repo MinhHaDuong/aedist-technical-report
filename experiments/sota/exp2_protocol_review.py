@@ -160,7 +160,7 @@ def review_openai(spec: str, output_dir: Path) -> dict:
                 if getattr(content, "type", "") == "output_text":
                     narrative += content.text or ""
     raw_path = output_dir / "openai_review.raw.json"
-    raw_path.write_text(resp.model_dump_json(indent=2), encoding="utf-8")
+    raw_path.write_text(resp.model_dump_json(indent=2) + "\n", encoding="utf-8")
     usage = resp.usage
     tokens_in = getattr(usage, "input_tokens", 0) or 0
     tokens_out = getattr(usage, "output_tokens", 0) or 0
@@ -215,7 +215,7 @@ def review_qwen(spec: str, output_dir: Path) -> dict:
         except (KeyError, IndexError, TypeError):
             narrative = ""
     raw_path = output_dir / "qwen_review.raw.json"
-    raw_path.write_text(json.dumps(dict(resp), default=str, indent=2), encoding="utf-8")
+    raw_path.write_text(json.dumps(dict(resp), default=str, indent=2) + "\n", encoding="utf-8")
     usage = getattr(resp, "usage", None) or {}
     tokens_in = (usage.get("input_tokens") if isinstance(usage, dict) else 0) or 0
     tokens_out = (usage.get("output_tokens") if isinstance(usage, dict) else 0) or 0
@@ -346,7 +346,8 @@ def main(argv: list[str] | None = None) -> int:
                     "review_chars": len(result["narrative"]),
                 },
                 indent=2,
-            ),
+            )
+            + "\n",
             encoding="utf-8",
         )
         summary.append(
@@ -361,7 +362,7 @@ def main(argv: list[str] | None = None) -> int:
         )
 
     summary_path = args.output_dir / "summary.json"
-    summary_path.write_text(json.dumps(summary, indent=2), encoding="utf-8")
+    summary_path.write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
     total_cost = sum(s.get("cost_usd", 0) or 0 for s in summary)
     log.info(
         "Done. %d agents reviewed. Total cost $%.4f. Summary -> %s",

@@ -501,6 +501,7 @@ def _smoke(args: argparse.Namespace) -> None:
     }
     with open(artifact_path, "w") as f:
         json.dump(payload_dict, f, indent=2, ensure_ascii=False, default=str)
+        f.write("\n")
 
     n_searches = len(record.web_search_calls or [])
     n_citations = len(record.citations or [])

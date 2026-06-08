@@ -328,7 +328,7 @@ def _write_record(record: RunRecord, out: Path, stem: str) -> Path:
     """Write a RunRecord to {out}/{stem}.record.json, return the path."""
     record_path = out / f"{stem}.record.json"
     record_path.parent.mkdir(parents=True, exist_ok=True)
-    record_path.write_text(record.model_dump_json(indent=2, exclude_none=True), encoding="utf-8")
+    record_path.write_text(record.model_dump_json(indent=2, exclude_none=True) + "\n", encoding="utf-8")
     return record_path
 
 
