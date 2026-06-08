@@ -1,0 +1,132 @@
+%erg 0.1
+Title: Per-attribute fusion layer — GTM capacity, DS fuel, time-indexed status vintage
+Created: 2026-06-08
+Author: HDMX-coding-agent
+Blocked-by: 0398
+
+--- log ---
+2026-06-08T22:00Z HDMX-coding-agent created — split from 0398 during descope; three unimplemented DoD bullets promoted to child ticket
+
+--- body ---
+## Context
+
+Ticket 0398 implemented the existence layer (LTM EM), PU anchor correction, and
+stratified reliability. It deferred the per-attribute fusion layer because `RunSet`
+only carries per-run entity *presence* (`run_assertions: list[set[str]]`), not
+per-run entity *attributes*. Without attribute observations, GTM/DS fusion is
+structurally impossible — the inputs don't exist.
+
+This ticket adds the per-attribute layer as the next step in the 0465 tracker.
+
+Three design constraints from the original 0398 ticket (inherited verbatim):
+
+1. **Gaussian/GTM for capacity-MW** (CRH, Li et al. SIGMOD 2014): each run can
+   report a capacity value for an entity; fuse into a posterior mean/variance.
+2. **Dawid-Skene confusion matrix for fuel** (categorical): per-model confusion
+   matrix estimated jointly with the existence posterior.
+3. **Time-indexed categorical for status** with model training-cutoff covariate:
+   a 2022 model saying "constructing" and a 2024 model saying "operational" for
+   the same plant are both right at their vintage — do not score as disagreement.
+   The `_status_compatible()` function in `fuse_runs.py` already encodes this
+   logic; this ticket wires it into the reliability M-step and the DS attribute
+   fusion.
+
+## Relevant files
+
+- `src/aedist/fuse_runs.py` — extend `RunSet` with per-run attributes; extend
+  `Posterior.value_posteriors` with real fused posteriors; wire `_status_compatible()`
+  into the M-step status-attribute DS update.
+- `tests/test_latent_truth_fusion.py` — re-introduce `test_status_vintage_not_penalized`
+  with a non-vacuous assertion (see test spec below).
+
+## Actions
+
+1. Extend `RunSet` with:
+   ```python
+   run_entity_capacity: list[dict[str, float]] = field(default_factory=list)
+   # run_entity_capacity[i][entity_id] = capacity in MW reported by run i
+   run_entity_fuel: list[dict[str, str]] = field(default_factory=list)
+   # run_entity_fuel[i][entity_id] = fuel label reported by run i
+   run_entity_status: list[dict[str, str]] = field(default_factory=list)
+   # run_entity_status[i][entity_id] = status label reported by run i
+   ```
+   Keep existing fields unchanged for backward compatibility.
+
+2. Implement GTM/Gaussian fusion for capacity:
+   - For each entity, compute existence-weighted mean and variance over per-run
+     capacity reports. Entities with no capacity reports: `value_posteriors[e]["capacity_mw"]` = None.
+
+3. Implement Dawid-Skene confusion matrix for fuel:
+   - Per-model fuel confusion matrix; EM update like the existence layer.
+
+4. Implement time-indexed DS for status:
+   - Use `_status_compatible(asserted, reference, model_vintage, ref_year)` to
+     determine compatibility before scoring a status report as agreement/disagreement.
+   - Incompatible reports get reduced weight (not zeroed) in the M-step.
+
+5. Re-introduce `test_status_vintage_not_penalized` as a non-vacuous test:
+
+## Test
+
+```python
+def test_status_vintage_not_penalized():
+    """A 2022 model reporting 'constructing' for a plant whose 2024 status is
+    'operational' must NOT be scored as a reliability failure.
+
+    Mechanism: _status_compatible('constructing', 'operational', 2022, 2024) is True,
+    so the run gets full weight in the M-step; model 0's sensitivity must NOT be
+    driven below the prior.
+
+    Non-vacuous assertion: delete _status_compatible() from the M-step and this
+    test must fail (model 0's sensitivity falls below 0.3 because its 2022 status
+    reports never match the 2024 reference).
+    """
+    runs = make_runs(
+        anchored={"new_plant"},
+        run_assertions=[
+            {"new_plant"},   # model 0 (vintage 2022): plant exists
+            {"new_plant"},   # model 1 (vintage 2024): plant exists
+        ],
+        model_of_run=[0, 1],
+        entity_status={"new_plant": "operational"},
+        run_entity_status=[
+            {"new_plant": "constructing"},  # model 0 reports earlier state
+            {"new_plant": "operational"},   # model 1 reports current state
+        ],
+        model_vintage={0: 2022, 1: 2024},
+    )
+    post = fuse(runs, anchor_mode="pu")
+
+    # With vintage awareness: model 0's status is compatible → full weight → sens ~ 0.7+
+    sens_0, _ = post.reliability[(0, "operational")]
+    assert sens_0 > 0.5, (
+        f"Model 0 vintage-compatible status must not suppress its sensitivity; "
+        f"got sens={sens_0:.3f}"
+    )
+
+    # Also verify: existence of new_plant is high (both models assert it)
+    assert post.existence["new_plant"] > 0.7
+```
+
+## Verification
+
+- [ ] `test_status_vintage_not_penalized` fails when `_status_compatible()` is removed from M-step (non-vacuous)
+- [ ] `test_capacity_fusion_weighted_by_existence` passes (new test)
+- [ ] `test_fuel_confusion_matrix_per_model` passes (new test)
+- [ ] `make check` passes
+
+## Invariants
+
+- `RunSet` backward-compatible: existing callers passing only `run_assertions` continue to work.
+- `Posterior.value_posteriors` structure unchanged; capacity/fuel/status keys may be None if
+  no per-run attribute data provided.
+- `_status_compatible()` function signature unchanged.
+
+## Exit criteria
+
+- All three attribute layers (GTM capacity, DS fuel, time-indexed DS status) implemented and
+  tested with non-vacuous tests.
+- `test_status_vintage_not_penalized` fails when vintage logic is removed (test is load-bearing).
+- `make check` passes.
+
+Part of: 0465 — PU/latent-truth fusion (run as unit)

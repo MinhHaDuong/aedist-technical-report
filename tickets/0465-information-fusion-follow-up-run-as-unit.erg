@@ -40,7 +40,10 @@ advanced fusion and the E1→1N→1D ladder (0471).
 - **E1→1N→1D grounding ladder = 0471** (NEW): paired within-agent deltas
   isolating harness+tier (E1→1N), documents (1N→1D), and multi-turn (1D→5D);
   emphasises source/provenance axes.
-- **0398**: PU / latent-truth multi-attribute fusion (run as unit).
+- **0398**: PU / latent-truth existence + PU + stratified reliability +
+  anchor-discounting (run as unit). Per-attribute fusion deferred to 0481.
+- **0481**: Per-attribute fusion layer — GTM capacity, DS fuel, time-indexed
+  status vintage (child of 0398; blocked by 0398).
 - **Consensus half of 0399**: the consensus / spammer-score channel of the
   two-channel run-quality gate (the model-free VETO half folds into Paper A
   via 0453).
@@ -54,7 +57,7 @@ advanced fusion and the E1→1N→1D ladder (0471).
 
 ## Exit criteria
 
-- [ ] All children merged: 0470, 0471, 0398, the consensus half of 0399, 0293.
+- [ ] All children merged: 0470, 0471, 0398, 0481, the consensus half of 0399, 0293.
 - [ ] A run-as-unit fusion estimate exists that consumes Paper A's screen to
       discard uninformative runs before fusion.
 - [ ] Closes only after integration review across the children, never on the

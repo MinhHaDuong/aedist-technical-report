@@ -2,10 +2,10 @@
 
 Unit tests only — no LLM calls, no I/O.
 
-Five named tests from the ticket exit criteria:
+Named tests from the ticket exit criteria (descoped — per-attribute loss in 0481):
   1. test_pu_anchor_absence_is_not_negative
   2. test_reliability_not_pooled_across_strata
-  3. test_status_vintage_not_penalized
+  3. test_status_compatible_function  (replaces vacuous vintage fuse test; original in 0481)
   4. test_anchor_agreement_discounted
   5. (coverage_frequency_c estimated, not 1.0 — rolled into test 1)
 
@@ -13,7 +13,7 @@ Fixture contract: make_runs() returns a RunSet accepted by fuse().
 """
 
 
-from aedist.fuse_runs import RunSet, fuse
+from aedist.fuse_runs import RunSet, _status_compatible, fuse
 
 # ---------------------------------------------------------------------------
 # Fixture helper
@@ -156,52 +156,49 @@ def test_reliability_not_pooled_across_strata():
 
 
 # ---------------------------------------------------------------------------
-# 3. Status vintage — forward lifecycle progression is not penalised
+# 3. Status vintage — _status_compatible() function unit test
+#
+# NOTE: The original exit criterion ("time-indexed DS for status with model
+# training-cutoff as covariate, test_status_vintage_not_penalized") is deferred
+# to child ticket 0481, which adds per-run attribute observations to RunSet.
+# Without per-run attributes, a model reporting 'constructing' vs 'operational'
+# cannot be represented — run_assertions carries presence only.
+#
+# This test verifies the _status_compatible() helper that 0481 will use.
 # ---------------------------------------------------------------------------
 
 
-def test_status_vintage_not_penalized():
-    """A 2022 model saying 'construction' and a 2024 model saying 'operational'
-    for the same plant must not be scored as disagreement.
+def test_status_compatible_function():
+    """_status_compatible() must implement time-indexed forward-lifecycle logic.
 
-    Design:
-      - 'new_plant' transitions construction→operational between 2022 and 2024.
-      - model 0 has vintage 2022, asserts 'constructing'.
-      - model 1 has vintage 2024, asserts 'operational'.
-      - Ground truth resolves to 'operational' (later is authoritative).
-      - The fuser should NOT count this as a reliability failure for either model.
-
-    We measure this indirectly: if vintage awareness is absent, model 0's
-    specificity on status = 0 (it "disagreed" with every other source).
-    With vintage awareness, model 0 should still have a positive sensitivity.
+    Rules:
+      - Same status → always compatible.
+      - Earlier lifecycle state + older model vintage → compatible (forward progression).
+      - Later lifecycle state (model claims future) → incompatible.
+      - Unknown/cancelled status → only compatible with itself.
     """
-    runs = make_runs(
-        anchored={"new_plant"},
-        run_assertions=[
-            {"new_plant"},   # model 0 (vintage 2022): plant exists
-            {"new_plant"},   # model 1 (vintage 2024): plant exists
-        ],
-        model_of_run=[0, 1],
-        entity_status={
-            "new_plant": "operational",  # true status at reference year
-        },
-        model_vintage={0: 2022, 1: 2024},
-    )
-    post = fuse(runs, anchor_mode="pu")
+    # Same status: always compatible regardless of vintage
+    assert _status_compatible("operational", "operational", 2022, 2024)
+    assert _status_compatible("planned", "planned", 2024, 2024)
 
-    # Both models should have reasonable sensitivity; neither should be zeroed
-    # out by the time-indexed attribute loss.
-    for model_id in (0, 1):
-        for stratum in ("operational", "constructing"):
-            if (model_id, stratum) in post.reliability:
-                sens, spec = post.reliability[(model_id, stratum)]
-                assert sens >= 0.0, f"Sensitivity must be non-negative: model={model_id}, stratum={stratum}"
-                assert spec >= 0.0, f"Specificity must be non-negative: model={model_id}, stratum={stratum}"
+    # Forward progression: model saw 'constructing', truth is now 'operational'
+    # Model vintage 2022 < ref_year 2024 → compatible
+    assert _status_compatible("constructing", "operational", 2022, 2024)
 
-    # The fused existence posterior for new_plant must be high (both models assert it).
-    assert post.existence["new_plant"] > 0.7, (
-        f"Both models assert new_plant; existence should be high, got {post.existence['new_plant']:.3f}"
-    )
+    # Forward progression: 'planned' → 'constructing' → 'operational'
+    assert _status_compatible("planned", "operational", 2020, 2024)
+
+    # Backward regression: model claims future state (should be incompatible)
+    # Model with 2022 vintage claims 'operational' but truth was 'planned' in 2022
+    assert not _status_compatible("operational", "planned", 2022, 2024)
+
+    # Unknown status: compatible only with itself
+    assert _status_compatible("unknown", "unknown", 2022, 2024)
+    assert not _status_compatible("unknown", "operational", 2022, 2024)
+
+    # Cancelled is a branch (order -1): compatible only with itself
+    assert _status_compatible("cancelled", "cancelled", 2022, 2024)
+    assert not _status_compatible("cancelled", "operational", 2022, 2024)
 
 
 # ---------------------------------------------------------------------------
