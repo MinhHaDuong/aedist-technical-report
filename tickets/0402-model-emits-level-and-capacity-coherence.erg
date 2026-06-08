@@ -2,11 +2,11 @@
 Title: Model emits `level`; level-conditioned capacity-plausibility coherence check
 Created: 2026-06-03
 Author: claude
-Blocked-by: 0401
 
 --- log ---
 2026-06-03T00:00Z claude created — Imagine session. Once `level` exists in the schema and is validated on the reference (0401), the capacity-plausibility check becomes a per-row INTERNAL self-consistency signal: is the capacity plausible *given the level the model declared*, and is the declared level consistent with the name. This replaces the flat [30,1600] band that the verification proved wrong (operating max 1500, but power-centers reach 6000). Author decision: the model assigns level.
 
+2026-06-08T20:57Z HDMX-coding-agent note blocker 0401 closed — Blocked-by removed.
 --- body ---
 ## Context
 

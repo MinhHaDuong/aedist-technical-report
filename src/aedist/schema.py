@@ -40,6 +40,34 @@ class PlantStatus(StrEnum):
     UNKNOWN = "unknown"
 
 
+class Level(StrEnum):
+    """Granularity level of a reference or system power-plant row.
+
+    Reference:
+    - Unit    — one turbo-set / tranche (single shaft). Coal ≤ 1350 MW world
+                record; VN typically 300/600/660 MW; alert above 700 MW.
+    - Block   — CCGT multi-shaft assembly (2+ GT + 1 ST). CCGT-only; above
+                1300 MW is normal for a block; not a single turbo-set.
+    - Plant   — a centrale = "Site + number" (e.g. Vũng Áng 2). Operating
+                plants ≤ ~1500 MW; planned LNG plants ≤ ~3200 MW.
+    - Complex — a site / power center that aggregates several named plants
+                (bare "Site" label). Can exceed 3200 MW up to 6000+ MW.
+    - Unknown — grain not determinable from the available data.
+
+    The hierarchy is not a clean linear order: Block is CCGT-only between
+    Unit and Plant. A single-block CCGT may simultaneously be a Block and
+    a Plant; the rule of assignment is the finest grain the row represents.
+
+    Ticket 0401.
+    """
+
+    UNIT = "unit"
+    BLOCK = "block"
+    PLANT = "plant"
+    COMPLEX = "complex"
+    UNKNOWN = "unknown"
+
+
 class Plant(BaseModel):
     """A single power plant entry in canonical form.
 
@@ -52,6 +80,14 @@ class Plant(BaseModel):
     cod: str | None = Field(default=None, description="Connection date (year or YYYY-MM-DD).")
     province: str | None = Field(default=None)
     capacity_mwe: float | None = Field(default=None, ge=0)
+    level: Level = Field(
+        default=Level.UNKNOWN,
+        description=(
+            "Row granularity: Unit / Block / Plant / Complex / Unknown. "
+            "Derived from the three-column address (complex/plant/unit) in "
+            "the v2 reference; emitted by the model in 0402."
+        ),
+    )
     source_ref: str | None = Field(
         default=None,
         description="Primary source document reference, e.g. 'Decision 1509/QĐ-BCT, Annexe II.1'.",

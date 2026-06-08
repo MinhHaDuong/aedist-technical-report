@@ -25,6 +25,13 @@ GEM_THERMAL_REFERENCE_CSV = (
     _REPO_ROOT / "data" / "reference" / "gem_thermal.csv"
 )
 
+# Vietnam thermal units release (v2) — unit-grain CSV produced by extract_ods.py.
+# Carries three-column address (complex/plant/unit) and pre-assigned `level`.
+# Primary source for derive_reference_level() (ticket 0401).
+VN_THERMAL_UNITS_RELEASE_CSV = (
+    _REPO_ROOT / "data" / "reference" / "vietnam_thermal_units_v2.csv"
+)
+
 # Vietnam thermal master snapshot (pipeline.ods) — the pinned ODS capture
 # from the author's "Market report on Gas to Power" master spreadsheet.
 # Datestamped immutable; extraction reads this to produce v2 releases.
