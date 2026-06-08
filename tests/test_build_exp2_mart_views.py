@@ -49,6 +49,8 @@ def _score_row(arm):
         "coherence_status_vocab_adherence_annotation": "",
         "coherence_capacity_nonnegative": "0.5000",
         "coherence_capacity_nonnegative_annotation": "",
+        "coherence_row_atomicity": "0.9750",
+        "coherence_row_atomicity_annotation": "",
         "provenance_source_presence": "1.0000",
         "provenance_source_presence_annotation": "",
         "provenance_high_conf_dual_source": "1.0000",

@@ -100,6 +100,10 @@ def _score_summary(row: dict[str, str]) -> ScoreSummary:
                 row.get("coherence_capacity_nonnegative"),
                 row.get("coherence_capacity_nonnegative_annotation"),
             ),
+            row_atomicity=_metric(
+                row.get("coherence_row_atomicity"),
+                row.get("coherence_row_atomicity_annotation"),
+            ),
         ),
         provenance=ProvenanceMetrics(
             source_presence=_metric(

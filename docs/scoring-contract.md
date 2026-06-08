@@ -37,8 +37,12 @@ places, or empty string when null.
 | `accuracy_province_annotation` | str | Same code as coverage |
 | `coherence_vocab_adherence` | float\|null | Fraction of rows with in-vocab fuel value |
 | `coherence_vocab_adherence_annotation` | str | Annotation code or empty |
+| `coherence_status_vocab_adherence` | float\|null | Fraction of rows with in-vocab status value |
+| `coherence_status_vocab_adherence_annotation` | str | Annotation code or empty |
 | `coherence_capacity_nonnegative` | float\|null | Fraction of rows with capacity ≥ 0 |
 | `coherence_capacity_nonnegative_annotation` | str | Annotation code or empty |
+| `coherence_row_atomicity` | float\|null | Fraction of rows whose name does not merge ≥2 distinct plant identifiers (1NF check) |
+| `coherence_row_atomicity_annotation` | str | Annotation code or empty |
 | `provenance_source_presence` | float\|null | Fraction of rows with ≥1 source |
 | `provenance_source_presence_annotation` | str | Annotation code or empty |
 | `provenance_high_conf_dual_source` | float\|null | Fraction of HIGH-confidence rows with both sources |
@@ -98,6 +102,18 @@ Allowed fuel vocabulary: `coal`, `gas`, `natural gas`, `local gas`,
 
 Null condition: `n_rows == 0` → annotation `no_rows`.
 
+**`coherence_status_vocab_adherence`**
+
+Numerator: rows where `status` (lowercased, stripped) is in the allowed set.  
+Denominator: `n_rows`.
+
+Allowed status vocabulary: GEM canonical terms (`announced`, `pre-permit`,
+`pre-permit development`, `permitted`, `construction`, `operating`, `shelved`,
+`cancelled`, `retired`) plus accepted synonyms (`operational`, `under construction`,
+`approved`, `planned`, `suspended`, `commissioning`, `decommissioned`).
+
+Null condition: `n_rows == 0` → annotation `no_rows`.
+
 **`coherence_capacity_nonnegative`**
 
 Numerator: rows where capacity (first non-empty of `capacity_mwe`, `total_mwe`,
@@ -109,6 +125,36 @@ it fails the same as a negative value. The metric measures "capacity is present
 and non-negative" jointly, not "capacity is non-negative given it is present".
 
 Null condition: `n_rows == 0` → annotation `no_rows`.
+
+**`coherence_row_atomicity`** (ticket 0396)
+
+Reference-free internal-coherence indicator: fraction of rows whose `name` field
+does not merge ≥2 distinct plant identifiers (1NF check). Higher is better;
+1.0 = every row names exactly one plant.
+
+Numerator: rows whose `name` does NOT match the join-detector pattern (see below).  
+Denominator: `n_rows`.
+
+Detector — reads **only** the `name` field. Flags as non-atomic:
+
+| Pattern | Example |
+|---------|---------|
+| `\d\s*&\s*\d` | "Nhơn Trạch 3 & 4" |
+| `[ivxIVX]+\s*&\s*[ivxIVX]+` | "Cẩm Phả I & II" |
+| `[ivxIVX0-9]\s*\+\s*[ivxIVX0-9]` | "Phả Lại I+II" (identifier join) |
+| `\d\s*và\s*\d` | "Phả Lại 1 và 2" |
+| `\d\s*[-–]\s*\d` | "Hòa Bình 1–3" (numbered range) |
+
+Does **not** flag technology-composition strings in other columns
+(`2 GT + 1 ST`, `Coal + BFG`) — the detector never reads those columns.
+Separate `Phase I` and `Phase II` rows are not a violation (each row is one unit).
+
+Null condition: `n_rows == 0` → annotation `no_rows`.
+
+Corpus rate (Exp2): ≈2.6 % of rows (71 % of runs affected). A naive regex
+gives ≈14 %; the tightened detector gives ≈2.6 % (see handoff §2,
+`docs/inventory-1nf-handoff-exp2.md`). The adherence test asserts the
+corpus non-atomicity rate in `[0.01, 0.06]`.
 
 ### Provenance
 
@@ -138,6 +184,109 @@ is therefore always present (possibly empty), so `column_missing` is unreachable
 in the pipeline — the effective code when a model omitted the Confidence column
 is `no_high_confidence` (zero HIGH rows → denominator 0 → null).
 
+**`provenance_source_diversity`**
+
+Numerator: count of distinct non-sentinel `source_1` values (clipped at 20).  
+Result: `min(distinct_sources / 20, 1.0)`.
+
+Sentinel values excluded: `not found`, `n/a`, `unknown`, `""`.
+
+Null conditions: `n_rows == 0` → `no_rows`; all values are sentinels → `column_empty`.
+
+**`provenance_source_spread`**
+
+Fraction of sources that are NOT the most-common source.  
+Result: `1.0 − (count_of_most_common / n_valid_sources)`.
+
+Null conditions: `n_rows == 0` → `no_rows`; all values are sentinels → `column_empty`.
+
+**Note (Exp2 mart scope):** `provenance_source_diversity` and
+`provenance_source_spread` are Exp1 quality-spider metrics. They are computed by
+`score_mechanical.py` and written to `sota_cross_eval.csv`, and recomputed by
+`score_exp1.py` for `exp1_cross_eval.csv`. They are intentionally **not** wired
+into the Exp2 mart `ScoreSummary` (ticket 0386 Option B carve-out; see
+`docs/scoring-contract.md` §Mart schema section).
+
+---
+
+## Provenance URL spot-check — `check_provenance_urls.py`
+
+**Scope:** on-demand CLI companion; not wired into the pipeline Makefile (avoids
+network dependencies in clean-room builds). Implemented in ticket 0281.
+
+**Input:** a single run's `.md` file (plant table + bibliography). The cross-eval
+CSV path may optionally be supplied for future per-plant match filtering, but
+currently has no effect on row selection.
+
+**Row selection:** rows whose `Source 1` cell is non-empty and is not a
+"not found" marker — i.e. rows that have a non-trivial citation to verify.
+
+**N:** `--n` (default 10). When fewer citeable rows exist, all are checked.
+
+### Algorithm (per row)
+
+1. **URL resolution.** If `Source 1` is a citation key `[N]`, resolve against
+   the run's bibliography (`**[N]** … URL: \`https://…\``). If it contains an
+   inline `https://…` URL, use that. Otherwise: verdict `NO_URL` (inline-text
+   citation with no URL; not a fabrication signal).
+2. **HTTP GET** the resolved URL (10 s timeout, single retry on network error).
+   `User-Agent` is set to identify the research bot. Classification:
+   - `resolved` — HTTP 2xx/3xx after redirects
+   - `unresolved` — HTTP 4xx/5xx, network error, or timeout
+   - `no-url` — citation resolves to no URL (see step 1)
+   - `no-source` — Source 1 was empty or "not found"
+3. **Name check.** If resolved, search page text for the plant's Vietnamese or
+   English name (case-insensitive substring match). Verdict `FAIL` if not found.
+4. **Capacity check.** If name found and `Total MWe` is non-empty, extract all
+   capacity figures (MW and GW) from the page text; normalise GW × 1000 → MWe;
+   compare to claimed value with ±10% tolerance. Verdict `PASS` if any figure
+   matches; `FAIL` if none match.
+
+### Output columns — `sota_provenance_sample.csv`
+
+| Column | Description |
+|--------|-------------|
+| `plant_name_vi` | Vietnamese plant name from run table |
+| `plant_name_en` | English plant name from run table |
+| `claimed_capacity_mwe` | `Total MWe` value from run table |
+| `source_1_raw` | Raw Source 1 cell (citation key or text) |
+| `source_1_url` | Resolved URL, or empty |
+| `url_status` | HTTP status code, `network_error`, or empty |
+| `name_found` | `yes` / `no` / empty |
+| `capacity_match` | `yes` / `no` / `n/a` / empty |
+| `verdict` | `PASS`, `FAIL`, `UNRESOLVED`, `NO_URL`, or `NO_SOURCE` |
+| `detail` | Human-readable explanation |
+
+### Aggregate output
+
+```json
+{
+  "n_candidates": 42,
+  "n_sampled": 10,
+  "n_pass": 6,
+  "n_fail": 2,
+  "n_unresolved": 1,
+  "n_no_url": 1,
+  "n_no_source": 0,
+  "provenance_score": 0.6,
+  "sampled_plants": ["Plant A", "Plant B", "..."]
+}
+```
+
+`provenance_score = n_pass / n_sampled`. Null when `n_sampled == 0`.
+
+### Scope limits
+
+- Source 1 only (not Source 2).
+- N=10 per run (spot-check, not exhaustive citation audit).
+- No JavaScript rendering (plain HTTP GET). Dynamic pages score `UNRESOLVED`.
+- Capacity check is fuzzy ±10%, not exact.
+- Bibliography entries without `URL: \`…\`` (e.g. Decision documents) resolve to
+  `NO_URL`, not fabrication — they are cite-by-text, not cite-by-link.
+
+---
+
+>>>>>>> a5ff2499 (wip: ticket 0396 — coherence_row_atomicity indicator (temp commit))
 ### Temporality
 
 As-of date is resolved from the first non-empty of: `status_as_of`, `as_of`,
@@ -169,6 +318,27 @@ Denominator: rows with a non-empty as-of cell.
 |-----------|------------|
 | `column_missing` propagated from asof_presence | `column_missing` |
 | As-of column present but all values empty | `column_empty` |
+
+**`temporality_cod_plausible`**
+
+Numerator: rows where `cod` contains a year in `[1960, 2035]`.  
+Denominator: rows with a non-empty `cod` cell.
+
+Special case: if all non-empty `cod` values are identical, score = 0.0,
+annotation `all_identical` (likely the run date stamped on every row).
+
+**Null conditions:**
+
+| Condition | Annotation |
+|-----------|------------|
+| `n_rows == 0` | `no_rows` |
+| `cod` column present but all values empty | `column_empty` |
+
+**Note (Exp2 mart scope):** `temporality_cod_plausible` is an Exp1
+quality-spider metric. It is computed by `score_mechanical.py` and written to
+`sota_cross_eval.csv`, and recomputed by `score_exp1.py` for
+`exp1_cross_eval.csv`. It is intentionally **not** wired into the Exp2 mart
+`ScoreSummary` (ticket 0386 Option B carve-out).
 
 ### Field completeness
 
@@ -274,7 +444,7 @@ the Layer-2 completeness check (ticket 0384).
 ### Versioning
 
 - `mart_schema = "exp2_mart"`
-- `mart_schema_version = 2`
+- `mart_schema_version = 3`
 
 Any change that adds, removes, or renames mart fields must bump the schema
 version and ship a new validator model.
@@ -288,6 +458,14 @@ tp/fp/fn change, and this field is what distinguishes pre- from
 post-adoption rows. The `sota_cross_eval.csv` carries the same value in a
 `reference` metadata column, and `build_exp2_mart_views.py` projects it
 back into the score view.
+
+**v3 (ticket 0396):** `CoherenceMetrics` gains `row_atomicity` — the
+fraction of rows whose `name` field does not merge ≥2 distinct plant
+identifiers (1NF reference-free coherence check). The score is computed by
+`score_mechanical.py`'s `score_coherence()` using the tightened detector
+from `docs/inventory-1nf-handoff-exp2.md §6`. The field defaults to
+`MetricValue()` (null value) for pre-v3 mart rows loaded via defensive
+`.get("row_atomicity", {})` in `build_exp2_mart_views.py`.
 
 **Design note — backfill vs omit-when-absent:** The mart and the
 `measurements.jsonl` metrics dict use different migration strategies for

@@ -12,7 +12,9 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 _MART_SCHEMA_NAME = "exp2_mart"
 # v2 (ticket 0431): Exp2ScoreMartRecord carries ``reference`` — the release
 # filename of the dataset the accuracy metrics were computed against.
-_MART_SCHEMA_VERSION = 2
+# v3 (ticket 0396): CoherenceMetrics gains ``row_atomicity`` — the fraction of
+# rows whose name field does not merge ≥2 distinct plant identifiers (1NF check).
+_MART_SCHEMA_VERSION = 3
 _SHA256_PATTERN = r"^[0-9a-f]{64}$"
 
 
@@ -60,6 +62,7 @@ class CoherenceMetrics(BaseModel):
     vocab_adherence: MetricValue = Field(default_factory=MetricValue)
     status_vocab_adherence: MetricValue = Field(default_factory=MetricValue)
     capacity_nonnegative: MetricValue = Field(default_factory=MetricValue)
+    row_atomicity: MetricValue = Field(default_factory=MetricValue)
 
 
 class ProvenanceMetrics(BaseModel):
@@ -133,7 +136,7 @@ class Exp2MartBase(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     mart_schema: Literal["exp2_mart"] = _MART_SCHEMA_NAME
-    mart_schema_version: Literal[2] = _MART_SCHEMA_VERSION
+    mart_schema_version: Literal[3] = _MART_SCHEMA_VERSION
     record_kind: Literal["run", "probe", "score"]
     record_id: str = Field(..., min_length=1)
     parent_record_id: str | None = Field(default=None)

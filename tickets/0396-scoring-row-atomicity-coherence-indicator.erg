@@ -2,10 +2,12 @@
 Title: Scoring: add coherence_row_atomicity (1NF / FN1) — reference-free internal-coherence indicator
 Created: 2026-06-03
 Author: claude
+Closed: 2026-06-08
 
 --- log ---
 2026-06-03T00:00Z claude created — promote row atomicity (1NF) from a matcher artefact (0393) to a first-class reference-free coherence indicator, measured at the verbal level
 2026-06-08T11:00Z claude note linked to tracker 0464
+2026-06-08T12:00Z claude closed implemented coherence_row_atomicity indicator — all exit criteria met
 
 --- body ---
 ## Context

@@ -26,6 +26,18 @@ _SOURCE_DIVERSITY_CLIP = 20
 _SOURCE_NOT_FOUND = frozenset({"not found", "n/a", "unknown", ""})
 _CAPACITY_KEYS = ("capacity_mwe", "total_mwe", "total_mw", "capacity")
 
+# Row-atomicity detector (ticket 0396, handoff §6).
+# Reads ONLY the `name` field; technology-composition strings in other columns
+# ("2 GT + 1 ST", "Coal + BFG") are never touched.
+# Flag patterns: two plant identifiers joined in one name field.
+_ATOMICITY_VIOLATION_RE = re.compile(
+    r"\d\s*&\s*\d"  # "3 & 4", "1 & 2"
+    r"|[ivxIVX]+\s*&\s*[ivxIVX]+"  # "I & II", "III & IV"
+    r"|[ivxIVX0-9]\s*\+\s*[ivxIVX0-9]"  # "I+II", "1+2" (identifier join)
+    r"|\d\s*và\s*\d"  # Vietnamese "1 và 2"
+    r"|\d\s*[-–]\s*\d",  # "1-3", "1–3" (numbered range)
+)
+
 _ALLOWED_FUELS = {
     "coal",
     "gas",
@@ -85,6 +97,8 @@ _CSV_COLUMNS = [
     "coherence_status_vocab_adherence_annotation",
     "coherence_capacity_nonnegative",
     "coherence_capacity_nonnegative_annotation",
+    "coherence_row_atomicity",
+    "coherence_row_atomicity_annotation",
     "provenance_source_presence",
     "provenance_source_presence_annotation",
     "provenance_high_conf_dual_source",
@@ -121,6 +135,7 @@ class AccuracyScores:
 class CoherenceScores:
     vocab_adherence: float | None
     status_vocab_adherence: float | None
+    row_atomicity: float | None
     annotation: str | None = None
 
 
@@ -272,10 +287,11 @@ def score_accuracy(rows: list[dict[str, str]], ref_path: Path | None) -> Accurac
 
 def score_coherence(rows: list[dict[str, str]]) -> CoherenceScores:
     if not rows:
-        return CoherenceScores(None, None, annotation="no_rows")
+        return CoherenceScores(None, None, None, annotation="no_rows")
 
     valid_fuel = 0
     valid_status = 0
+    atomic_rows = 0
     for row in rows:
         fuel = (row.get("fuel") or "").strip().lower()
         if fuel in _ALLOWED_FUELS:
@@ -285,9 +301,14 @@ def score_coherence(rows: list[dict[str, str]]) -> CoherenceScores:
         if status in _ALLOWED_STATUSES:
             valid_status += 1
 
+        name = (row.get("name") or "").strip()
+        if not _ATOMICITY_VIOLATION_RE.search(name):
+            atomic_rows += 1
+
     return CoherenceScores(
         vocab_adherence=_fraction(valid_fuel, len(rows)),
         status_vocab_adherence=_fraction(valid_status, len(rows)),
+        row_atomicity=_fraction(atomic_rows, len(rows)),
         annotation=None,
     )
 
@@ -491,6 +512,8 @@ def main(argv: list[str] | None = None) -> None:
         "coherence_status_vocab_adherence_annotation": coherence.annotation or "",
         "coherence_capacity_nonnegative": _fmt(coherence_capacity),
         "coherence_capacity_nonnegative_annotation": coherence_capacity_annotation or "",
+        "coherence_row_atomicity": _fmt(coherence.row_atomicity),
+        "coherence_row_atomicity_annotation": coherence.annotation or "",
         "provenance_source_presence": _fmt(provenance.source_presence),
         "provenance_source_presence_annotation": provenance.source_presence_annotation or "",
         "provenance_high_conf_dual_source": _fmt(provenance.high_conf_dual_source),

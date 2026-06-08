@@ -87,6 +87,8 @@ _SCORE_VIEW_FIELDS = [
     "coherence_status_vocab_adherence_annotation",
     "coherence_capacity_nonnegative",
     "coherence_capacity_nonnegative_annotation",
+    "coherence_row_atomicity",
+    "coherence_row_atomicity_annotation",
     "provenance_source_presence",
     "provenance_source_presence_annotation",
     "provenance_high_conf_dual_source",
@@ -291,6 +293,15 @@ def build_exp2_mart_views(mart_path: Path, repo_root: Path | None = None) -> dic
                 ),
                 "coherence_capacity_nonnegative_annotation": summary["coherence"]
                 .get("capacity_nonnegative", {})
+                .get("annotation", ""),
+                # Defensive .get: marts written before ticket 0396 (schema v2) lack
+                # row_atomicity. Tolerate absence (empty cell) so the view builds
+                # against pre-v3 committed marts until they are regenerated.
+                "coherence_row_atomicity": _fmt(
+                    summary["coherence"].get("row_atomicity", {}).get("value")
+                ),
+                "coherence_row_atomicity_annotation": summary["coherence"]
+                .get("row_atomicity", {})
                 .get("annotation", ""),
                 "provenance_source_presence": _fmt(
                     summary["provenance"]["source_presence"].get("value")
