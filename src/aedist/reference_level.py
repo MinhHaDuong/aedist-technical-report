@@ -15,14 +15,22 @@ The function is a cross-check and a forward-compatible path for new rows.
 
 Taxonomy audit (tickets 0401 / 0402 gate):
 
-Checks three capacity caps against the derived levels on the v2 reference:
+Checks capacity caps against the derived levels on the v2 reference:
   (a) every operating/constructing Plant row has capacity ≤ 1600 MW
   (b) every Unit row has capacity ≤ 1350 MW
-  (c) Complex rows carry the highest capacities (> 3200 MW tail)
 
-Audit passes when caps (a) and (b) hold; (c) is informational only.
-If either cap is violated the audit returns a non-finding with diagnostics
-and does not raise — the caller decides whether to treat as hard error.
+Audit passes when both hard caps hold.  If either cap is violated the
+audit returns a non-finding with diagnostics and does not raise — the
+caller decides whether to treat as hard error.
+
+IMPORTANT — capacity does NOT cleanly partition Plant from Complex:
+  • Proposed Plants reach 4500 MW (LNG Hải Phòng 1/3/4, LNG Quảng Ninh 3)
+  • Complexes range down to 1500 MW (LNG Cà Ná, LNG miền Nam)
+  • Overlap region [1500, 4500] MW spans both levels for planned assets
+Hard caps (a)/(b) pass because all operating/constructing Plants are ≤ 1500 MW
+and no operating/constructing Complexes exist yet.  Ticket 0402 must use
+declared Level as authoritative (not capacity-inferred level) for coherence
+scoring; the Plant capacity note in Level.PLANT docstring is approximate.
 
 Ticket 0401.
 """
@@ -141,10 +149,16 @@ def audit_reference_taxonomy(
 ) -> AuditResult:
     """Run the taxonomy audit on the v2 reference.
 
-    Checks:
+    Hard checks (determine ``passed``):
       (a) operating/constructing Plant rows: capacity ≤ 1600 MW
       (b) Unit rows: capacity ≤ 1350 MW
-      (c) informational: Complex rows carry capacities ≥ expected floor
+
+    Informational findings (never cause failure):
+      • Capacity overlap between Plant and Complex for planned assets.
+        As of the 2026-06 v2 reference: 5 proposed Plants exceed 3200 MW
+        (up to 4500 MW); 5 Complexes are below 3200 MW (down to 1500 MW).
+        Ticket 0402 must treat declared Level as authoritative — capacity
+        alone cannot discriminate Plant from Complex for forward-looking rows.
 
     Returns an AuditResult.  Does not raise on cap violations; the caller
     controls failure behaviour (hard error vs. logged warning).
@@ -186,20 +200,39 @@ def audit_reference_taxonomy(
                 (r["name"], lv_str, cap, f"Unit cap > {_UNIT_CAP_MW} MW")
             )
 
-    # (c) informational: max complex capacity
-    complex_caps = [
-        r["capacity_mwe"]
+    # Informational: capacity overlap between Plant and Complex for planned assets
+    complex_caps_all = [
+        (r["name"], r["capacity_mwe"])
         for r in rows
         if r["derived_level"] == Level.COMPLEX and r["capacity_mwe"] is not None
     ]
+    plant_caps_all = [
+        (r["name"], r["capacity_mwe"], r["status"])
+        for r in rows
+        if r["derived_level"] == Level.PLANT and r["capacity_mwe"] is not None
+    ]
     informational = []
-    if complex_caps:
-        max_complex = max(complex_caps)
-        informational.append(
-            f"Max Complex capacity: {max_complex:.0f} MW "
-            f"(floor {_COMPLEX_FLOOR_MW:.0f} MW; "
-            f"{'above' if max_complex >= _COMPLEX_FLOOR_MW else 'BELOW — check'} floor)"
-        )
+    if complex_caps_all and plant_caps_all:
+        min_complex = min(c for _, c in complex_caps_all)
+        max_plant = max(c for _, c, _ in plant_caps_all)
+        plants_above_3200 = [(n, c) for n, c, _ in plant_caps_all if c > _COMPLEX_FLOOR_MW]
+        complexes_below_3200 = [(n, c) for n, c in complex_caps_all if c < _COMPLEX_FLOOR_MW]
+        if plants_above_3200 or complexes_below_3200:
+            informational.append(
+                f"Capacity does NOT cleanly partition Plant from Complex: "
+                f"{len(plants_above_3200)} Plant row(s) exceed {_COMPLEX_FLOOR_MW:.0f} MW "
+                f"(max {max_plant:.0f} MW); "
+                f"{len(complexes_below_3200)} Complex row(s) below {_COMPLEX_FLOOR_MW:.0f} MW "
+                f"(min {min_complex:.0f} MW). "
+                f"Overlap is confined to planned/proposed assets. "
+                f"Ticket 0402 must use declared Level, not capacity, for coherence scoring."
+            )
+        else:
+            informational.append(
+                f"Complex/Plant capacity partition holds: "
+                f"min Complex {min_complex:.0f} MW > {_COMPLEX_FLOOR_MW:.0f} MW floor; "
+                f"max Plant {max_plant:.0f} MW."
+            )
 
     passed = len(violations) == 0
     return AuditResult(

@@ -199,8 +199,11 @@ def test_audit_no_unknown_rows():
 
 @pytest.mark.skipif(not _V2_UNITS_CSV.exists(), reason="v2 units CSV not present")
 def test_audit_operating_plants_under_cap():
-    """No operating/constructing Plant row exceeds 1600 MW (the audit assertion
-    that would catch a broken derivation labelling a 6000 MW Complex as Plant).
+    """No operating/constructing Plant row exceeds 1600 MW.
+
+    Note: this cap applies only to the operating/constructing subset.
+    Proposed Plants in the v2 reference reach 4500 MW — capacity alone
+    does NOT partition Plant from Complex for planned assets.
     """
     rows = derive_reference_level()
     op_plant_caps = [
@@ -238,6 +241,39 @@ def test_audit_level_counts_plausible():
     assert result.level_counts.get("unit", 0) > 0
     assert result.level_counts.get("plant", 0) > 0
     assert result.level_counts.get("complex", 0) > 0
+
+
+@pytest.mark.skipif(not _V2_UNITS_CSV.exists(), reason="v2 units CSV not present")
+def test_audit_reports_plant_complex_capacity_overlap():
+    """Audit reports the Plant/Complex capacity overlap as an informational finding.
+
+    Capacity does NOT cleanly separate Plant from Complex for planned assets:
+    proposed Plants reach 4500 MW while some Complexes are only 1500 MW.
+    This is a documented non-finding that Ticket 0402 must account for —
+    level-conditioned scoring must use the declared Level, not capacity inference.
+    """
+    result = audit_reference_taxonomy()
+    # Audit must still pass on hard caps (operating/constructing only)
+    assert result.passed, f"Hard caps failed: {result.violations}"
+    # The overlap finding must surface as an informational message
+    assert any(
+        "does NOT cleanly partition" in msg for msg in result.informational
+    ), (
+        "Expected an informational message about Plant/Complex capacity overlap; "
+        f"got: {result.informational}"
+    )
+    # Verify the raw data: proposed Plants above 3200 MW must exist
+    rows = derive_reference_level()
+    proposed_plants_above_3200 = [
+        r for r in rows
+        if r["derived_level"] == Level.PLANT
+        and r["capacity_mwe"] is not None
+        and r["capacity_mwe"] > 3200.0
+    ]
+    assert len(proposed_plants_above_3200) >= 5, (
+        f"Expected ≥5 proposed Plants >3200 MW; found {len(proposed_plants_above_3200)}: "
+        f"{[r['name'] for r in proposed_plants_above_3200]}"
+    )
 
 
 def test_audit_accepts_custom_csv(tmp_path):
