@@ -1,4 +1,4 @@
-Last updated: 2026-06-08T09:15Z
+Last updated: 2026-06-08T10:18Z
 
 ## North star
 
@@ -6,18 +6,18 @@ Produce research-quality energy infrastructure datasets from open sources, valid
 
 ## Current milestone: arXiv preprint (0435)
 
-**The preprint WP is `slides/manuscript/main.md`** — report.tex is internal ("no future", author 2026-06-05). main.md is structurally complete: v2 numbers, Annex E (reworked matrix on a landscape page, #771) + two Discussion future-work paragraphs (#767 fusion, #771 zero-reference coherence screen). **Blocked-by 0445** (extension-as-unit can move 170→174 and every quoted number — author 2026-06-06). Then: blessed acknowledgements, full author read, arXiv build, sign-off. 0171 cross-eval OUT (journal delta).
+**The preprint WP is `slides/manuscript/main.md`** — report.tex is internal ("no future", author 2026-06-05). main.md is structurally complete: v2.1 numbers (reference settled at **173 plants** by 0445; propagated 170→173 across main.md by 0444/PR #781), Annex E (reworked matrix on a landscape page, #771) + two Discussion future-work paragraphs (#767 fusion, #771 zero-reference coherence screen). 0445 blocker cleared. Remaining: blessed acknowledgements, full author read, arXiv build, sign-off. 0171 cross-eval OUT (journal delta).
 
 ## Status
-<!-- generated 2026-06-06T12:19Z -->
+<!-- generated 2026-06-08T10:18Z -->
 
-**Tickets:** 45 ready · 28 blocked — `erg ready tickets/` for full list
+**Tickets:** 47 ready · 28 blocked — `erg ready tickets/` for full list
 **Recent commits:**
-  e7ef4f96 Merge pull request #771 from MinhHaDuong/ticket/0446-matrix-figure-rework
-  51c0efdb ticket(0446): close and archive — PR #771
-  93f6ef2e tickets: drop stale open 0456 — closed+archived on main (superseded by 0457); duplicate ID broke erg check after rebase
-  b4b23429 Merge pull request #778 from MinhHaDuong/chore/ticket-0457-cohort-filter-test-gap
-  491026a3 ticket(0446): log /gaze round-1 reroll
+  752fef5f Merge pull request #787 from MinhHaDuong/quickpr/ticket-0462-file-fix-parse-time-wildcard-20260608-095106
+  265286cb ticket(0462): file — fix parse-time wildcard fragility in armN_flat stamp prereqs
+  1011b3a1 Merge pull request #786 from MinhHaDuong/quickpr/ticket-0461-file-delete-on-error-across--20260608-094224
+  d1998900 Merge pull request #783 from MinhHaDuong/chore/retire-erg-skills
+  d8e783a9 ticket(0461): file — .DELETE_ON_ERROR across all build makefiles + adherence guard
 
 ## Sprint 2026-06-05 — CLOSED
 
@@ -25,10 +25,9 @@ Reference v2 (170 plants) adopted end-to-end: snapshot policy → aggregator (#7
 
 ## Next actions
 
-1. **0445** — extension-as-unit net measurement; now BLOCKS 0435. mở-rộng FPs re-raised at 0446 review.
-2. **0435 finalization** — acknowledgements (blessed wording), author read (incl. new coherence-screen paragraph), arXiv build.
-3. 0446-review follow-ons: 0453 (two-level coherence scoring), 0455 (preprint figures EN sweep), 0448 (caption dup), 0449 (Exp2 matrices), 0457 (cohort-filter test); imagines awaiting discussion: 0450/0451/0454. 0255–0262 deferred (Blocked-by 0435), owed to journal.
-4. Backlog: 0459 (re-derive+wire report.tex Exp3 decomposition table — deferred from 0444), 0447 (hardcoded-size ratchet), 0441–0443, 0377. 0444 (census re-score to v2.1) DONE — PR #781.
+1. **0435 finalization** — acknowledgements (blessed wording), author read (incl. new coherence-screen paragraph), arXiv build. 0445 blocker cleared (173 settled + propagated).
+2. 0446-review follow-ons: 0453 (two-level coherence scoring), 0455 (preprint figures EN sweep), 0448 (caption dup), 0449 (Exp2 matrices), 0457 (cohort-filter test); imagines awaiting discussion: 0450/0451/0454. 0255–0262 deferred (Blocked-by 0435), owed to journal.
+3. Backlog: 0459 (re-derive+wire report.tex Exp3 decomposition table), 0461 (.DELETE_ON_ERROR build-wide + adherence guard), 0462 (armN stamp wildcard parse-time fragility), 0447 (hardcoded-size ratchet), 0441–0443, 0377.
 
 ## Open issues
 
