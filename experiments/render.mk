@@ -63,6 +63,8 @@ ANALYSIS_EXP2_COVERAGE_FIG_FR := $(ANALYSIS_GEN)/fig_exp2_coverage_certainty_fr.
 ANALYSIS_EXP1_QUALITY_HEATMAP := $(ANALYSIS_GEN)/fig_quality_floor_heatmap_exp1.pdf
 # Within-model screen validation summary CSV (ticket 0467).
 ANALYSIS_EXP1_SCREEN_VALID_CSV := $(ANALYSIS_GEN)/tab_screen_validation_within_model.csv
+# Exp1 run-stats macros: F1 min/mean/max/n_runs/n_models (ticket 0474).
+ANALYSIS_EXP1_RUN_STATS_MACROS := $(ANALYSIS_GEN)/macros_exp1_run_stats.tex
 # Reference-count anchoring analysis CSV (ticket 0293 — one-time exploration).
 ANALYSIS_REF_COUNT_CSV := $(ANALYSIS_GEN)/ref_count_anchoring_analysis.csv
 
@@ -241,6 +243,15 @@ $(ANALYSIS_EXP1_SCREEN_VALID_CSV): $(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.screen_validation_within_model \
 	    --exp1-dir $(ANALYSIS_EXPERIMENTS_DIR)/outputs/exp1_batch2 \
+	    --cross-eval $(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
+	    --output $@
+
+# Exp1 run-stats macros: F1 min/mean/max, n_runs, n_models (ticket 0474).
+# Consumes only the canonical cross-eval CSV (P2 committed source).
+$(ANALYSIS_EXP1_RUN_STATS_MACROS): $(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
+		$(ANALYSIS_REPO_ROOT)/src/aedist/tabulate_exp1_run_stats.py
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.tabulate_exp1_run_stats \
 	    --cross-eval $(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
 	    --output $@
 
@@ -580,7 +591,8 @@ report-tables: $(RENDER_REPORT_TABLES)
 RENDER_REPORT_FIGURES := \
 	$(ANALYSIS_EXP1_SPIDER_FAMILIES) \
 	$(ANALYSIS_EXP1_QUALITY_HEATMAP) \
-	$(ANALYSIS_EXP1_SCREEN_VALID_CSV)
+	$(ANALYSIS_EXP1_SCREEN_VALID_CSV) \
+	$(ANALYSIS_EXP1_RUN_STATS_MACROS)
 
 report-figures: $(RENDER_REPORT_FIGURES)
 
