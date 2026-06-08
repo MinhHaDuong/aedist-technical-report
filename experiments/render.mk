@@ -728,6 +728,46 @@ $(ANALYSIS_GEN)/fig_exp1_recognition_matrix_portrait.pdf: $(ANALYSIS_EXP1_BATCH2
 	    --reference $(ANALYSIS_EXPERT_REF) \
 	    --output $@
 
+# Exp2 recognition matrices (ticket 0449): one matrix per arm (four figures),
+# same layout as the Exp1 matrix (status group column bands, FP left panel).
+# Derives per-(run x plant) recognition from the Exp2 mart JSONL + paired
+# markdown report files via aedist.exp2_recognition (mart-layer loader; no
+# P3->P3 side-output, rule 0436). Exploration artifacts — not yet referenced by
+# the manuscript; author placement decision deferred.
+# The plot scripts (exp2_recognition.py + plot_exp2_matrix.py) are prerequisites
+# so a script edit re-triggers the build (mirrors the exp1 matrix rules).
+$(ANALYSIS_GEN)/fig_exp2_recognition_matrix_naive.pdf: $(ANALYSIS_EXP2_MART_JSONL) $(ANALYSIS_EXPERT_REF) $(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp2_matrix.py $(ANALYSIS_REPO_ROOT)/src/aedist/exp2_recognition.py
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.plot_exp2_matrix \
+	    --mart-jsonl $(ANALYSIS_EXP2_MART_JSONL) \
+	    --reference $(ANALYSIS_EXPERT_REF) \
+	    --arm naive \
+	    --output $@
+
+$(ANALYSIS_GEN)/fig_exp2_recognition_matrix_optimised.pdf: $(ANALYSIS_EXP2_MART_JSONL) $(ANALYSIS_EXPERT_REF) $(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp2_matrix.py $(ANALYSIS_REPO_ROOT)/src/aedist/exp2_recognition.py
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.plot_exp2_matrix \
+	    --mart-jsonl $(ANALYSIS_EXP2_MART_JSONL) \
+	    --reference $(ANALYSIS_EXPERT_REF) \
+	    --arm optimised \
+	    --output $@
+
+$(ANALYSIS_GEN)/fig_exp2_recognition_matrix_arm3.pdf: $(ANALYSIS_EXP2_MART_JSONL) $(ANALYSIS_EXPERT_REF) $(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp2_matrix.py $(ANALYSIS_REPO_ROOT)/src/aedist/exp2_recognition.py
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.plot_exp2_matrix \
+	    --mart-jsonl $(ANALYSIS_EXP2_MART_JSONL) \
+	    --reference $(ANALYSIS_EXPERT_REF) \
+	    --arm arm3 \
+	    --output $@
+
+$(ANALYSIS_GEN)/fig_exp2_recognition_matrix_arm4.pdf: $(ANALYSIS_EXP2_MART_JSONL) $(ANALYSIS_EXPERT_REF) $(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp2_matrix.py $(ANALYSIS_REPO_ROOT)/src/aedist/exp2_recognition.py
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.plot_exp2_matrix \
+	    --mart-jsonl $(ANALYSIS_EXP2_MART_JSONL) \
+	    --reference $(ANALYSIS_EXPERT_REF) \
+	    --arm arm4 \
+	    --output $@
+
 # Exp1 status difficulty table (ticket 0434): reference-list composition by
 # status vs mean recognition rate. Annex companion to the matrix figure above;
 # derives the same per-(run x plant) recognition independently from the records
@@ -789,6 +829,10 @@ RENDER_CHART_FIGURES := \
 	$(ANALYSIS_GEN)/fig_exp1_recognition_matrix_strong.pdf \
 	$(ANALYSIS_GEN)/fig_exp1_recognition_matrix_top.pdf \
 	$(ANALYSIS_GEN)/fig_exp1_recognition_matrix_portrait.pdf \
+	$(ANALYSIS_GEN)/fig_exp2_recognition_matrix_naive.pdf \
+	$(ANALYSIS_GEN)/fig_exp2_recognition_matrix_optimised.pdf \
+	$(ANALYSIS_GEN)/fig_exp2_recognition_matrix_arm3.pdf \
+	$(ANALYSIS_GEN)/fig_exp2_recognition_matrix_arm4.pdf \
 	$(ANALYSIS_GEN)/fig_capability_timeline.pdf \
 	$(ANALYSIS_GEN)/fig_capability_dag.pdf \
 	$(ANALYSIS_GEN)/fig_spider_cross_exp.pdf \
