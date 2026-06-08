@@ -33,13 +33,22 @@ def _content_lines(text: str) -> set[str]:
 
 @pytest.mark.adherence
 def test_modules_cover_prompt_complete():
-    """Assembled composite covers every content line of prompt_complete.txt."""
+    """Assembled composite covers every content line of prompt_complete.txt.
+
+    ``7_evidence`` is excluded from this comparison: it is the evidence-pack
+    preamble module (ticket 0269), not part of the Exp 1 prompt assembly
+    anchored to ``prompt_complete.txt``.
+    """
     from aedist.harness import assemble_prompt
 
     modules_dir = EXPERIMENTS_DIR / "prompts" / "modules"
     prompt_complete = (EXPERIMENTS_DIR / "prompts" / "prompt_complete.txt").read_text()
 
-    all_stems = sorted(p.stem for p in modules_dir.glob("*.txt"))
+    # Exclude evidence-pack preamble module — it feeds assemble_evidence_pack,
+    # not the Exp 1 prompt assembly.
+    all_stems = sorted(
+        p.stem for p in modules_dir.glob("*.txt") if p.stem != "7_evidence"
+    )
     assembled = assemble_prompt(modules_dir, all_stems)
 
     expected = _content_lines(prompt_complete)

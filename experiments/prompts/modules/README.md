@@ -17,6 +17,7 @@ filename matches the natural reading order of the assembled prompt:
 | `4_narratives.txt` | Per-plant discussion |
 | `5_table.txt` | Structured table specification (always included) |
 | `6_bibliography.txt` | Annotated bibliography |
+| `7_evidence.txt` | Evidence-pack preamble sentence (Exp 3 only — not part of Exp 1 assembly) |
 | `A_Statistics.txt` | Cross-tabulations |
 | `B_Temporality.txt` | Observed vs projected discipline |
 | `C_Uncertainty.txt` | Confidence levels and source guardrails |
