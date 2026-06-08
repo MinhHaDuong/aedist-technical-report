@@ -1,0 +1,100 @@
+%erg 0.1
+Title: Fix parse-time wildcard fragility in armN_flat stamp prerequisites
+Created: 2026-06-08
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-08T09:49Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+The four `armN_flat/.done` extraction stamps in `experiments/derived/score.mk`
+(~207–239) take their prerequisites from `$(wildcard …/sota_exp3_armN_batch1/
+run*/*.json)`. `$(wildcard)` expands at **parse time**, against the files
+present when `make` reads the makefile — not when the rule runs. Two failure
+modes follow:
+
+1. **Fresh checkout / pre-acquire.** If the P1 raw replies are absent at parse
+   time (clone before the acquire sweep, or after an archive move), the wildcard
+   expands to the empty list. The stamp rule then has NO prerequisites: once
+   `.done` exists it is considered up-to-date forever, so when the JSONs later
+   land the extraction never re-runs. `armN_flat/` stays stale silently.
+2. **New runs added.** Adding `run06/*.json` after a stamp exists does not mark
+   the stamp out of date unless a *captured* prereq is newer — and a brand-new
+   file was not in the parse-time set at all.
+
+This is the deferred follow-up flagged in tickets 0460 and 0461 and in the
+`feedback-make-stamp-discipline` memory. It is distinct from those: the stamps
+themselves are the CORRECT idiom (dynamic multi-output, ~60 un-enumerable
+files) — the bug is the *prerequisite source*, not the stamp.
+
+## Scope note — the pattern is broader than armN
+
+The same parse-time `$(wildcard)` feeds other score.mk prereqs:
+- `ANALYSIS_EXP1_INPUT_CSVS := $(wildcard …/exp1_batch2/*.csv)` (prereq of the
+  exp1_cross_eval.csv rule, 0460).
+- `SCORE_OUTPUT_FILES := $(wildcard …)` (prereq of `measurements.jsonl`).
+Decide whether to fix only the armN stamps (narrow) or address the class
+(preferred, with one mechanism). Document the choice.
+
+## Candidate fixes (executor decides; do not assume)
+
+- **Depend on an acquire-produced sentinel.** P1 (`acquire.mk`) is the producer
+  of `run*/*.json`; have the sweep write/`touch` a per-arm manifest
+  (e.g. `sota_exp3_armN_batch1/.acquired`) and make the score stamp depend on
+  THAT stable path (no wildcard). Cleanest across the acquire→score seam, and
+  consistent with the phase-boundary discipline (test_score_build_no_acquire).
+- **Recursively-expanded prereq via a shell `find`** in a `$(shell …)` guarded
+  to run at build time, or a `.SECONDEXPANSION` prereq — re-globs later but
+  still mtime-based; partial.
+- **Order-only + always-extract when explicitly invoked** — simplest, loses
+  incremental skip; acceptable only if extraction is cheap.
+Evaluate against: correctness on fresh checkout, no money-gated acquire
+triggered by a P2 dry-run (the score/acquire seam invariant), incremental skip
+preserved.
+
+## Relevant files
+
+- `experiments/derived/score.mk` (~183 EXP1 csvs, ~207–239 armN stamps, the
+  SCORE_OUTPUT_FILES wildcard).
+- `experiments/acquire.mk` — if the sentinel-manifest fix is chosen, the sweep
+  writes it here (P1 side).
+- `tests/test_score_build_no_acquire.py` — keep its invariant intact.
+
+## Test (write first — red)
+
+`tests/test_armN_stamp_rebuilds_on_new_data.py` (integration — uses tmp tree +
+subprocess `make`): create an EMPTY arm input dir, build the stamp (succeeds
+with empty input), then drop a `run01/*.json` in and re-run make; assert the
+stamp rule re-fires (extraction re-runs). Against today's wildcard rule this is
+RED (stamp stays up-to-date); the fix makes it GREEN. Mark `@pytest.mark.integration`.
+
+## Verification
+
+- [ ] Reproduction test red on current code, green after the fix.
+- [ ] Fresh-checkout simulation: empty input dir → stamp → add data → stamp
+      rebuilds.
+- [ ] A P2 dry-run (`make -n -f score.mk all-outcomes`) still triggers NO
+      acquire/LLM step (test_score_build_no_acquire stays green).
+- [ ] `make check` green.
+
+## Invariants
+
+- The stamp idiom for armN stays (do not "flatten" to plain rules — outputs are
+  dynamic/multi-file).
+- No P2 target may (re)acquire raw replies (score/acquire seam).
+- exp1_cross_eval.csv (0460) and measurements.jsonl rebuild behavior unchanged
+  unless the class fix is deliberately extended to them.
+
+## Exit criteria
+
+- [ ] armN extraction re-runs when its raw inputs appear or change after parse
+      time (no silent stale `armN_flat/`).
+- [ ] Reproduction test guards the regression.
+- [ ] score/acquire seam invariant preserved; `make check` green.
+
+## Related
+
+- 0460 (stamp→plain conversion; flagged this), 0461 (.DELETE_ON_ERROR class),
+  memory feedback-make-stamp-discipline, project-phase-build-layout.
