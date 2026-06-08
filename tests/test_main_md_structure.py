@@ -72,16 +72,19 @@ def test_abstract_present_and_leads_with_frontier():
 def test_abstract_numbers_in_body():
     """Key numeric claims in the abstract (F1 range, ρ) are consistent with the body.
 
-    We check that the abstract numbers 0.01, 0.76, 0.38, and ρ = 0.90 appear
-    somewhere in the manuscript body (they are body-derived, not re-typed).
+    We check that the batch-2 canonical numbers (0.00, 0.67, 0.37, ρ = 0.92) appear
+    somewhere in the manuscript body.  The deeper artifact-level guard lives in
+    ``test_abstract_numbers.py::test_abstract_numbers_derived_from_artifact``.
+
+    Ticket 0474 corrected the cohort from batch-1 (16 models / 80 runs) to the
+    canonical batch-2 (14 models / 70 runs; exp1_cross_eval.csv).
     """
     md = _text()
-    # These numbers appear in the Discussion's internal-coherence screen paragraph
-    # and in the Exp1 results paragraph.
-    assert "0.01" in md, "F1 lower bound 0.01 missing from manuscript"
-    assert "0.76" in md, "F1 upper bound 0.76 missing from manuscript"
-    assert "0.38" in md, "mean F1 0.38 missing from manuscript"
-    assert "0.90" in md, "coherence–F1 correlation ρ = 0.90 missing from manuscript"
+    # These numbers appear in the Exp1 §4 results paragraph and §8 Conclusion.
+    assert "0.00" in md, "F1 lower bound 0.00 missing from manuscript"
+    assert "0.67" in md, "F1 upper bound 0.67 missing from manuscript"
+    assert "0.37" in md, "mean F1 0.37 missing from manuscript"
+    assert "0.92" in md, "coherence–F1 correlation ρ = 0.92 missing from manuscript"
 
 
 def test_author_affiliation_present():
