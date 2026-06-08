@@ -1,0 +1,101 @@
+%erg 0.1
+Title: Add .DELETE_ON_ERROR across all build makefiles + adherence guard
+Created: 2026-06-08
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-08T09:41Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Ticket 0460 added `.DELETE_ON_ERROR:` to `experiments/derived/score.mk` to make
+a crashed recipe self-clean (otherwise a mid-write failure leaves a partial
+output with a fresh mtime that Make treats as up-to-date → silent stale
+artifact). The roar sweep found the guarantee is missing from **6 of 7** build
+makefiles — only score.mk has it. The hazard is build-wide, not score-specific:
+
+  MISSING  Makefile (root)
+  MISSING  experiments/acquire.mk
+  MISSING  experiments/render.mk
+  MISSING  experiments/paths.mk
+  MISSING  report/Makefile
+  MISSING  slides/Makefile
+  SET      experiments/derived/score.mk   (0460)
+
+This is a class defect: any `--output`/append/stream recipe in any of these
+phases can ship a truncated artifact on crash. render.mk (figures, tables,
+macros) and report/slides (tectonic PDFs) are exactly the writers where a
+partial file is most damaging.
+
+## Design (the per-invocation nuance)
+
+`.DELETE_ON_ERROR` is global to a single `make` invocation, not per-rule. The
+recursive `$(MAKE) -f/-C` delegation means each phase runs as its own process,
+so each invocation ROOT needs the directive in a makefile it reads:
+
+- `experiments/paths.mk` is `include`d by BOTH score.mk and render.mk — setting
+  it there covers both phases in one line and makes score.mk's 0460 copy
+  redundant (drop it, or keep as harmless local defense — decide in the PR).
+- `Makefile` (root), `experiments/acquire.mk`, `report/Makefile`,
+  `slides/Makefile` are independent invocation roots (root delegates by
+  recursive $(MAKE), not include) — each needs its own line.
+
+paths.mk is variables-only today; a special-target directive there is still
+read by its includers, so it works — but document why a "variables-only" file
+carries one directive, to not surprise the next reader.
+
+## Relevant files
+
+- `experiments/paths.mk`, `Makefile`, `experiments/acquire.mk`,
+  `report/Makefile`, `slides/Makefile` — add `.DELETE_ON_ERROR:`.
+- `experiments/derived/score.mk` — resolve redundancy with paths.mk.
+- `tests/test_makefile_delete_on_error.py` (NEW) — the class guard.
+
+## Actions
+
+1. Add `.DELETE_ON_ERROR:` to paths.mk (covers score+render), root Makefile,
+   acquire.mk, report/Makefile, slides/Makefile.
+2. Resolve the score.mk duplicate (prefer: keep in paths.mk, drop the score.mk
+   line so there is one source of truth for the two including phases).
+3. Update 0460's adherence test if it asserts the directive lives literally in
+   score.mk (it now lives in the included paths.mk) — keep the guarantee, fix
+   the location assertion.
+
+## Test (write first — red)
+
+`tests/test_makefile_delete_on_error.py` (`@pytest.mark.adherence`, source
+inspection, no subprocess): for each build makefile that carries recipes,
+assert `.DELETE_ON_ERROR` is reachable — set in the file itself OR in a file it
+`include`s. This is the standing regression guard for the whole class: a new
+phase makefile added later without the directive fails the test.
+
+## Verification
+
+- [ ] `grep -L DELETE_ON_ERROR` over the build makefiles returns only
+      variables-only/recipe-less files whose includers set it.
+- [ ] `make report`, `make slides`, `make -f experiments/render.mk all`,
+      `make -f experiments/derived/score.mk all-outcomes` all still build.
+- [ ] New adherence test green; deleting the directive from any covered
+      makefile turns it red.
+- [ ] `make check` green.
+
+## Invariants
+
+- No artifact content changes — this only affects crash behavior.
+- The 0460 atomicity guarantee for score.mk is preserved (now via paths.mk).
+- The four armN_flat/.done stamps stay as-is (correct dynamic-output idiom).
+
+## Exit criteria
+
+- [ ] Every build makefile that runs recipes has `.DELETE_ON_ERROR` in force.
+- [ ] One adherence test guards the class so a future phase makefile cannot
+      regress silently.
+- [ ] `make check` green.
+
+## Related
+
+- 0460 (added .DELETE_ON_ERROR to score.mk; PR #785 — this generalizes it)
+- 0444 (the census re-score that surfaced the build-hygiene thread)
+- FOLLOW-UP still open: `$(wildcard run*/*.json)` parse-time fragility in the
+  armN stamp rules (noted in 0460; not yet ticketed).
