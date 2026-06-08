@@ -1,0 +1,102 @@
+%erg 0.1
+Title: Convert exp1_cross_eval stamp to plain-file rule + add .DELETE_ON_ERROR
+Created: 2026-06-08
+Author: HDMX-coding-agent
+Closed: Converted exp1_cross_eval stamp to plain-file rule on exp1_cross_eval.csv; added .DELETE_ON_ERROR to score.mk for build-wide write atomicity; orphan exp1_cross_eval/ dir eliminated. armN stamps left as correct idiom. Adherence test guards all three.
+
+--- log ---
+2026-06-08T09:28Z HDMX-coding-agent created
+
+2026-06-08T09:36Z HDMX-coding-agent closed — Converted exp1_cross_eval stamp to plain-file rule on exp1_cross_eval.csv; added .DELETE_ON_ERROR to score.mk for build-wide write atomicity; orphan exp1_cross_eval/ dir eliminated. armN stamps left as correct idiom. Adherence test guards all three.
+--- body ---
+## Context
+
+`score.mk` keys the Exp1 cross-eval build on a sentinel stamp
+`experiments/derived/exp1_cross_eval/.done` (rule ~line 213). But
+`score_exp1` writes exactly ONE known output — `exp1_cross_eval.csv` — and
+already `mkdir`s the CSV's own parent. The stamp + its dedicated
+`exp1_cross_eval/` directory (created solely by the Makefile's `mkdir -p` to
+hold `.done`) are pure ceremony. That empty directory is the orphan untracked
+dir flagged at the close of ticket 0444.
+
+This is unlike the four `armN_flat/.done` stamps, which are the *correct*
+idiom — each extraction emits ~60 files with data-dependent names the Makefile
+cannot enumerate. Those stay. Only the single-known-output `exp1_cross_eval`
+rule is convertible to a plain-file target.
+
+**Atomicity catch (load-bearing).** The stamp gives failure-atomicity for
+free: it `touch`es only on success, so a mid-recipe crash leaves no stamp →
+correct rebuild. `score_exp1` appends (`open(..., "a")`), so the rule does
+`rm -f` then writes. A naive `CSV: inputs` rule would lose atomicity: a crash
+mid-write leaves a PARTIAL CSV with a fresh mtime → Make treats it as current
+→ stale artifact ships silently. `.DELETE_ON_ERROR` is currently set NOWHERE
+in the build. So the conversion MUST be paired with adding `.DELETE_ON_ERROR:`
+to score.mk — a one-line, build-wide correctness win (the real "let Make
+manage deps properly" fix: today any recipe crashing mid-write leaves a
+stale-but-fresh artifact).
+
+The CSV is LIVE — consumed by `plot_quality_spider_exp1.py` and
+`plot_spider_cross_exp.py` (`--input` / `--exp1`). Convert, do not delete.
+
+## Relevant files
+
+- `experiments/derived/score.mk` — the `exp1_cross_eval/.done` rule (~213), its
+  reference in `all-outcomes` (~157), the SOURCES/OUTCOMES doc comments
+  (~22, ~143). Add `.DELETE_ON_ERROR:` near the top.
+- `src/aedist/score_exp1.py` — append-mode writer (`--output`); no side
+  outputs (verified). No change expected.
+
+## Actions
+
+1. Add `.DELETE_ON_ERROR:` to `score.mk` (top, near `SHELL`/self-path block).
+2. Replace the stamp rule with a plain-file rule:
+   `$(ANALYSIS_EXP1_CROSS_EVAL_CSV): $(ANALYSIS_EXP1_INPUT_CSVS) <score_exp1.py>`
+   recipe: `rm -f $@; uv run python -m aedist.score_exp1 --input-dir … --output $@`
+   (drop the `mkdir exp1_cross_eval/` and `touch`). score_exp1 already mkdirs
+   the CSV parent.
+3. Repoint the `all-outcomes` reference (~157) from `.../exp1_cross_eval/.done`
+   to `$(ANALYSIS_EXP1_CROSS_EVAL_CSV)`.
+4. Update the doc-comment mentions of the stamp (~143) to describe the plain
+   target.
+5. Remove the orphan dir: `git rm -r --cached` is N/A (untracked); just ensure
+   no rule recreates `experiments/derived/exp1_cross_eval/`.
+
+## Test (write first — red)
+
+`tests/test_score_mk_exp1_cross_eval.py` (source-inspection, no subprocess):
+- assert `score.mk` contains `.DELETE_ON_ERROR`.
+- assert `score.mk` declares `$(ANALYSIS_EXP1_CROSS_EVAL_CSV)` /
+  `exp1_cross_eval.csv` as a rule target (line matching `exp1_cross_eval.csv:`).
+- assert `score.mk` no longer references `exp1_cross_eval/.done`.
+
+## Verification
+
+- [ ] `grep -n 'exp1_cross_eval/.done' experiments/derived/score.mk` → no match.
+- [ ] `grep -n 'DELETE_ON_ERROR' experiments/derived/score.mk` → matches.
+- [ ] `make -f experiments/derived/score.mk experiments/derived/exp1_cross_eval.csv`
+      regenerates the CSV; no `exp1_cross_eval/` directory is created.
+- [ ] `make -f experiments/derived/score.mk all-outcomes` still builds.
+- [ ] `pytest tests/test_score_mk_exp1_cross_eval.py` green; `make check` green.
+
+## Invariants
+
+- The four `armN_flat/.done` stamps are UNTOUCHED (correct dynamic-output idiom).
+- `exp1_cross_eval.csv` content unchanged (same script, same inputs); its two
+  spider-plot consumers keep working.
+- `make check` green.
+
+## Exit criteria
+
+- [ ] `exp1_cross_eval` builds via a plain-file rule on `exp1_cross_eval.csv`;
+      no stamp, no orphan `exp1_cross_eval/` directory.
+- [ ] `.DELETE_ON_ERROR:` set in score.mk; adherence test guards both.
+- [ ] `make check` green.
+
+## Related / flagged follow-up
+
+- 0444 (flagged the orphan `exp1_cross_eval/.done` dir; PR #781).
+- FOLLOW-UP (separate ticket): the `$(wildcard run*/*.json)` prereqs in the
+  armN stamp rules are parse-time fragile — on a fresh checkout where the JSONs
+  do not yet exist, the wildcard expands empty and the stamp never rebuilds
+  when data later lands. Afflicts stamp and non-stamp rules equally; orthogonal
+  to this conversion. Not fixed here.

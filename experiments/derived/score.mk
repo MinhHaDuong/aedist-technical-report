@@ -49,6 +49,14 @@ SCORE_MK_SELF := $(abspath $(lastword $(MAKEFILE_LIST)))
 
 include $(dir $(lastword $(MAKEFILE_LIST)))../paths.mk
 
+# Atomicity: delete a target whose recipe fails mid-write. Without this, a
+# crash partway through an append/stream write (e.g. score_exp1 appending to
+# exp1_cross_eval.csv, or any --output writer here) leaves a PARTIAL file with
+# a fresh mtime that Make treats as up-to-date — a silent stale-artifact
+# hazard. This is the correctness guarantee that lets single-known-output
+# recipes drop their .done sentinels and be plain-file rules (ticket 0460).
+.DELETE_ON_ERROR:
+
 # --- P2-local tooling -------------------------------------------------------
 # Bare `uv run` (no --env-file): P2 scoring makes no API calls, so it needs no
 # secrets. This mirrors the former P2 score makefile's convention and keeps
@@ -140,10 +148,8 @@ rebuild-measurements:
 #                                          pulls $(ANALYSIS_EXP2_CROSS_EVAL_CSV)
 #                                          = sota_cross_eval.csv + the arm .done
 #                                          stamps)
-#   * exp1_cross_eval/.done               (produces exp1_cross_eval.csv — a
-#                                          side-effect of this stamp, named here
-#                                          because the CSV itself is not a make
-#                                          target)
+#   * exp1_cross_eval.csv                 (Exp1 cross-eval; a plain-file rule —
+#                                          single known output, no stamp)
 #   * self_consistency_summary.json       (P2 SC outcome; no current P3 consumer
 #                                          but part of a full P2 re-run)
 # This rule runs P2 for REAL (extract → evaluate → assemble): it (re)writes
@@ -154,7 +160,7 @@ rebuild-measurements:
 all-outcomes:
 	@$(MAKE) --no-print-directory -f $(SCORE_MK_SELF) $(ANALYSIS_MEASUREMENTS)
 	@$(MAKE) --no-print-directory -f $(SCORE_MK_SELF) $(ANALYSIS_EXP2_MART_JSONL)
-	@$(MAKE) --no-print-directory -f $(SCORE_MK_SELF) $(ANALYSIS_DERIVED_DIR)/exp1_cross_eval/.done
+	@$(MAKE) --no-print-directory -f $(SCORE_MK_SELF) $(ANALYSIS_EXP1_CROSS_EVAL_CSV)
 	@$(MAKE) --no-print-directory -f $(SCORE_MK_SELF) $(SCORE_SC_JSON)
 
 # === Self-consistency scorer (archive rag_extract → derived/rag_consistency)
@@ -210,13 +216,15 @@ $(ANALYSIS_DERIVED_DIR)/arm2_flat/.done: $(wildcard $(ANALYSIS_EXPERIMENTS_DIR)/
 	    --output-dir $(ANALYSIS_DERIVED_DIR)/arm2_flat
 	touch $@
 
-$(ANALYSIS_DERIVED_DIR)/exp1_cross_eval/.done: $(ANALYSIS_EXP1_INPUT_CSVS) $(ANALYSIS_EXPERIMENTS_DIR)/../src/aedist/score_exp1.py
-	rm -f $(ANALYSIS_EXP1_CROSS_EVAL_CSV)
+# exp1_cross_eval.csv is a single known output (score_exp1 writes exactly one
+# file and mkdirs its own parent), so it is a plain-file rule — no .done stamp,
+# no dedicated holding directory. score_exp1 appends, hence the rm -f; the
+# .DELETE_ON_ERROR above makes a crashed write self-clean (ticket 0460).
+$(ANALYSIS_EXP1_CROSS_EVAL_CSV): $(ANALYSIS_EXP1_INPUT_CSVS) $(ANALYSIS_EXPERIMENTS_DIR)/../src/aedist/score_exp1.py
+	rm -f $@
 	uv run python -m aedist.score_exp1 \
 	    --input-dir $(ANALYSIS_EXPERIMENTS_DIR)/outputs/exp1_batch2 \
-	    --output $(ANALYSIS_EXP1_CROSS_EVAL_CSV)
-	mkdir -p $(ANALYSIS_DERIVED_DIR)/exp1_cross_eval
-	touch $@
+	    --output $@
 
 $(ANALYSIS_DERIVED_DIR)/arm3_flat/.done: $(wildcard $(ANALYSIS_EXPERIMENTS_DIR)/outputs/sota_exp3_arm3_batch1/run*/*.json)
 	uv run python -m aedist.extract_arm_single_turn \
