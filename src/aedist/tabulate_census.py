@@ -23,11 +23,20 @@ log = logging.getLogger(__name__)
 
 _CONVERGENCE_METHODS = {"direct", "direct+multiturn", "rag_livesearch", "rag"}
 
+# Cohorts that share a convergence method but are NOT the pre-experiment census:
+#   exp1_batch2     — Experiment 1 (its own figure/table)
+#   derived         — P2 analysis artifacts (exp2_fp_* triage, cross-eval CSVs)
+#   rag_consistency — synthetic multi-run aggregates (-union / -consolidated)
+# Excluding these yields exactly the archive-sourced census cohort that the
+# macros path (tabulate_census_macros --result-dir experiments/archive/outputs)
+# selects, keeping the two census tabulators consistent.
+_NON_CENSUS_PROMPT_VERSIONS = {"exp1_batch2", "derived", "rag_consistency"}
+
 
 def _is_census(entry: dict) -> bool:
     return (
         entry.get("method") in _CONVERGENCE_METHODS
-        and entry.get("prompt_version") != "exp1_batch2"
+        and entry.get("prompt_version") not in _NON_CENSUS_PROMPT_VERSIONS
     )
 
 
