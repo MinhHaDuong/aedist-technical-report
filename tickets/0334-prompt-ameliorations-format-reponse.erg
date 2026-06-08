@@ -6,6 +6,7 @@ Label: deferred
 
 --- log ---
 2026-05-26T10:00Z claude created
+2026-06-08T00:00Z HDMX-coding-agent note Deferral confirmed: (1) exit criterion "Test sur 1 modèle" requires API call ($$); (2) protocol_07_naive_prompt.md is the frozen naive-arm stimulus referenced by path in 49+ completed exp1_batch2 jobs and exp2_naive_arm.py — editing it in place would desync the archived data from the stimulus that produced it; (3) the requested structured scaffolding (mandated header, caption, Notes, Sources) is exactly what the naive arm is designed to lack (per protocol_05_experiment.md) — applying these changes would contaminate the Exp2 naive-vs-optimized contrast. If these improvements are wanted for future runs, they should target a new protocol document, not protocol_07.
 
 --- body ---
 ## Verbatim
