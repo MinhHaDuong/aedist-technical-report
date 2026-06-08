@@ -3,10 +3,12 @@ Title: adapter_mistral: self-guard against metadata on follow-up turns
 Created: 2026-05-23
 Author: claude
 Label: deferred
+Closed: Self-guard against metadata on follow-up turns added via content prepend; docstring updated; unit test added
 
 --- log ---
 2026-05-23T00:00Z claude created — residual from 0218; caller-guard exists, adapter still attaches metadata on follow-up (footgun)
 
+2026-06-08T18:59Z HDMX-coding-agent closed — Self-guard against metadata on follow-up turns added via content prepend; docstring updated; unit test added
 --- body ---
 ## Context
 
