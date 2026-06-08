@@ -18,6 +18,13 @@ VN_THERMAL_PLANTS_RELEASE_CSV = (
     _REPO_ROOT / "data" / "reference" / "vietnam_thermal_plants_v2_classified.csv"
 )
 
+# GEM (Global Energy Monitor) thermal reference CSV — used by reconciliation
+# and source-URL audit scripts.  Single source of truth; do not hardcode the
+# filename outside this module (ticket 0428 ratchet).
+GEM_THERMAL_REFERENCE_CSV = (
+    _REPO_ROOT / "data" / "reference" / "gem_thermal.csv"
+)
+
 # Vietnam thermal master snapshot (pipeline.ods) — the pinned ODS capture
 # from the author's "Market report on Gas to Power" master spreadsheet.
 # Datestamped immutable; extraction reads this to produce v2 releases.

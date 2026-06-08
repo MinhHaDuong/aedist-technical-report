@@ -23,6 +23,7 @@ from pathlib import Path
 import httpx
 from rapidfuzz import fuzz
 
+from aedist.config import GEM_THERMAL_REFERENCE_CSV
 from aedist.verify import (
     _PRIMARY_PATTERNS,
     classify_source_by_text,
@@ -36,7 +37,7 @@ _DEFAULT_INPUTS = [
     Path("experiments/outputs/rag_cited/claude-opus-4.6-run2.csv"),
     Path("experiments/outputs/rag_cited/claude-opus-4.6-run3.csv"),
 ]
-_DEFAULT_GEM = Path("data/reference/gem_thermal.csv")
+_DEFAULT_GEM = GEM_THERMAL_REFERENCE_CSV
 _DEFAULT_OUTPUT_DIR = Path("derived/audit/")
 
 

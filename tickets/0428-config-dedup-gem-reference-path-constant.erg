@@ -2,10 +2,12 @@
 Title: Config: dedup GEM reference path constants + generalize the hardcoded-path ratchet
 Created: 2026-06-04
 Author: HDMX-coding-agent
+Closed: GEM_THERMAL_REFERENCE_CSV added to config.py; tabulate_reconciliation.py and audit_source_urls.py re-pointed; ratchet extended to all data/reference CSVs and scripts/
 
 --- log ---
 2026-06-04T20:19Z HDMX-coding-agent created
 
+2026-06-08T17:52Z HDMX-coding-agent closed — GEM_THERMAL_REFERENCE_CSV added to config.py; tabulate_reconciliation.py and audit_source_urls.py re-pointed; ratchet extended to all data/reference CSVs and scripts/
 --- body ---
 ## Context
 
