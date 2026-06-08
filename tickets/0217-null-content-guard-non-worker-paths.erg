@@ -3,10 +3,12 @@ Title: Guard non-worker query paths against null content from provider
 Created: 2026-05-21
 Author: claude
 Label: deferred
+Closed: guard implemented in query_single_turn and multiturn._call; 3 tests added
 
 --- log ---
 2026-05-21T18:50Z claude created — celebrate sweep for PR #402
 
+2026-06-08T19:00Z HDMX-coding-agent closed — guard implemented in query_single_turn and multiturn._call; 3 tests added
 --- body ---
 ## Context
 
