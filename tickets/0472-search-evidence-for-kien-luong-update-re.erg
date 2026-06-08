@@ -1,0 +1,75 @@
+%erg 0.1
+Title: Search evidence for Kien Luong, update reference master
+Created: 2026-06-08
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-08T15:43Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Kien Luong Phase 1/2/3 (Kiên Giang province, coal, ~1200 MW each, 2×600 MW
+units) appear in `data/reference/gem_thermal.csv` and `data/reference/gem_units.csv`
+as `cancelled`, but are **ABSENT** from the classified master
+`data/reference/vietnam_thermal_plants_v2_classified.csv` — which otherwise
+carries cancelled plants (status code 9) and whose task claims "all lifecycle
+statuses". A model that lists Kien Luong is therefore scored
+unrecognized/FP although it is a real (cancelled) project — not a
+hallucination. **Observation only**; cause (deliberate per-plant exclusion vs
+reference gap) is not yet established.
+
+This is a data-curation ticket, not a manuscript ticket — a sibling of the
+0442/0443 reference-curation family.
+
+## Relevant files
+
+- `data/reference/gem_thermal.csv` — GEM tracker plants; Kien Luong present (`cancelled`)
+- `data/reference/gem_units.csv` — GEM tracker units; Kien Luong 2×600 MW units present
+- `data/reference/vietnam_thermal_plants_v2_classified.csv` — the classified master; Kien Luong ABSENT
+- the ODS→extract pipeline in `data/reference/` — the canonical path that derives the classified master (status, capacity, units, sources)
+
+## Actions
+
+1. **Search primary evidence** for Kien Luong 1 & 2: GEM Global Energy Monitor
+   tracker entries, Vietnam PDP (Power Development Plan) documents, and news on
+   the Tan Hong / Kien Luong coal project and its cancellation.
+2. **Decide include-or-exclude** per the reference's documented inclusion policy.
+3. **If INCLUDE:** add to the classified master *through the existing ODS→extract
+   pipeline* in `data/reference/` (status, capacity, units, sources) and
+   re-derive downstream. `reference_plant_count()` may change — **never hardcode
+   the reference size**; use `reference_plant_count()` everywhere.
+4. **If EXCLUDE:** document the per-plant exclusion rationale (in the pipeline
+   ODS / reference docs) so Kien Luong is not re-flagged in future audits.
+
+## Test
+
+An assertion/check that Kien Luong's treatment matches the decision:
+- present-with-status in the classified master (INCLUDE branch), OR
+- documented-excluded with a recorded rationale (EXCLUDE branch).
+
+```python
+def test_kien_luong_treatment_matches_decision():
+    master = read_classified_master()
+    # INCLUDE: present with a lifecycle status (e.g. cancelled / status 9)
+    # EXCLUDE: absent AND a recorded exclusion rationale exists for Kien Luong
+    assert kien_luong_present(master) or kien_luong_exclusion_documented()
+```
+
+## Verification
+
+- [ ] Primary evidence for Kien Luong 1 & 2 gathered and cited.
+- [ ] Include-or-exclude decision made against the documented inclusion policy.
+- [ ] If INCLUDE: master updated via the ODS→extract pipeline; downstream re-derived; `reference_plant_count()` used (not hardcoded).
+- [ ] If EXCLUDE: per-plant exclusion rationale documented so it is not re-flagged.
+
+## Invariants
+
+- Reference size is never hardcoded — always `reference_plant_count()`.
+- The classified master is regenerated through the existing ODS→extract
+  pipeline, never hand-edited in the CSV.
+
+## Exit criteria
+
+- Evidence gathered + cited; master updated OR exclusion documented;
+  downstream re-derived; `make check` green.

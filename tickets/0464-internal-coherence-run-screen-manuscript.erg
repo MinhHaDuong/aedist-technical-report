@@ -8,9 +8,11 @@ Blocked-by: 0466
 Blocked-by: 0467
 Blocked-by: 0468
 Blocked-by: 0469
+Blocked-by: 0473
 
 --- log ---
 2026-06-08T14:39Z claude created
+2026-06-08T15:43Z claude note added child A6=0473 (§5 fusion MVP); A5=0469 re-scoped synopsis→paper restructure
 
 --- body ---
 ## Context
@@ -50,7 +52,12 @@ It holds no production code of its own; each child lands its own merge request.
 - **A4 = 0468** (NEW): move the "why it is hard" difficulty table from Annex E
   into task setup / head of Exp1 results (it characterises the task, so it
   motivates difficulty up front).
-- **A5 = 0469** (NEW): `main.md ↔ slides` sync — talk-aligned manuscript revision.
+- **A5 = 0469** (re-scoped): synopsis→paper restructure of `main.md` (was
+  "slides sync") — real title, structured abstract, numbered IMRaD, Related
+  Work into the body, author/affiliations.
+- **A6 = 0473** (NEW): §5 naive presence-fusion MVP — union vs ≥2-models,
+  discovery gain vs best single model in E1 & E2-1D (no copulas; full
+  treatment in 0465).
 - **screen-design = 0453** (re-scoped): two-level screen — run-grain veto
   (zero-is-trash on the four free criteria) + model-grain majority-red floor.
 
@@ -62,7 +69,7 @@ It holds no production code of its own; each child lands its own merge request.
 
 ## Exit criteria (IDH tracking-ticket convention)
 
-- [ ] All children merged: 0201, 0453, 0466, 0467, 0468, 0469.
+- [ ] All children merged: 0201, 0453, 0466, 0467, 0468, 0469, 0473.
 - [ ] Manuscript presents the internal-coherence run-screen as a present
       contribution (not future work) with the model-grain floor heatmap as
       the canonical quality figure.

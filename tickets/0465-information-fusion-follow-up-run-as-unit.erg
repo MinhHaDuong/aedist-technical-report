@@ -27,6 +27,10 @@ residual share of unseen plants by linear programming against a control total
 arXiv-preprint critical path. It stays open until all children are merged
 (IDH tracking-ticket convention).
 
+A naive presence-fusion **TEASER** lives in Paper A §5 (leaf 0473 under tracker
+0464); Paper B retains the full latent-truth / capture–recapture / copula-or-
+advanced fusion and the E1→1N→1D ladder (0471).
+
 ## Children
 
 - **Cached LLM-judge faithfulness = 0470** (NEW): does document X say plant P
