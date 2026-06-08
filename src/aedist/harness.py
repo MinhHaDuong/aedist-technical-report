@@ -155,6 +155,11 @@ EVIDENCE_PACK_HEADER_FIELDS = (
 
 EVIDENCE_PACK_SECTION_TITLE = "# Evidence pack"
 
+# Path to the evidence-pack preamble module, relative to the repo root.
+# Extracting this sentence to a versioned file (ticket 0269) keeps it aligned
+# with the other prompt modules and avoids a hardcoded string buried in Python.
+_EVIDENCE_PREAMBLE_MODULE = Path(__file__).resolve().parents[2] / "experiments" / "prompts" / "modules" / "7_evidence.txt"
+
 
 def assemble_prompt(modules_dir: Path, module_names: list[str]) -> str:
     """Assemble a prompt from the always-pair plus named optional modules.
@@ -225,10 +230,15 @@ def assemble_evidence_pack(manifest_path: Path) -> str:
     corpus_root = _resolve_manifest_source_root(manifest_path, source_root)
 
     items = manifest["items"]
-    manifest_lines = [
-        "These are manually curated primary sources meant to boost but not replace your own deep research.",
-        "",
+    # Read the static preamble sentence from the versioned module file.
+    # The section header line ("## Evidence pack preamble") is stripped;
+    # only the content sentence is used.
+    preamble_lines = [
+        line
+        for line in _EVIDENCE_PREAMBLE_MODULE.read_text().splitlines()
+        if line and not line.startswith("#")
     ]
+    manifest_lines = preamble_lines + [""]
     for index, item in enumerate(items, start=1):
         manifest_lines.append(f"{index}. {item['source_id']} — {item.get('document_title', '')}")
     preamble = "\n".join(manifest_lines)

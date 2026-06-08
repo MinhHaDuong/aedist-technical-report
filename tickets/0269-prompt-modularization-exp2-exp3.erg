@@ -2,10 +2,13 @@
 Title: Explore prompt modularization for Exp 2 and Exp 3 — consolidate sources of truth
 Created: 2026-05-24
 Author: HDMX-coding-agent
+Closed: Accepted divergence documented; evidence-pack preamble extracted to modules/7_evidence.txt
 
 --- log ---
 2026-05-24T08:30Z HDMX-coding-agent created
+2026-06-08T00:00Z HDMX-coding-agent implemented: option (c) accepted divergence. Diff table in experiments/prompts/README.md ADR. Evidence-pack preamble extracted to modules/7_evidence.txt (harness reads it; byte-identical output). Frozen stimuli not touched.
 
+2026-06-08T21:21Z HDMX-coding-agent closed — Accepted divergence documented; evidence-pack preamble extracted to modules/7_evidence.txt
 --- body ---
 ## Context
 
