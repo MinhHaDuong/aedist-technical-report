@@ -560,6 +560,35 @@ $(ANALYSIS_EXP3_FN_TRIAGE_TEX): $(ANALYSIS_EXP3_FN_TRIAGE_WORKSHEET) \
 .PHONY: exp3-fn-triage
 exp3-fn-triage: $(ANALYSIS_EXP3_FN_TRIAGE_TEX)
 
+# --- Run aggregation sweep (ticket 0375) ------------------------------------
+# Two-step: (1) sweep_aggregations.py re-scores committed exp1_batch2 CSVs
+# and writes the aggregation_sweep.csv; (2) tabulate_aggregation_sweep.py
+# renders the LaTeX table. Step 1 is slow (~3 min LP matching); the CSV is
+# committed so step 2 can run without step 1 on a clean-room build.
+
+ANALYSIS_AGG_SWEEP_CSV := $(ANALYSIS_DERIVED_DIR)/aggregation_sweep.csv
+ANALYSIS_AGG_SWEEP_TEX := $(ANALYSIS_GEN)/tab_aggregation_sweep.tex
+
+# Step 1: generate the sweep CSV from committed per-run CSVs.
+# Not a default dependency — run explicitly when exp1_batch2 data changes.
+$(ANALYSIS_AGG_SWEEP_CSV): $(ANALYSIS_REPO_ROOT)/src/aedist/sweep_aggregations.py
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.sweep_aggregations --output $@
+
+.PHONY: aggregation-sweep-csv
+aggregation-sweep-csv: $(ANALYSIS_AGG_SWEEP_CSV)
+
+# Step 2: render LaTeX table (fast, clean-room safe).
+$(ANALYSIS_AGG_SWEEP_TEX): $(ANALYSIS_AGG_SWEEP_CSV) \
+		$(ANALYSIS_REPO_ROOT)/src/aedist/tabulate_aggregation_sweep.py
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.tabulate_aggregation_sweep \
+	    --input $(ANALYSIS_AGG_SWEEP_CSV) \
+	    --output $@
+
+.PHONY: aggregation-sweep
+aggregation-sweep: $(ANALYSIS_AGG_SWEEP_TEX)
+
 # Grouping targets — drive end-to-end regeneration of report-side handoff
 # artifacts. tab_self_consistency.tex and tab_per_run.tex are produced by the
 # `self-consistency` verb above (single producer, 0354 → migrated here 0410).
@@ -584,7 +613,8 @@ RENDER_REPORT_TABLES := \
 	$(ANALYSIS_GEN)/tab_converter_benchmark.tex \
 	$(ANALYSIS_GEN)/tab_source_grounding.tex \
 	$(ANALYSIS_GEN)/tab_status_difficulty.tex \
-	$(ANALYSIS_EXP2_WIKI_CSV)
+	$(ANALYSIS_EXP2_WIKI_CSV) \
+	$(ANALYSIS_AGG_SWEEP_TEX)
 
 report-tables: $(RENDER_REPORT_TABLES)
 

@@ -2,10 +2,12 @@
 Title: Tester les méthodes d'agrégation (merge × pool size × diversity rule)
 Created: 2026-05-28
 Author: minh
+Closed: Sweep implemented; union/3/cross_model_high best recipe; manuscript updated
 
 --- log ---
 2026-05-28T19:48Z minh created — single-run recall is the floor; aggregating runs is the cheapest path to a higher coverage number, but the optimal recipe is unknown
 
+2026-06-08T22:01Z HDMX-coding-agent closed — Sweep implemented; union/3/cross_model_high best recipe; manuscript updated
 --- body ---
 ## Context
 
