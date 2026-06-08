@@ -2,10 +2,12 @@
 Title: Convert exp1_cross_eval stamp to plain-file rule + add .DELETE_ON_ERROR
 Created: 2026-06-08
 Author: HDMX-coding-agent
+Closed: Converted exp1_cross_eval stamp to plain-file rule on exp1_cross_eval.csv; added .DELETE_ON_ERROR to score.mk for build-wide write atomicity; orphan exp1_cross_eval/ dir eliminated. armN stamps left as correct idiom. Adherence test guards all three.
 
 --- log ---
 2026-06-08T09:28Z HDMX-coding-agent created
 
+2026-06-08T09:36Z HDMX-coding-agent closed — Converted exp1_cross_eval stamp to plain-file rule on exp1_cross_eval.csv; added .DELETE_ON_ERROR to score.mk for build-wide write atomicity; orphan exp1_cross_eval/ dir eliminated. armN stamps left as correct idiom. Adherence test guards all three.
 --- body ---
 ## Context
 
