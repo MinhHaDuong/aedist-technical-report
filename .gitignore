@@ -60,6 +60,8 @@ report/inputs/generated/exp2_turn_trajectory_view.csv
 report/inputs/generated/sota_cross_eval_view.csv
 report/inputs/generated/tab_exp2_arms_runs_view.csv
 report/inputs/generated/tab_exp2_bib_quality_view.csv
+# Interactive LP matcher QA tool (ticket 0450): dev-only, nothing downstream consumes it
+report/inputs/generated/exp1_recognition_matrix_interactive.html
 
 # Experiment working files (large intermediates, not needed for analysis)
 experiments/data/rag_work/

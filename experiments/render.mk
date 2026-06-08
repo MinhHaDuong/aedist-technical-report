@@ -683,6 +683,17 @@ $(ANALYSIS_GEN)/tab_status_difficulty.tex: $(ANALYSIS_EXP1_BATCH2_RECORDS) $(ANA
 	    --reference $(ANALYSIS_EXPERT_REF) \
 	    --output $(ANALYSIS_GEN)/tab_status_difficulty.tex
 
+# Interactive recognition matrix (ticket 0450): dev-tool HTML for LP matcher
+# QA — hover any cell to see the reference-vs-reply comparison table.  Output
+# is gitignored (nothing downstream consumes it); not in RENDER_CHART_FIGURES.
+# One output per rule (single HTML), DAG-wired to records + reference + scripts.
+$(ANALYSIS_GEN)/exp1_recognition_matrix_interactive.html: $(ANALYSIS_EXP1_BATCH2_RECORDS) $(ANALYSIS_EXPERT_REF) $(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp1_matrix_interactive.py $(ANALYSIS_REPO_ROOT)/src/aedist/exp1_recognition.py
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.plot_exp1_matrix_interactive \
+	    --records-glob "$(ANALYSIS_EXPERIMENTS_DIR)/outputs/exp1_batch2/*.record.json" \
+	    --reference $(ANALYSIS_EXPERT_REF) \
+	    --output $@
+
 $(ANALYSIS_GEN)/fig_regimes_scatter.pdf: $(ANALYSIS_MEASUREMENTS) $(ANALYSIS_EXPERIMENTS_DIR)/figures.toml
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_regimes_scatter \
