@@ -113,6 +113,8 @@ def test_coherence_field_names_match_source_columns() -> None:
         "coherence_status_vocab_adherence_annotation": "",
         "coherence_capacity_nonnegative": "0.3",
         "coherence_capacity_nonnegative_annotation": "",
+        "coherence_row_atomicity": "0.97",
+        "coherence_row_atomicity_annotation": "",
     }
     summary = _score_summary(row)
     assert summary.coherence.vocab_adherence.value == 0.1, (
@@ -123,6 +125,9 @@ def test_coherence_field_names_match_source_columns() -> None:
     )
     assert summary.coherence.capacity_nonnegative.value == 0.3, (
         "capacity_nonnegative must read the coherence_capacity_nonnegative column"
+    )
+    assert summary.coherence.row_atomicity.value == pytest.approx(0.97), (
+        "row_atomicity must read the coherence_row_atomicity column"
     )
 
 

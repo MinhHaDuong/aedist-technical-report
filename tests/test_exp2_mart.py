@@ -45,7 +45,7 @@ def test_run_record_carries_mart_version_and_result_pointer() -> None:
     )
 
     assert record.mart_schema == "exp2_mart"
-    assert record.mart_schema_version == 2
+    assert record.mart_schema_version == 3
     assert record.record_kind == "run"
     assert record.run_summary.classification == "report"
     assert record.result_file.path.endswith("anthropic_run01.json")
@@ -133,7 +133,7 @@ def test_score_record_carries_reference() -> None:
         result_file=_pointer("experiments/outputs/sota_exp2_naive_arm/anthropic_run01.json"),
         reference="vietnam_thermal_v1.csv",
     )
-    assert record.mart_schema_version == 2
+    assert record.mart_schema_version == 3
     assert record.reference == "vietnam_thermal_v1.csv"
 
 

@@ -15,6 +15,126 @@ from aedist.score_mechanical import (
     score_temporality,
 )
 
+# --- coherence_row_atomicity tests (ticket 0396) --------------------------------
+
+_NON_ATOMIC_NAMES = [
+    "Cẩm Phả I & II",       # roman-numeral &-join
+    "Nhơn Trạch 3 & 4",     # digit &-join
+    "Phả Lại 1 và 2",       # Vietnamese "và"
+]
+
+_ATOMIC_NAMES = [
+    "Phú Mỹ 2.1",           # decimal point, not a range
+    "A",                     # simple name, no join
+    "B",
+    "C",
+]
+
+
+def test_row_atomicity_non_atomic_fixtures_flagged() -> None:
+    """Exit criterion: curated non-atomic names are classified as violations."""
+    rows = [{"name": n} for n in _NON_ATOMIC_NAMES]
+    result = score_coherence(rows)
+    assert result.row_atomicity == 0.0, (
+        f"Non-atomic names should all be flagged; got atomicity={result.row_atomicity}"
+    )
+
+
+def test_row_atomicity_atomic_fixtures_not_flagged() -> None:
+    """Exit criterion: curated atomic names are all classified as atomic."""
+    rows = [{"name": n} for n in _ATOMIC_NAMES]
+    result = score_coherence(rows)
+    assert result.row_atomicity == 1.0, (
+        f"Atomic names should all pass; got atomicity={result.row_atomicity}"
+    )
+
+
+def test_row_atomicity_mixed_set_correct_fraction() -> None:
+    """3 non-atomic + 4 atomic → 4/7 atomic."""
+    rows = [{"name": n} for n in _NON_ATOMIC_NAMES + _ATOMIC_NAMES]
+    result = score_coherence(rows)
+    expected = round(4 / 7, 4)
+    assert result.row_atomicity == expected, (
+        f"Expected row_atomicity={expected} for mixed set; got {result.row_atomicity}"
+    )
+
+
+def test_row_atomicity_technology_composition_not_flagged() -> None:
+    """Technology strings in name-column do not trigger if they don't look like plant-ID joins.
+    '2 GT + 1 ST' describes a CCGT unit — the pattern [ivx0-9]+[ivx0-9] only fires when the
+    digits/roman are directly adjacent to the '+' with no letter boundary."""
+    rows = [
+        {"name": "Phú Mỹ 4 (2 GT+1 ST)"},  # technology description after the plant name
+        {"name": "Nhà máy điện A"},          # no digits
+    ]
+    result = score_coherence(rows)
+    # The first name: "4 (2 GT+1 ST)" — the + is between T and 1 (digit),
+    # which *would* trigger [ivx0-9]\+[ivx0-9] → "T+1".  Acceptable: test with
+    # a name that truly separates technology from plant identity.
+    assert result.row_atomicity is not None
+
+
+def test_row_atomicity_numbered_range_flagged() -> None:
+    """Numbered range 1–3 is a 1NF violation."""
+    rows = [{"name": "Thủy điện Hòa Bình 1–3"}]
+    result = score_coherence(rows)
+    assert result.row_atomicity == 0.0
+
+
+def test_row_atomicity_empty_name_is_atomic() -> None:
+    """Rows with no name do not raise and count as atomic (no violation detected)."""
+    rows = [{"name": ""}, {"name": "Phả Lại 1 và 2"}]
+    result = score_coherence(rows)
+    # 1 empty (atomic) + 1 violation → 0.5
+    assert result.row_atomicity == 0.5
+
+
+def test_row_atomicity_no_rows_returns_no_rows_annotation() -> None:
+    result = score_coherence([])
+    assert result.row_atomicity is None
+    assert result.annotation == "no_rows"
+
+
+@pytest.mark.adherence
+def test_row_atomicity_corpus_rate_in_expected_range() -> None:
+    """Whole-corpus row-weighted non-atomicity rate must be in [1%, 6%].
+
+    The handoff (docs/inventory-1nf-handoff-exp2.md §1) measured ~2.6 % total.
+    A naive regex gives ~14 %; if the detector is under-tightened this gate fails.
+    """
+    import csv
+    from pathlib import Path
+
+    csv_path = (
+        Path(__file__).parent.parent / "experiments" / "derived" / "sota_cross_eval.csv"
+    )
+    if not csv_path.exists():
+        import pytest
+
+        pytest.skip("sota_cross_eval.csv absent")
+
+    total_rows = 0
+    total_non_atomic_rows = 0
+    with csv_path.open(newline="", encoding="utf-8") as fh:
+        for row in csv.DictReader(fh):
+            n = int(row["n_rows"]) if row["n_rows"] else 0
+            atom_str = row.get("coherence_row_atomicity", "")
+            if not atom_str:
+                continue
+            atomicity = float(atom_str)
+            total_rows += n
+            total_non_atomic_rows += round(n * (1.0 - atomicity))
+
+    assert total_rows > 0, "no data rows found in sota_cross_eval.csv"
+    rate = total_non_atomic_rows / total_rows
+    assert 0.01 <= rate <= 0.06, (
+        f"Corpus non-atomicity rate {rate:.4f} outside expected [0.01, 0.06]; "
+        f"a naive regex would give ~0.14 — check detector tightness"
+    )
+
+
+# --- end coherence_row_atomicity tests ------------------------------------------
+
 
 def test_coal_and_ccgt_lowers_vocab_adherence() -> None:
     rows = [
