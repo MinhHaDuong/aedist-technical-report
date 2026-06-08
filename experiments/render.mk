@@ -37,6 +37,7 @@ include $(dir $(lastword $(MAKEFILE_LIST)))paths.mk
 ANALYSIS_EXP2_ARM_FIG := $(ANALYSIS_GEN)/fig_exp2_arms_comparison.pdf
 ANALYSIS_EXP2_TURN_FIG := $(ANALYSIS_GEN)/fig_exp2_turn_trajectory.pdf
 ANALYSIS_EXP2_BIB_TABLE := $(ANALYSIS_GEN)/tab_exp2_bib_quality.tex
+ANALYSIS_EXP2_BIB_TABLE_FR := $(ANALYSIS_GEN)/tab_exp2_bib_quality_fr.tex
 ANALYSIS_EXP2_COVERAGE_FIG := $(ANALYSIS_GEN)/fig_exp2_coverage_certainty.pdf
 ANALYSIS_EXP2_SPIRE_FIG := $(ANALYSIS_GEN)/fig_quality_spider.pdf
 ANALYSIS_EXP2_2X2_CSV := $(ANALYSIS_DERIVED_DIR)/tab_exp2_2x2.csv
@@ -127,7 +128,13 @@ $(ANALYSIS_EXP2_BIB_TABLE): $(ANALYSIS_GEN)/tab_exp2_bib_quality_view.csv
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.tabulate_exp2_bib_quality \
 	    --input $< \
-	    --output $@
+	    --output $@ --lang en
+
+$(ANALYSIS_EXP2_BIB_TABLE_FR): $(ANALYSIS_GEN)/tab_exp2_bib_quality_view.csv
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.tabulate_exp2_bib_quality \
+	    --input $< \
+	    --output $@ --lang fr
 
 # The plot script is a prerequisite: it carries the language labels (ticket
 # 0455), so a label edit must re-trigger the figure build (mirrors the
@@ -254,6 +261,7 @@ ANALYSIS_EXP2_REPORT_TARGETS := \
 	$(ANALYSIS_EXP2_ARM_FIG) \
 	$(ANALYSIS_EXP2_TURN_FIG) \
 	$(ANALYSIS_EXP2_BIB_TABLE) \
+	$(ANALYSIS_EXP2_BIB_TABLE_FR) \
 	$(ANALYSIS_EXP2_COVERAGE_FIG) \
 	$(ANALYSIS_EXP2_COVERAGE_FIG_FR) \
 	$(ANALYSIS_EXP2_SPIRE_FIG) \
