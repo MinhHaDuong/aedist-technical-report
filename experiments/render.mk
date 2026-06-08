@@ -486,6 +486,29 @@ $(ANALYSIS_EXP1_TOPUP_TEX): $(ANALYSIS_MEASUREMENTS) $(ANALYSIS_REPO_ROOT)/src/a
 .PHONY: exp1-reasoning-topup
 exp1-reasoning-topup: $(ANALYSIS_EXP1_TOPUP_TEX)
 
+# --- Exp3 false-negative triage summary (ticket 0374) -----------------------
+# Reads the human-filled worksheet CSV (committed to experiments/derived/) and
+# writes a per-bucket summary CSV + LaTeX table.
+# Prerequisite: experiments/derived/exp3_fn_triage.csv must exist and have
+# its bucket column filled in by the human reviewer before this rule is run.
+# The worksheet itself is generated (one-shot, not a Make target) via:
+#   uv run python -m aedist.tabulate_exp3_fn_triage --mode worksheet
+
+ANALYSIS_EXP3_FN_TRIAGE_WORKSHEET := $(ANALYSIS_DERIVED_DIR)/exp3_fn_triage.csv
+ANALYSIS_EXP3_FN_TRIAGE_SUMMARY_CSV := $(ANALYSIS_DERIVED_DIR)/tab_exp3_fn_triage_summary.csv
+ANALYSIS_EXP3_FN_TRIAGE_TEX := $(ANALYSIS_GEN)/tab_exp3_fn_triage.tex
+
+$(ANALYSIS_EXP3_FN_TRIAGE_TEX): $(ANALYSIS_EXP3_FN_TRIAGE_WORKSHEET) \
+		$(ANALYSIS_REPO_ROOT)/src/aedist/tabulate_exp3_fn_triage.py
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.tabulate_exp3_fn_triage --mode summary \
+	    --input $(ANALYSIS_EXP3_FN_TRIAGE_WORKSHEET) \
+	    --output-csv $(ANALYSIS_EXP3_FN_TRIAGE_SUMMARY_CSV) \
+	    --output-tex $@
+
+.PHONY: exp3-fn-triage
+exp3-fn-triage: $(ANALYSIS_EXP3_FN_TRIAGE_TEX)
+
 # Grouping targets — drive end-to-end regeneration of report-side handoff
 # artifacts. tab_self_consistency.tex and tab_per_run.tex are produced by the
 # `self-consistency` verb above (single producer, 0354 → migrated here 0410).
