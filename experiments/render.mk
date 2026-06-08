@@ -103,7 +103,9 @@ $(ANALYSIS_EXP2_MART_VIEWS): $(ANALYSIS_EXP2_MART_JSONL)
 
 # --- Tables and figures -----------------------------------------------------
 
-$(ANALYSIS_EXP2_ARM_FIG): $(ANALYSIS_GEN)/tab_exp2_arms_runs_view.csv
+# The comparison figure now loads Exp1 baseline data from the mart (via
+# exp1_cost_quality), matching the split figure's E1 bar derivation.
+$(ANALYSIS_EXP2_ARM_FIG): $(ANALYSIS_GEN)/tab_exp2_arms_runs_view.csv $(ANALYSIS_MEASUREMENTS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_exp2_arms_comparison \
 	    --input $< \
