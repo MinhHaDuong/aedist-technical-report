@@ -9,6 +9,12 @@ The single entry point :func:`load_exp1_recognition` reconciles every record
 once and returns *both* the per-(run x reference-plant) recognition cells and
 the per-run false-positive presence, so the figure's TP view and its FP view
 cannot silently diverge.
+
+Extended for ticket 0450: :attr:`RecognitionData.match_details` carries per-cell
+match payloads (matched pair, similarity, capacity delta) and
+:attr:`RecognitionData.fp_candidates` carries the nearest reference candidate for
+each false-positive emission.  Both are populated by the same single reconcile
+call per record — no extra LP runs.
 """
 
 import csv
@@ -85,6 +91,59 @@ class RecognitionCell:
 
 
 @dataclass
+class MatchDetail:
+    """Hover payload for one (run, reference-plant) cell.
+
+    For a recognised (TP) cell: the matched system row attributes and the LP
+    similarity score + capacity delta so the inspector can see *why* the match
+    was accepted.
+
+    For a missed (FN) cell: ``system_name`` is None (nothing was matched).
+
+    ``level`` is the post-preprint 0401/0402 column — not yet in the Plant
+    schema; rendered as ``"—"`` when absent.
+    """
+
+    # Reference-side attributes (always present, read from the reference CSV)
+    ref_name: str
+    ref_fuel: str
+    ref_capacity_mw: float | None
+    ref_status: str
+    ref_province: str | None
+    ref_level: str  # "—" until 0401/0402 lands
+
+    # Matched system-side attributes (None for FN cells)
+    system_name: str | None = None
+    system_fuel: str | None = None
+    system_capacity_mw: float | None = None
+    system_status: str | None = None
+    system_province: str | None = None
+
+    # LP match quality (None for FN cells)
+    match_type: str | None = None
+    similarity_score: float | None = None
+    capacity_diff_pct: float | None = None
+
+
+@dataclass
+class FPCandidate:
+    """Nearest reference candidate for a false-positive system emission.
+
+    Computed post-hoc by scanning every reference plant with
+    ``rapidfuzz.fuzz.partial_ratio`` — the same metric the LP matcher uses for
+    name similarity — so the score is directly comparable to the 90-point
+    threshold the LP enforces.
+    """
+
+    fp_name: str
+    best_ref_name: str | None  # None if reference is empty
+    best_similarity: float  # 0–100
+    best_ref_fuel: str | None
+    best_ref_capacity_mw: float | None
+    best_ref_status: str | None
+
+
+@dataclass
 class RecognitionData:
     """Result of reconciling all Exp1 records once.
 
@@ -92,10 +151,19 @@ class RecognitionData:
         cells: one RecognitionCell per (model, run, reference plant).
         fp_presence: maps (model, run) -> set of false-positive system names
             emitted by that run (SYSTEM_ONLY matches).
+        match_details: maps (model, run, plant_id) -> MatchDetail for the
+            interactive hover payload (ticket 0450).  Only populated when
+            ``load_exp1_recognition`` is called with ``collect_details=True``
+            (default False to preserve the fast path for PDF/table consumers).
+        fp_candidates: maps (model, run, fp_name) -> FPCandidate with the
+            nearest reference plant for each false-positive emission.  Same
+            ``collect_details`` guard as ``match_details``.
     """
 
     cells: list[RecognitionCell] = field(default_factory=list)
     fp_presence: dict[tuple[str, int], set[str]] = field(default_factory=dict)
+    match_details: dict[tuple[str, int, int], MatchDetail] = field(default_factory=dict)
+    fp_candidates: dict[tuple[str, int, str], FPCandidate] = field(default_factory=dict)
 
 
 def _parse_model_run(record_path: Path, record: dict) -> tuple[str, int] | None:
@@ -118,6 +186,7 @@ def _parse_model_run(record_path: Path, record: dict) -> tuple[str, int] | None:
 def load_exp1_recognition(
     records_glob: str,
     reference_path: Path,
+    collect_details: bool = False,
 ) -> RecognitionData:
     """Reconcile every Exp1 record once; return recognition cells and FP presence.
 
@@ -126,6 +195,10 @@ def load_exp1_recognition(
             (e.g. ``experiments/outputs/exp1_batch2/*.record.json``).
         reference_path: Path to the gold reference CSV
             (vietnam_thermal_plants_v2_classified.csv by default).
+        collect_details: When True, also populate ``RecognitionData.match_details``
+            and ``RecognitionData.fp_candidates`` for the interactive HTML viewer
+            (ticket 0450).  Defaults to False to preserve the fast path used by
+            the PDF and table consumers (plot_exp1_matrix, tabulate_status_difficulty).
 
     Returns:
         :class:`RecognitionData`. ``cells`` holds one cell per
@@ -159,14 +232,25 @@ def load_exp1_recognition(
         # same-name Formosa phases are told apart wherever capacity differs.
         recognized: set[tuple[str, float]] = set()
         fps: set[str] = set()
+
+        # For collect_details: map reference (name, capacity) key -> entry
+        detail_by_key: dict[tuple[str, float], object] = {}
+        fp_entries: list[object] = []
+
         for entry in entries:
             if entry.match_type in _MATCHED_TYPES and entry.reference_name:
-                recognized.add((entry.reference_name, round(entry.reference_capacity_mwe or 0.0, 1)))
+                key = (entry.reference_name, round(entry.reference_capacity_mwe or 0.0, 1))
+                recognized.add(key)
+                if collect_details:
+                    detail_by_key[key] = entry
             elif entry.match_type == MatchType.SYSTEM_ONLY and entry.system_name:
                 fps.add(entry.system_name)
+                if collect_details:
+                    fp_entries.append(entry)
 
         for plant_id, plant in enumerate(reference):
             key = (plant.name, round(plant.capacity_mwe or 0.0, 1))
+            is_recognized = key in recognized
             data.cells.append(
                 RecognitionCell(
                     model=model,
@@ -176,12 +260,73 @@ def load_exp1_recognition(
                     plant_name=plant.name,
                     status=plant.status.value if plant.status else "",
                     capacity_mw=plant.capacity_mwe or 0.0,
-                    recognized=key in recognized,
+                    recognized=is_recognized,
                 )
             )
+            if collect_details:
+                entry = detail_by_key.get(key)
+                detail = MatchDetail(
+                    ref_name=plant.name,
+                    ref_fuel=plant.fuel.value if plant.fuel else "",
+                    ref_capacity_mw=plant.capacity_mwe,
+                    ref_status=plant.status.value if plant.status else "",
+                    ref_province=plant.province,
+                    ref_level="—",  # 0401/0402 post-preprint: not yet in Plant schema
+                    system_name=entry.system_name if entry else None,
+                    system_fuel=entry.system_fuel if entry else None,
+                    system_capacity_mw=entry.system_capacity_mwe if entry else None,
+                    system_status=None,  # not carried in ReconciliationEntry
+                    system_province=entry.system_province if entry else None,
+                    match_type=entry.match_type.value if entry else None,
+                    similarity_score=entry.similarity_score if entry else None,
+                    capacity_diff_pct=entry.capacity_diff_pct if entry else None,
+                )
+                data.match_details[(model, run, plant_id)] = detail
+
         data.fp_presence[(model, run)] = fps
 
+        if collect_details:
+            for entry in fp_entries:
+                fp_name = entry.system_name
+                candidate = _nearest_reference_candidate(fp_name, reference)
+                data.fp_candidates[(model, run, fp_name)] = candidate
+
     return data
+
+
+def _nearest_reference_candidate(fp_name: str, reference: list) -> FPCandidate:
+    """Find the reference plant with the highest name-similarity to a FP emission.
+
+    Uses ``rapidfuzz.fuzz.partial_ratio`` — the same metric the LP matcher uses
+    for name similarity — so the returned score is directly comparable to the
+    LP's 90-point acceptance threshold.
+
+    Args:
+        fp_name: The false-positive system plant name.
+        reference: The loaded reference plant list.
+
+    Returns:
+        :class:`FPCandidate` with the nearest reference plant and its similarity
+        score.  When the reference is empty, ``best_ref_name`` is None and
+        ``best_similarity`` is 0.
+    """
+    from rapidfuzz import fuzz
+
+    best_score = 0.0
+    best_plant = None
+    for plant in reference:
+        score = fuzz.partial_ratio(fp_name, plant.name)
+        if score > best_score:
+            best_score = score
+            best_plant = plant
+    return FPCandidate(
+        fp_name=fp_name,
+        best_ref_name=best_plant.name if best_plant else None,
+        best_similarity=best_score,
+        best_ref_fuel=best_plant.fuel.value if best_plant and best_plant.fuel else None,
+        best_ref_capacity_mw=best_plant.capacity_mwe if best_plant else None,
+        best_ref_status=best_plant.status.value if best_plant and best_plant.status else None,
+    )
 
 
 def top_false_positives(
