@@ -1,5 +1,21 @@
 # Reference dataset provenance — Vietnam thermal fleet
 
+## Adopted release (v2.3, ticket 0395, 2026-06-09)
+
+**The frozen reference is `vietnam_thermal_plants_v2_classified.csv` at 180 plants**: v2.2 (176) plus four potential coal sites from PDP planning documents — Kim Sơn (Ninh Bình, 3000 MW), Rạng Đông (Nam Định, 2400 MW, distinct from the existing Rang Dong cogeneration entry), Yên Hưng (Quảng Ninh, 1200 MW, PDP7 planned), and Phú Thọ (Phú Thọ, 600 MW). All four are status "1 announced". Primary sources: Study E542 Table PL9.2 (PDP8 draft 3, Institute of Energy, 2020-11) for Kim Sơn, Rạng Đông, and Phú Thọ; PDP7 Annex 1 + Annex 2 for Yên Hưng. Added via XML surgery on the ODS snapshot (`add_plants_0395.py`), re-extracted through the standard pipeline. The Exp2 FP audit `reference_hole` bucket drops from 95 occurrences (v1 baseline) to 8 occurrences (91.6% reduction).
+
+Not added (needs-human, no primary source in RAG corpus): Hòa Phát Dung Quất captive power (operating BFG/coal ~240 MW); the RAG corpus only documents "NĐ khí dư Hòa Phát II" (300 MW, announced, PDP8 Table 4) which is already in the reference.
+
+Status distribution (v1-compat projection): operational 56, proposed 71, planned 21, constructing 10, cancelled 20, retired 2. (Note: 0 exploring = 4, 1 announced = 24, 2 proposed = 43, 3 added to PDP = 16, 4 permitted = 5, 5 construction = 10, 6 operating = 56, 9 cancelled = 20, 10 retired = 2.)
+
+**Snapshot provenance exception.** The pinned snapshot `raw/pipeline+0395-2026-06-09.ods` carries three un-replayed local edits that the master (on another machine) does not yet have:
+1. The author's 8-cell standalone-extensions edit (4 rows, ticket 0445; replay pending, ticket 0458).
+2. The 4-row Kiên Lương complex insertion (ticket 0472, `add_kien_luong.py`).
+3. The 4-row addition from ticket 0395 (`add_plants_0395.py`).
+Do NOT re-pin to a fresh master import until ALL THREE edits are replayed there.
+
+Extractor @ this commit applied to snapshot `pipeline+0395-2026-06-09.ods`.
+
 ## Adopted release (v2.2, ticket 0472, 2026-06-08)
 
 **The frozen reference is `vietnam_thermal_plants_v2_classified.csv` at 176 plants**: v2.1 (173) plus the Kiên Lương complex (3 plants: Kiên Lương 1 = 1200 MW, Kiên Lương 2 = 1200 MW, Kiên Lương 3 = 2000 MW), all coal, all cancelled (investment certificate revoked April 2017). Evidence: GEM wiki (gem.wiki/Kien_Luong_power_station). Added via XML surgery on the ODS snapshot (`add_kien_luong.py`), re-extracted through the standard pipeline.
