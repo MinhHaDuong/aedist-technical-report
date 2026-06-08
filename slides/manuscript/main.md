@@ -50,7 +50,7 @@ The table below decomposes the difficulty by status (library `aedist.exp1_recogn
 
 ![](../report/inputs/generated/fig_quality_floor_heatmap_exp1.pdf)\
 
-*Figure 2b. Quality-floor heatmap for Experiment 1 (parametric arm, 12 models × 5 runs). Rows are models in four architectural families (Claude, GPT, Mistral, Qwen); DeepSeek is excluded (no panel in the quality taxonomy). Columns are the ten sub-score criteria across four dimensions (Accuracy, Coherence, Provenance, Temporality). A cell is **red** iff a majority (≥ 3 of 5) of that model's runs scored zero on that criterion — indicating a systematic failure. Any red cell in a row disqualifies the model: it cannot clear the §2 quality bar, which is a conjunction — a zero on any criterion means the bar is not cleared. Model labels and family-separation lines help the reader isolate which families clear all criteria and which do not.*
+*Figure 2b. Quality-floor heatmap for Experiment 1 (parametric arm, 12 models × 5 runs). Rows are models in four architectural families (Claude, GPT, Mistral, Qwen); DeepSeek is excluded (no panel in the quality taxonomy). Columns are the sixteen sub-score criteria across five dimensions (Accuracy, Coherence, Field completeness, Provenance, Temporality), derived programmatically from the scoring CSV. A cell is **red** iff a majority (≥ 3 of 5) of that model's runs scored zero on that criterion — indicating a systematic failure. Any red cell in a row disqualifies the model: it cannot clear the §2 quality bar, which is a conjunction — a zero on any criterion means the bar is not cleared. Model labels and family-separation lines help the reader isolate which families clear all criteria and which do not.*
 
 ## Second, the quality bar that any acceptable dataset must clear
 

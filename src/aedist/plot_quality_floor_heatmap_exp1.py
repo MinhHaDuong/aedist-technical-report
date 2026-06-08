@@ -3,7 +3,9 @@
 Pipeline phase: P3 (analyze & render) — invoked by experiments/render.mk.
 
 Rows = the exact model set the spider renders (families claude / gpt / mistral / qwen;
-deepseek excluded — it has no spider panel). Columns = the 10 SPIDER_AXES sub-scores.
+deepseek excluded — it has no spider panel).  Columns = all five scored criteria
+(accuracy, coherence, field_completeness, provenance, temporality) and their
+sub-scores, derived programmatically from the CSV header — never hardcoded.
 
 A cell is RED iff a majority (≥ ceil(n/2)+1 of n) of that model's runs score zero —
 indicating the model systematically fails on that criterion. A row with any red cell
@@ -16,13 +18,13 @@ Usage:
 """
 
 import argparse
+import csv
 import logging
 from collections import defaultdict
 from pathlib import Path
 
 from .plot_quality_spider_exp1 import (
     _PANELS,
-    SPIDER_AXES,
     _aggregate,
     _load_rows,
     _model_size_rank,
@@ -32,7 +34,17 @@ from .util import model_family, model_family_color
 
 log = logging.getLogger(__name__)
 
-# Human-readable column labels (same as spider indicator labels, single-line).
+# Non-scored bookkeeping columns to exclude.
+_BOOKKEEPING_COLS = frozenset({"arm", "model", "run", "prompt_version", "reference", "n_rows"})
+
+# The five criterion prefixes — order is preserved in the figure.
+_CRITERION_ORDER = ("accuracy", "coherence", "field_completeness", "provenance", "temporality")
+
+# Composite/derived columns to exclude from the heatmap (they are aggregates of
+# other sub-scores already present, so including them would double-count).
+_COMPOSITE_COLS = frozenset({"accuracy_f1"})
+
+# Human-readable column labels for display.
 COLUMN_LABELS: dict[str, str] = {
     "accuracy_coverage": "Coverage",
     "accuracy_precision": "Precision",
@@ -40,19 +52,76 @@ COLUMN_LABELS: dict[str, str] = {
     "accuracy_status": "Status",
     "accuracy_province": "Province",
     "coherence_vocab_adherence": "Vocabulary",
+    "coherence_capacity_nonnegative": "Capacity≥0",
+    "field_completeness_core": "Core fields",
+    "field_completeness_capacity": "Capacity",
+    "provenance_source_presence": "Src presence",
+    "provenance_high_conf_dual_source": "Dual source",
     "provenance_source_diversity": "Src diversity",
     "provenance_source_spread": "Src spread",
+    "temporality_asof_presence": "As-of date",
     "temporality_plausible_range": "Date range",
     "temporality_cod_plausible": "COD date",
 }
 
-# Dimension group labels and their member sub-scores (order matches SPIDER_AXES).
-DIMENSION_GROUPS: list[tuple[str, list[str]]] = [
-    ("Accuracy", ["accuracy_coverage", "accuracy_precision", "accuracy_fuel", "accuracy_status", "accuracy_province"]),
-    ("Coherence", ["coherence_vocab_adherence"]),
-    ("Provenance", ["provenance_source_diversity", "provenance_source_spread"]),
-    ("Temporality", ["temporality_plausible_range", "temporality_cod_plausible"]),
-]
+# Dimension group display names (keys = CSV prefixes).
+_DIM_DISPLAY: dict[str, str] = {
+    "accuracy": "Accuracy",
+    "coherence": "Coherence",
+    "field_completeness": "Field completeness",
+    "provenance": "Provenance",
+    "temporality": "Temporality",
+}
+
+
+def _col_criterion(col: str) -> str:
+    """Return the criterion prefix for a column name.
+
+    Handles compound prefixes: 'field_completeness_core' → 'field_completeness'.
+    All other columns use the first underscore-segment as the criterion.
+    """
+    for criterion in _CRITERION_ORDER:
+        if col.startswith(criterion + "_") or col == criterion:
+            return criterion
+    return col.split("_")[0]
+
+
+def _scored_columns(csv_path: Path) -> list[str]:
+    """Return the ordered list of scored sub-score columns from the CSV header.
+
+    Excludes bookkeeping columns, annotation columns, and composite aggregates
+    (accuracy_f1).  Orders by criterion prefix according to _CRITERION_ORDER,
+    preserving original column order within each criterion group.
+    """
+    with csv_path.open(newline="", encoding="utf-8") as fh:
+        header = next(csv.reader(fh))
+
+    by_criterion: dict[str, list[str]] = defaultdict(list)
+    for col in header:
+        if col in _BOOKKEEPING_COLS:
+            continue
+        if col.endswith("_annotation"):
+            continue
+        if col in _COMPOSITE_COLS:
+            continue
+        by_criterion[_col_criterion(col)].append(col)
+
+    result: list[str] = []
+    for criterion in _CRITERION_ORDER:
+        result.extend(by_criterion.get(criterion, []))
+    return result
+
+
+def _dimension_groups(columns: list[str]) -> list[tuple[str, list[str]]]:
+    """Group columns by criterion prefix, preserving _CRITERION_ORDER."""
+    by_criterion: dict[str, list[str]] = defaultdict(list)
+    for col in columns:
+        by_criterion[_col_criterion(col)].append(col)
+    return [
+        (_DIM_DISPLAY.get(c, c), by_criterion[c])
+        for c in _CRITERION_ORDER
+        if c in by_criterion
+    ]
 
 # RGB arrays for heatmap cell colours (module-level to satisfy ruff N806).
 CELL_COLOR_RED = (0.85, 0.22, 0.22)    # red  — disqualifying cell
@@ -107,6 +176,7 @@ def heatmap_models(rows: list[dict[str, str]]) -> list[str]:
 def _compute_zero_fractions(
     rows: list[dict[str, str]],
     models: list[str],
+    columns: list[str],
 ) -> dict[str, dict[str, list[float]]]:
     """For each (model, sub-score), collect the list of numeric run values.
 
@@ -117,35 +187,42 @@ def _compute_zero_fractions(
         model = str(row.get("model", "")).strip()
         if model not in models:
             continue
-        for axis in SPIDER_AXES:
-            value = _parse_optional_float(row.get(axis))
+        for col in columns:
+            value = _parse_optional_float(row.get(col))
             if value is not None:
-                by_model[model][axis].append(value)
+                by_model[model][col].append(value)
     return {m: dict(by_model[m]) for m in models}
 
 
-def make_figure(rows: list[dict[str, str]], output: Path) -> None:
-    """Build and save the quality-floor heatmap PDF."""
+def make_figure(rows: list[dict[str, str]], input_path: Path, output: Path) -> None:
+    """Build and save the quality-floor heatmap PDF.
+
+    Columns are derived programmatically from the CSV header so the figure
+    always covers all five scored criteria without hardcoding.
+    """
     import matplotlib.patches as mpatches
     import matplotlib.pyplot as plt
     import numpy as np
+
+    columns = _scored_columns(input_path)
+    dim_groups = _dimension_groups(columns)
 
     models = heatmap_models(rows)
     if not models:
         msg = "quality floor heatmap: no models resolved from input rows"
         raise ValueError(msg)
 
-    run_values = _compute_zero_fractions(rows, models)
+    run_values = _compute_zero_fractions(rows, models, columns)
 
     n_rows = len(models)
-    n_cols = len(SPIDER_AXES)
+    n_cols = len(columns)
 
     # Build the boolean red-cell matrix and zero-fraction matrix (for annotation).
     is_red = np.zeros((n_rows, n_cols), dtype=bool)
     zero_frac = np.full((n_rows, n_cols), np.nan)
     for i, model in enumerate(models):
-        for j, axis in enumerate(SPIDER_AXES):
-            runs = run_values.get(model, {}).get(axis, [])
+        for j, col in enumerate(columns):
+            runs = run_values.get(model, {}).get(col, [])
             if runs:
                 n_z = sum(1 for v in runs if v == 0.0)
                 zero_frac[i, j] = n_z / len(runs)
@@ -155,8 +232,8 @@ def make_figure(rows: list[dict[str, str]], output: Path) -> None:
     disqualified = np.any(is_red, axis=1)
 
     # ── Layout ────────────────────────────────────────────────────────────────
-    fig_width = max(9.0, n_cols * 0.85 + 3.0)
-    fig_height = max(5.0, n_rows * 0.55 + 2.5)
+    fig_width = max(10.0, n_cols * 0.95 + 3.5)
+    fig_height = max(5.0, n_rows * 0.55 + 3.0)
     fig, ax = plt.subplots(figsize=(fig_width, fig_height))
 
     # Background colour matrix: green for passing, red for failing, grey for no-data.
@@ -175,7 +252,7 @@ def make_figure(rows: list[dict[str, str]], output: Path) -> None:
                 pct = zero_frac[i, j]
                 label = f"{pct:.0%}" if pct > 0 else "0%"
                 text_color = "white" if is_red[i, j] or pct > 0.5 else "black"
-                ax.text(j, i, label, ha="center", va="center", fontsize=7.5, color=text_color)
+                ax.text(j, i, label, ha="center", va="center", fontsize=7.0, color=text_color)
 
     # Row labels: model names, coloured by family; disqualified rows get a ✗ marker.
     ax.set_yticks(range(n_rows))
@@ -195,26 +272,26 @@ def make_figure(rows: list[dict[str, str]], output: Path) -> None:
 
     # Column labels: short sub-score names, angled.
     ax.set_xticks(range(n_cols))
-    col_labels = [COLUMN_LABELS.get(a, a) for a in SPIDER_AXES]
-    ax.set_xticklabels(col_labels, rotation=40, ha="right", fontsize=8)
+    col_labels = [COLUMN_LABELS.get(c, c) for c in columns]
+    ax.set_xticklabels(col_labels, rotation=45, ha="right", fontsize=7.5)
 
     # Dimension group separators (vertical lines between groups).
     col_idx = 0
-    for _dim, members in DIMENSION_GROUPS:
+    for _dim, members in dim_groups:
         col_idx += len(members)
         if col_idx < n_cols:
             ax.axvline(col_idx - 0.5, color="white", linewidth=2.0)
 
     # Dimension header strip above the column labels.
     col_idx = 0
-    y_top = -0.8
-    for dim, members in DIMENSION_GROUPS:
+    y_top = -0.72
+    for dim, members in dim_groups:
         start = col_idx
         end = col_idx + len(members) - 1
         mid = (start + end) / 2
         ax.text(
             mid, y_top, dim,
-            ha="center", va="center", fontsize=9, fontweight="bold",
+            ha="center", va="center", fontsize=8.5, fontweight="bold",
             transform=ax.get_xaxis_transform(),
         )
         col_idx += len(members)
@@ -229,11 +306,11 @@ def make_figure(rows: list[dict[str, str]], output: Path) -> None:
 
     # Legend.
     red_patch = mpatches.Patch(color=CELL_COLOR_RED, label="Red: ≥3/5 runs score zero (disqualifying)")
-    green_patch = mpatches.Patch(color=CELL_COLOR_GREEN, label="Green: < majority zeros")
+    green_patch = mpatches.Patch(color=CELL_COLOR_GREEN, label="Green: passes (< majority zeros)")
     ax.legend(
         handles=[green_patch, red_patch],
         loc="lower center",
-        bbox_to_anchor=(0.5, -0.26),
+        bbox_to_anchor=(0.5, -0.30),
         ncol=2,
         fontsize=8,
         frameon=False,
@@ -276,7 +353,7 @@ def main(argv: list[str] | None = None) -> None:
     )
     args = parser.parse_args(argv)
     rows = _load_rows(args.input)
-    make_figure(rows, args.output)
+    make_figure(rows, args.input, args.output)
 
 
 if __name__ == "__main__":

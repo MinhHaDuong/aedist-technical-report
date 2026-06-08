@@ -3,6 +3,7 @@
 from pathlib import Path
 
 from aedist.plot_quality_floor_heatmap_exp1 import (
+    _scored_columns,
     cell_is_red,
     heatmap_models,
     make_figure,
@@ -61,11 +62,32 @@ def test_model_set_matches_spider_panels():
     assert set(heatmap_models(rows)) == set(_spider_panel_models_ref(rows))
 
 
+def test_scored_columns_covers_all_five_criteria():
+    """_scored_columns returns sub-scores from all five criteria groups."""
+    from aedist.plot_quality_floor_heatmap_exp1 import _col_criterion
+
+    csv_path = Path("experiments/derived/exp1_cross_eval.csv")
+    cols = _scored_columns(csv_path)
+    criteria = {_col_criterion(c) for c in cols}
+    assert criteria == {"accuracy", "coherence", "field_completeness", "provenance", "temporality"}
+    # The composite accuracy_f1 must be excluded (it double-counts accuracy).
+    assert "accuracy_f1" not in cols
+
+
+def test_scored_columns_excludes_bookkeeping():
+    """_scored_columns does not include bookkeeping or annotation columns."""
+    csv_path = Path("experiments/derived/exp1_cross_eval.csv")
+    cols = _scored_columns(csv_path)
+    for col in cols:
+        assert not col.endswith("_annotation"), f"annotation column leaked: {col}"
+        assert col not in {"arm", "model", "run", "prompt_version", "reference", "n_rows"}
+
+
 def test_make_figure_writes_pdf(tmp_path):
     """make_figure produces a non-empty PDF."""
     csv_path = Path("experiments/derived/exp1_cross_eval.csv")
     rows = _load_rows(csv_path)
     out = tmp_path / "fig_quality_floor_heatmap_exp1.pdf"
-    make_figure(rows, out)
+    make_figure(rows, csv_path, out)
     assert out.exists()
     assert out.stat().st_size > 1000
