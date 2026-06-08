@@ -51,7 +51,11 @@ def _write_run(out_dir: Path, model: str, run: int, system_rows: list[dict]) -> 
 
 @pytest.fixture
 def fixture_dir(tmp_path: Path) -> tuple[str, Path]:
-    """Build a synthetic records dir + reference; return (glob, reference_path)."""
+    """Build a synthetic records dir + reference; return (glob, reference_path).
+
+    Single-model (modelA) fixture kept for the library-level tests that predate
+    the cohort-filter feature.  The cohort-filter tests use fixture_dir_two_models.
+    """
     ref = tmp_path / "reference.csv"
     _write_reference(ref)
 
@@ -77,6 +81,33 @@ def fixture_dir(tmp_path: Path) -> tuple[str, Path]:
             {"name": "Alpha Power", "status": "operating", "capacity_mwe": "1200"},
             {"name": "Ghost Plant", "status": "operating", "capacity_mwe": "999"},
         ],
+    )
+    return (str(out / "*.record.json"), ref)
+
+
+@pytest.fixture
+def fixture_dir_two_models(tmp_path: Path) -> tuple[str, Path]:
+    """Two-model fixture for cohort-filter tests: modelA and modelB, one run each.
+
+    Used by tests that must verify write_pdf actually drops the excluded model.
+    """
+    ref = tmp_path / "reference.csv"
+    _write_reference(ref)
+
+    out = tmp_path / "records"
+    out.mkdir()
+    _write_run(
+        out,
+        "modelA",
+        1,
+        [{"name": "Alpha Power", "status": "operating", "capacity_mwe": "1200"}],
+    )
+    _write_run(
+        out,
+        "modelB",
+        1,
+        [{"name": "Bravo Power", "status": "operating", "capacity_mwe": "800"},
+         {"name": "Phantom Plant", "status": "operating", "capacity_mwe": "50"}],
     )
     return (str(out / "*.record.json"), ref)
 
@@ -188,62 +219,76 @@ def test_plot_writes_nonempty_pdf(fixture_dir, tmp_path):
     assert out.stat().st_size > 0
 
 
-def test_cohort_filter_selects_models(tmp_path):
-    """`models` / `exclude_models` filter the run rows before any derivation,
-    so the FP list, row set, and macros are recomputed for the cohort (0446).
+@pytest.mark.slow
+def test_cohort_filter_exclude_drops_rows(fixture_dir_two_models, tmp_path):
+    """`exclude_models` actually drops the excluded model's rows from write_pdf.
 
-    Asserted at the data layer (not just "PDF is non-empty") so the filter is
-    actually exercised: a two-model fixture, then include/exclude must change
-    the surviving model set.
+    Fang check (0457): the macros file records n_runs *after* the filter.
+    If the filter block in write_pdf is removed, n_runs equals 2 (both models)
+    and the assertion `n_runs == 1` fails — proving the filter is exercised.
+
+    Two-model fixture: modelA (1 run) + modelB (1 run).  Excluding modelB must
+    leave exactly 1 run row (modelA).
     """
-    from aedist.exp1_recognition import load_exp1_recognition
+    from aedist.plot_exp1_matrix import write_pdf
 
-    ref = tmp_path / "reference.csv"
-    _write_reference(ref)
-    out = tmp_path / "records"
-    out.mkdir()
-    _write_run(
-        out, "modelA", 1,
-        [{"name": "Alpha Power", "status": "operating", "capacity_mwe": "1200"}],
+    glob, ref = fixture_dir_two_models
+    macros = tmp_path / "macros.tex"
+    out = tmp_path / "fig.pdf"
+
+    write_pdf(
+        records_glob=glob,
+        reference_path=ref,
+        output=out,
+        output_macros=macros,
+        exclude_models=["modelB"],
     )
-    _write_run(
-        out, "modelB", 1,
-        [{"name": "Bravo Power", "status": "operating", "capacity_mwe": "800"}],
+    assert out.exists() and out.stat().st_size > 0
+    text = macros.read_text()
+    # Must contain exactly 1 run row (modelA only) after modelB is excluded.
+    assert r"\newcommand{\ExpOneMatrixRuns}{1}" in text, (
+        f"Expected 1 run after excluding modelB, got:\n{text}"
     )
-    glob = str(out / "*.record.json")
 
-    data = load_exp1_recognition(glob, ref)
-    assert {c.model for c in data.cells} == {"modelA", "modelB"}
 
-    # The keep-filter is the same predicate write_pdf applies; assert it here
-    # so a regression in the filter logic is caught without rendering a PDF.
-    kept_include = [c for c in data.cells if c.model in {"modelA"}]
-    assert {c.model for c in kept_include} == {"modelA"}
-    kept_exclude = [c for c in data.cells if c.model not in {"modelB"}]
-    assert {c.model for c in kept_exclude} == {"modelA"}
+@pytest.mark.slow
+def test_cohort_filter_include_drops_rows(fixture_dir_two_models, tmp_path):
+    """`models` include-list keeps only the named model's rows in write_pdf.
+
+    Fang check (0457): including only modelB must yield 1 run row, not 2.
+    If the filter block is removed, n_runs stays at 2 and the assertion fails.
+    """
+    from aedist.plot_exp1_matrix import write_pdf
+
+    glob, ref = fixture_dir_two_models
+    macros = tmp_path / "macros.tex"
+    out = tmp_path / "fig.pdf"
+
+    write_pdf(
+        records_glob=glob,
+        reference_path=ref,
+        output=out,
+        output_macros=macros,
+        models=["modelB"],
+    )
+    assert out.exists() and out.stat().st_size > 0
+    text = macros.read_text()
+    # Must contain exactly 1 run row (modelB only).
+    assert r"\newcommand{\ExpOneMatrixRuns}{1}" in text, (
+        f"Expected 1 run after including only modelB, got:\n{text}"
+    )
 
 
 @pytest.mark.slow
 def test_plot_cohort_and_lang_render(fixture_dir, tmp_path):
-    """write_pdf renders non-empty PDFs for the FR band-label path and for
-    cohort include/exclude lists (0446 model-subset versions)."""
+    """write_pdf renders non-empty PDFs for the FR band-label path (0446).
+
+    Uses the single-model fixture; language-switching is independent of the
+    cohort filter and does not require a two-model setup.
+    """
     from aedist.plot_exp1_matrix import write_pdf
 
     glob, ref = fixture_dir
     out_fr = tmp_path / "fr.pdf"
     write_pdf(records_glob=glob, reference_path=ref, output=out_fr, lang="fr")
     assert out_fr.stat().st_size > 0
-
-    out_excl = tmp_path / "excl.pdf"
-    write_pdf(
-        records_glob=glob, reference_path=ref, output=out_excl,
-        exclude_models=["nonexistent"],
-    )
-    assert out_excl.stat().st_size > 0
-
-    out_incl = tmp_path / "incl.pdf"
-    write_pdf(
-        records_glob=glob, reference_path=ref, output=out_incl,
-        models=["modelA"],
-    )
-    assert out_incl.stat().st_size > 0

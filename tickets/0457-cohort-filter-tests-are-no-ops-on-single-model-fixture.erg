@@ -2,10 +2,12 @@
 Title: Cohort-filter tests in test_plot_exp1_matrix are no-ops on the single-model fixture
 Created: 2026-06-06
 Author: HDMX-coding-agent
+Closed: exit criteria met — two-model fixture + write_pdf fang-checked tests
 
 --- log ---
 2026-06-06T00:00Z claude created — /gaze round-2 on PR #771: verify-gate APPROVED but flagged that the cohort-filter tests added in commit 9127fc3d are smoke-level no-ops; this ticket restores the tracking the APPROVED verdict relied on (gate recommendation: keep a tracker open). Supersedes the prematurely-closed 0456.
 
+2026-06-08T17:48Z HDMX-coding-agent closed — exit criteria met — two-model fixture + write_pdf fang-checked tests
 --- body ---
 ## Context
 
