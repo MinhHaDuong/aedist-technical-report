@@ -5,7 +5,10 @@ Pipeline phase: P3 (analyze & render) — invoked by experiments/render.mk.
 Two modes:
   - Family 2×2 panels (default): one subplot per model family.
   - Single model (--model): one large spider for a single model,
-    with 5 quality dimensions and 2 French-labelled indicators each.
+    with 5 quality dimensions and 2 indicators each.
+
+Labels are language-parametric (``--lang {en,fr}``): the unsuffixed PDF is
+English (preprint-first), the ``_fr`` variant feeds the French conference deck.
 
 Usage:
     python -m aedist.plot_quality_spider_exp1 \
@@ -53,30 +56,71 @@ SPIDER_AXES = [
     "temporality_cod_plausible",
 ]
 
-SPIDER_DIMENSION = {
-    "accuracy_coverage": "Exactitude",
-    "accuracy_precision": "Exactitude",
-    "accuracy_fuel": "Contenu",
-    "accuracy_status": "Contenu",
-    "accuracy_province": "Cohérence",
-    "coherence_vocab_adherence": "Cohérence",
-    "provenance_source_diversity": "Provenance",
-    "provenance_source_spread": "Provenance",
-    "temporality_plausible_range": "Temporalité",
-    "temporality_cod_plausible": "Temporalité",
+# Axis dimension/indicator labels by language. The unsuffixed PDF is English
+# (preprint-first; author 2026-06-06: all preprint figures in English); the _fr
+# variants feed the French conference deck (slides.tex).
+SPIDER_DIMENSION_BY_LANG = {
+    "en": {
+        "accuracy_coverage": "Accuracy",
+        "accuracy_precision": "Accuracy",
+        "accuracy_fuel": "Content",
+        "accuracy_status": "Content",
+        "accuracy_province": "Coherence",
+        "coherence_vocab_adherence": "Coherence",
+        "provenance_source_diversity": "Provenance",
+        "provenance_source_spread": "Provenance",
+        "temporality_plausible_range": "Temporality",
+        "temporality_cod_plausible": "Temporality",
+    },
+    "fr": {
+        "accuracy_coverage": "Exactitude",
+        "accuracy_precision": "Exactitude",
+        "accuracy_fuel": "Contenu",
+        "accuracy_status": "Contenu",
+        "accuracy_province": "Cohérence",
+        "coherence_vocab_adherence": "Cohérence",
+        "provenance_source_diversity": "Provenance",
+        "provenance_source_spread": "Provenance",
+        "temporality_plausible_range": "Temporalité",
+        "temporality_cod_plausible": "Temporalité",
+    },
 }
 
-SPIDER_LABEL = {
-    "accuracy_coverage": "Actifs\ntrouvés",
-    "accuracy_precision": "Actifs\ncorrects",
-    "accuracy_fuel": "Combustible\ncorrect",
-    "accuracy_status": "Statut\ncorrect",
-    "accuracy_province": "Province\ncorrecte",
-    "coherence_vocab_adherence": "Vocabulaire\nrespecté",
-    "provenance_source_diversity": "Diversité\ndes sources",
-    "provenance_source_spread": "Répartition\ndes sources",
-    "temporality_plausible_range": "Date\nplausible",
-    "temporality_cod_plausible": "Date COD\nplausible",
+SPIDER_LABEL_BY_LANG = {
+    "en": {
+        "accuracy_coverage": "Assets\nfound",
+        "accuracy_precision": "Assets\ncorrect",
+        "accuracy_fuel": "Fuel\ncorrect",
+        "accuracy_status": "Status\ncorrect",
+        "accuracy_province": "Province\ncorrect",
+        "coherence_vocab_adherence": "Vocabulary\nadherence",
+        "provenance_source_diversity": "Source\ndiversity",
+        "provenance_source_spread": "Source\nspread",
+        "temporality_plausible_range": "Date\nplausible",
+        "temporality_cod_plausible": "COD date\nplausible",
+    },
+    "fr": {
+        "accuracy_coverage": "Actifs\ntrouvés",
+        "accuracy_precision": "Actifs\ncorrects",
+        "accuracy_fuel": "Combustible\ncorrect",
+        "accuracy_status": "Statut\ncorrect",
+        "accuracy_province": "Province\ncorrecte",
+        "coherence_vocab_adherence": "Vocabulaire\nrespecté",
+        "provenance_source_diversity": "Diversité\ndes sources",
+        "provenance_source_spread": "Répartition\ndes sources",
+        "temporality_plausible_range": "Date\nplausible",
+        "temporality_cod_plausible": "Date COD\nplausible",
+    },
+}
+
+SUPTITLE_BY_LANG = {
+    "en": "Source is the universal failure mode",
+    "fr": "La source est le mode de défaillance universel",
+}
+
+SINGLE_TITLE_BY_LANG = {
+    "en": "Quality profile — {model} (Experiment 1)",
+    "fr": "Profil de qualité — {model} (Expérience 1)",
 }
 
 _PANELS = [
@@ -185,12 +229,14 @@ def _panel_models(stats: dict[str, dict[str, dict[str, float]]], families: set[s
 
 
 def _draw_axis_labels(
-    ax, angles, axes_order, *, label_fontsize: float = 10, dim_fontsize: float = 12.5
+    ax, angles, axes_order, *, lang: str = "en", label_fontsize: float = 10, dim_fontsize: float = 12.5
 ):
+    spider_dimension = SPIDER_DIMENSION_BY_LANG[lang]
+    spider_label = SPIDER_LABEL_BY_LANG[lang]
     dimension_angles: dict[str, list[float]] = defaultdict(list)
     for theta, axis in zip(angles, axes_order, strict=True):
-        dimension = SPIDER_DIMENSION[axis]
-        ax.text(theta, 1.28, SPIDER_LABEL[axis], ha="center", va="center", fontsize=label_fontsize)
+        dimension = spider_dimension[axis]
+        ax.text(theta, 1.28, spider_label[axis], ha="center", va="center", fontsize=label_fontsize)
         dimension_angles[dimension].append(theta)
 
     for dimension, group in dimension_angles.items():
@@ -218,7 +264,7 @@ def _style_polar_ax(ax, angles):
     ax.spines["polar"].set_color(COLOR_NEUTRAL)
 
 
-def make_figure(rows: list[dict[str, str]], output: Path) -> None:
+def make_figure(rows: list[dict[str, str]], output: Path, *, lang: str = "en") -> None:
     import matplotlib.pyplot as plt
     import numpy as np
 
@@ -235,7 +281,7 @@ def make_figure(rows: list[dict[str, str]], output: Path) -> None:
     closed_angles = np.concatenate((angles, [angles[0]]))
 
     for ax, (_panel_key, panel_title, families) in zip(axes.flatten(), _PANELS, strict=True):
-        _draw_axis_labels(ax, angles, SPIDER_AXES, label_fontsize=7, dim_fontsize=8.5)
+        _draw_axis_labels(ax, angles, SPIDER_AXES, lang=lang, label_fontsize=7, dim_fontsize=8.5)
         ax.set_theta_offset(np.pi / 2)
         ax.set_theta_direction(-1)
 
@@ -286,7 +332,7 @@ def make_figure(rows: list[dict[str, str]], output: Path) -> None:
             )
 
     fig.suptitle(
-        "Source is the universal failure mode",
+        SUPTITLE_BY_LANG[lang],
         fontsize=12,
         y=0.995,
     )
@@ -297,7 +343,9 @@ def make_figure(rows: list[dict[str, str]], output: Path) -> None:
     log.info("Wrote %s", output)
 
 
-def make_single_model_figure(rows: list[dict[str, str]], model_slug: str, output: Path) -> None:
+def make_single_model_figure(
+    rows: list[dict[str, str]], model_slug: str, output: Path, *, lang: str = "en"
+) -> None:
     import matplotlib.pyplot as plt
     import numpy as np
 
@@ -311,7 +359,7 @@ def make_single_model_figure(rows: list[dict[str, str]], model_slug: str, output
     angles = np.linspace(0, 2 * np.pi, n_axes, endpoint=False) + (np.pi / n_axes)
     closed_angles = np.concatenate((angles, [angles[0]]))
 
-    _draw_axis_labels(ax, angles, SPIDER_AXES)
+    _draw_axis_labels(ax, angles, SPIDER_AXES, lang=lang)
     ax.set_theta_offset(np.pi / 2)
     ax.set_theta_direction(-1)
     _style_polar_ax(ax, angles)
@@ -324,7 +372,7 @@ def make_single_model_figure(rows: list[dict[str, str]], model_slug: str, output
     ax.fill(closed_angles, closed_values, color=color, alpha=0.12)
 
     ax.set_title(
-        f"Profil de qualité — {_model_label(model_slug)} (Expérience 1)",
+        SINGLE_TITLE_BY_LANG[lang].format(model=_model_label(model_slug)),
         fontsize=14,
         y=1.18,
         pad=6,
@@ -356,18 +404,24 @@ def main(argv: list[str] | None = None) -> None:
     )
     # Kept for Makefile back-compat; --model takes priority.
     parser.add_argument("--family", type=str, default=None, help=argparse.SUPPRESS)
+    parser.add_argument(
+        "--lang",
+        choices=["en", "fr"],
+        default="en",
+        help="Label language: en for the preprint (default), fr for the French conference deck",
+    )
     args = parser.parse_args(argv)
     rows = _load_rows(args.input)
     if args.model:
-        make_single_model_figure(rows, args.model, args.output)
+        make_single_model_figure(rows, args.model, args.output, lang=args.lang)
     elif args.family:
         stats = _aggregate(rows)
         match = next((m for m in stats if model_family(m) == args.family), None)
         if match is None:
             raise ValueError(f"--family {args.family!r}: no model found in data")
-        make_single_model_figure(rows, match, args.output)
+        make_single_model_figure(rows, match, args.output, lang=args.lang)
     else:
-        make_figure(rows, args.output)
+        make_figure(rows, args.output, lang=args.lang)
 
 
 if __name__ == "__main__":

@@ -147,7 +147,16 @@ def _load_n_points(cross_eval_path: Path) -> list[dict]:
     return points
 
 
-def make_figure(points: list[dict], output: Path) -> None:
+# Glyph-legend subtitle by language. The unsuffixed PDF is English
+# (preprint-first; author 2026-06-06: all preprint figures in English); the _fr
+# variant feeds the French conference deck (slides.tex).
+_GLYPH_LEGEND_BY_LANG = {
+    "en": "circle = 1 turn   square = 5 turns   |   filled = with documents   empty = without documents",
+    "fr": "rond = 1 tour   carré = 5 tours   |   plein = avec documents   vide = sans documents",
+}
+
+
+def make_figure(points: list[dict], output: Path, *, lang: str = "en") -> None:
     import matplotlib.pyplot as plt
     from matplotlib.lines import Line2D
 
@@ -203,7 +212,7 @@ def make_figure(points: list[dict], output: Path) -> None:
     ax.text(
         0.5,
         1.02,
-        "rond = 1 tour   carré = 5 tours   |   plein = avec documents   vide = sans documents",
+        _GLYPH_LEGEND_BY_LANG[lang],
         transform=ax.transAxes,
         ha="center",
         va="bottom",
@@ -268,12 +277,18 @@ def main(argv: list[str] | None = None) -> None:
         help="Path to sota_cross_eval.csv (N-arm coverage and dual_source)",
     )
     parser.add_argument("--output", required=True, help="Path to write PDF figure")
+    parser.add_argument(
+        "--lang",
+        choices=["en", "fr"],
+        default="en",
+        help="Glyph-legend language: en for the preprint (default), fr for the French conference deck",
+    )
     args = parser.parse_args(argv)
     matched = _load_matched(Path(args.arms_input))
     points = _load_d_points(Path(args.input), matched)
     points += _load_n_points(Path(args.cross_eval))
     assert len(points) > 0, "No points loaded"
-    make_figure(points, Path(args.output))
+    make_figure(points, Path(args.output), lang=args.lang)
 
 
 if __name__ == "__main__":

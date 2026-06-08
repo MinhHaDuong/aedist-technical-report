@@ -7,14 +7,20 @@
 ROOT_REPORT_GEN := report/inputs/generated
 LOCAL_ROOT_REPORT_GEN := ../report/inputs/generated
 
+# The unsuffixed spider/coverage PDFs are English (used by slides-en.tex and
+# main.md preprint); the _fr variants carry French labels for slides.tex
+# (ticket 0455). Both decks share this list, so both languages are listed.
 SLIDE_ASSETS := \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_direct_p1_base.pdf \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_spider_exp1_claude.pdf \
+	$(LOCAL_ROOT_REPORT_GEN)/fig_spider_exp1_claude_fr.pdf \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_spider_exp1_families.pdf \
+	$(LOCAL_ROOT_REPORT_GEN)/fig_spider_exp1_families_fr.pdf \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_capability_timeline.pdf \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_exp2_coverage.pdf \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_exp2_cost.pdf \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_exp2_coverage_certainty.pdf \
+	$(LOCAL_ROOT_REPORT_GEN)/fig_exp2_coverage_certainty_fr.pdf \
 	$(LOCAL_ROOT_REPORT_GEN)/macros_slides.tex \
 	$(LOCAL_ROOT_REPORT_GEN)/tab_exp2_2x2_fr.tex \
 	$(LOCAL_ROOT_REPORT_GEN)/macros_p1_base.tex
@@ -43,8 +49,8 @@ translate-slides:
 slides.pdf: slides.tex $(SLIDE_ASSETS)
 	tectonic $<
 
-# English deck. Shares all SLIDE_ASSETS; figures keep their generated-language
-# labels (regenerating figures in English is a separate analysis-side task).
+# English deck. Shares all SLIDE_ASSETS; it includes the unsuffixed (English)
+# spider/coverage PDFs, while slides.tex includes the _fr variants (0455).
 slides-en.pdf: slides-en.tex $(SLIDE_ASSETS)
 	tectonic $<
 
