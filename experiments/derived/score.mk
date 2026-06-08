@@ -203,14 +203,32 @@ ANALYSIS_EXP2_PROBE_RAWS := $(wildcard $(ANALYSIS_EXP2_OPTIMISED_DIR)/probes/*/*
 ANALYSIS_EXP2_PROBE_CLSF := $(wildcard $(ANALYSIS_EXP2_OPTIMISED_DIR)/probes/*/*.classification.json)
 
 # --- Extraction stamps -------------------------------------------------------
+# Each arm stamp depends on a committed sentinel (.dataset) in its input
+# directory rather than on a $(wildcard run*/*.json) expansion.
+#
+# Rationale (ticket 0462): $(wildcard) evaluates at parse time.  When .done
+# is newer than all matched files (e.g. after a git checkout sets all mtimes
+# to "now" while .done was already committed), make treats the stamp as
+# up-to-date and silently skips extraction.  A committed sentinel decouples
+# the rebuild trigger from file-mtime races: whenever the dataset changes
+# (new run committed, existing run re-processed), touch or update .dataset
+# and the next `make` will re-run extraction.
+#
+# Scope note: the remaining $(wildcard) expansions in this file (P2-local
+# input wildcards for arm*_flat/ derived dirs, SCORE_OUTPUT_FILES,
+# ANALYSIS_EXP1_INPUT_CSVS) feed P2→P2 rules whose inputs are produced by
+# *this* phase.  Those patterns expand AFTER extraction runs (the derived
+# dirs are built here), so the parse-time expansion is correct in practice.
+# The armN_flat/.done stamps were the only rules consuming raw P1 committed
+# data — the only place the bug manifested.
 
-$(ANALYSIS_DERIVED_DIR)/arm1_flat/.done: $(wildcard $(ANALYSIS_EXPERIMENTS_DIR)/outputs/sota_exp3_arm1_batch1/run*/*.json)
+$(ANALYSIS_DERIVED_DIR)/arm1_flat/.done: $(ANALYSIS_EXPERIMENTS_DIR)/outputs/sota_exp3_arm1_batch1/.dataset
 	uv run python -m aedist.extract_arm_single_turn \
 	    --input-dir $(ANALYSIS_EXPERIMENTS_DIR)/outputs/sota_exp3_arm1_batch1 \
 	    --output-dir $(ANALYSIS_DERIVED_DIR)/arm1_flat
 	touch $@
 
-$(ANALYSIS_DERIVED_DIR)/arm2_flat/.done: $(wildcard $(ANALYSIS_EXPERIMENTS_DIR)/outputs/sota_exp3_arm2_batch1/run*/summary.json)
+$(ANALYSIS_DERIVED_DIR)/arm2_flat/.done: $(ANALYSIS_EXPERIMENTS_DIR)/outputs/sota_exp3_arm2_batch1/.dataset
 	uv run python -m aedist.extract_arm_multi_turn \
 	    --input-dir $(ANALYSIS_EXPERIMENTS_DIR)/outputs/sota_exp3_arm2_batch1 \
 	    --output-dir $(ANALYSIS_DERIVED_DIR)/arm2_flat
@@ -226,13 +244,13 @@ $(ANALYSIS_EXP1_CROSS_EVAL_CSV): $(ANALYSIS_EXP1_INPUT_CSVS) $(ANALYSIS_EXPERIME
 	    --input-dir $(ANALYSIS_EXPERIMENTS_DIR)/outputs/exp1_batch2 \
 	    --output $@
 
-$(ANALYSIS_DERIVED_DIR)/arm3_flat/.done: $(wildcard $(ANALYSIS_EXPERIMENTS_DIR)/outputs/sota_exp3_arm3_batch1/run*/*.json)
+$(ANALYSIS_DERIVED_DIR)/arm3_flat/.done: $(ANALYSIS_EXPERIMENTS_DIR)/outputs/sota_exp3_arm3_batch1/.dataset
 	uv run python -m aedist.extract_arm_single_turn \
 	    --input-dir $(ANALYSIS_EXPERIMENTS_DIR)/outputs/sota_exp3_arm3_batch1 \
 	    --output-dir $(ANALYSIS_DERIVED_DIR)/arm3_flat
 	touch $@
 
-$(ANALYSIS_DERIVED_DIR)/arm4_flat/.done: $(wildcard $(ANALYSIS_EXPERIMENTS_DIR)/outputs/sota_exp3_arm4_batch1/run*/summary.json)
+$(ANALYSIS_DERIVED_DIR)/arm4_flat/.done: $(ANALYSIS_EXPERIMENTS_DIR)/outputs/sota_exp3_arm4_batch1/.dataset
 	uv run python -m aedist.extract_arm_multi_turn \
 	    --input-dir $(ANALYSIS_EXPERIMENTS_DIR)/outputs/sota_exp3_arm4_batch1 \
 	    --output-dir $(ANALYSIS_DERIVED_DIR)/arm4_flat
