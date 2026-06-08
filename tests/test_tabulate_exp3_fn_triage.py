@@ -152,6 +152,18 @@ def test_generate_summary_skips_empty_bucket(tmp_path):
     assert by_bucket["résidu"]["n_plants"] == 1
 
 
+def test_generate_summary_raises_on_empty_worksheet(tmp_path):
+    rows = [{**_fixture_row("Plant A", "résidu"), "bucket": ""}]
+    input_csv = _write_fixture_csv(tmp_path, rows)
+    output_csv = tmp_path / "summary.csv"
+    output_tex = tmp_path / "table.tex"
+
+    with pytest.raises(ValueError, match="No classified rows"):
+        generate_summary(
+            input_csv=input_csv, output_csv=output_csv, output_tex=output_tex
+        )
+
+
 def test_generate_summary_raises_on_bad_bucket(tmp_path):
     rows = [_fixture_row("Plant A", "wrong_bucket")]
     input_csv = _write_fixture_csv(tmp_path, rows)
