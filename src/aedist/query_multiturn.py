@@ -80,8 +80,16 @@ def run_conversation(
 
     def _call(msgs):
         if is_ollama:
-            return query_ollama_native(ollama_url, model_id, msgs, num_ctx, no_think=no_think)
-        return query_single_turn(client, model_id, msgs, **api_kwargs)
+            result = query_ollama_native(ollama_url, model_id, msgs, num_ctx, no_think=no_think)
+        else:
+            result = query_single_turn(client, model_id, msgs, **api_kwargs)
+        if result.get("content") is None:
+            raise RuntimeError(
+                f"Null content from {model_id}: provider returned HTTP 200 "
+                f"but message.content is None "
+                f"(finish_reason={result.get('finish_reason')})"
+            )
+        return result
 
     messages: list[dict] = []
     turns: list[dict] = []

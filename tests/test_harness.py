@@ -527,6 +527,30 @@ def test_query_single_turn_handles_missing_usage():
     assert result["usage"] == {}
 
 
+def test_query_single_turn_raises_on_null_content():
+    """query_single_turn raises RuntimeError when content is None (ticket 0217).
+
+    Providers like deepseek-v4-pro can return HTTP 200 with message.content=None.
+    This must not silently propagate to callers — a RuntimeError with the model
+    ID is raised immediately so callers get a diagnostic, not an AttributeError
+    or corrupt data.
+    """
+    from unittest.mock import MagicMock
+
+    import pytest
+
+    from aedist.harness import query_single_turn
+
+    client = MagicMock()
+    response = MagicMock()
+    response.choices = [MagicMock(message=MagicMock(content=None), finish_reason="stop")]
+    response.usage = MagicMock(model_dump=MagicMock(return_value={}))
+    client.chat.completions.create.return_value = response
+
+    with pytest.raises(RuntimeError, match="null-content-model"):
+        query_single_turn(client, "null-content-model", [{"role": "user", "content": "hi"}])
+
+
 def test_make_client_default_sets_max_retries():
     """make_client() (OpenRouter default) pins max_retries=1 on the OpenAI client."""
     import os
