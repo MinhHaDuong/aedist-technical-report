@@ -2,10 +2,12 @@
 Title: Pipeline GEM: tracked raw input + argparse + validation for GEM_aggregate.py (mirror 0420/0416)
 Created: 2026-06-04
 Author: HDMX-coding-agent
+Closed: argparse+guard implemented; uniqueness guard adapted to GEM's composite key (Name, Aggregated Units) — bare Name not unique by design (153-row gem_thermal has 34 same-name multi-status plants); 11 tests pass; acquire.mk verbs added
 
 --- log ---
 2026-06-04T20:19Z HDMX-coding-agent created
 
+2026-06-08T19:01Z HDMX-coding-agent closed — argparse+guard implemented; uniqueness guard adapted to GEM's composite key (Name, Aggregated Units) — bare Name not unique by design (153-row gem_thermal has 34 same-name multi-status plants); 11 tests pass; acquire.mk verbs added
 --- body ---
 ## Context
 
