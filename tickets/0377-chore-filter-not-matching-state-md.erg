@@ -2,10 +2,13 @@
 Title: Diagnose chore-filter not matching STATE.md / pure-tickets diffs (dorny/paths-filter)
 Created: 2026-05-28
 Author: HDMX-coding-agent
+Closed: fixed: brace-expansion single-pattern in both workflows + adherence tests
 
 --- log ---
 2026-05-28T14:10Z HDMX-coding-agent created — surfaced during 0358 raid: both `.github/workflows/CI.yml`'s and `.github/workflows/docs-build.yml`'s `changes` jobs returned `chore=false` for PR #638's STATE.md-only diff. The intended chore short-circuit on lint/tests/build never fires, so chore-only PRs run the full pipelines.
+2026-06-08T00:00Z HDMX-coding-agent fix — root cause: predicate-quantifier: every means each changed file must match ALL patterns; with mutually-exclusive positive patterns (tickets/**, STATE.md, etc.) no file can ever satisfy all patterns → chore always false. Fix: collapse to one brace-expansion pattern '{tickets/**,.claude/**,...}' in both CI.yml and docs-build.yml. Adherence test added in tests/test_ci_workflow.py and tests/test_docs_build_workflow.py to guard the single-pattern invariant.
 
+2026-06-08T19:34Z HDMX-coding-agent closed — fixed: brace-expansion single-pattern in both workflows + adherence tests
 --- body ---
 ## Context
 

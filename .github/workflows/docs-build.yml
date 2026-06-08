@@ -25,16 +25,7 @@ jobs:
           predicate-quantifier: 'every'
           filters: |
             chore:
-              - 'tickets/**'
-              - '.claude/**'
-              - 'docs/**'
-              - 'STATE.md'
-              - 'README.md'
-              - 'AGENTS.md'
-              - 'CLAUDE.md'
-              - 'ADR.md'
-              - 'MASTERPLAN.md'
-              - 'PLAN.md'
+              - '{tickets/**,.claude/**,docs/**,STATE.md,README.md,AGENTS.md,CLAUDE.md,ADR.md,MASTERPLAN.md,PLAN.md}'
 
   build:
     needs: changes
