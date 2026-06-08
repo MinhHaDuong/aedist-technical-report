@@ -1,0 +1,27 @@
+{
+  "run_id": "a6ba03beab03",
+  "timestamp": "2026-06-08T08:21:36.225729Z",
+  "method": "direct",
+  "method_params": {
+    "model": "qwen3.5:4b",
+    "prompt_version": "direct_extract",
+    "extra": {
+      "size_class": "edge",
+      "country": "CN",
+      "architecture": "moe",
+      "provider": "Ollama/Padme",
+      "context_window": 131072,
+      "finish_reason": "stop"
+    }
+  },
+  "resource_use": {
+    "wall_s": 465.281,
+    "tokens_in": 63,
+    "tokens_out": 9520
+  },
+  "result_file": "experiments/archive/outputs/direct_extract/padme-qwen3.5-4b-run3.json",
+  "result_summary": {
+    "status": "error"
+  },
+  "finish_reason": "stop"
+}

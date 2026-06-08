@@ -1,0 +1,33 @@
+{
+  "run_id": "b7373bbffb26",
+  "timestamp": "2026-06-08T08:20:41.139559Z",
+  "method": "direct+multiturn",
+  "method_params": {
+    "model": "mistralai/mistral-small-2603",
+    "prompt_version": "direct_multiturn",
+    "extra": {
+      "size_class": "small",
+      "country": "FR",
+      "architecture": "dense",
+      "provider": "Mistral",
+      "context_window": 262144
+    }
+  },
+  "resource_use": {
+    "wall_s": 60.627,
+    "cost_usd": 0.00875715
+  },
+  "result_file": "experiments/archive/outputs/direct_multiturn/mistral-small-2603-run3.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 72,
+    "tp": 47,
+    "fp": 25,
+    "fn": 126,
+    "f1": 0.3837,
+    "fuel_accuracy": 0.7021,
+    "status_accuracy": 0.0,
+    "province_accuracy": 0.9574
+  },
+  "reference": "vietnam_thermal_plants_v2_classified.csv"
+}

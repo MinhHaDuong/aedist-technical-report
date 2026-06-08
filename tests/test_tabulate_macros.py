@@ -255,7 +255,7 @@ def test_decomposed_deepseek_has_ci():
     assert result["n_runs"] >= 3
     assert result["ci_lo"] < result["mean"] <= result["ci_hi"]
     assert result["ci_hi"] - result["ci_lo"] > 0
-    # Values must match what is reported in slides.tex
-    assert abs(result["mean"] - 0.898) < 0.005, f"Mean {result['mean']:.3f} != 89.8%"
-    assert abs(result["ci_lo"] - 0.858) < 0.01, f"CI lower {result['ci_lo']:.3f} != 85.8%"
-    assert abs(result["ci_hi"] - 0.956) < 0.01, f"CI upper {result['ci_hi']:.3f} != 95.6%"
+    # Values must match what is reported in slides.tex (v2.1 reference, 173 plants)
+    assert abs(result["mean"] - 0.686) < 0.005, f"Mean {result['mean']:.3f} != 68.6%"
+    assert abs(result["ci_lo"] - 0.607) < 0.01, f"CI lower {result['ci_lo']:.3f} != 60.7%"
+    assert abs(result["ci_hi"] - 0.748) < 0.01, f"CI upper {result['ci_hi']:.3f} != 74.8%"

@@ -1,0 +1,34 @@
+{
+  "run_id": "76a8187a21c9",
+  "timestamp": "2026-06-08T08:20:26.064291Z",
+  "method": "direct",
+  "method_params": {
+    "model": "openai/gpt-5-mini",
+    "prompt_version": "direct_extract",
+    "extra": {
+      "size_class": "small",
+      "country": "US",
+      "architecture": "dense",
+      "provider": "OpenAI",
+      "context_window": 400000,
+      "finish_reason": "stop"
+    }
+  },
+  "resource_use": {
+    "wall_s": 12.766,
+    "cost_usd": 0.00106075,
+    "tokens_in": 59,
+    "tokens_out": 523
+  },
+  "result_file": "experiments/archive/outputs/direct_extract/gpt-5-mini-run2.csv",
+  "result_summary": {
+    "status": "empty",
+    "n_plants": 0,
+    "tp": 0,
+    "fp": 0,
+    "fn": 173,
+    "f1": 0.0
+  },
+  "finish_reason": "stop",
+  "reference": "vietnam_thermal_plants_v2_classified.csv"
+}

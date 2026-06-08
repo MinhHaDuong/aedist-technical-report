@@ -1,0 +1,30 @@
+{
+  "run_id": "05b37be08768",
+  "timestamp": "2026-06-08T08:21:30.098558Z",
+  "method": "direct",
+  "method_params": {
+    "model": "x-ai/grok-4.20",
+    "temperature": 0.0,
+    "max_tokens": 32768,
+    "prompt_version": "direct_complete",
+    "extra": {
+      "size_class": "frontier",
+      "country": "US",
+      "architecture": "dense",
+      "provider": "xAI",
+      "context_window": 2000000,
+      "finish_reason": "stop"
+    }
+  },
+  "resource_use": {
+    "wall_s": 3.237,
+    "cost_usd": 0.0053,
+    "tokens_in": 1144,
+    "tokens_out": 502
+  },
+  "result_file": "experiments/archive/outputs/direct_complete/grok-4.20-run1.json",
+  "result_summary": {
+    "status": "refusal"
+  },
+  "finish_reason": "stop"
+}

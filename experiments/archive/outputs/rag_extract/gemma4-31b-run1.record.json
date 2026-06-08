@@ -1,0 +1,35 @@
+{
+  "run_id": "85a2565d131e",
+  "timestamp": "2026-06-08T08:20:41.406037Z",
+  "method": "rag",
+  "method_params": {
+    "model": "gemma4:31b",
+    "prompt_version": "rag_extract",
+    "extra": {
+      "size_class": "medium",
+      "country": "US",
+      "architecture": "dense",
+      "provider": "Ollama/Padme",
+      "context_window": 131072,
+      "finish_reason": "stop"
+    }
+  },
+  "resource_use": {
+    "wall_s": 1673.161,
+    "tokens_in": 80421,
+    "tokens_out": 2477
+  },
+  "result_file": "experiments/archive/outputs/rag_extract/gemma4-31b-run1.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 4,
+    "tp": 4,
+    "fp": 0,
+    "fn": 169,
+    "f1": 0.0452,
+    "fuel_accuracy": 0.0,
+    "status_accuracy": 0.75
+  },
+  "finish_reason": "stop",
+  "reference": "vietnam_thermal_plants_v2_classified.csv"
+}

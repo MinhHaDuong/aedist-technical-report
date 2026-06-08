@@ -1,0 +1,34 @@
+{
+  "run_id": "20a9676e68b6",
+  "timestamp": "2026-06-08T08:20:27.033428Z",
+  "method": "direct",
+  "method_params": {
+    "model": "x-ai/grok-4.20",
+    "prompt_version": "direct_extract",
+    "extra": {
+      "size_class": "frontier",
+      "country": "US",
+      "architecture": "dense",
+      "provider": "xAI",
+      "context_window": 2000000,
+      "finish_reason": "stop"
+    }
+  },
+  "resource_use": {
+    "wall_s": 1.427,
+    "cost_usd": 0.001698,
+    "tokens_in": 174,
+    "tokens_out": 225
+  },
+  "result_file": "experiments/archive/outputs/direct_extract/grok-4.20-run3.csv",
+  "result_summary": {
+    "status": "empty",
+    "n_plants": 0,
+    "tp": 0,
+    "fp": 0,
+    "fn": 173,
+    "f1": 0.0
+  },
+  "finish_reason": "stop",
+  "reference": "vietnam_thermal_plants_v2_classified.csv"
+}

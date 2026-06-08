@@ -1,0 +1,39 @@
+{
+  "run_id": "e2b7531b52c1",
+  "timestamp": "2026-06-08T08:20:23.342316Z",
+  "method": "direct",
+  "method_params": {
+    "model": "moonshotai/kimi-k2-thinking",
+    "temperature": 0.0,
+    "max_tokens": 32768,
+    "prompt_version": "direct_complete",
+    "extra": {
+      "size_class": "frontier",
+      "country": "CN",
+      "architecture": "moe",
+      "provider": "Moonshot AI",
+      "context_window": 131072,
+      "finish_reason": "stop"
+    }
+  },
+  "resource_use": {
+    "wall_s": 195.258,
+    "cost_usd": 0.028682419999999997,
+    "tokens_in": 1086,
+    "tokens_out": 14086
+  },
+  "result_file": "experiments/archive/outputs/direct_complete/kimi-k2-thinking-run1.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 58,
+    "tp": 50,
+    "fp": 8,
+    "fn": 123,
+    "f1": 0.4329,
+    "fuel_accuracy": 0.8,
+    "status_accuracy": 0.54,
+    "province_accuracy": 1.0
+  },
+  "finish_reason": "stop",
+  "reference": "vietnam_thermal_plants_v2_classified.csv"
+}

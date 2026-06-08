@@ -295,18 +295,16 @@ class TestAssembleValidation:
         assert src_rec.exists(), f"fixture missing: {src_rec}"
 
         monkeypatch.chdir(tmp_path)
-        dst_dir = tmp_path / "experiments" / "outputs" / "rag_extract"
+        dst_dir = tmp_path / "experiments" / "archive" / "outputs" / "rag_extract"
         dst_dir.mkdir(parents=True)
         shutil.copy(src_raw, dst_dir / "deepseek-v3.2-run1.json")
 
-        # Load the real record; normalise result_file to the current directory
-        # name (rag_extract) so the companion-JSON lookup resolves in tmp_path.
         record_data = _json.loads(src_rec.read_text(encoding="utf-8"))
         assert record_data["result_file"].endswith(".csv"), (
             "fixture must have CSV result_file to exercise the regression"
         )
-        record_data["result_file"] = record_data["result_file"].replace(
-            "outputs/rag/", "outputs/rag_extract/"
+        record_data["result_file"] = (
+            "experiments/archive/outputs/rag_extract/deepseek-v3.2-run1.csv"
         )
         rec_path = tmp_path / "deepseek-v3.2-run1.record.json"
         rec_path.write_text(_json.dumps(record_data), encoding="utf-8")

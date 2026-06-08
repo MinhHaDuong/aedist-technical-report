@@ -1,0 +1,37 @@
+{
+  "run_id": "c975dbaac333",
+  "timestamp": "2026-06-08T08:21:01.689203Z",
+  "method": "rag",
+  "method_params": {
+    "model": "minimax/minimax-m2.7",
+    "prompt_version": "rag_per_fuel_v2",
+    "extra": {
+      "size_class": "large",
+      "country": "CN",
+      "architecture": "dense",
+      "provider": "MiniMax",
+      "context_window": 204800,
+      "finish_reason": "merged"
+    }
+  },
+  "resource_use": {
+    "wall_s": 190.408,
+    "cost_usd": 0.08044950000000001,
+    "tokens_in": 225341,
+    "tokens_out": 10706
+  },
+  "result_file": "experiments/archive/outputs/rag_per_fuel_v2/minimax-m2.7-run1.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 127,
+    "tp": 96,
+    "fp": 31,
+    "fn": 77,
+    "f1": 0.64,
+    "fuel_accuracy": 0.0312,
+    "status_accuracy": 0.4583,
+    "province_accuracy": 0.8065
+  },
+  "finish_reason": "merged",
+  "reference": "vietnam_thermal_plants_v2_classified.csv"
+}

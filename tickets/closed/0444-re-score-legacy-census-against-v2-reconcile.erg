@@ -1,0 +1,94 @@
+%erg 0.1
+Title: Re-score legacy model-census against v2 + reconcile committed mart drift
+Created: 2026-06-05
+Author: HDMX-coding-agent
+Closed: Census re-scored against v2.1 (173 plants). Archive scoring path wired, 254 stubs replaced by 416 v2 records, mart reconciled (669 rows), artifacts regenerated, manuscript propagated (170→173 / 163→NumRefPlants).
+
+--- log ---
+2026-06-05T13:00Z claude created — deferred from 0413 (v2 adoption); author greenlit "nice-to-have, ticket it for later"
+2026-06-05T14:35Z claude note macroization criterion gated on 0445 (settle plant count via extension measurement) so the literal 163s are macroized once, against the final count — see criterion text
+2026-06-06T11:25Z claude note Blocked-by 0445 header added (author 2026-06-06: mark 0445 blocking) — dependency was documented in the log but missing from the header
+
+2026-06-06T14:50Z claude note 0445 settled the count: \NumRefPlants macroizes at 173 (v2.1, extensions standalone)
+2026-06-06T15:47Z HDMX-coding-agent note blocker 0445 closed — Blocked-by removed.
+2026-06-08T08:43Z HDMX-coding-agent closed — Census re-scored against v2.1 (173 plants). Archive scoring path wired, 254 stubs replaced by 416 v2 records, mart reconciled (669 rows), artifacts regenerated, manuscript propagated (170→173 / 163→NumRefPlants).
+--- body ---
+## Context
+
+Ticket 0413 adopted the v2 reference and re-scored Experiments 1–3 (exp1_batch2
+records + measurements rows, and the exp2_mart.jsonl / sota_cross_eval.csv arms).
+It deliberately left the earlier **model-census** rows on v1-era scoring, with the
+author's explicit agreement that full mart coherence is nice-to-have, not a
+blocker for the v2 adoption PR.
+
+While adopting v2, four pre-existing drifts surfaced (none v2-caused — all
+predate 0413):
+
+1. **Census rows not re-scored.** measurements.jsonl rows with
+   `method ∈ {direct, rag, direct+multiturn}` (the pre-experiment census,
+   "$5 burned on 26 models from memory") carry no `reference` field and still
+   reflect v1-era scoring. Their raw replies live in
+   `experiments/archive/outputs/{direct_extract,rag_extract,direct_multiturn,
+   ablation,...}` — re-scoreable, but there is **no live DAG edge**: the
+   `%.record.json: %.csv` pattern in score.mk resolves to `experiments/outputs/`,
+   not `archive/`. An archive-sourced score path must be wired.
+2. **Record/mart desync.** The committed `exp1_batch2/*.record.json` files and
+   the committed measurements.jsonl disagreed on exp1 v1 scores (mart TP 2801 vs
+   record TP 2894) before 0413. (0413's exp1 re-score incidentally fixed this for
+   exp1; the broader desync class remains.)
+3. **Stale census macros.** `tabulate_macros` regenerated from the current
+   committed measurements yields `\NumModelsTested` 103 where committed
+   macros.tex said 86 — the committed file was stale vs its own committed source.
+4. **106 uncommitted-to-mart records.** `find … -name '*.record.json'` yields 668
+   records on disk; the committed measurements.jsonl has 562 (frontier /
+   direct_complete records present on disk, absent from the mart).
+
+## Affected artifacts
+
+- `macros_census.tex`, `macros_p1_base.tex`, `tab_census.tex` (`\input`'d by
+  report.tex / slides — they currently render v1-era census numbers).
+- Orphan figures `fig_scaling_curve.pdf`, `fig_regimes_scatter.pdf` (generated,
+  not included in the manuscript) consume `result_summary.f1/tp` from census rows.
+- The `prompt_version='census'` render path (`plot_method_convergence`,
+  `tabulate_census_macros`) currently raises "No measurement records matched the
+  active filter" against the committed measurements — broken at HEAD, not by 0413.
+
+## Exit criteria
+
+- [ ] Wire an archive-sourced score path so census raw replies in
+      `experiments/archive/outputs/` can be re-scored against v2 (no
+      `rebuild-measurements`, which deletes records).
+- [ ] Re-score census rows against v2; every re-scored measurements row carries
+      `reference=vietnam_thermal_plants_v2_classified.csv`.
+- [ ] Reconcile the committed mart with its committed sources (decide membership
+      of the 106 extra records explicitly; row count documented, not accidental).
+- [ ] Regenerate `macros_census` / `macros_p1_base` / `tab_census` / scaling /
+      regimes from the v2-scored mart; centralize the `tabulate_macros`
+      `ref_plants` constant via `evaluate.reference_plant_count()` (deferred from
+      0413 to keep the census source+output revert mutually consistent).
+- [ ] Manuscript reference-count propagation — GATED on two upstream settlements,
+      do it once against the final state:
+      (a) Exp3 (RAG) re-scored to v2 (this ticket) — unlocks the RAG recall
+          *denominators* (`report.tex` §«Expérience 3 RAG» lines ~406/412/420/422/
+          449/485). These stay LITERAL 163 until then because they are recall
+          against still-v1 archived RAG data — `\NumRefPlants`=170 there would
+          falsely claim 170/170 recall.
+      (b) Plant count SETTLED by ticket 0445 (extension-as-unit vs standalone) —
+          fixes the value `\NumRefPlants` resolves to (170 vs 174). Macroizing the
+          reference-size mentions before 0445 risks doing it twice if the count
+          moves.
+      Then replace the literal `163` reference-size mentions with `\NumRefPlants`
+      and update the recall numbers (`report.tex` §«Expérience direct complet»
+      ~218, abstract ~49, conclusion ~669; `slides/manuscript/main.md` Exp1/Exp2
+      captions if not already v2). 0413 already macro-ized the v2-coherent mentions
+      (Exp2 provenance §269, reconciliation §396, slides §105) and applied the
+      #547 de-inflation corrections to §396/§734.
+- [ ] `make check` green.
+
+## Related
+
+- 0413 (v2 adoption — this ticket's parent; covers Exp1–3, defers the census)
+- 0445 (extension-as-unit measurement — settles the final plant count the
+  macroization resolves to; macroization criterion (b) gated on it)
+- `data/reference/v1_v2_adoption_comparison.md` (records the re-score scope split)
+- `data/reference/PROVENANCE.md` § "Re-score scope" (names this ticket)

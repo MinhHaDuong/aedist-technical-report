@@ -1,0 +1,37 @@
+{
+  "run_id": "1cdde19ce64f",
+  "timestamp": "2026-06-08T08:20:24.510719Z",
+  "method": "direct",
+  "method_params": {
+    "model": "deepseek/deepseek-v3.2",
+    "prompt_version": "direct_extract",
+    "extra": {
+      "size_class": "frontier",
+      "country": "CN",
+      "architecture": "moe",
+      "provider": "DeepSeek",
+      "context_window": 163840,
+      "finish_reason": "stop"
+    }
+  },
+  "resource_use": {
+    "wall_s": 87.654,
+    "cost_usd": 0.0004185,
+    "tokens_in": 56,
+    "tokens_out": 1063
+  },
+  "result_file": "experiments/archive/outputs/direct_extract/deepseek-v3.2-run2.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 28,
+    "tp": 25,
+    "fp": 3,
+    "fn": 148,
+    "f1": 0.2488,
+    "fuel_accuracy": 0.68,
+    "status_accuracy": 0.56,
+    "province_accuracy": 1.0
+  },
+  "finish_reason": "stop",
+  "reference": "vietnam_thermal_plants_v2_classified.csv"
+}

@@ -1,0 +1,39 @@
+{
+  "run_id": "6a3f73bdcd06",
+  "timestamp": "2026-06-08T08:20:23.019506Z",
+  "method": "direct",
+  "method_params": {
+    "model": "z-ai/glm-5-turbo",
+    "temperature": 0.0,
+    "max_tokens": 32768,
+    "prompt_version": "direct_complete",
+    "extra": {
+      "size_class": "frontier",
+      "country": "CN",
+      "architecture": "moe",
+      "provider": "Zhipu AI",
+      "context_window": 202752,
+      "finish_reason": "stop"
+    }
+  },
+  "resource_use": {
+    "wall_s": 386.845,
+    "cost_usd": 0.0504848,
+    "tokens_in": 1064,
+    "tokens_out": 12302
+  },
+  "result_file": "experiments/archive/outputs/direct_complete/glm-5-turbo-run1.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 63,
+    "tp": 56,
+    "fp": 7,
+    "fn": 117,
+    "f1": 0.4746,
+    "fuel_accuracy": 0.5179,
+    "status_accuracy": 0.625,
+    "province_accuracy": 0.8036
+  },
+  "finish_reason": "stop",
+  "reference": "vietnam_thermal_plants_v2_classified.csv"
+}
