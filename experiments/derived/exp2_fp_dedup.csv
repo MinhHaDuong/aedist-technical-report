@@ -1,292 +1,115 @@
 clean_name,display_name,n_appearances,n_models,n_arms,models,arms,fuels,statuses,capacities,provinces,cur_score,cur_ref,new_score,new_ref
-nhiet dien ba ria,Nhiệt điện Bà Rịa,18,4,4,claude-opus-4-6;gpt-5.5;gpt-5.5-2026-04-23;mistral-large-2512,arm1;arm2;arm3;arm4,gas;unknown,operational,100.0;120.0;389.0;400.0,ba ria - vung tau;ba ria–vung tau,85.7,TBKHH Bà Rịa 2,100.0,Bà Rịa GT
-nhiet dien duyen hai 3 mo rong,Nhiệt điện Duyên Hải 3 mở rộng,17,4,4,gpt-5.5;gpt-5.5-2026-04-23;mistral-large-2512;qwen3.7-max-2026-05-20,arm1;arm2;arm3;arm4,coal,operational,622.5;660.0;688.0,tra vinh,100.0,Duyen Hai 3,100.0,Duyen Hai 3
-nhon trach 3 & 4,Nhơn Trạch 3 & 4,17,3,4,claude-opus-4-6;mistral-large-2512;qwen3.7-max-2026-05-20,arm1;arm2;arm3;arm4,gas;imported gas;unknown,constructing;operational;planned;unknown,1500.0;1620.0;1624.0;1760.0,dong nai,100.0,LNG Nhơn Trạch 3,100.0,LNG Nhơn Trạch 3
-nhiet dien vinh tan 4 mo rong,Nhiệt điện Vĩnh Tân 4 mở rộng,16,4,4,gpt-5.5;gpt-5.5-2026-04-23;mistral-large-2512;qwen3.7-max-2026-05-20,arm1;arm2;arm3;arm4,coal,operational,1200.0;600.0,binh thuan,100.0,Vinh Tan 4,100.0,Vinh Tan 4
-nhiet dien uong bi mo rong 2,Nhiệt điện Uông Bí mở rộng 2,13,3,4,gpt-5.5;gpt-5.5-2026-04-23;qwen3.7-max-2026-05-20,arm1;arm2;arm3;arm4,coal,operational,330.0,quang ninh,88.9,Uong Bi I,94.4,Uong Bi I extension
-nhiet dien cam pha,Nhiệt điện Cẩm Phả,11,4,3,claude-opus-4-6;gpt-5.5-2026-04-23;mistral-large-2512;qwen3.7-max-2026-05-20,arm1;arm2;arm3,coal;unknown,operational;proposed,1500.0;300.0;600.0;670.0;680.0,quang ninh,87.5,Cam Pha 3,100.0,Cam Pha 3
-dong phat hai ha 1,NĐ đồng phát Hải Hà 1,10,4,2,claude-opus-4-6;gpt-5.5;gpt-5.5-2026-04-23;qwen3.7-max-2026-05-20,arm3;arm4,coal;unknown,constructing;planned;proposed;unknown,150.0;300.0,quang ninh,77.8,Phả Lại 1,93.3,Hai Ha CHP Phase 1
-formosa dong nai,NĐ Formosa Đồng Nai,10,4,2,claude-opus-4-6;gpt-5.5;gpt-5.5-2026-04-23;qwen3.7-max-2026-05-20,arm3;arm4,coal;unknown,operational;unknown,150.0,dong nai,84.2,Formosa HT2,84.2,Formosa HT2
-nhiet dien nhon trach 3 & 4,Nhiệt điện Nhơn Trạch 3 & 4,10,2,3,claude-opus-4-6;mistral-large-2512,arm1;arm2;arm4,imported gas,constructing;operational,1500.0;1600.0;1624.0,dong nai,100.0,LNG Nhơn Trạch 3,100.0,LNG Nhơn Trạch 3
-nhiet dien song hau 3,Nhiệt điện Sông Hậu 3,9,3,4,gpt-5.5;gpt-5.5-2026-04-23;mistral-large-2512,arm1;arm2;arm3;arm4,coal,cancelled,1200.0;2000.0,hau giang,90.0,Sông Hậu 1,94.7,Sông Hậu 1
-nhiet dien na duong,Nhiệt điện Na Dương,9,3,2,gpt-5.5;gpt-5.5-2026-04-23;mistral-large-2512,arm1;arm2,coal,operational,100.0;110.0;220.0,lang son,88.9,Na Dương 1,100.0,Na Dương 1
-song hau 3,Sông Hậu III,8,3,2,gpt-5.5;gpt-5.5-2026-04-23;mistral-large-2512,arm3;arm4,coal,cancelled;planned;proposed;unknown,2000.0,hau giang,94.7,Sông Hậu 1,94.7,Sông Hậu 1
-cam thanh,Cẩm Thanh,8,3,2,gpt-5.5;mistral-large-2512;qwen3.7-max-2026-05-20,arm3;arm4,coal;unknown,cancelled;unknown,600.0,quang nam;quang ninh;thanh hoa,80.0,Cong Thanh,80.0,Cong Thanh
-uong bi mo rong 2,NĐ Uông Bí mở rộng 2,7,4,2,claude-opus-4-6;gpt-5.5;gpt-5.5-2026-04-23;qwen3.7-max-2026-05-20,arm3;arm4,coal;unknown,operational;unknown,330.0,quang ninh,94.1,Uong Bi I,94.4,Uong Bi I extension
-khi du hoa phat 2,NĐ khí dư Hòa Phát II,7,4,2,claude-opus-4-6;gpt-5.5;gpt-5.5-2026-04-23;qwen3.7-max-2026-05-20,arm3;arm4,coal;unknown,constructing;planned;proposed;unknown,300.0,ha tinh;hai duong;hai duong / dung quat unclear;not found;quang ngai;quang ngai / dung quat,82.4,Cẩm Phả 2,82.4,Cẩm Phả 2
-nhiet dien uong bi mo rong 1,Nhiệt điện Uông Bí mở rộng 1,7,3,4,gpt-5.5;gpt-5.5-2026-04-23;qwen3.7-max-2026-05-20,arm1;arm2;arm3;arm4,coal,operational,300.0,quang ninh,88.9,Uong Bi I,94.4,Uong Bi I extension
-nam dinh 2,NĐ Nam Định II,7,3,2,gpt-5.5;gpt-5.5-2026-04-23;mistral-large-2512,arm3;arm4,coal,cancelled;proposed;unknown,1200.0;2000.0,nam dinh,94.7,Nam Dinh 1,94.7,Nam Dinh 1
-kien luong,Kiên Lương,7,2,3,claude-opus-4-6;mistral-large-2512,arm2;arm3;arm4,coal,cancelled;proposed,1800.0;3600.0,kien giang,75.0,"TBKHH Kiên Giang I, II",75.0,"TBKHH Kiên Giang I, II"
-dong phat hai ha 2,NĐ đồng phát Hải Hà 2,6,4,2,claude-opus-4-6;gpt-5.5;gpt-5.5-2026-04-23;qwen3.7-max-2026-05-20,arm3;arm4,coal;unknown,cancelled;planned;proposed;unknown,600.0,quang ninh,77.8,Phả Lại 1,93.3,Hai Ha CHP Phase 1
-rang dong,Rạng Đông,6,3,2,gpt-5.5;gpt-5.5-2026-04-23;mistral-large-2512,arm3;arm4,coal,cancelled;planned;proposed;unknown,100.0;2400.0,nam dinh,82.4,Thang Long,82.4,Thang Long
-cam pha 1 & 2,Cẩm Phả I & II,6,2,3,claude-opus-4-6;qwen3.7-max-2026-05-20,arm2;arm3;arm4,coal,operational;unknown,600.0;670.0,quang ninh,100.0,Cẩm Phả 1,100.0,Cẩm Phả 1
-binh dinh 1,Bình Định I,6,2,2,gpt-5.5-2026-04-23;mistral-large-2512,arm3;arm4,coal,cancelled;planned;proposed,1200.0,binh dinh,100.0,LNG Bình Định,100.0,LNG Bình Định
-ca mau 1 & 2,Cà Mau 1 & 2,6,1,3,qwen3.7-max-2026-05-20,arm2;arm3;arm4,gas;unknown,operational,1500.0,ca mau,100.0,LNG Cà Mau 1,100.0,LNG Cà Mau 1
-dong phat duc giang,NĐ đồng phát Đức Giang,5,4,2,claude-opus-4-6;gpt-5.5;gpt-5.5-2026-04-23;qwen3.7-max-2026-05-20,arm3;arm4,coal;unknown,planned;proposed;unknown,100.0,lao cai;lao cai / chemical complex uncertain;lao cai / hai phong unclear;not found;unknown,85.7,LNG Mỹ Giang,100.0,Duc Giang - Lao Cai Chemical
-nhiet dien kien luong 1,Nhiệt điện Kiên Lương 1,5,3,3,claude-opus-4-6;gpt-5.5;gpt-5.5-2026-04-23,arm1;arm2;arm3,coal,cancelled,1200.0,kien giang,84.2,Na Dương 1,84.2,Na Dương 1
-dong phat hai ha 3,NĐ đồng phát Hải Hà 3,5,3,2,claude-opus-4-6;gpt-5.5;gpt-5.5-2026-04-23,arm3;arm4,coal;unknown,cancelled;planned;proposed;unknown,600.0,quang ninh,77.8,Phả Lại 1,93.3,Hai Ha CHP Phase 1
-dong phat hai ha 4,NĐ đồng phát Hải Hà 4,5,3,2,claude-opus-4-6;gpt-5.5;gpt-5.5-2026-04-23,arm3;arm4,coal;unknown,cancelled;planned;proposed;unknown,600.0,quang ninh,77.8,Phả Lại 1,93.3,Hai Ha CHP Phase 1
-kien giang 1 & 2,TBKHH Kiên Giang I & II,5,3,2,claude-opus-4-6;gpt-5.5-2026-04-23;qwen3.7-max-2026-05-20,arm3;arm4,unknown,cancelled;unknown,1500.0,kien giang,92.9,"TBKHH Kiên Giang I, II",92.9,"TBKHH Kiên Giang I, II"
-binh dinh 2,Bình Định II,5,2,2,gpt-5.5-2026-04-23;mistral-large-2512,arm3;arm4,coal,cancelled;planned;proposed,1200.0;2000.0,binh dinh,100.0,LNG Bình Định,100.0,LNG Bình Định
+song hau 3,Nhiệt điện Sông Hậu 3,17,3,4,gpt-5.5;gpt-5.5-2026-04-23;mistral-large-2512,arm1;arm2;arm3;arm4,coal,cancelled;planned;proposed;unknown,1200.0;2000.0,hau giang,94.7,Sông Hậu 1,94.7,Sông Hậu 1
+formosa dong nai,NĐ Formosa Đồng Nai,12,5,2,claude-opus-4-6;gpt-5.5;gpt-5.5-2026-04-23;mistral-large-2512;qwen3.7-max-2026-05-20,arm3;arm4,coal;unknown,operational;unknown,150.0,dong nai,84.2,Formosa HT2,84.2,Formosa HT2
+nam dinh 2,NĐ Nam Định II,11,3,3,gpt-5.5;gpt-5.5-2026-04-23;mistral-large-2512,arm1;arm3;arm4,coal,cancelled;proposed;unknown,1200.0;2000.0,nam dinh,94.7,Nam Dinh 1,94.7,Nam Dinh 1
+cam thanh,Cẩm Thanh,11,3,2,gpt-5.5;mistral-large-2512;qwen3.7-max-2026-05-20,arm3;arm4,coal;unknown,cancelled;unknown,600.0,quang nam;quang ninh;thanh hoa,80.0,Cong Thanh,80.0,Cong Thanh
+kien giang 1,Nhiệt điện Kiên Giang 1,7,4,4,claude-opus-4-6;gpt-5.5;gpt-5.5-2026-04-23;mistral-large-2512,arm1;arm2;arm3;arm4,imported gas;unknown,cancelled;proposed,750.0,kien giang,100.0,"TBKHH Kiên Giang I, II",100.0,"TBKHH Kiên Giang I, II"
+binh dinh 1,Bình Định I,7,3,2,gpt-5.5;gpt-5.5-2026-04-23;mistral-large-2512,arm3;arm4,coal,cancelled;planned;proposed,1200.0,binh dinh,100.0,LNG Bình Định,100.0,LNG Bình Định
+kien giang 1 & 2,TBKHH Kiên Giang I & II,6,3,3,claude-opus-4-6;gpt-5.5-2026-04-23;qwen3.7-max-2026-05-20,arm1;arm3;arm4,coal;unknown,cancelled;unknown,1500.0,,92.9,"TBKHH Kiên Giang I, II",92.9,"TBKHH Kiên Giang I, II"
+binh dinh 2,Bình Định II,6,3,2,gpt-5.5;gpt-5.5-2026-04-23;mistral-large-2512,arm3;arm4,coal,cancelled;planned;proposed,1200.0;2000.0,binh dinh,100.0,LNG Bình Định,100.0,LNG Bình Định
+dam phu my,Đạm Phú Mỹ,6,2,2,gpt-5.5;mistral-large-2512,arm3;arm4,gas;unknown,operational,21.0,ba ria - vung tau;ba ria–vung tau,85.7,TBKHH Phú Mỹ 1,85.7,TBKHH Phú Mỹ 1
+phu tho,Phú Thọ,5,3,2,gpt-5.5;gpt-5.5-2026-04-23;mistral-large-2512,arm3;arm4,coal,cancelled;planned;proposed,300.0;600.0,phu tho,72.7,LNG Phú Mỹ 3.1,72.7,LNG Phú Mỹ 3.1
 kim son,Kim Sơn,5,2,2,gpt-5.5-2026-04-23;mistral-large-2512,arm3;arm4,coal,cancelled;planned;proposed,3000.0,ninh binh,83.3,LNG Nghi Sơn (Thanh Hóa),83.3,LNG Nghi Sơn (Thanh Hóa)
-uong bi mr 2,Uông Bí MR 2,4,3,2,claude-opus-4-6;gpt-5.5;qwen3.7-max-2026-05-20,arm3;arm4,coal;unknown,operational;unknown,330.0,quang ninh,94.1,Uong Bi I,94.4,Uong Bi I extension
-kien giang 1,Kiên Giang I,4,3,2,gpt-5.5;gpt-5.5-2026-04-23;mistral-large-2512,arm3;arm4,imported gas;unknown,cancelled,750.0,kien giang,100.0,"TBKHH Kiên Giang I, II",100.0,"TBKHH Kiên Giang I, II"
-nhiet dien ca mau 1 & 2,Nhiệt điện Cà Mau 1 & 2,4,2,2,claude-opus-4-6;mistral-large-2512,arm1;arm2,unknown,operational,1500.0;3000.0,ca mau,100.0,LNG Cà Mau 1,100.0,LNG Cà Mau 1
-nhiet dien kien luong 2,Nhiệt điện Kiên Lương 2,4,2,3,gpt-5.5;gpt-5.5-2026-04-23,arm1;arm2;arm3,coal,cancelled,1200.0,kien giang,84.2,Na Dương 2,84.2,Na Dương 2
-nhiet dien nam dinh 2,Nhiệt điện Nam Định 2,4,2,3,gpt-5.5;gpt-5.5-2026-04-23,arm1;arm3;arm4,coal,cancelled,1200.0;2000.0,nam dinh,90.0,Nam Dinh 1,94.7,Nam Dinh 1
-nha may nhiet dien uong bi 2,Nhà máy Nhiệt điện Uông Bí 2,4,2,2,mistral-large-2512;qwen3.7-max-2026-05-20,arm1;arm2,coal,operational,300.0;600.0,quang ninh,88.9,Uong Bi I,100.0,Uong Bi II extension
-hoa phat 2,NĐ Hòa Phát II,4,2,2,claude-opus-4-6;qwen3.7-max-2026-05-20,arm3;arm4,coal;gas;unknown,proposed;unknown,300.0,ha tinh;quang ngai,82.4,Cẩm Phả 2,82.4,Cẩm Phả 2
-nha may nhiet dien vinh tan 4 mo rong,Nhà máy Nhiệt điện Vĩnh Tân 4 Mở rộng,4,1,1,qwen3.7-max-2026-05-20,arm1,coal,operational,600.0,binh thuan,100.0,Vinh Tan 4,100.0,Vinh Tan 4
-dam phu my,Đạm Phú Mỹ,4,1,2,mistral-large-2512,arm3;arm4,gas;unknown,operational,21.0,ba ria - vung tau,85.7,TBKHH Phú Mỹ 1,85.7,TBKHH Phú Mỹ 1
-tbk thu duc,TBK Thủ Đức,3,3,2,claude-opus-4-6;gpt-5.5;gpt-5.5-2026-04-23,arm3;arm4,unknown,operational;retired,113.0;114.0,tp ho chi minh;tp. ho chi minh,100.0,NĐ Thủ Đức,100.0,NĐ Thủ Đức
-bao dai,NĐ Bảo Đại,3,3,2,gpt-5.5;gpt-5.5-2026-04-23;mistral-large-2512,arm3;arm4,coal,planned;proposed,600.0,bac bo;bac giang / unclear;quang ninh,71.4,Duc Giang - Lao Cai Chemical,71.4,Duc Giang - Lao Cai Chemical
-nhiet dien vinh tan 4 mr,Nhiệt điện Vĩnh Tân 4 MR,3,2,2,claude-opus-4-6;qwen3.7-max-2026-05-20,arm1;arm3,coal;unknown,operational,600.0,binh thuan,100.0,Vinh Tan 4,100.0,Vinh Tan 4
-nhiet dien duyen hai 3 mr,Nhiệt điện Duyên Hải 3 MR,3,2,2,claude-opus-4-6;qwen3.7-max-2026-05-20,arm1;arm3,coal;unknown,operational,660.0;688.0,tra vinh,100.0,Duyen Hai 3,100.0,Duyen Hai 3
-nhiet dien kien luong,Nhiệt điện Kiên Lương,3,2,2,gpt-5.5-2026-04-23;mistral-large-2512,arm1;arm2,coal,cancelled,2400.0;4400.0,kien giang,70.6,Na Dương 1,75.0,"TBKHH Kiên Giang I, II"
-nhiet dien kien luong 3,Nhiệt điện Kiên Lương 3,3,2,3,gpt-5.5;gpt-5.5-2026-04-23,arm1;arm2;arm3,coal,cancelled,1200.0;2000.0,kien giang,73.7,Na Dương 1,73.7,Na Dương 1
-nha may nhiet dien cam pha,Nhà máy Nhiệt điện Cẩm Phả,3,2,1,gpt-5.5;qwen3.7-max-2026-05-20,arm1,coal,operational,600.0,quang ninh,87.5,Cam Pha 3,100.0,Cam Pha 3
-cong thanh,LNG Công Thanh,3,2,3,claude-opus-4-6;gpt-5.5-2026-04-23,arm2;arm3;arm4,coal;unknown,proposed;unknown,1500.0,thanh hoa,100.0,Cong Thanh,100.0,Cong Thanh
-nhiet dien nhon trach 3 va 4,Nhiệt điện Nhơn Trạch 3 và 4,3,2,3,gpt-5.5;gpt-5.5-2026-04-23,arm2;arm3;arm4,imported gas,constructing;operational,1624.0,dong nai,100.0,LNG Nhơn Trạch 3,100.0,LNG Nhơn Trạch 3
-phu tho,Phú Thọ,3,2,2,gpt-5.5-2026-04-23;mistral-large-2512,arm3;arm4,coal,cancelled;planned;proposed,300.0;600.0,phu tho,72.7,LNG Phú Mỹ 3.1,72.7,LNG Phú Mỹ 3.1
-luc nam,NĐ Lục Nam,3,2,2,gpt-5.5;gpt-5.5-2026-04-23,arm3;arm4,coal,cancelled;unknown,100.0,bac giang,80.0,LNG Cà Ná,80.0,LNG Cà Ná
-nmd nhon trach 3 va 4,NMĐ Nhơn Trạch 3 và 4,3,2,2,gpt-5.5;gpt-5.5-2026-04-23,arm3;arm4,imported gas,constructing,1624.0,dong nai,100.0,LNG Nhơn Trạch 3,100.0,LNG Nhơn Trạch 3
-uong bi mo rong 1,NĐ Uông Bí mở rộng 1,3,2,2,gpt-5.5;gpt-5.5-2026-04-23,arm3;arm4,coal,operational,300.0,quang ninh,94.1,Uong Bi I,94.4,Uong Bi I extension
-nhiet dien dong phat duc giang,Nhiệt điện đồng phát Đức Giang,3,2,2,gpt-5.5;gpt-5.5-2026-04-23,arm3;arm4,coal,proposed;unknown,100.0,lao cai / tbd;lao cai / uncertain;not found,85.7,LNG Mỹ Giang,100.0,Duc Giang - Lao Cai Chemical
-duc giang dong phat,NĐ Đức Giang đồng phát,3,2,2,gpt-5.5-2026-04-23;qwen3.7-max-2026-05-20,arm3;arm4,coal;unknown,cancelled;unknown,100.0,lao cai,75.0,LNG Mỹ Giang,100.0,Duc Giang - Lao Cai Chemical
-nhiet dien duyen hai 1 & 3,Nhiệt điện Duyên Hải 1 & 3,3,1,2,mistral-large-2512,arm1;arm2,coal,operational,2488.0;2490.0,tra vinh,100.0,Duyen Hai 1,100.0,Duyen Hai 1
-nha may dien khi nhon trach 3 & 4,Nhà máy Điện khí Nhơn Trạch 3 & 4,3,1,1,qwen3.7-max-2026-05-20,arm1,imported gas,constructing,1600.0;1760.0,dong nai,100.0,LNG Nhơn Trạch 3,100.0,LNG Nhơn Trạch 3
-nha may dien khi ba ria,Nhà máy Điện khí Bà Rịa,3,1,1,qwen3.7-max-2026-05-20,arm1,unknown,operational,240.0;276.0,ba ria - vung tau,85.7,TBKHH Bà Rịa 2,85.7,TBKHH Bà Rịa 2
-nhiet dien lng son my 1 & 2,Nhiệt điện LNG Sơn Mỹ I & II,3,1,1,mistral-large-2512,arm2,imported gas,proposed;unknown,4000.0;4500.0;4800.0,binh thuan,100.0,LNG Sơn Mỹ I,100.0,LNG Sơn Mỹ I
-pha lai 1 & 2,Pha Lai 1 & 2,3,1,2,qwen3.7-max-2026-05-20,arm2;arm4,coal,operational,1040.0,hai duong,100.0,Phả Lại 1,100.0,Phả Lại 1
-son my 1 & 2,Sơn Mỹ I & II,3,1,2,qwen3.7-max-2026-05-20,arm2;arm4,imported gas,proposed,3750.0;4500.0,binh thuan,100.0,LNG Sơn Mỹ I,100.0,LNG Sơn Mỹ I
-dong phat hai ha 2–4,NĐ đồng phát Hải Hà 2–4,3,1,1,claude-opus-4-6,arm3,coal;unknown,proposed;unknown,1800.0,quang ninh,77.8,Phả Lại 1,82.4,Hai Ha CHP Phase 1
-phu yen,Phú Yên,3,1,2,mistral-large-2512,arm3;arm4,coal,planned;proposed,4000.0,phu yen,76.9,LNG Phú Mỹ 3.1,76.9,LNG Phú Mỹ 3.1
+cong thanh,LNG Công Thanh,4,2,4,claude-opus-4-6;gpt-5.5-2026-04-23,arm1;arm2;arm3;arm4,coal;unknown,proposed;unknown,1500.0,thanh hoa,100.0,Cong Thanh,100.0,Cong Thanh
+yen hung,NĐ Yên Hưng,4,2,2,gpt-5.5;gpt-5.5-2026-04-23,arm3;arm4,coal,cancelled,1200.0,quang ninh,75.0,Kiên Lương 1,75.0,Kiên Lương 1
+uong bi 3,NĐ Uông Bí III,4,2,2,gpt-5.5;gpt-5.5-2026-04-23,arm3;arm4,coal,cancelled,1200.0,quang ninh,94.1,Uong Bi I,94.1,Uong Bi I
+can tho,"NĐ Cần Thơ (S4, dầu)",3,2,2,claude-opus-4-6;qwen3.7-max-2026-05-20,arm3;arm4,gas;unknown,operational;unknown,33.0,can tho,100.0,NĐ Cần Thơ,100.0,NĐ Cần Thơ
+thu duc,TBK Thủ Đức,3,2,2,claude-opus-4-6;qwen3.7-max-2026-05-20,arm3;arm4,gas;oil;unknown,operational,113.0;114.0,tp ho chi minh;tp.hcm,100.0,NĐ Thủ Đức,100.0,NĐ Thủ Đức
+vedan / ve dan,NĐ Vedan / Vê Đan,3,2,2,gpt-5.5;gpt-5.5-2026-04-23,arm3;arm4,unknown,operational;unknown,60.0;72.0,dong nai,72.0,Vedan Vietnam Cogeneration power station,72.0,Vedan Vietnam Cogeneration power station
+than an giang,NĐ Than An Giang,3,2,2,gpt-5.5;gpt-5.5-2026-04-23,arm3;arm4,coal,cancelled,2000.0,an giang,85.7,LNG Mỹ Giang,85.7,LNG Mỹ Giang
+dien khi ba ria,Nhà máy Điện khí Bà Rịa,3,1,1,qwen3.7-max-2026-05-20,arm1,unknown,operational,240.0;276.0,ba ria - vung tau,85.7,TBKHH Bà Rịa 2,85.7,TBKHH Bà Rịa 2
+hai ha 2–4,NĐ đồng phát Hải Hà 2–4,3,1,1,claude-opus-4-6,arm3,coal;unknown,proposed;unknown,1800.0,quang ninh,82.4,Hai Ha CHP Phase 1,82.4,Hai Ha CHP Phase 1
 bourbon,Bourbon,3,1,1,mistral-large-2512,arm3,oil,operational;retired,24.0,ba ria - vung tau,60.0,Uong Bi I,60.0,Uong Bi I
+phu yen,Phú Yên,3,1,2,mistral-large-2512,arm3;arm4,coal,planned;proposed,4000.0,phu yen,76.9,LNG Phú Mỹ 3.1,76.9,LNG Phú Mỹ 3.1
 mien trung 3,TBKHH Miền Trung III,3,1,1,gpt-5.5,arm3,unknown,cancelled,750.0,quang nam / quang ngai;quang nam / quang ngai unresolved;quang ngai / quang tri uncertain,95.7,TBKHH miền Trung I,95.7,TBKHH miền Trung I
-mien trung 1 & 2,Miền Trung I & II,3,1,1,qwen3.7-max-2026-05-20,arm4,gas;unknown,proposed;unknown,1500.0,quang nam;quang tri / quang ngai,100.0,TBKHH miền Trung I,100.0,TBKHH miền Trung I
-vinh tan 4 mo rong,NĐ Vĩnh Tân 4 Mở Rộng,2,2,2,claude-opus-4-6;gpt-5.5,arm1;arm3,coal,operational,600.0,binh thuan,100.0,Vinh Tan 4,100.0,Vinh Tan 4
-nhiet dien kien giang 2,Nhiệt điện Kiên Giang 2,2,2,2,gpt-5.5;gpt-5.5-2026-04-23,arm1;arm2,unknown,cancelled;proposed,750.0,kien giang,88.9,"TBKHH Kiên Giang I, II",95.7,"TBKHH Kiên Giang I, II"
-nhiet dien kien giang 1,Nhiệt điện Kiên Giang 1,2,2,2,gpt-5.5;gpt-5.5-2026-04-23,arm1;arm2,unknown,cancelled;proposed,750.0,kien giang,88.9,"TBKHH Kiên Giang I, II",100.0,"TBKHH Kiên Giang I, II"
-nha may dien ba ria,Nhà máy điện Bà Rịa,2,2,1,gpt-5.5;qwen3.7-max-2026-05-20,arm1,unknown,operational,310.0;389.0,ba ria - vung tau,85.7,TBKHH Bà Rịa 2,85.7,TBKHH Bà Rịa 2
-nha may nhiet dien duyen hai 3 mo rong,Nhà máy nhiệt điện Duyên Hải 3 mở rộng,2,2,1,gpt-5.5;qwen3.7-max-2026-05-20,arm1,coal,operational,660.0;688.0,tra vinh,100.0,Duyen Hai 3,100.0,Duyen Hai 3
-nhiet dien dong phat hai ha 1,Nhiệt điện đồng phát Hải Hà 1,2,2,2,gpt-5.5;gpt-5.5-2026-04-23,arm2;arm3,coal,operational;proposed,150.0;300.0,quang ninh,77.8,Phả Lại 1,93.3,Hai Ha CHP Phase 1
-thu duc,Thủ Đức (tua bin khí),2,2,2,claude-opus-4-6;qwen3.7-max-2026-05-20,arm3;arm4,gas;oil,operational,113.0;114.0,tp.hcm,100.0,NĐ Thủ Đức,100.0,NĐ Thủ Đức
-can tho,Cần Thơ (S4),2,2,2,claude-opus-4-6;qwen3.7-max-2026-05-20,arm3;arm4,gas;unknown,operational;unknown,33.0,can tho,100.0,NĐ Cần Thơ,100.0,NĐ Cần Thơ
+dien ba ria,Nhà máy điện Bà Rịa,2,2,1,gpt-5.5;qwen3.7-max-2026-05-20,arm1,unknown,operational,310.0;389.0,ba ria - vung tau,85.7,TBKHH Bà Rịa 2,85.7,TBKHH Bà Rịa 2
 hai ha 1-4,Hải Hà I-IV (đang phát),2,2,2,mistral-large-2512;qwen3.7-max-2026-05-20,arm3;arm4,coal,operational;proposed,1800.0;2100.0,quang ninh,82.4,Hai Ha CHP Phase 1,82.4,Hai Ha CHP Phase 1
-kien luong 1–3,NĐ Kiên Lương I–III,2,2,2,gpt-5.5;gpt-5.5-2026-04-23,arm3;arm4,coal,cancelled;unknown,1200.0;3600.0,kien giang,80.0,Na Dương 1,80.0,Na Dương 1
 can tho s4,NĐ Cần Thơ S4,2,2,2,gpt-5.5;gpt-5.5-2026-04-23,arm3;arm4,unknown,operational;unknown,33.0,can tho,100.0,NĐ Cần Thơ,100.0,NĐ Cần Thơ
-vedan / ve dan,NĐ Vedan / Vê Đan,2,2,2,gpt-5.5;gpt-5.5-2026-04-23,arm3;arm4,unknown,operational;unknown,60.0;72.0,dong nai,72.0,Vedan Vietnam Cogeneration power station,72.0,Vedan Vietnam Cogeneration power station
-than an giang,NĐ Than An Giang,2,2,2,gpt-5.5;gpt-5.5-2026-04-23,arm3;arm4,coal,cancelled,2000.0,an giang,85.7,LNG Mỹ Giang,85.7,LNG Mỹ Giang
-uong bi 3,NĐ Uông Bí III,2,2,2,gpt-5.5;gpt-5.5-2026-04-23,arm3;arm4,coal,cancelled,1200.0,quang ninh,94.1,Uong Bi I,94.1,Uong Bi I
-nmd dam phu my,NMĐ Đạm Phú Mỹ,2,2,2,gpt-5.5;mistral-large-2512,arm3;arm4,unknown,operational,21.0,ba ria - vung tau;ba ria–vung tau,85.7,TBKHH Phú Mỹ 1,85.7,TBKHH Phú Mỹ 1
-yen hung,NĐ Yên Hưng,2,2,2,gpt-5.5;gpt-5.5-2026-04-23,arm3;arm4,coal,cancelled,1200.0,quang ninh,75.0,TBKHH miền Trung I,75.0,TBKHH miền Trung I
-nhiet dien binh dinh 1,Nhiệt điện Bình Định I,2,2,2,gpt-5.5;gpt-5.5-2026-04-23,arm3;arm4,coal,cancelled,1200.0,binh dinh,100.0,LNG Bình Định,100.0,LNG Bình Định
-nhiet dien uong bi 3,Nhiệt điện Uông Bí III,2,2,2,gpt-5.5;gpt-5.5-2026-04-23,arm3;arm4,coal,cancelled,1200.0,quang ninh,88.9,Uong Bi I,94.1,Uong Bi I
-nhiet dien yen hung,Nhiệt điện Yên Hưng,2,2,2,gpt-5.5;gpt-5.5-2026-04-23,arm3;arm4,coal,cancelled,1200.0,quang ninh,66.7,LNG Vân Phong (J-Power),75.0,TBKHH miền Trung I
+an giang,NĐ An Giang,2,2,2,gpt-5.5;gpt-5.5-2026-04-23,arm3;arm4,coal,cancelled;unknown,2000.0,an giang,87.5,An Khánh - Bac Giang,87.5,An Khánh - Bac Giang
+formosa ha tinh hien huu,Nhiệt điện Formosa Hà Tĩnh hiện hữu,2,2,2,gpt-5.5;gpt-5.5-2026-04-23,arm3;arm4,coal,operational,150.0,ha tinh,100.0,LNG Hà Tĩnh,100.0,LNG Hà Tĩnh
+than ve dan,Nhiệt điện than Vê Đan,2,2,2,gpt-5.5;gpt-5.5-2026-04-23,arm3;arm4,coal,operational,60.0,dong nai,72.7,"LNG Tân Thuận – Đầm Dơi, Cà Mau",72.7,"LNG Tân Thuận – Đầm Dơi, Cà Mau"
 uong bi ext 2,Uông Bí Ext 2,2,2,1,claude-opus-4-6;qwen3.7-max-2026-05-20,arm4,coal;unknown,operational;unknown,330.0,quang ninh,94.1,Uong Bi I,94.1,Uong Bi I
 an khanh 2,NĐ An Khánh II,2,2,1,gpt-5.5-2026-04-23;qwen3.7-max-2026-05-20,arm4,coal,cancelled;operational,300.0,bac giang/thai nguyen;thai nguyen,94.7,An Khánh - Bac Giang,94.7,An Khánh - Bac Giang
-nhiet dien lng cong thanh,Nhiệt điện LNG Công Thanh,2,1,1,mistral-large-2512,arm1,imported gas;unknown,proposed;unknown,1500.0,thanh hoa,100.0,Cong Thanh,100.0,Cong Thanh
-nhiet dien formosa,Nhiệt điện Formosa,2,1,2,mistral-large-2512,arm1;arm2,coal,operational,1200.0,ha tinh,77.8,Formosa HT2,100.0,Dong Nai Formosa
-nha may dien hat nhan ninh thuan 1,Nhà máy điện hạt nhân Ninh Thuận 1,2,1,2,mistral-large-2512,arm1;arm2,unknown,planned;unknown,2400.0,ninh thuan,80.0,LNG Chân Mây,80.0,Vinh Tan 1
-nha may dien hat nhan ninh thuan 2,Nhà máy điện hạt nhân Ninh Thuận 2,2,1,2,mistral-large-2512,arm1;arm2,unknown,planned;proposed,2400.0;4000.0,ninh thuan,80.0,LNG Chân Mây,80.0,Vinh Tan 1
-nhiet dien pha lai 1 & 2,Nhiệt điện Phả Lại 1 & 2,2,1,1,mistral-large-2512,arm2,coal,operational,1800.0;2400.0,hai duong,100.0,Phả Lại 1,100.0,Phả Lại 1
-nhiet dien cai lan,Nhiệt điện Cái Lân,2,1,1,gpt-5.5-2026-04-23,arm2,coal;unknown,operational,39.0,quang ninh,85.7,LNG Hải Lăng (2 and 3),85.7,LNG Hải Lăng (2 and 3)
-nhon trach 1 & 2,Nhơn Trạch 1 & 2,2,1,2,qwen3.7-max-2026-05-20,arm2;arm4,gas;unknown,operational,1200.0;1215.0,dong nai,100.0,TBKHH Nhơn Trạch I,100.0,TBKHH Nhơn Trạch I
+cong thanh lng,Công Thanh LNG,2,1,1,claude-opus-4-6,arm1,imported gas,proposed,1500.0;600.0,thanh hoa,100.0,Cong Thanh,100.0,Cong Thanh
+lng cong thanh,Nhiệt điện LNG Công Thanh,2,1,1,mistral-large-2512,arm1,imported gas;unknown,proposed;unknown,1500.0,thanh hoa,100.0,Cong Thanh,100.0,Cong Thanh
+dien hat nhan ninh thuan 1,Nhà máy điện hạt nhân Ninh Thuận 1,2,1,2,mistral-large-2512,arm1;arm2,unknown,planned;unknown,2400.0,ninh thuan,80.0,Vinh Tan 1,80.0,Vinh Tan 1
+dien hat nhan ninh thuan 2,Nhà máy điện hạt nhân Ninh Thuận 2,2,1,2,mistral-large-2512,arm1;arm2,unknown,planned;proposed,2400.0;4000.0,ninh thuan,80.0,Vinh Tan 1,80.0,Vinh Tan 1
+cai lan,Nhiệt điện Cái Lân,2,1,1,gpt-5.5-2026-04-23,arm2,coal;unknown,operational,39.0,quang ninh,85.7,LNG Hải Lăng (1),85.7,LNG Hải Lăng (1)
+nhon trach 3&4,NMĐ Nhơn Trạch 3&4 (row),2,1,1,claude-opus-4-6,arm3,imported gas,unknown,0.0,dong nai,100.0,LNG Nhơn Trạch 3,100.0,LNG Nhơn Trạch 3
 thai binh,LNG Thái Bình,2,1,2,mistral-large-2512,arm3;arm4,imported gas,planned;proposed,1500.0,thai binh,100.0,LNG Thái Bình,100.0,LNG Thái Bình
-nmd khi du hoa phat 2,NMĐ khí dư Hòa Phát II,2,1,2,mistral-large-2512,arm3;arm4,unknown,operational,300.0,hai duong,82.4,Cẩm Phả 2,82.4,Cẩm Phả 2
-nmd dong phat duc giang,NMĐ đồng phát Đức Giang,2,1,2,mistral-large-2512,arm3;arm4,coal;unknown,operational,100.0,bac giang,85.7,LNG Mỹ Giang,85.7,LNG Mỹ Giang
-nmd dong phat hai ha 2,NMĐ đồng phát Hải Hà 2,2,1,2,mistral-large-2512,arm3;arm4,coal;unknown,proposed,600.0,quang ninh,77.8,Phả Lại 1,75.0,Cẩm Phả 2
-nmd ba ria,NMĐ Bà Rịa,2,1,2,mistral-large-2512,arm3;arm4,unknown,operational,389.0,ba ria - vung tau,85.7,TBKHH Bà Rịa 2,85.7,TBKHH Bà Rịa 2
-nmd dong phat hai ha 3,NMĐ đồng phát Hải Hà 3,2,1,2,mistral-large-2512,arm3;arm4,coal;unknown,proposed,600.0,quang ninh,77.8,Phả Lại 1,75.0,Cam Pha 3
-nmd nhon trach 3 & 4,NMĐ Nhơn Trạch 3 & 4,2,1,2,mistral-large-2512,arm3;arm4,imported gas,operational;unknown,1500.0;1624.0,dong nai,100.0,LNG Nhơn Trạch 3,100.0,LNG Nhơn Trạch 3
-nmd na duong,NMĐ Na Dương,2,1,2,mistral-large-2512,arm3;arm4,coal;unknown,operational,110.0;111.0,lang son,88.9,Na Dương 1,88.9,Na Dương 1
-nmd dong phat hai ha 4,NMĐ đồng phát Hải Hà 4,2,1,2,mistral-large-2512,arm3;arm4,coal;unknown,proposed,600.0,quang ninh,77.8,Phả Lại 1,73.7,Hai Ha CHP Phase 1
-nmd dong phat hai ha 1,NMĐ đồng phát Hải Hà 1,2,1,2,mistral-large-2512,arm3;arm4,coal;unknown,operational,300.0,quang ninh,77.8,Phả Lại 1,75.0,Cẩm Phả 1
-nmd ve dan,NMĐ Vê Dan,2,1,2,mistral-large-2512,arm3;arm4,oil;unknown,operational,72.0,binh dinh;dong nai,66.7,Vedan Vietnam Cogeneration power station,66.7,Lee & Man
-uong bi mr 1,NĐ Uông Bí MR 1,2,1,1,gpt-5.5,arm3,coal,operational,300.0,quang ninh,94.1,Uong Bi I,94.4,Uong Bi I extension
-nhiet dien phu tho,Nhiệt điện Phú Thọ,2,1,1,gpt-5.5,arm3,coal,cancelled,600.0,phu tho,72.7,NĐ Cần Thơ,72.7,LNG Phú Mỹ 3.1
-nhiet dien khi du hoa phat 2,Nhiệt điện khí dư Hòa Phát II,2,1,1,gpt-5.5,arm3,coal;unknown,proposed,300.0,hai duong / dung quat unresolved;hai duong / dung quat?,82.4,Cẩm Phả 2,82.4,Cẩm Phả 2
-nhiet dien bac giang,Nhiệt điện Bắc Giang,2,1,1,gpt-5.5,arm3,coal,cancelled,600.0,bac giang,85.7,LNG Mỹ Giang,100.0,An Khánh - Bac Giang
-nhiet dien cam thanh,Nhiệt điện Cẩm Thanh,2,1,1,qwen3.7-max-2026-05-20,arm3,coal,cancelled,600.0,quang nam,80.0,LNG Núi Thành (Quảng Nam),80.0,Cong Thanh
-duyen hai 3 mo rong,NĐ Duyên Hải 3 Mở Rộng,1,1,1,claude-opus-4-6,arm1,coal,operational,688.0,tra vinh,100.0,Duyen Hai 3,100.0,Duyen Hai 3
+than binh dinh 1,NĐ Than Bình Định I,2,1,1,gpt-5.5,arm3,coal,cancelled,1200.0,binh dinh,100.0,LNG Bình Định,100.0,LNG Bình Định
+an khanh 2 / bac giang,NĐ An Khánh II / Bắc Giang,2,1,1,gpt-5.5,arm3,coal,constructing,650.0,bac giang,94.7,An Khánh 1,94.7,An Khánh 1
+than mien bac 1000 mw,NĐ Than miền Bắc 1000 MW,2,1,1,gpt-5.5,arm3,coal,cancelled,2000.0,"bac bo unspecified;northern vietnam, unspecified",100.0,NĐ Miền Bắc 1,100.0,NĐ Miền Bắc 1
+vinh tan vi,NĐ Vĩnh Tân VI,2,1,1,gpt-5.5,arm3,coal,cancelled,1200.0,binh thuan,94.7,Vinh Tan 1,94.7,Vinh Tan 1
 tuabin khi ba ria,NĐ Tuabin khí Bà Rịa,1,1,1,claude-opus-4-6,arm1,unknown,operational,389.0,ba ria – vung tau,85.7,TBKHH Bà Rịa 2,85.7,TBKHH Bà Rịa 2
-cong thanh lng,Công Thanh LNG,1,1,1,claude-opus-4-6,arm1,imported gas,proposed,1500.0,thanh hoa,100.0,Cong Thanh,100.0,Cong Thanh
-nmnd ba ria,NMNĐ Bà Rịa,1,1,1,claude-opus-4-6,arm1,unknown,operational,389.0,ba ria–vung tau,85.7,TBKHH Bà Rịa 2,85.7,TBKHH Bà Rịa 2
-nmnd hoa phat dung quat,NMNĐ Hòa Phát Dung Quất,1,1,1,claude-opus-4-6,arm1,coal,operational,240.0,quang ngai,90.0,TBKHH Dung Quất I,90.0,TBKHH Dung Quất I
-nmnd cong thanh lng,NMNĐ Công Thanh LNG,1,1,1,claude-opus-4-6,arm1,imported gas,proposed,600.0,thanh hoa,100.0,Cong Thanh,100.0,Cong Thanh
-nmnd cam pha,NMNĐ Cẩm Phả,1,1,1,claude-opus-4-6,arm1,coal,operational,670.0,quang ninh,87.5,Cam Pha 3,87.5,Cam Pha 3
-nmnd kien giang 2,NMNĐ Kiên Giang 2,1,1,1,claude-opus-4-6,arm1,unknown,cancelled,750.0,kien giang,88.9,"TBKHH Kiên Giang I, II",88.9,"TBKHH Kiên Giang I, II"
-nmnd vinh tan 4 mr,NMNĐ Vĩnh Tân 4 MR,1,1,1,claude-opus-4-6,arm1,coal,operational,600.0,binh thuan,100.0,Vinh Tan 4,100.0,Vinh Tan 4
-nmnd kien luong,NMNĐ Kiên Lương,1,1,1,claude-opus-4-6,arm1,coal,cancelled,4400.0,kien giang,70.6,Na Dương 1,70.6,Na Dương 1
-nmnd duyen hai 3 mr,NMNĐ Duyên Hải 3 MR,1,1,1,claude-opus-4-6,arm1,coal,operational,688.0,tra vinh,100.0,Duyen Hai 3,100.0,Duyen Hai 3
-nmnd kien giang 1,NMNĐ Kiên Giang 1,1,1,1,claude-opus-4-6,arm1,unknown,cancelled,750.0,kien giang,88.9,"TBKHH Kiên Giang I, II",88.9,"TBKHH Kiên Giang I, II"
-nhiet dien cam pha tkv,Nhiệt điện Cẩm Phả TKV,1,1,1,claude-opus-4-6,arm1,coal,operational,440.0,quang ninh,88.9,Cam Pha 3,94.1,Cam Pha 3
-dien khi ca mau 3 lng,Điện khí Cà Mau 3 LNG,1,1,1,claude-opus-4-6,arm1,imported gas,cancelled,1500.0,ca mau,87.5,LNG Cà Mau 1,87.5,LNG Cà Mau 1
-nhiet dien kien giang 1 & 2,Nhiệt điện Kiên Giang 1 & 2,1,1,1,claude-opus-4-6,arm1,coal,cancelled,1500.0,kien giang,86.7,"TBKHH Kiên Giang I, II",92.9,"TBKHH Kiên Giang I, II"
-nhiet dien hoa phat hai duong,Nhiệt điện Hòa Phát Hải Dương,1,1,1,claude-opus-4-6,arm1,coal,operational,120.0,hai duong,100.0,Hai Duong,100.0,Hai Duong
+hoa phat hai duong,Nhiệt điện Hòa Phát Hải Dương,1,1,1,claude-opus-4-6,arm1,coal,operational,120.0,hai duong,100.0,Hai Duong,100.0,Hai Duong
 du phong lng qh8,Dự phòng LNG QH8 (2031–2035),1,1,1,claude-opus-4-6,arm1,imported gas,proposed,7500.0,various,70.6,Hải Phòng,70.6,Hải Phòng
-nhiet dien cong thanh,Nhiệt điện Công Thanh (LNG),1,1,1,claude-opus-4-6,arm1,coal,unknown,1500.0,thanh hoa,100.0,Cong Thanh,100.0,Cong Thanh
-nhiet dien duyen hai 1,Nhiệt điện Duyên Hải 1 (mở rộng),1,1,1,mistral-large-2512,arm1,coal,operational,622.5,tra vinh,100.0,Duyen Hai 1,100.0,Duyen Hai 1
-nhiet dien soc trang,Nhiệt điện Sóc Trăng,1,1,1,mistral-large-2512,arm1,unknown,proposed,9600.0,soc trang,60.0,LNG Cà Ná,62.5,An Khánh - Bac Giang
-nhiet dien ca mau,Nhiệt điện Cà Mau (mở rộng),1,1,1,mistral-large-2512,arm1,unknown,proposed,1500.0,ca mau,85.7,LNG Cà Mau 1,100.0,LNG Cà Mau 1
-nhiet dien na duong 2,Nhiệt điện Na Dương 2 (mở rộng),1,1,1,mistral-large-2512,arm1,coal,constructing,300.0,lang son,100.0,Na Dương 2,100.0,Na Dương 2
-dien khi lng son my 1 & 2,Điện khí LNG Sơn Mỹ I & II,1,1,1,mistral-large-2512,arm1,imported gas,unknown,3000.0,binh thuan,100.0,LNG Sơn Mỹ I,100.0,LNG Sơn Mỹ I
-nhiet dien nam mu,Nhiệt điện Nậm Mu,1,1,1,mistral-large-2512,arm1,coal,operational,100.0,dien bien,87.5,LNG miền Nam,80.0,Nam Dinh 1
-nhiet dien duyen hai 4,Nhiệt điện Duyên Hải 4,1,1,1,mistral-large-2512,arm1,coal,operational,600.0,tra vinh,90.9,Duyen Hai 1,95.2,Duyen Hai 1
-nhiet dien khe bo,Nhiệt điện Khe Bố,1,1,1,mistral-large-2512,arm1,coal,operational,200.0,nghe an,60.0,LNG Phong Điền – Huế,66.7,Mao Khe
-nhiet dien mong duong,Nhiệt điện Mông Dương,1,1,1,mistral-large-2512,arm1,coal,operational,1080.0,quang ninh,90.9,Mong Duong 1,100.0,Mong Duong 1
-nhiet dien lng soc trang,Nhiệt điện LNG Sóc Trăng,1,1,1,mistral-large-2512,arm1,imported gas,proposed,9600.0,soc trang,75.0,LNG Long Sơn,85.7,LNG Long Sơn
-nhiet dien lng ca mau 3,Nhiệt điện LNG Cà Mau 3,1,1,1,gpt-5.5,arm1,imported gas,proposed,1500.0,ca mau,88.9,"LNG Cà Mau 2,3",88.9,"LNG Cà Mau 2,3"
-nhiet dien khi ba ria,Nhiệt điện khí Bà Rịa,1,1,1,gpt-5.5,arm1,unknown,operational,389.0,ba ria–vung tau,85.7,TBKHH Bà Rịa 2,85.7,TBKHH Bà Rịa 2
-nha may dien kien giang 2,Nhà máy điện Kiên Giang 2,1,1,1,gpt-5.5,arm1,unknown,proposed,750.0,kien giang,88.9,"TBKHH Kiên Giang I, II",88.9,"TBKHH Kiên Giang I, II"
+duyen hai 1,Nhiệt điện Duyên Hải 1 (mở rộng),1,1,1,mistral-large-2512,arm1,coal,operational,622.5,tra vinh,100.0,Duyen Hai 1,100.0,Duyen Hai 1
+soc trang,Nhiệt điện Sóc Trăng,1,1,1,mistral-large-2512,arm1,unknown,proposed,9600.0,soc trang,62.5,An Khánh - Bac Giang,62.5,An Khánh - Bac Giang
+na duong 2,Nhiệt điện Na Dương 2 (mở rộng),1,1,1,mistral-large-2512,arm1,coal,constructing,300.0,lang son,100.0,Na Dương 2,100.0,Na Dương 2
+nam mu,Nhiệt điện Nậm Mu,1,1,1,mistral-large-2512,arm1,coal,operational,100.0,dien bien,80.0,Nam Dinh 1,80.0,Nam Dinh 1
+khe bo,Nhiệt điện Khe Bố,1,1,1,mistral-large-2512,arm1,coal,operational,200.0,nghe an,66.7,Mao Khe,66.7,Mao Khe
+mong duong,Nhiệt điện Mông Dương,1,1,1,mistral-large-2512,arm1,coal,operational,1080.0,quang ninh,100.0,Mong Duong 1,100.0,Mong Duong 1
+duyen hai 4,Nhiệt điện Duyên Hải 4,1,1,1,mistral-large-2512,arm1,coal,operational,600.0,tra vinh,95.2,Duyen Hai 1,95.2,Duyen Hai 1
+lng soc trang,Nhiệt điện LNG Sóc Trăng,1,1,1,mistral-large-2512,arm1,imported gas,proposed,9600.0,soc trang,85.7,LNG Long Sơn (I),85.7,LNG Long Sơn (I)
+khi ba ria,Nhiệt điện khí Bà Rịa,1,1,1,gpt-5.5,arm1,unknown,operational,389.0,ba ria–vung tau,85.7,TBKHH Bà Rịa 2,85.7,TBKHH Bà Rịa 2
+dien kien giang 2,Nhà máy điện Kiên Giang 2,1,1,1,gpt-5.5,arm1,unknown,proposed,750.0,kien giang,88.9,"TBKHH Kiên Giang I, II",88.9,"TBKHH Kiên Giang I, II"
 trung tam dien luc mien trung 500 mw,Trung tâm điện lực miền Trung 500 MW,1,1,1,gpt-5.5,arm1,unknown,proposed,500.0,not specified,91.7,TBKHH miền Trung I,91.7,TBKHH miền Trung I
 tuabin khi hon hop phu my chay lng bo sung,Tuabin khí hỗn hợp Phú Mỹ chạy LNG bổ sung,1,1,1,gpt-5.5,arm1,imported gas,operational,0.0,ba ria–vung tau,87.5,TBKHH Phú Mỹ 1,87.5,TBKHH Phú Mỹ 1
-nha may dien kien giang 1,Nhà máy điện Kiên Giang 1,1,1,1,gpt-5.5,arm1,unknown,proposed,750.0,kien giang,88.9,"TBKHH Kiên Giang I, II",88.9,"TBKHH Kiên Giang I, II"
-nha may nhiet dien pha lai,Nhà máy nhiệt điện Phả Lại,1,1,1,gpt-5.5,arm1,coal,operational,1040.0,hai duong,87.5,Phả Lại 1,100.0,Phả Lại 1
-nha may nhiet dien na duong,Nhà máy nhiệt điện Na Dương,1,1,1,gpt-5.5,arm1,coal,operational,110.0,lang son,88.9,Na Dương 1,100.0,Na Dương 1
-nha may dien tra noc,Nhà máy điện Trà Nóc,1,1,1,gpt-5.5,arm1,unknown,operational,193.0,can tho,80.0,LNG Chân Mây,71.4,LNG Bến Tre
+dien kien giang 1,Nhà máy điện Kiên Giang 1,1,1,1,gpt-5.5,arm1,unknown,proposed,750.0,kien giang,88.9,"TBKHH Kiên Giang I, II",88.9,"TBKHH Kiên Giang I, II"
+dien tra noc,Nhà máy điện Trà Nóc,1,1,1,gpt-5.5,arm1,unknown,operational,193.0,can tho,71.4,LNG Bến Tre,71.4,LNG Bến Tre
 dien khi lo b – o mon trung tam phu tro,Điện khí Lô B – Ô Môn trung tâm phụ trợ,1,1,1,gpt-5.5,arm1,unknown,proposed,30.0,can tho/kien giang region,85.7,TBKHH Ô Môn I,85.7,TBKHH Ô Môn I
-trung tam dien luc kien luong giai doan sau,Trung tâm điện lực Kiên Lương giai đoạn sau,1,1,1,gpt-5.5,arm1,coal,cancelled,2000.0,kien giang,70.0,Na Dương 1,70.0,Na Dương 1
-dien lng ca mau 3,Điện LNG Cà Mau 3,1,1,1,gpt-5.5,arm1,imported gas,proposed,1500.0,ca mau,88.9,"LNG Cà Mau 2,3",88.9,"LNG Cà Mau 2,3"
-du an nhiet dien o mon 3 & 4,Dự án Nhiệt điện Ô Môn III & IV,1,1,1,qwen3.7-max-2026-05-20,arm1,imported gas,unknown,1500.0,can tho,100.0,TBKHH Ô Môn III,100.0,TBKHH Ô Môn III
-nha may nhiet dien uong bi mo rong,Nhà máy Nhiệt điện Uông Bí Mở rộng,1,1,1,qwen3.7-max-2026-05-20,arm1,coal,operational,600.0,quang ninh,88.9,Uong Bi I,94.1,Uong Bi I
-nha may dien khi lo b - o mon,Nhà máy Điện Khí Lô B - Ô Môn,1,1,1,qwen3.7-max-2026-05-20,arm1,unknown,unknown,3000.0,can tho / kien giang,83.3,TBKHH Ô Môn I,83.3,TBKHH Ô Môn I
-nha may dien nhon trach 3 & 4,Nhà máy Điện Nhơn Trạch 3 & 4,1,1,1,qwen3.7-max-2026-05-20,arm1,imported gas,constructing,1760.0,dong nai,100.0,LNG Nhơn Trạch 3,100.0,LNG Nhơn Trạch 3
-nhiet dien uong bi 2,Nhiệt điện Uông Bí 2,1,1,1,qwen3.7-max-2026-05-20,arm1,coal,operational,300.0,quang ninh,88.9,Uong Bi I,100.0,Uong Bi II extension
-nmnd duyen hai 3 mo rong,NMNĐ Duyên Hải 3 Mở rộng,1,1,1,qwen3.7-max-2026-05-20,arm1,coal,operational,660.0,tra vinh,100.0,Duyen Hai 3,100.0,Duyen Hai 3
-nmnd vinh tan 4 mo rong,NMNĐ Vĩnh Tân 4 Mở rộng,1,1,1,qwen3.7-max-2026-05-20,arm1,coal,operational,600.0,binh thuan,100.0,Vinh Tan 4,100.0,Vinh Tan 4
-duyen hai 3 mr / dh3 ext.,Duyên Hải 3 MR / DH3 Ext.,1,1,1,claude-opus-4-6,arm2,coal,operational,688.0,tra vinh,100.0,Duyen Hai 3,100.0,Duyen Hai 3
-vinh tan 4 mr / vinh tan 4 ext.,Vĩnh Tân 4 MR / Vinh Tan 4 Ext.,1,1,1,claude-opus-4-6,arm2,coal,operational,600.0,binh thuan,100.0,Vinh Tan 4,100.0,Vinh Tan 4
-**coal shelved subtotal**,**Coal Shelved Subtotal**,1,1,1,claude-opus-4-6,arm2,unknown,unknown,7700.0,,60.0,LNG Cà Ná,60.0,LNG Cà Ná
-**dom. gas pre-con subtotal**,**Dom. Gas Pre-con Subtotal**,1,1,1,claude-opus-4-6,arm2,unknown,unknown,4990.0,,62.5,LNG Long Sơn,62.5,LNG Long Sơn
-**coal cancelled subtotal**,**Coal Cancelled Subtotal**,1,1,1,claude-opus-4-6,arm2,unknown,unknown,12000.0,,62.5,Cao Ngạn,62.5,Cao Ngạn
-**coal operating subtotal**,**Coal Operating Subtotal**,1,1,1,claude-opus-4-6,arm2,unknown,unknown,24804.0,,62.5,LNG Long Sơn,62.5,LNG Long Sơn
-**lng operating subtotal**,**LNG Operating Subtotal**,1,1,1,claude-opus-4-6,arm2,unknown,unknown,1500.0,,66.7,LNG Long Sơn,66.7,LNG Long Sơn
-**coal u/c subtotal**,**Coal U/C Subtotal**,1,1,1,claude-opus-4-6,arm2,unknown,unknown,4300.0,,60.0,LNG Cà Ná,60.0,LNG Cà Ná
+dien khi lo b - o mon,Nhà máy Điện Khí Lô B - Ô Môn,1,1,1,qwen3.7-max-2026-05-20,arm1,unknown,unknown,3000.0,can tho / kien giang,83.3,TBKHH Ô Môn I,83.3,TBKHH Ô Môn I
+**coal operating subtotal**,**Coal Operating Subtotal**,1,1,1,claude-opus-4-6,arm2,unknown,unknown,24804.0,,62.5,LNG Long Sơn (I),62.5,LNG Long Sơn (I)
 **lng pre-con/dev subtotal**,**LNG Pre-con/Dev Subtotal**,1,1,1,claude-opus-4-6,arm2,unknown,unknown,29000.0,,58.8,Long Phú 1,58.8,Long Phú 1
-**domestic gas operating subtotal**,**Domestic Gas Operating Subtotal**,1,1,1,claude-opus-4-6,arm2,unknown,unknown,8238.0,,62.5,LNG Long Sơn,62.5,LNG Long Sơn
-uong bi mr / uong bi expansion,Uông Bí MR / Uong Bi Expansion,1,1,1,claude-opus-4-6,arm2,coal,operational,630.0,quang ninh,94.1,Uong Bi I,94.4,Uong Bi I extension
-vinh tan 4 mr / vinh tan 4 ext,Vĩnh Tân 4 MR / Vinh Tan 4 Ext,1,1,1,claude-opus-4-6,arm2,coal,operational,600.0,binh thuan,100.0,Vinh Tan 4,100.0,Vinh Tan 4
-duyen hai 3 mr / duyen hai 3 ext,Duyên Hải 3 MR / Duyen Hai 3 Ext,1,1,1,claude-opus-4-6,arm2,coal,operational,688.0,tra vinh,100.0,Duyen Hai 3,100.0,Duyen Hai 3
-nhiet dien long an,Nhiệt điện Long An,1,1,1,mistral-large-2512,arm2,imported gas,cancelled,1500.0,long an,87.5,Long An 1,100.0,Long An 1
-"nhiet dien phu my 1, 2.1, 3, 4","Nhiệt điện Phú Mỹ 1, 2.1, 3, 4",1,1,1,mistral-large-2512,arm2,unknown,operational,1500.0,ba ria - vung tau,100.0,TBKHH Phú Mỹ 1,100.0,TBKHH Phú Mỹ 1
-"nhiet dien o mon 1, 2, 3","Nhiệt điện Ô Môn 1, 2, 3",1,1,1,mistral-large-2512,arm2,unknown,operational,1050.0,can tho,100.0,TBKHH Ô Môn I,100.0,TBKHH Ô Môn I
-nhiet dien o mon 3 & 4,Nhiệt điện Ô Môn 3 & 4,1,1,1,mistral-large-2512,arm2,imported gas,proposed,1500.0,can tho,100.0,TBKHH Ô Môn III,100.0,TBKHH Ô Môn III
-nha may nhiet dien formosa,Nhà máy Nhiệt điện Formosa,1,1,1,mistral-large-2512,arm2,coal,operational,300.0,ha tinh,80.0,LNG Chân Mây,100.0,Dong Nai Formosa
-nha may nhiet dien kien luong,Nhà máy Nhiệt điện Kiên Lương,1,1,1,mistral-large-2512,arm2,coal,cancelled,2400.0,kien giang,80.0,LNG Chân Mây,75.0,"TBKHH Kiên Giang I, II"
-nha may dien rac,Nhà máy điện rác,1,1,1,mistral-large-2512,arm2,unknown,operational,150.0,various,80.0,LNG Chân Mây,80.0,NĐ LNG miền Bắc
-nhiet dien block b – o mon,Nhiệt điện Block B – Ô Môn,1,1,1,mistral-large-2512,arm2,gas,planned,3000.0,kien giang,83.3,TBKHH Ô Môn I,83.3,TBKHH Ô Môn I
-nha may dien sinh khoi kcp,Nhà máy điện sinh khối KCP,1,1,1,mistral-large-2512,arm2,unknown,operational,30.0,various,80.0,LNG Chân Mây,66.7,LNG Bình Định
-nhiet dien van phong 1,Nhiệt điện Vân Phong 1,1,1,1,mistral-large-2512,arm2,coal,operational,1320.0,khanh hoa,100.0,LNG Vân Phong (J-Power),100.0,LNG Vân Phong (J-Power)
-nhiet dien mong duong 2,Nhiệt điện Mông Dương 2,1,1,1,mistral-large-2512,arm2,coal,operational,1244.0,quang ninh,100.0,Mong Duong 2,100.0,Mong Duong 2
-nha may dien sinh khoi,Nhà máy điện sinh khối,1,1,1,mistral-large-2512,arm2,unknown,operational,200.0,various,80.0,LNG Chân Mây,66.7,LNG Bình Định
-nha may dien rac soc son,Nhà máy điện rác Sóc Sơn,1,1,1,mistral-large-2512,arm2,unknown,operational,75.0,ha noi,80.0,LNG Chân Mây,71.4,LNG Long Sơn
-nhiet dien block b,Nhiệt điện Block B,1,1,1,mistral-large-2512,arm2,unknown,proposed,6900.0,multiple,58.8,LNG Bình Định,54.5,Bạc Liêu 1
-nhiet dien lng quang trach 3,Nhiệt điện LNG Quảng Trạch 3,1,1,1,mistral-large-2512,arm2,imported gas,proposed,1500.0,quang binh,92.3,Quảng Trạch 2,92.3,Quảng Trạch 2
-nhiet dien vinh tan 5,Nhiệt điện Vĩnh Tân 5,1,1,1,gpt-5.5-2026-04-23,arm2,coal,cancelled,1200.0,binh thuan,90.0,Vinh Tan 1,94.7,Vinh Tan 1
-nhiet dien van phong 2,Nhiệt điện Vân Phong 2,1,1,1,gpt-5.5-2026-04-23,arm2,coal,cancelled,1320.0,khanh hoa,100.0,LNG Vân Phong (J-Power),100.0,LNG Vân Phong (J-Power)
-dien khi du hoa phat 2,Điện khí dư Hòa Phát 2,1,1,1,gpt-5.5-2026-04-23,arm2,unknown,proposed,300.0,quang ngai,82.4,Cẩm Phả 2,82.4,Cẩm Phả 2
-dien dong phat duc giang,Điện đồng phát Đức Giang,1,1,1,gpt-5.5-2026-04-23,arm2,coal,proposed,100.0,lao cai,85.7,LNG Mỹ Giang,85.7,LNG Mỹ Giang
-nhiet dien ca mau 1 va 2,Nhiệt điện Cà Mau 1 và 2,1,1,1,gpt-5.5-2026-04-23,arm2,unknown,operational,1500.0,ca mau,100.0,LNG Cà Mau 1,100.0,LNG Cà Mau 1
-nhiet dien vedan viet nam,Nhiệt điện Vedan Việt Nam,1,1,1,gpt-5.5-2026-04-23,arm2,unknown,operational,72.0,dong nai,80.0,LNG miền Nam,96.3,Vedan Vietnam Cogeneration power station
-nhiet dien uong bi mo rong 1–2,Nhiệt điện Uông Bí mở rộng 1–2,1,1,1,gpt-5.5-2026-04-23,arm2,coal,operational,630.0,quang ninh,88.9,Uong Bi I,94.4,Uong Bi I extension
-long phu 2 & 3,Long Phu 2 & 3,1,1,1,qwen3.7-max-2026-05-20,arm2,coal,cancelled,2400.0,soc trang,100.0,Long Phú 2,100.0,Long Phú 2
-vung ang 2 & 3,Vung Ang 2 & 3,1,1,1,qwen3.7-max-2026-05-20,arm2,coal,cancelled,2400.0,ha tinh,100.0,Vung Ang 2,100.0,Vung Ang 2
+**coal cancelled subtotal**,**Coal Cancelled Subtotal**,1,1,1,claude-opus-4-6,arm2,unknown,unknown,12000.0,,62.5,Cao Ngạn,62.5,Cao Ngạn
+**domestic gas operating subtotal**,**Domestic Gas Operating Subtotal**,1,1,1,claude-opus-4-6,arm2,unknown,unknown,8238.0,,62.5,LNG Long Sơn (I),62.5,LNG Long Sơn (I)
+**coal u/c subtotal**,**Coal U/C Subtotal**,1,1,1,claude-opus-4-6,arm2,unknown,unknown,4300.0,,60.0,LNG Cà Ná,60.0,LNG Cà Ná
+**coal shelved subtotal**,**Coal Shelved Subtotal**,1,1,1,claude-opus-4-6,arm2,unknown,unknown,7700.0,,60.0,LNG Cà Ná,60.0,LNG Cà Ná
+**dom. gas pre-con subtotal**,**Dom. Gas Pre-con Subtotal**,1,1,1,claude-opus-4-6,arm2,unknown,unknown,4990.0,,62.5,LNG Long Sơn (I),62.5,LNG Long Sơn (I)
+**lng operating subtotal**,**LNG Operating Subtotal**,1,1,1,claude-opus-4-6,arm2,unknown,unknown,1500.0,,66.7,LNG Long Sơn (I),66.7,LNG Long Sơn (I)
+dien rac,Nhà máy điện rác,1,1,1,mistral-large-2512,arm2,unknown,operational,150.0,various,80.0,NĐ LNG miền Bắc,80.0,NĐ LNG miền Bắc
+block b – o mon,Nhiệt điện Block B – Ô Môn,1,1,1,mistral-large-2512,arm2,gas,planned,3000.0,kien giang,83.3,TBKHH Ô Môn I,83.3,TBKHH Ô Môn I
+dien sinh khoi kcp,Nhà máy điện sinh khối KCP,1,1,1,mistral-large-2512,arm2,unknown,operational,30.0,various,66.7,LNG Bình Định,66.7,LNG Bình Định
+bot mong duong 2,Nhiệt điện BOT Mông Dương 2,1,1,1,mistral-large-2512,arm2,coal,operational,1244.0,quang ninh,100.0,Mong Duong 2,100.0,Mong Duong 2
+dien sinh khoi,Nhà máy điện sinh khối,1,1,1,mistral-large-2512,arm2,unknown,operational,200.0,various,66.7,LNG Bình Định,66.7,LNG Bình Định
+dien rac soc son,Nhà máy điện rác Sóc Sơn,1,1,1,mistral-large-2512,arm2,unknown,operational,75.0,ha noi,73.7,NĐ Miền Bắc 1,73.7,NĐ Miền Bắc 1
+lng quang trach 3,Nhiệt điện LNG Quảng Trạch 3,1,1,1,mistral-large-2512,arm2,imported gas,proposed,1500.0,quang binh,92.3,Quảng Trạch 2,92.3,Quảng Trạch 2
+block b,Nhiệt điện Block B,1,1,1,mistral-large-2512,arm2,unknown,proposed,6900.0,multiple,54.5,Bạc Liêu 1,54.5,Bạc Liêu 1
+vinh tan 5,Nhiệt điện Vĩnh Tân 5,1,1,1,gpt-5.5-2026-04-23,arm2,coal,cancelled,1200.0,binh thuan,94.7,Vinh Tan 1,94.7,Vinh Tan 1
+dien duc giang,Điện đồng phát Đức Giang,1,1,1,gpt-5.5-2026-04-23,arm2,coal,proposed,100.0,lao cai,85.7,LNG Mỹ Giang,85.7,LNG Mỹ Giang
 thi vai,LNG Thị Vải,1,1,1,qwen3.7-max-2026-05-20,arm2,imported gas,unknown,900.0,ba ria - vung tau,72.7,LNG Thái Bình,72.7,LNG Thái Bình
-nha may dien ca mau 1 & 2,Nhà máy Điện Cà Mau 1 & 2,1,1,1,qwen3.7-max-2026-05-20,arm2,gas,operational,1420.0,ca mau,100.0,LNG Cà Mau 1,100.0,LNG Cà Mau 1
-nha may dien nhon trach 3 va 4,Nhà máy Điện Nhơn Trạch 3 và 4,1,1,1,qwen3.7-max-2026-05-20,arm2,imported gas,constructing,900.0,dong nai,100.0,LNG Nhơn Trạch 3,100.0,LNG Nhơn Trạch 3
 formosa ht,NĐ Formosa HT (Phase 1),1,1,1,claude-opus-4-6,arm3,unknown,unknown,500.0,ha tinh,100.0,Formosa HT2,100.0,Formosa HT2
-nhiet dien can tho,Nhiệt điện Cần Thơ (dầu),1,1,1,claude-opus-4-6,arm3,oil,operational,33.0,can tho,100.0,NĐ Cần Thơ,100.0,NĐ Cần Thơ
-nhiet dien uong bi mr 1,Nhiệt điện Uông Bí MR I,1,1,1,claude-opus-4-6,arm3,coal,operational,300.0,quang ninh,88.9,Uong Bi I,94.4,Uong Bi I extension
-nhiet dien cam pha 1 & 2,Nhiệt điện Cẩm Phả I & II,1,1,1,claude-opus-4-6,arm3,coal,operational,600.0,quang ninh,100.0,Cẩm Phả 1,100.0,Cẩm Phả 1
 tua bin khi thu duc,Tua bin khí Thủ Đức,1,1,1,claude-opus-4-6,arm3,oil,operational,113.0,hcm city,100.0,NĐ Thủ Đức,100.0,NĐ Thủ Đức
-nhiet dien uong bi mr 2,Nhiệt điện Uông Bí MR II,1,1,1,claude-opus-4-6,arm3,coal,operational,330.0,quang ninh,88.9,Uong Bi I,94.4,Uong Bi I extension
-tbk can tho,TBK Cần Thơ,1,1,1,claude-opus-4-6,arm3,unknown,operational,155.0,can tho,100.0,NĐ Cần Thơ,100.0,NĐ Cần Thơ
-nmd nhon trach 3&4,NMĐ Nhơn Trạch 3&4 (row),1,1,1,claude-opus-4-6,arm3,unknown,unknown,0.0,—,100.0,LNG Nhơn Trạch 3,100.0,LNG Nhơn Trạch 3
+tua bin khi can tho,Tua bin khí Cần Thơ,1,1,1,claude-opus-4-6,arm3,unknown,operational,155.0,can tho,100.0,NĐ Cần Thơ,100.0,NĐ Cần Thơ
 nghi son 3,Nghi Sơn III,1,1,1,mistral-large-2512,arm3,coal,proposed,1200.0,thanh hoa,100.0,LNG Nghi Sơn (Thanh Hóa),100.0,LNG Nghi Sơn (Thanh Hóa)
-nmd formosa dong nai,NMĐ Formosa Đồng Nai,1,1,1,mistral-large-2512,arm3,coal,operational,150.0,dong nai,75.0,Son Dong,75.0,Son Dong
-nmd uong bi mr,NMĐ Uông Bí MR,1,1,1,mistral-large-2512,arm3,coal,operational,300.0,quang ninh,88.9,Uong Bi I,94.4,Uong Bi I extension
-nmd kien luong,NMĐ Kiên Lương,1,1,1,mistral-large-2512,arm3,coal,cancelled,1900.0,kien giang,70.6,Na Dương 1,70.6,Na Dương 1
-nmd vinh tan 4 mr,NMĐ Vĩnh Tân IV MR,1,1,1,mistral-large-2512,arm3,coal,operational,600.0,binh thuan,100.0,Vinh Tan 4,100.0,Vinh Tan 4
-nmd uong bi mr 2,NMĐ Uông Bí MR II,1,1,1,mistral-large-2512,arm3,coal,operational,330.0,quang ninh,88.9,Uong Bi I,89.5,Uong Bi I extension
-kien luong 3,Kiên Lương III,1,1,1,mistral-large-2512,arm3,coal,proposed,1200.0,kien giang,73.7,Na Dương 1,73.7,Na Dương 1
+binh dinh 3,Bình Định III,1,1,1,mistral-large-2512,arm3,coal,proposed,1200.0,binh dinh,100.0,LNG Bình Định,100.0,LNG Bình Định
 yen hung / uong bi 3,NĐ Yên Hưng / Uông Bí III,1,1,1,gpt-5.5,arm3,coal,unknown,1200.0,quang ninh,88.9,Uong Bi I,88.9,Uong Bi I
-an giang,NĐ An Giang,1,1,1,gpt-5.5,arm3,coal,unknown,2000.0,an giang,87.5,An Khánh - Bac Giang,87.5,An Khánh - Bac Giang
 hoa phat 2 gas du,Hòa Phát II gas dư,1,1,1,gpt-5.5,arm3,unknown,planned,300.0,n/a,77.8,Cẩm Phả 2,77.8,Cẩm Phả 2
 duc giang chp,Đức Giang CHP,1,1,1,gpt-5.5,arm3,unknown,planned,100.0,n/a,87.0,Duc Giang - Lao Cai Chemical,87.0,Duc Giang - Lao Cai Chemical
-kien luong coal,Kiên Lương coal,1,1,1,gpt-5.5,arm3,coal,unknown,3600.0,kien giang,75.0,LNG Long Sơn,75.0,LNG Long Sơn
 kien giang 1–2 gas,Kiên Giang I–II gas,1,1,1,gpt-5.5,arm3,unknown,unknown,1500.0,kien giang,89.7,"TBKHH Kiên Giang I, II",89.7,"TBKHH Kiên Giang I, II"
 can tho hoi nuoc,NĐ Cần Thơ hơi nước,1,1,1,gpt-5.5,arm3,unknown,retired,33.0,can tho,100.0,NĐ Cần Thơ,100.0,NĐ Cần Thơ
-tbk ba ria,TBK Bà Rịa,1,1,1,gpt-5.5,arm3,unknown,operational,389.0,ba ria–vung tau,85.7,TBKHH Bà Rịa 2,100.0,Bà Rịa GT
-an khanh 2 / bac giang,NĐ An Khánh II / Bắc Giang,1,1,1,gpt-5.5,arm3,coal,constructing,650.0,bac giang,94.7,An Khánh 1,94.7,An Khánh 1
-than mien bac 1000 mw,NĐ Than miền Bắc 1000 MW,1,1,1,gpt-5.5,arm3,coal,cancelled,2000.0,bac bo unspecified,83.3,NĐ LNG miền Bắc,83.3,NĐ LNG miền Bắc
-ttnd kien luong 3,TTNĐ Kiên Lương III,1,1,1,gpt-5.5,arm3,coal,cancelled,2000.0,kien giang,73.7,Na Dương 1,73.7,Na Dương 1
-ttnd kien luong 1,TTNĐ Kiên Lương I,1,1,1,gpt-5.5,arm3,coal,cancelled,1200.0,kien giang,84.2,Na Dương 1,84.2,Na Dương 1
-ttnd kien luong 2,TTNĐ Kiên Lương II,1,1,1,gpt-5.5,arm3,coal,cancelled,1200.0,kien giang,84.2,Na Dương 2,84.2,Na Dương 2
-than binh dinh 1,NĐ Than Bình Định I,1,1,1,gpt-5.5,arm3,coal,cancelled,1200.0,binh dinh,100.0,LNG Bình Định,100.0,LNG Bình Định
-nhiet dien than ve dan,Nhiệt điện than Vê Đan,1,1,1,gpt-5.5,arm3,coal,operational,60.0,dong nai,70.0,Vinh Tan 1,72.7,"LNG Tân Thuận – Đầm Dơi, Cà Mau"
-nhiet dien formosa dong nai,Nhiệt điện Formosa Đồng Nai,1,1,1,gpt-5.5,arm3,coal,operational,150.0,dong nai,75.0,Son Dong,84.2,Formosa HT2
-nhiet dien binh dinh 2,Nhiệt điện Bình Định II,1,1,1,gpt-5.5,arm3,coal,cancelled,2000.0,binh dinh,100.0,LNG Bình Định,100.0,LNG Bình Định
-nhiet dien bao dai,Nhiệt điện Bảo Đại,1,1,1,gpt-5.5,arm3,coal,cancelled,600.0,bac bo unspecified,62.5,LNG miền Nam,71.4,Duc Giang - Lao Cai Chemical
-nhiet dien an khanh 2 / bac giang,Nhiệt điện An Khánh II / Bắc Giang,1,1,1,gpt-5.5,arm3,coal,constructing,650.0,bac giang,90.0,An Khánh 1,94.7,An Khánh 1
-trung tam nhiet dien kien luong 1,Trung tâm nhiệt điện Kiên Lương I,1,1,1,gpt-5.5,arm3,coal,cancelled,1200.0,kien giang,84.2,Na Dương 1,84.2,Na Dương 1
+thu duc dau,NĐ Thủ Đức dầu,1,1,1,gpt-5.5,arm3,unknown,retired,165.0,tp. ho chi minh,100.0,NĐ Thủ Đức,100.0,NĐ Thủ Đức
+can tho s4 dau,Nhiệt điện Cần Thơ S4 dầu,1,1,1,gpt-5.5,arm3,unknown,retired,33.0,can tho,100.0,NĐ Cần Thơ,100.0,NĐ Cần Thơ
 tuabin khi thu duc,Tuabin khí Thủ Đức,1,1,1,gpt-5.5,arm3,unknown,retired,113.0,tp. ho chi minh,100.0,NĐ Thủ Đức,100.0,NĐ Thủ Đức
-nhiet dien hai ha 2,Nhiệt điện Hải Hà 2,1,1,1,gpt-5.5,arm3,coal,proposed,600.0,quang ninh,75.0,Cẩm Phả 2,93.3,Hai Ha CHP Phase 1
-nhiet dien hai ha 3,Nhiệt điện Hải Hà 3,1,1,1,gpt-5.5,arm3,coal,proposed,600.0,quang ninh,75.0,Cam Pha 3,93.3,Hai Ha CHP Phase 1
-nhiet dien hai ha 4,Nhiệt điện Hải Hà 4,1,1,1,gpt-5.5,arm3,coal,proposed,600.0,quang ninh,73.7,LNG Hải Phòng 4 (Đồ Sơn),93.3,Hai Ha CHP Phase 1
-trung tam nhiet dien kien luong 3,Trung tâm nhiệt điện Kiên Lương III,1,1,1,gpt-5.5,arm3,coal,cancelled,2000.0,kien giang,73.7,Na Dương 1,73.7,Na Dương 1
-nhiet dien formosa ha tinh mo rong / ht2,Nhiệt điện Formosa Hà Tĩnh mở rộng / HT2,1,1,1,gpt-5.5,arm3,coal,proposed,650.0,ha tinh,100.0,LNG Hà Tĩnh,100.0,LNG Hà Tĩnh
-nhiet dien rang dong,Nhiệt điện Rạng Đông,1,1,1,gpt-5.5,arm3,coal,proposed,100.0,nam dinh,80.0,Son Dong,82.4,Thang Long
-nhiet dien can tho s4 dau,Nhiệt điện Cần Thơ S4 dầu,1,1,1,gpt-5.5,arm3,unknown,retired,33.0,can tho,100.0,NĐ Cần Thơ,100.0,NĐ Cần Thơ
-trung tam nhiet dien kien luong 2,Trung tâm nhiệt điện Kiên Lương II,1,1,1,gpt-5.5,arm3,coal,cancelled,1200.0,kien giang,84.2,Na Dương 2,84.2,Na Dương 2
-nhiet dien vinh tan vi,Nhiệt điện Vĩnh Tân VI,1,1,1,gpt-5.5,arm3,coal,cancelled,1200.0,binh thuan,90.0,Vinh Tan 1,94.7,Vinh Tan 1
-nhiet dien hai ha 1,Nhiệt điện Hải Hà 1,1,1,1,gpt-5.5,arm3,coal,operational,150.0,quang ninh,75.0,Cẩm Phả 1,93.3,Hai Ha CHP Phase 1
-nhiet dien formosa ha tinh hien huu,Nhiệt điện Formosa Hà Tĩnh hiện hữu,1,1,1,gpt-5.5,arm3,coal,operational,150.0,ha tinh,100.0,LNG Hà Tĩnh,100.0,LNG Hà Tĩnh
-nhiet dien ve dan,Nhiệt điện Vê Đan,1,1,1,gpt-5.5,arm3,unknown,operational,72.0,dong nai,58.8,LNG Bình Định,90.9,Vedan Vietnam Cogeneration power station
-nhiet dien than binh dinh 2,Nhiệt điện than Bình Định II,1,1,1,gpt-5.5,arm3,coal,cancelled,2000.0,binh dinh,100.0,LNG Bình Định,100.0,LNG Bình Định
-nhiet dien dong phat hai ha 2,Nhiệt điện đồng phát Hải Hà 2,1,1,1,gpt-5.5,arm3,coal,proposed,600.0,quang ninh,77.8,Phả Lại 1,93.3,Hai Ha CHP Phase 1
-nhiet dien formosa ha tinh 2 / ht2,Nhiệt điện Formosa Hà Tĩnh II / HT2,1,1,1,gpt-5.5,arm3,coal,operational,650.0,ha tinh,100.0,LNG Hà Tĩnh,100.0,LNG Hà Tĩnh
-nhiet dien formosa ha tinh 1,Nhiệt điện Formosa Hà Tĩnh I,1,1,1,gpt-5.5,arm3,coal,operational,150.0,ha tinh,100.0,LNG Hà Tĩnh,100.0,LNG Hà Tĩnh
-nhiet dien dong phat hai ha 4,Nhiệt điện đồng phát Hải Hà 4,1,1,1,gpt-5.5,arm3,coal,proposed,600.0,quang ninh,77.8,Phả Lại 1,93.3,Hai Ha CHP Phase 1
-nhiet dien than mien bac 1000 mw,Nhiệt điện than miền Bắc 1000 MW,1,1,1,gpt-5.5,arm3,coal,cancelled,2000.0,"northern vietnam, unspecified",83.3,NĐ LNG miền Bắc,83.3,NĐ LNG miền Bắc
-nhiet dien than an giang,Nhiệt điện than An Giang,1,1,1,gpt-5.5,arm3,coal,cancelled,2000.0,an giang,85.7,LNG Mỹ Giang,85.7,LNG Mỹ Giang
-nhiet dien luc nam,Nhiệt điện Lục Nam,1,1,1,gpt-5.5,arm3,coal,cancelled,100.0,bac giang,80.0,LNG Cà Ná,80.0,LNG Cà Ná
-nhiet dien dong phat hai ha 3,Nhiệt điện đồng phát Hải Hà 3,1,1,1,gpt-5.5,arm3,coal,proposed,600.0,quang ninh,77.8,Phả Lại 1,93.3,Hai Ha CHP Phase 1
-nhiet dien than binh dinh 1,Nhiệt điện than Bình Định I,1,1,1,gpt-5.5,arm3,coal,cancelled,1200.0,binh dinh,100.0,LNG Bình Định,100.0,LNG Bình Định
-nhiet dien vedan / ve dan,Nhiệt điện Vedan / Vê Đan,1,1,1,gpt-5.5,arm3,unknown,operational,72.0,dong nai,62.5,LNG miền Nam,72.0,Vedan Vietnam Cogeneration power station
+than binh dinh 2,Nhiệt điện than Bình Định II,1,1,1,gpt-5.5,arm3,coal,cancelled,2000.0,binh dinh,100.0,LNG Bình Định,100.0,LNG Bình Định
+bac giang,Nhiệt điện Bắc Giang,1,1,1,gpt-5.5,arm3,coal,cancelled,600.0,bac giang,100.0,An Khánh - Bac Giang,100.0,An Khánh - Bac Giang
+formosa ha tinh 1,Nhiệt điện Formosa Hà Tĩnh I,1,1,1,gpt-5.5,arm3,coal,operational,150.0,ha tinh,100.0,LNG Hà Tĩnh,100.0,LNG Hà Tĩnh
 an khe biomass,An Khê Biomass,1,1,1,qwen3.7-max-2026-05-20,arm3,unknown,operational,110.0,gia lai,76.9,Mao Khe,76.9,Mao Khe
-hai ha dong phat,Hải Hà Đồng Phát,1,1,1,qwen3.7-max-2026-05-20,arm3,unknown,unknown,300.0,quang ninh,77.8,Hai Duong,100.0,Hai Ha CHP Phase 1
-kien luong complex,Kiên Lương Complex,1,1,1,qwen3.7-max-2026-05-20,arm3,unknown,cancelled,3600.0,kien giang,75.0,LNG Long Sơn,75.0,LNG Long Sơn
 kcp biomass,KCP Biomass,1,1,1,qwen3.7-max-2026-05-20,arm3,unknown,operational,60.0,phu yen,50.0,LNG Cà Mau 1,50.0,LNG Cà Mau 1
-nmnd cam thanh,NMNĐ Cẩm Thanh,1,1,1,qwen3.7-max-2026-05-20,arm3,unknown,unknown,600.0,quang nam,80.0,LNG Núi Thành (Quảng Nam),80.0,LNG Núi Thành (Quảng Nam)
-nhiet dien dau thu duc,Nhiệt điện Dầu Thủ Đức,1,1,1,qwen3.7-max-2026-05-20,arm3,unknown,unknown,165.0,tp ho chi minh,100.0,NĐ Thủ Đức,100.0,NĐ Thủ Đức
-nhiet dien uong bi mr1,Nhiệt điện Uông Bí MR1,1,1,1,qwen3.7-max-2026-05-20,arm3,unknown,operational,300.0,quang ninh,88.9,Uong Bi I,94.1,Uong Bi I
-nhiet dien uong bi mr2,Nhiệt điện Uông Bí MR2,1,1,1,qwen3.7-max-2026-05-20,arm3,unknown,operational,330.0,quang ninh,88.9,Uong Bi I,94.1,Uong Bi I
+dau thu duc,Nhiệt điện Dầu Thủ Đức,1,1,1,qwen3.7-max-2026-05-20,arm3,unknown,unknown,165.0,tp ho chi minh,100.0,NĐ Thủ Đức,100.0,NĐ Thủ Đức
 cao nhan,Cao Nhân,1,1,1,claude-opus-4-6,arm4,unknown,unknown,0.0,hai phong,87.5,Cao Ngạn,87.5,Cao Ngạn
 formosa ht ph.1,Formosa HT Ph.1,1,1,1,claude-opus-4-6,arm4,unknown,operational,500.0,ha tinh,95.2,Formosa HT2,95.2,Formosa HT2
-nmd formosa,NMĐ Formosa,1,1,1,mistral-large-2512,arm4,unknown,operational,600.0,ha tinh,84.2,Dong Nai Formosa,84.2,Dong Nai Formosa
-nmd kien luong 1,NMĐ Kiên Lương I,1,1,1,mistral-large-2512,arm4,unknown,cancelled,1800.0,kien giang,84.2,Na Dương 1,84.2,Na Dương 1
-nmd cam pha,NMĐ Cẩm Phả,1,1,1,mistral-large-2512,arm4,unknown,operational,600.0,quang ninh,87.5,Cam Pha 3,87.5,Cam Pha 3
-nmd uong bi mo rong 2,NMĐ Uông Bí Mở Rộng II,1,1,1,mistral-large-2512,arm4,unknown,operational,330.0,quang ninh,88.9,Uong Bi I,89.5,Uong Bi I extension
 long an 3,Long An III,1,1,1,mistral-large-2512,arm4,coal,proposed,1200.0,long an,94.1,Long An 1,94.1,Long An 1
-formosa ha tinh hien huu,NĐ Formosa Hà Tĩnh hiện hữu,1,1,1,gpt-5.5-2026-04-23,arm4,coal,operational,150.0,ha tinh,100.0,LNG Hà Tĩnh,100.0,LNG Hà Tĩnh
-ttdl kien luong,TTĐL Kiên Lương,1,1,1,gpt-5.5-2026-04-23,arm4,coal,cancelled,3600.0,kien giang,70.6,Na Dương 1,70.6,Na Dương 1
 tan phuoc 3,NĐ Tân Phước III,1,1,1,gpt-5.5-2026-04-23,arm4,coal,cancelled,1200.0,tien giang,100.0,LNG Tân Phước,100.0,LNG Tân Phước
-dong phat rang dong,NĐ đồng phát Rạng Đông,1,1,1,gpt-5.5-2026-04-23,arm4,coal,planned,100.0,nam dinh,80.0,Son Dong,82.4,Thang Long
-than ve dan,NĐ than Vê Đan,1,1,1,gpt-5.5-2026-04-23,arm4,coal,operational,60.0,dong nai,72.7,"LNG Tân Thuận – Đầm Dơi, Cà Mau",72.7,"LNG Tân Thuận – Đầm Dơi, Cà Mau"
-nhiet dien an giang,Nhiệt điện An Giang,1,1,1,gpt-5.5-2026-04-23,arm4,coal,cancelled,2000.0,an giang,85.7,LNG Mỹ Giang,87.5,An Khánh - Bac Giang
-nhiet dien than bao dai,Nhiệt điện than Bảo Đại,1,1,1,gpt-5.5-2026-04-23,arm4,coal,cancelled,600.0,bac bo unspecified,70.0,Vinh Tan 1,66.7,LNG Chân Mây
-trung tam nhiet dien kien luong,Trung tâm nhiệt điện Kiên Lương,1,1,1,gpt-5.5-2026-04-23,arm4,coal,cancelled,3600.0,kien giang,70.6,Na Dương 1,70.6,Na Dương 1
-nhiet dien dong phat hai ha,Nhiệt điện đồng phát Hải Hà,1,1,1,gpt-5.5-2026-04-23,arm4,coal,unknown,2100.0,quang ninh,77.8,Phả Lại 1,100.0,Hai Ha CHP Phase 1
-nhiet dien kien luong 1-3,Nhiệt điện Kiên Lương 1-3,1,1,1,gpt-5.5-2026-04-23,arm4,coal,cancelled,3600.0,kien giang,80.0,Na Dương 1,80.0,Na Dương 1
 hoa phat 2 nhiet du,NĐ Hòa Phát II nhiệt dư,1,1,1,gpt-5.5-2026-04-23,arm4,coal,unknown,300.0,quang ngai,77.8,Cẩm Phả 2,77.8,Cẩm Phả 2
-ttnd kien luong,TTNĐ Kiên Lương,1,1,1,gpt-5.5-2026-04-23,arm4,coal,cancelled,3600.0,kien giang,70.6,Na Dương 1,70.6,Na Dương 1
-nha may nhiet dien vnt19,Nhà máy nhiệt điện VNT19,1,1,1,gpt-5.5-2026-04-23,arm4,coal,proposed,54.0,quang ngai,80.0,LNG Chân Mây,50.0,Long An 1
 vung ang 3 than,NĐ Vũng Áng III than,1,1,1,gpt-5.5-2026-04-23,arm4,coal,cancelled,1200.0,ha tinh,100.0,Vung Ang 3,100.0,Vung Ang 3
-than bao dai,NĐ than Bảo Đài,1,1,1,gpt-5.5-2026-04-23,arm4,coal,cancelled,600.0,bac giang,66.7,LNG Chân Mây,66.7,LNG Chân Mây
+hoa ninh giai doan 1,LNG Hòa Ninh giai đoạn I,1,1,1,gpt-5.5-2026-04-23,arm4,imported gas,proposed,1500.0,da nang,73.7,Na Dương 1,73.7,Na Dương 1
 thanh hoa,LNG Thanh Hóa,1,1,1,gpt-5.5-2026-04-23,arm4,imported gas,proposed,1500.0,thanh hoa,71.4,Cong Thanh,71.4,Cong Thanh
 thai binh giai doan 2,LNG Thái Bình giai đoạn 2,1,1,1,gpt-5.5-2026-04-23,arm4,imported gas,proposed,1500.0,thai binh,100.0,LNG Thái Bình,100.0,LNG Thái Bình
-hoa ninh giai doan 1,LNG Hòa Ninh giai đoạn I,1,1,1,gpt-5.5-2026-04-23,arm4,imported gas,proposed,1500.0,da nang,73.7,Na Dương 1,73.7,Na Dương 1
+vnt19,Nhà máy nhiệt điện VNT19,1,1,1,gpt-5.5-2026-04-23,arm4,coal,proposed,54.0,quang ngai,50.0,Long An 1,50.0,Long An 1
+dau/khi thu duc,NĐ dầu/khí Thủ Đức,1,1,1,gpt-5.5-2026-04-23,arm4,unknown,retired,165.0,tp ho chi minh,100.0,NĐ Thủ Đức,100.0,NĐ Thủ Đức
+uong bi ext 1 & 2,Uong Bi Ext 1 & 2,1,1,1,qwen3.7-max-2026-05-20,arm4,coal,operational,630.0,,94.1,Uong Bi I,94.1,Uong Bi I
 **cam pha**,**Cẩm Phả**,1,1,1,qwen3.7-max-2026-05-20,arm4,coal,unknown,600.0,,77.8,Cam Pha 3,77.8,Cam Pha 3
-long an 1 & 2,LNG Long An I & II,1,1,1,qwen3.7-max-2026-05-20,arm4,imported gas,proposed,3000.0,long an,100.0,Long An 1,100.0,Long An 1
+an khanh 1 & 2,An Khánh I & II,1,1,1,qwen3.7-max-2026-05-20,arm4,coal,operational,400.0,,100.0,An Khánh 1,100.0,An Khánh 1
 long an 1 & 2 lng,Long An I & II LNG,1,1,1,qwen3.7-max-2026-05-20,arm4,imported gas,proposed,3000.0,long an,100.0,Long An 1,100.0,Long An 1
