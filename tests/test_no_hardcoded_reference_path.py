@@ -110,12 +110,15 @@ def test_config_default_reference_exists():
 
 
 def test_raw_snapshots_are_datestamped():
-    """All files in raw/ (except README.md, import.sh) must have -YYYY-MM-DD.ext pattern."""
+    """All files in raw/ (except README.md, import.sh) must have -YYYY-MM-DD pattern.
+
+    Accepts optional +descriptor suffix after the date (e.g. pipeline-2026-06-05+ext.ods).
+    """
     import re
 
     raw = REPO_ROOT / "data" / "reference" / "raw"
     exempt = {"README.md", "import.sh"}
-    pat = re.compile(r"-\d{4}-\d{2}-\d{2}\.[a-z0-9]+$")
+    pat = re.compile(r"-\d{4}-\d{2}-\d{2}([+][^.]+)?\.[a-z0-9]+$")
     undated = [f.name for f in raw.iterdir()
                if f.name not in exempt and not pat.search(f.name)]
     assert undated == [], f"raw/ files without capture datestamp: {undated}"

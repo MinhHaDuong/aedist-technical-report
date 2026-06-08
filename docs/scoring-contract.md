@@ -286,7 +286,6 @@ currently has no effect on row selection.
 
 ---
 
->>>>>>> a5ff2499 (wip: ticket 0396 — coherence_row_atomicity indicator (temp commit))
 ### Temporality
 
 As-of date is resolved from the first non-empty of: `status_as_of`, `as_of`,
