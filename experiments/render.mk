@@ -45,6 +45,7 @@ ANALYSIS_EXP2_2X2_TEX := $(ANALYSIS_GEN)/tab_exp2_2x2.tex
 ANALYSIS_EXP2_2X2_FR_TEX := $(ANALYSIS_GEN)/tab_exp2_2x2_fr.tex
 ANALYSIS_EXP2_COVERAGE_SPLIT := $(ANALYSIS_GEN)/fig_exp2_coverage.pdf
 ANALYSIS_EXP2_COST_SPLIT := $(ANALYSIS_GEN)/fig_exp2_cost.pdf
+ANALYSIS_GROUNDING_LADDER_FIG := $(ANALYSIS_GEN)/fig_grounding_ladder.pdf
 ANALYSIS_SLIDE_MACROS := $(ANALYSIS_GEN)/macros_slides.tex
 
 ANALYSIS_EXP2_WIKI_CSV := $(ANALYSIS_GEN)/tab_exp2_wiki_compliance.csv
@@ -298,6 +299,20 @@ $(ANALYSIS_EXP2_COVERAGE_SPLIT) $(ANALYSIS_EXP2_COST_SPLIT) &: \
 	    --input $(ANALYSIS_GEN)/tab_exp2_arms_runs_view.csv \
 	    --coverage-output $(ANALYSIS_EXP2_COVERAGE_SPLIT) \
 	    --cost-output $(ANALYSIS_EXP2_COST_SPLIT)
+
+# --- Grounding ladder figure (E1→1N→1D→5D, paired within-agent; ticket 0471) --
+# Post-preprint / future work (deferred). Sources: both cross-eval CSVs (P2).
+# The figure is a committed handoff artifact but is NOT included in the preprint
+# (deferred per label in tickets/0471-...).
+$(ANALYSIS_GROUNDING_LADDER_FIG): \
+		$(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
+		$(ANALYSIS_EXP2_CROSS_EVAL_CSV) \
+		$(ANALYSIS_REPO_ROOT)/src/aedist/plot_grounding_ladder.py
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.plot_grounding_ladder \
+	    --exp1 $(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
+	    --exp2 $(ANALYSIS_EXP2_CROSS_EVAL_CSV) \
+	    --output $@
 
 # --- Slide macros (measurements → report/inputs/generated/macros_slides.tex) ---
 # The baseline census summary is derived from measurements.jsonl directly inside
@@ -621,7 +636,8 @@ chart-figures: \
 	$(ANALYSIS_EXP1_SPIDER_FAMILIES_FR) \
 	$(ANALYSIS_GEN)/fig_method_convergence.pdf \
 	$(ANALYSIS_GEN)/fig_regimes_scatter.pdf \
-	$(ANALYSIS_GEN)/fig_scaling_curve.pdf
+	$(ANALYSIS_GEN)/fig_scaling_curve.pdf \
+	$(ANALYSIS_GROUNDING_LADDER_FIG)
 
 # --- Full-phase aggregate (P3 render surface) -------------------------------
 # `all` rebuilds every committed handoff artifact this phase produces, so the
