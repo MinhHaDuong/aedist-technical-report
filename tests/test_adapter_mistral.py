@@ -780,6 +780,91 @@ def test_run_extra_metadata_logged_without_crash(monkeypatch, caplog):
     assert record.method_params.extra == {"dry_run": True}
 
 
+def test_followup_extra_metadata_prepended_not_in_body(monkeypatch):
+    """Follow-up turn with extra_metadata: budget signal must be prepended
+    into the user message content, NOT placed in the request body's
+    ``metadata`` key (which causes HTTP 422 on the append endpoint —
+    confirmed empirically, ticket 0247).
+    """
+    import aedist.adapter_mistral as am
+
+    bodies: list[dict] = []
+
+    class FakeResponse:
+        status_code = 200
+        text = "{}"
+
+        def raise_for_status(self):
+            pass
+
+        def json(self):
+            return {
+                "outputs": [
+                    {"type": "message.output", "content": "follow-up answer"},
+                ],
+                "usage": {
+                    "prompt_tokens": 50,
+                    "completion_tokens": 100,
+                    "connector_tokens": 0,
+                    "connectors": {"web_search": 0},
+                },
+                "conversation_id": "conv_1",
+            }
+
+    class FakeClient:
+        def __init__(self, **kwargs):
+            pass
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            pass
+
+        def post(self, url, **kwargs):
+            bodies.append(kwargs.get("json") or {})
+            return FakeResponse()
+
+        def delete(self, url, **kwargs):
+            return FakeResponse()
+
+    monkeypatch.setattr(am, "_load_api_key", lambda *a, **k: "fake-key")
+    monkeypatch.setattr(am.httpx, "Client", FakeClient)
+
+    run(
+        "what is the PDP8 capacity?",
+        dry_run=False,
+        model_meta=PRICE_CARD,
+        max_tokens=600,
+        cap_usd=10.0,
+        agent_mode="smoke",
+        continuation={"conversation_id": "conv_1", "agent_id": "ag_1"},
+        extra_metadata={"remaining_budget_usd": "3.50"},
+    )
+
+    assert len(bodies) == 1
+    body = bodies[0]
+
+    # The 422-triggering body-level metadata key must be absent.
+    assert "metadata" not in body, (
+        f"body-level 'metadata' key causes HTTP 422 on follow-up; body={body}"
+    )
+
+    # Budget signal must be preserved in the message content.
+    assert "inputs" in body
+    content = body["inputs"][0]["content"]
+    assert "[metadata]" in content, (
+        f"extra_metadata must be prepended as [metadata] line; content={content!r}"
+    )
+    assert "remaining_budget_usd=3.50" in content, (
+        f"metadata key=value missing from content; content={content!r}"
+    )
+    # Original prompt must still be present.
+    assert "what is the PDP8 capacity?" in content, (
+        f"original prompt missing from content; content={content!r}"
+    )
+
+
 # ---------------------------------------------------------------------------
 # Retry policy (ticket 0215)
 #

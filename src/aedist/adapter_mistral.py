@@ -488,9 +488,15 @@ def run(
        **follow-up turn**: skip agent creation, send follow-up message
        to existing conversation. No create, no delete.
 
-    ``extra_metadata`` is attached to the conversation request body's
-    ``metadata`` field when present. Wrapped defensively since the
-    Mistral beta API may not support it.
+    ``extra_metadata`` behaviour differs by turn:
+
+    - **Turn 1 (create + invoke):** attached as a body-level ``metadata``
+      key on the ``POST /v1/conversations`` request.
+    - **Follow-up turns:** the append endpoint (``POST /v1/conversations/{id}``)
+      returns HTTP 422 when a ``metadata`` key is present in the body
+      (confirmed empirically, ticket 0247). Instead the budget signal is
+      prepended as a ``[metadata] key=value; ...`` line inside the user
+      message content, matching the Qwen DashScope fallback pattern.
 
     ``system_prompt`` (ticket 0213) installs a designed system-level
     instruction on the Mistral agent at create time by overriding the
@@ -599,10 +605,21 @@ def run(
                 "Mistral follow-up turn requires continuation['conversation_id']; "
                 f"got {continuation!r}"
             )
+        # Mistral's append endpoint returns HTTP 422 with a body-level
+        # ``metadata`` key (confirmed ticket 0247). Preserve the budget
+        # signal by prepending a machine-parseable line into the message
+        # text — matching the Qwen DashScope fallback pattern.
+        user_content = prompt
+        if extra_metadata is not None:
+            meta_text = "; ".join(f"{k}={v}" for k, v in extra_metadata.items())
+            user_content = f"[metadata] {meta_text}\n{prompt}"
+            log.info(
+                "Mistral follow-up: extra_metadata prepended to user content "
+                "(body-level metadata key causes HTTP 422 on append endpoint)"
+            )
         conv_body: dict[str, Any] = {
-            "inputs": [{"role": "user", "content": prompt}],
+            "inputs": [{"role": "user", "content": user_content}],
         }
-        _attach_metadata(conv_body)
         with httpx.Client(base_url=API_BASE, headers=headers) as client:
             raw = _append_conversation(client, conversation_id, conv_body)
         agent_id = continuation["agent_id"]
