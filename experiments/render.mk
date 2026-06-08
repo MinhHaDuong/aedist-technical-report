@@ -61,6 +61,8 @@ ANALYSIS_EXP1_SPIDER_CLAUDE_FR := $(ANALYSIS_GEN)/fig_spider_exp1_claude_fr.pdf
 ANALYSIS_EXP2_COVERAGE_FIG_FR := $(ANALYSIS_GEN)/fig_exp2_coverage_certainty_fr.pdf
 # Quality-floor heatmap (ticket 0466): replaces spider in manuscript (main.md).
 ANALYSIS_EXP1_QUALITY_HEATMAP := $(ANALYSIS_GEN)/fig_quality_floor_heatmap_exp1.pdf
+# Within-model screen validation summary CSV (ticket 0467).
+ANALYSIS_EXP1_SCREEN_VALID_CSV := $(ANALYSIS_GEN)/tab_screen_validation_within_model.csv
 
 ANALYSIS_EXP2_OUTLINE_ARTIFACTS := \
 	$(ANALYSIS_GEN)/tab_exp2_outline_dataset.tex \
@@ -79,6 +81,7 @@ ANALYSIS_EXP2_OUTLINE_ARTIFACTS := \
 # ANALYSIS_MEASUREMENTS is defined in paths.mk (shared P2 outcome, now produced
 # by score.mk and consumed here as a source).
 ANALYSIS_EXP1_BATCH2_RECORDS := $(wildcard $(ANALYSIS_EXPERIMENTS_DIR)/outputs/exp1_batch2/*.record.json)
+ANALYSIS_EXP1_INPUT_CSVS := $(wildcard $(ANALYSIS_EXPERIMENTS_DIR)/outputs/exp1_batch2/*.csv)
 
 ANALYSIS_REPORT_DERIVED_DIR ?= $(ANALYSIS_REPO_ROOT)/derived
 ANALYSIS_VARIANCE_JSON := $(ANALYSIS_REPORT_DERIVED_DIR)/variance_decomposition.json
@@ -215,6 +218,18 @@ $(ANALYSIS_EXP1_QUALITY_HEATMAP): $(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_quality_floor_heatmap_exp1 \
 	    --input $(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
+	    --output $@
+
+# Within-model screen validation (ticket 0467): Annex F supporting CSV.
+# Consumes raw exp1_batch2 CSVs (cap_distinct/status_distinct) + cross-eval F1.
+# Two-source prereq: the cross-eval CSV (P2) and the raw run outputs (P1).
+$(ANALYSIS_EXP1_SCREEN_VALID_CSV): $(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
+		$(ANALYSIS_EXP1_INPUT_CSVS) \
+		$(ANALYSIS_REPO_ROOT)/src/aedist/screen_validation_within_model.py
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.screen_validation_within_model \
+	    --exp1-dir $(ANALYSIS_EXPERIMENTS_DIR)/outputs/exp1_batch2 \
+	    --cross-eval $(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
 	    --output $@
 
 $(ANALYSIS_GEN)/stat_tests_arm1_vs_arm2.txt: $(ANALYSIS_GEN)/tab_exp2_arms_runs_view.csv
@@ -505,7 +520,8 @@ report-tables: \
 	$(ANALYSIS_GEN)/tab_status_difficulty.tex \
 	$(ANALYSIS_EXP2_WIKI_CSV)
 
-report-figures: $(ANALYSIS_EXP1_SPIDER_FAMILIES) $(ANALYSIS_EXP1_QUALITY_HEATMAP)
+report-figures: $(ANALYSIS_EXP1_SPIDER_FAMILIES) $(ANALYSIS_EXP1_QUALITY_HEATMAP) \
+	$(ANALYSIS_EXP1_SCREEN_VALID_CSV)
 
 # --- Chart-data figures (migrated from root Makefile by 0370) -----------------
 # These produce committed handoff artifacts consumed by both report and slides.
