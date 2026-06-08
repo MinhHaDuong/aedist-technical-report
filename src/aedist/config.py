@@ -29,11 +29,13 @@ GEM_THERMAL_REFERENCE_CSV = (
 # from the author's "Market report on Gas to Power" master spreadsheet.
 # Datestamped immutable; extraction reads this to produce v2 releases.
 #
-# 0445 EXCEPTION: the pinned snapshot is the 2026-06-05 capture plus the
-# author's 8-cell standalone-extensions edit, applied locally because the
-# master lives on another machine (PROVENANCE.md § v2.1). The master does NOT
-# yet carry this edit — do NOT re-pin to a fresh import until the edit is
-# replayed there (ticket 0458), or the adoption silently reverts.
+# 0445/0472 EXCEPTION: the pinned snapshot carries two un-replayed local edits
+# that are not yet in the master (which lives on another machine):
+#   1. the author's 8-cell standalone-extensions edit (4 rows, ticket 0445;
+#      replay pending, ticket 0458);
+#   2. the 4-row Kiên Lương complex insertion (ticket 0472, add_kien_luong.py).
+# Do NOT re-pin to a fresh master import until BOTH edits are replayed there,
+# or the adoption silently reverts 176 → 170 (PROVENANCE.md § v2.2).
 VN_THERMAL_MASTER_SNAPSHOT_ODS = (
-    _REPO_ROOT / "data" / "reference" / "raw" / "pipeline+extensions-as-plants-2026-06-05.ods"
+    _REPO_ROOT / "data" / "reference" / "raw" / "pipeline+KG-2026-06-08.ods"
 )

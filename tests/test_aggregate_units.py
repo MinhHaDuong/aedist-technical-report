@@ -409,7 +409,7 @@ def test_real_snapshot_aggregates_green(tmp_path):
     assert r2.returncode == 0, (r2.stdout, r2.stderr)
 
     out = pd.read_csv(plants, dtype=str)
-    assert len(out) == 173  # pinned snapshot: 170 v2 plants -> 173 v2.1 (extensions standalone, 0445)
+    assert len(out) == 176  # pinned snapshot: 170 v2 plants -> 173 v2.1 -> 176 v2.2 (Kiên Lương +3, 0472)
     assert not out["name"].duplicated().any()
     assert (out["name"].str.strip() != "").all()
     capacities = pd.to_numeric(out["capacity_mwe"], errors="coerce")
