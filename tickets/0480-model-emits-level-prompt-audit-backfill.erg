@@ -1,0 +1,72 @@
+%erg 0.1
+Title: Prompt emits `level`; grain audit; measurements.jsonl backfill (Part A of 0402)
+Created: 2026-06-08
+Author: claude
+Blocked-by: 0401
+
+--- log ---
+2026-06-08T00:00Z claude created — Part A of tracking ticket 0402, split out so Part B (scorers) can land independently. Part B landed in PR #<TBD>.
+
+--- body ---
+## Context
+
+Ticket 0402 has two parts:
+- **Part B** (scorers) — `capacity_plausible_for_level` and `level_consistent_with_name`
+  predicates, wired into `score_coherence()` and `sota_cross_eval.csv`. DONE (PR
+  ticket/0402-model-emits-level).
+- **Part A** (this ticket) — prompt change so each output row declares its
+  granularity level (Unit/Block/Plant/Complex/Unknown), plus a one-call-per-regime
+  audit before any batch, plus `measurements.jsonl` backfill for existing rows.
+
+Until Part A lands, the Part-B scorers return `(None, "column_missing")` on all
+existing data rows (no `level` column in current output). The feature is inert but
+present; backfill activates it.
+
+## Relevant files
+- `src/aedist/reference_level.py` — `derive_reference_level()` for post-hoc name derivation
+- `src/aedist/schema.py` — `Level` enum (0401)
+- `experiments/experiments.toml` — sweep configs; prompt versions live here
+- `experiments/derived/measurements.jsonl` — the file to backfill
+
+## Actions
+
+1. **Audit first** (`.claude/rules/workflow.md`): run ONE call per regime with the new
+   prompt. Inspect whether models label grain coherently. If models cannot self-classify
+   reliably, fall back to post-hoc name derivation via `derive_reference_level()` and
+   record the fallback decision — do not ship a noisy hallucination axis.
+
+2. **Prompt change**: add a `level` field (Unit/Block/Plant/Complex/Unknown) to the
+   output row schema in the system prompt for each query variant. Document the exact
+   prompt version bump.
+
+3. **Backfill**: for existing `measurements.jsonl` rows lacking `level`, derive it
+   post-hoc from the emitted name via `derive_reference_level()`. Flag backfilled rows
+   as `level_source: "derived"` (vs. `"model"` for new runs). Wire into
+   `records_to_metrics()` if required by ADR-7; at minimum document in the row's extra
+   dict.
+
+4. **Re-run sweep if audit passes**: only after confirming the grain audit verdict,
+   gate whether a new Exp2 sweep with `level` is needed. If audit fails, ship derived
+   fallback only and open a separate ticket for the sweep.
+
+## Test
+- After backfill: `load_metrics()` rows have `level` key populated for at least N
+  existing rows.
+- Adherence test: if `level` is added to `records_to_metrics()`, add it to the ADR-7
+  wiring tests.
+
+## Verification
+- [ ] Prompt diff shows `level` field in the output schema instruction.
+- [ ] Grain audit: at least one call per regime; output inspected and verdict recorded in ticket log.
+- [ ] `measurements.jsonl` rows carry `level` (model or derived).
+- [ ] `make check` passes.
+
+## Invariants
+- Do not re-run the full sweep before the audit verdict is confirmed.
+- Post-hoc derivation must be flagged as `level_source: "derived"`, not silently passed off as model-emitted.
+
+## Exit criteria
+- [ ] Prompt emits `level`; one-call-per-regime audit recorded before any batch.
+- [ ] `measurements.jsonl` rows carry `level` (model-emitted on new runs, derived +
+      flagged on existing).
+- [ ] `make check` passes.

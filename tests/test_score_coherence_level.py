@@ -295,3 +295,54 @@ class TestScoreLevelConsistentWithName:
         ]
         frac, ann = score_level_consistent_with_name(rows)
         assert frac == 1.0
+
+
+# ---------------------------------------------------------------------------
+# Integration: score_coherence() populates new fields (ticket 0402)
+# ---------------------------------------------------------------------------
+
+
+class TestScoreCoherenceIntegration:
+    """Verify that score_coherence() in score_mechanical correctly delegates
+    capacity_plausible_for_level and level_consistent_with_name to the
+    canonical implementations in score_coherence_level.py."""
+
+    def test_coherence_populates_capacity_plausible_for_level(self):
+        """score_coherence() populates capacity_plausible_for_level when level present."""
+        from aedist.score_mechanical import score_coherence
+
+        rows = [
+            {"name": "Vinh Tan 2", "fuel": "coal", "status": "operating",
+             "level": "plant", "capacity_mwe": "600"},
+            {"name": "Cẩm Phả 1", "fuel": "coal", "status": "operating",
+             "level": "plant", "capacity_mwe": "6000"},  # Plant cap violation
+        ]
+        result = score_coherence(rows)
+        # One of two rows is plausible for level (600 MW Plant = OK; 6000 MW Plant = fail)
+        assert result.capacity_plausible_for_level == 0.5
+
+    def test_coherence_populates_level_consistent_with_name(self):
+        """score_coherence() populates level_consistent_with_name when level present."""
+        from aedist.score_mechanical import score_coherence
+
+        rows = [
+            {"name": "Vinh Tan 2", "fuel": "coal", "status": "operating",
+             "level": "plant", "capacity_mwe": "600"},
+            {"name": "Nhơn Trạch 3 & 4", "fuel": "gas", "status": "operating",
+             "level": "unit", "capacity_mwe": "1500"},  # R1 violation
+        ]
+        result = score_coherence(rows)
+        assert result.level_consistent_with_name == 0.5
+
+    def test_coherence_none_when_no_level_column(self):
+        """score_coherence() returns None for level fields when level key absent."""
+        from aedist.score_mechanical import score_coherence
+
+        rows = [
+            {"name": "Vinh Tan 2", "fuel": "coal", "status": "operating",
+             "capacity_mwe": "600"},
+        ]
+        result = score_coherence(rows)
+        assert result.capacity_plausible_for_level is None
+        assert result.capacity_plausible_for_level_annotation == "column_missing"
+        assert result.level_consistent_with_name is None

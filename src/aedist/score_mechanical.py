@@ -293,64 +293,15 @@ def score_accuracy(rows: list[dict[str, str]], ref_path: Path | None) -> Accurac
     )
 
 
-def score_capacity_plausible_for_level(
-    rows: list[dict[str, str]],
-) -> tuple[float | None, str | None]:
-    """Fraction of rows where capacity is plausible given the plant level (plant vs complex)."""
-    from .reference_level import derive_reference_level
-    from .schema import Level
-
-    if not rows:
-        return None, "no_rows"
-    plausible = 0
-    assessed = 0
-    for row in rows:
-        asset_type = (row.get("asset_type") or row.get("type") or "").strip()
-        cap_str = (row.get("capacity") or "").strip()
-        if not cap_str:
-            continue
-        try:
-            cap = float(cap_str)
-        except ValueError:
-            continue
-        level = derive_reference_level(asset_type)
-        if level is Level.UNKNOWN:
-            continue
-        assessed += 1
-        if level is Level.PLANT and cap <= 3200:
-            plausible += 1
-        elif level is Level.COMPLEX and cap >= 100:
-            plausible += 1
-    if assessed == 0:
-        return None, "no_assessable_rows"
-    return round(plausible / assessed, 4), None
-
-
-def score_level_consistent_with_name(
-    rows: list[dict[str, str]],
-) -> tuple[float | None, str | None]:
-    """Fraction of rows where the stated level (plant/complex) is consistent with the name."""
-    if not rows:
-        return None, "no_rows"
-    consistent = 0
-    assessed = 0
-    _complex_keywords = {"complex", "centre", "center", "tổ hợp", "cụm"}
-    for row in rows:
-        name = (row.get("name") or row.get("plant") or "").strip().lower()
-        asset_type = (row.get("asset_type") or row.get("type") or "").strip().lower()
-        if not name or not asset_type:
-            continue
-        assessed += 1
-        has_complex_kw = any(kw in name for kw in _complex_keywords)
-        is_complex_type = "complex" in asset_type
-        if has_complex_kw == is_complex_type:
-            consistent += 1
-    if assessed == 0:
-        return None, "no_assessable_rows"
-    return round(consistent / assessed, 4), None
-
-
 def score_coherence(rows: list[dict[str, str]]) -> CoherenceScores:
+    # Local import to avoid a circular dependency:
+    # score_coherence_level imports _ATOMICITY_VIOLATION_RE, _CAPACITY_KEYS,
+    # and _as_float from this module at the top level.
+    from .score_coherence_level import (
+        score_capacity_plausible_for_level,
+        score_level_consistent_with_name,
+    )
+
     if not rows:
         return CoherenceScores(None, None, None, annotation="no_rows")
 
