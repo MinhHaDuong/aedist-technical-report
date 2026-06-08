@@ -710,8 +710,15 @@ def query_single_turn(
     # exposed by OpenRouter for reasoning-capable models). Falls back to {} if the
     # provider returned no usage block. Ticket 0195.
     usage = response.usage.model_dump() if response.usage is not None else {}
+    content = choice.message.content
+    if content is None:
+        raise RuntimeError(
+            f"Null content from {model_id}: provider returned HTTP 200 "
+            f"but message.content is None "
+            f"(finish_reason={choice.finish_reason})"
+        )
     return {
-        "content": choice.message.content,
+        "content": content,
         "finish_reason": choice.finish_reason,
         "usage": usage,
         "wall_seconds": wall_seconds,

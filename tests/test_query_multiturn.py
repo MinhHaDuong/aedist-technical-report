@@ -331,6 +331,67 @@ def test_stateless_mode_resets_messages():
     assert "Response 2" not in last_call_msgs[0]["content"]
 
 
+def test_run_conversation_raises_on_null_content_cloud(monkeypatch):
+    """Null content from a cloud provider raises RuntimeError (ticket 0217).
+
+    query_single_turn now raises before returning, so this is exercised via the
+    cloud branch of _call. Covers exit criterion: query_multiturn does not
+    append None content to messages.
+    """
+    import pytest
+
+    from aedist.harness import BudgetTracker
+    from aedist.query_multiturn import run_conversation
+
+    client = MagicMock()
+    response = MagicMock()
+    response.choices = [MagicMock(message=MagicMock(content=None), finish_reason="stop")]
+    response.usage = MagicMock(model_dump=MagicMock(return_value={}))
+    client.chat.completions.create.return_value = response
+
+    model = {"context_window": 100000, "price_per_mtok_in": 0, "price_per_mtok_out": 0}
+    budget = BudgetTracker(budget_usd=None)
+
+    with pytest.raises(RuntimeError, match="null-mt-model"):
+        run_conversation(client, "null-mt-model", "hi", [], model, budget)
+
+
+def test_run_conversation_raises_on_null_content_ollama(monkeypatch):
+    """Null content from the Ollama branch raises RuntimeError (ticket 0217).
+
+    The Ollama route bypasses query_single_turn, so _call's own guard is what
+    catches it. This covers the path that corrupted conversation state in
+    query_multiturn:114 before the fix.
+    """
+    import pytest
+
+    from aedist.harness import BudgetTracker
+    from aedist.query_multiturn import run_conversation
+
+    monkeypatch.setattr(
+        "aedist.query_multiturn.query_ollama_native",
+        lambda *a, **kw: {
+            "content": None,
+            "finish_reason": "stop",
+            "usage": {},
+            "wall_seconds": 0.1,
+        },
+    )
+
+    model = {
+        "route": "ollama",
+        "context_window": 100000,
+        "price_per_mtok_in": 0,
+        "price_per_mtok_out": 0,
+    }
+    budget = BudgetTracker(budget_usd=None)
+
+    with pytest.raises(RuntimeError, match="null-ollama-model"):
+        run_conversation(
+            None, "null-ollama-model", "hi", [], model, budget, ollama_base_url="http://localhost:11434/v1"
+        )
+
+
 def test_no_context_window_skips_guard():
     """Models without context_window field skip the guard entirely."""
     from aedist.harness import BudgetTracker
