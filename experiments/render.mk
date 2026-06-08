@@ -650,6 +650,21 @@ $(ANALYSIS_GEN)/fig_exp1_recognition_matrix_top.pdf: $(ANALYSIS_EXP1_BATCH2_RECO
 	    --output $@ \
 	    --models claude-opus-4.6 deepseek-v4-pro gpt-5.5 mistral-large-2512 qwen3.7-max
 
+# Portrait (transposed) variant (ticket 0451): plant names on rows (legible at
+# ≥7pt/row, measured at build time), runs as columns with 3-level hierarchical
+# header (family / version / run). Multi-page PDF: page 1 = terminal+active
+# (operational/retired/cancelled, 78 rows), page 2 = pipeline
+# (proposed/planned/constructing, 98 rows), page 3 = top-40 FP panel.
+# Exploration artifact — not yet placed in the manuscript; author orientation
+# decision deferred (ticket 0451 exit criterion). The script imports
+# _order_runs/_order_plants from plot_exp1_matrix, so both are prerequisites.
+$(ANALYSIS_GEN)/fig_exp1_recognition_matrix_portrait.pdf: $(ANALYSIS_EXP1_BATCH2_RECORDS) $(ANALYSIS_EXPERT_REF) $(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp1_matrix_portrait.py $(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp1_matrix.py $(ANALYSIS_REPO_ROOT)/src/aedist/exp1_recognition.py
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.plot_exp1_matrix_portrait \
+	    --records-glob "$(ANALYSIS_EXPERIMENTS_DIR)/outputs/exp1_batch2/*.record.json" \
+	    --reference $(ANALYSIS_EXPERT_REF) \
+	    --output $@
+
 # Exp1 status difficulty table (ticket 0434): reference-list composition by
 # status vs mean recognition rate. Annex companion to the matrix figure above;
 # derives the same per-(run x plant) recognition independently from the records
@@ -697,6 +712,7 @@ chart-figures: \
 	$(ANALYSIS_GEN)/fig_exp1_recognition_matrix_fr.pdf \
 	$(ANALYSIS_GEN)/fig_exp1_recognition_matrix_strong.pdf \
 	$(ANALYSIS_GEN)/fig_exp1_recognition_matrix_top.pdf \
+	$(ANALYSIS_GEN)/fig_exp1_recognition_matrix_portrait.pdf \
 	$(ANALYSIS_GEN)/fig_capability_timeline.pdf \
 	$(ANALYSIS_GEN)/fig_capability_dag.pdf \
 	$(ANALYSIS_GEN)/fig_spider_cross_exp.pdf \
