@@ -51,6 +51,12 @@ ANALYSIS_EXP2_WIKI_MACROS := $(ANALYSIS_GEN)/macros_wiki_compliance.tex
 
 ANALYSIS_EXP1_SPIDER_FAMILIES := $(ANALYSIS_GEN)/fig_spider_exp1_families.pdf
 ANALYSIS_EXP1_SPIDER_CLAUDE := $(ANALYSIS_GEN)/fig_spider_exp1_claude.pdf
+# French-label variants for the French conference deck (slides.tex). The
+# unsuffixed PDFs above are English (preprint-first; author 2026-06-06: all
+# preprint figures in English, ticket 0455).
+ANALYSIS_EXP1_SPIDER_FAMILIES_FR := $(ANALYSIS_GEN)/fig_spider_exp1_families_fr.pdf
+ANALYSIS_EXP1_SPIDER_CLAUDE_FR := $(ANALYSIS_GEN)/fig_spider_exp1_claude_fr.pdf
+ANALYSIS_EXP2_COVERAGE_FIG_FR := $(ANALYSIS_GEN)/fig_exp2_coverage_certainty_fr.pdf
 
 ANALYSIS_EXP2_OUTLINE_ARTIFACTS := \
 	$(ANALYSIS_GEN)/tab_exp2_outline_dataset.tex \
@@ -123,13 +129,28 @@ $(ANALYSIS_EXP2_BIB_TABLE): $(ANALYSIS_GEN)/tab_exp2_bib_quality_view.csv
 	    --input $< \
 	    --output $@
 
+# The plot script is a prerequisite: it carries the language labels (ticket
+# 0455), so a label edit must re-trigger the figure build (mirrors the
+# recognition-matrix rules).
 $(ANALYSIS_EXP2_COVERAGE_FIG): $(ANALYSIS_GEN)/tab_exp2_bib_quality_view.csv \
-		$(ANALYSIS_GEN)/tab_exp2_arms_runs_view.csv
+		$(ANALYSIS_GEN)/tab_exp2_arms_runs_view.csv \
+		$(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp2_coverage_certainty.py
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_exp2_coverage_certainty \
 	    --input $(ANALYSIS_GEN)/tab_exp2_bib_quality_view.csv \
 	    --arms-input $(ANALYSIS_GEN)/tab_exp2_arms_runs_view.csv \
-	    --output $@
+	    --output $@ \
+	    --lang en
+
+$(ANALYSIS_EXP2_COVERAGE_FIG_FR): $(ANALYSIS_GEN)/tab_exp2_bib_quality_view.csv \
+		$(ANALYSIS_GEN)/tab_exp2_arms_runs_view.csv \
+		$(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp2_coverage_certainty.py
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.plot_exp2_coverage_certainty \
+	    --input $(ANALYSIS_GEN)/tab_exp2_bib_quality_view.csv \
+	    --arms-input $(ANALYSIS_GEN)/tab_exp2_arms_runs_view.csv \
+	    --output $@ \
+	    --lang fr
 
 $(ANALYSIS_EXP2_SPIRE_FIG): $(ANALYSIS_GEN)/sota_cross_eval_view.csv experiments/quality_spider_config.yaml
 	@mkdir -p $(dir $@)
@@ -139,19 +160,42 @@ $(ANALYSIS_EXP2_SPIRE_FIG): $(ANALYSIS_GEN)/sota_cross_eval_view.csv experiments
 	    --output $@
 
 # Exp1 quality spiders: one script, two invocations (family 2x2 panels vs a
-# single-model large spider) -> two targets, not a grouped rule.
-$(ANALYSIS_EXP1_SPIDER_FAMILIES): $(ANALYSIS_EXP1_CROSS_EVAL_CSV)
+# single-model large spider) -> two targets, not a grouped rule. The plot
+# script is a prerequisite — it carries the language labels (ticket 0455), so a
+# label edit must re-trigger the build.
+$(ANALYSIS_EXP1_SPIDER_FAMILIES): $(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
+		$(ANALYSIS_REPO_ROOT)/src/aedist/plot_quality_spider_exp1.py
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_quality_spider_exp1 \
 	    --input $(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
-	    --output $@
+	    --output $@ \
+	    --lang en
 
-$(ANALYSIS_EXP1_SPIDER_CLAUDE): $(ANALYSIS_EXP1_CROSS_EVAL_CSV)
+$(ANALYSIS_EXP1_SPIDER_FAMILIES_FR): $(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
+		$(ANALYSIS_REPO_ROOT)/src/aedist/plot_quality_spider_exp1.py
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.plot_quality_spider_exp1 \
+	    --input $(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
+	    --output $@ \
+	    --lang fr
+
+$(ANALYSIS_EXP1_SPIDER_CLAUDE): $(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
+		$(ANALYSIS_REPO_ROOT)/src/aedist/plot_quality_spider_exp1.py
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_quality_spider_exp1 \
 	    --input $(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
 	    --model claude-opus-4.6 \
-	    --output $@
+	    --output $@ \
+	    --lang en
+
+$(ANALYSIS_EXP1_SPIDER_CLAUDE_FR): $(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
+		$(ANALYSIS_REPO_ROOT)/src/aedist/plot_quality_spider_exp1.py
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.plot_quality_spider_exp1 \
+	    --input $(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
+	    --model claude-opus-4.6 \
+	    --output $@ \
+	    --lang fr
 
 $(ANALYSIS_GEN)/stat_tests_arm1_vs_arm2.txt: $(ANALYSIS_GEN)/tab_exp2_arms_runs_view.csv
 	@mkdir -p $(dir $@)
@@ -211,6 +255,7 @@ ANALYSIS_EXP2_REPORT_TARGETS := \
 	$(ANALYSIS_EXP2_TURN_FIG) \
 	$(ANALYSIS_EXP2_BIB_TABLE) \
 	$(ANALYSIS_EXP2_COVERAGE_FIG) \
+	$(ANALYSIS_EXP2_COVERAGE_FIG_FR) \
 	$(ANALYSIS_EXP2_SPIRE_FIG) \
 	$(ANALYSIS_EXP2_OUTLINE_ARTIFACTS)
 
@@ -277,7 +322,8 @@ exp2-analysis-report: $(ANALYSIS_EXP2_REPORT_TARGETS) \
 	$(ANALYSIS_EXP2_COVERAGE_SPLIT) $(ANALYSIS_EXP2_COST_SPLIT) \
 	$(ANALYSIS_SLIDE_MACROS)
 
-exp1-analysis-figures: $(ANALYSIS_EXP1_SPIDER_FAMILIES) $(ANALYSIS_EXP1_SPIDER_CLAUDE)
+exp1-analysis-figures: $(ANALYSIS_EXP1_SPIDER_FAMILIES) $(ANALYSIS_EXP1_SPIDER_CLAUDE) \
+	$(ANALYSIS_EXP1_SPIDER_FAMILIES_FR) $(ANALYSIS_EXP1_SPIDER_CLAUDE_FR)
 
 # --- Report-side tables and figures (migrated from root Makefile by 0352) ---
 # These produce committed handoff artifacts under $(ANALYSIS_GEN). The root
@@ -564,6 +610,7 @@ chart-figures: \
 	$(ANALYSIS_GEN)/fig_capability_dag.pdf \
 	$(ANALYSIS_GEN)/fig_spider_cross_exp.pdf \
 	$(ANALYSIS_EXP1_SPIDER_FAMILIES) \
+	$(ANALYSIS_EXP1_SPIDER_FAMILIES_FR) \
 	$(ANALYSIS_GEN)/fig_method_convergence.pdf \
 	$(ANALYSIS_GEN)/fig_regimes_scatter.pdf \
 	$(ANALYSIS_GEN)/fig_scaling_curve.pdf
