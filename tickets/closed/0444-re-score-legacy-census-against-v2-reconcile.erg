@@ -2,6 +2,7 @@
 Title: Re-score legacy model-census against v2 + reconcile committed mart drift
 Created: 2026-06-05
 Author: HDMX-coding-agent
+Closed: Census re-scored against v2.1 (173 plants). Archive scoring path wired, 254 stubs replaced by 416 v2 records, mart reconciled (669 rows), artifacts regenerated, manuscript propagated (170→173 / 163→NumRefPlants).
 
 --- log ---
 2026-06-05T13:00Z claude created — deferred from 0413 (v2 adoption); author greenlit "nice-to-have, ticket it for later"
@@ -10,6 +11,7 @@ Author: HDMX-coding-agent
 
 2026-06-06T14:50Z claude note 0445 settled the count: \NumRefPlants macroizes at 173 (v2.1, extensions standalone)
 2026-06-06T15:47Z HDMX-coding-agent note blocker 0445 closed — Blocked-by removed.
+2026-06-08T08:43Z HDMX-coding-agent closed — Census re-scored against v2.1 (173 plants). Archive scoring path wired, 254 stubs replaced by 416 v2 records, mart reconciled (669 rows), artifacts regenerated, manuscript propagated (170→173 / 163→NumRefPlants).
 --- body ---
 ## Context
 
