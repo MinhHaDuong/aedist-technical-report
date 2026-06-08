@@ -176,6 +176,38 @@ An independent 153-plant comparison with Global Energy Monitor data
 (system vs. expert vs. GEM) would quantify reference disagreement rate
 but is out of scope for the current article.
 
+### GEM pipeline (ticket 0429) — raw input → cross-check artifact
+
+**Raw input.** `data/reference/gem_units.csv` (308 rows) is the tracked GEM
+export (Global Energy Monitor, Global Coal Plant Tracker and Gas Plant Tracker,
+Vietnam). Source: manual export from gem.wiki; the export date and URL are not
+stamped. The file is committed as the frozen comparator for the cross-check and
+is NOT updated via `raw/import.sh` — it follows the snapshot-on-change pattern
+but is managed manually since there is no automated GEM import pipeline.
+
+**Chain.** The full reproducible chain (ticket 0429) is:
+
+```
+gem_units.csv → GEM_aggregate.py → add_classifications.py → gem_thermal.csv
+```
+
+Invoked as: `make -C experiments -f acquire.mk gem-pipeline`
+
+- `GEM_aggregate.py --input gem_units.csv --output gem_thermal_aggregated.csv`
+  Phase-aware groupby: Phase strings embedded in Unit name ("Phase 1 Unit 2")
+  are appended to Plant name to produce distinct keys for phase-split plants
+  (e.g. "An Khanh Phase 1", "An Khanh Phase 2"). Output uniqueness guard:
+  duplicate plant Name is a hard failure (mirroring aggregate_units.py,
+  ticket 0416).
+- `add_classifications.py --input gem_thermal_aggregated.csv --output gem_thermal.csv --fuel-col Fuel`
+  Adds IRES/ISIC/PyPSA classification columns, keyed on the "Fuel" column.
+
+**Verification.** The chain is confirmed to reproduce `gem_thermal.csv` (all
+columns including classification) exactly from `gem_units.csv` (2026-06-08
+audit, ticket 0429). The GEM data is a frozen comparator; the cross-check
+itself (comparing gem_thermal.csv against the master reference) is deferred
+as noted above.
+
 ## Known limitations
 
 Single observer; no independent second reviewer; per-row audit trail
