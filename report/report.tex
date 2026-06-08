@@ -289,7 +289,7 @@ Les exclusions au niveau des données --- sessions individuelles retirées sur l
 
 \paragraph{Provenance des citations.} Le tableau~\ref{tab:exp2-bib-quality} agrège, par agent et par bras, la structure de citation des inventaires (lignes, taux de Source~1 et~2, part de sources primaires, taux de Notes, entrées bibliographiques), moyennée sur les seules exécutions parsables (\texttt{n\_rows}${>}0$), l'étendue figurant entre crochets. Ce tableau est purement descriptif et sert de socle de provenance aux audits ultérieurs (H5, conformité Wikipedia)~; son interprétation par agent est développée avec ces tests.
 
-\InputIfFileExists{inputs/generated/tab_exp2_bib_quality_fr}{}{}
+\InputIfFileExists{inputs/generated/tab_exp2_bib_quality}{}{}
 
 \section{Résultats par hypothèse (H1--H6)}\label{sec:exp2-sota:hypotheses}
 
@@ -426,26 +426,7 @@ Le vote par union bénéficie aux modèles tronqués~: les 3 runs de DeepSeek co
 
 La troncature étant le principal facteur limitant, on teste une stratégie de décomposition~: au lieu d'une seule requête demandant toutes les centrales thermiques, on envoie 3 sous-requêtes par type de combustible (charbon, gaz/GNL, pétrole/autres), chacune avec le même corpus RAG. Les 3 réponses CSV sont extraites puis fusionnées avec dédoublonnage par nom.
 
-\begin{table}[htbp]
-\centering
-\caption{Effet de la décomposition par combustible~: F1 médian et meilleur run.\textsuperscript{a}}\label{tab:decomposition}
-\begin{tabular}{@{}lrrrr@{}}
-\toprule
-Modèle & \multicolumn{2}{c}{Requête unique} & \multicolumn{2}{c}{Décomposé} \\
-\cmidrule(lr){2-3}\cmidrule(lr){4-5}
- & Méd. F1 & Meilleur & Méd. F1 & Meilleur \\
-\midrule
-Mistral Small 4     & 86,4\,\% & 87,2\,\% & 83,2\,\% & 89,6\,\% \\
-GPT-5.4             & 77,0\,\% & 93,8\,\% & 70,7\,\% & 74,8\,\% \\
-Mistral Large 3     & 72,2\,\% & 88,4\,\% & \textbf{94,8\,\%} & \textbf{95,6\,\%} \\
-DeepSeek V3.2       & 60,1\,\% & 68,5\,\% & \textbf{87,3\,\%} & \textbf{98,8\,\%} \\
-Gemini 2.5 Flash Lite & 58,0\,\% & 96,7\,\% & 75,1\,\% & 97,5\,\% \\
-\bottomrule
-\end{tabular}
-
-\smallskip
-{\footnotesize \textsuperscript{a}Meilleur = meilleur run individuel~; Méd.\ F1 = médiane sur $n$ runs ($n$=3 sauf DeepSeek~V3.2 décomposé, $n$=4). Voir le texte pour l'IC bootstrap du résultat principal.}
-\end{table}
+\InputIfFileExists{inputs/generated/tab_decomposition}{}{}
 
 La décomposition améliore le rappel~: le meilleur run atteint 154 centrales sur \NumRefPlants{}, contre un maximum de 117 en requête unique. L'effet net sur le F1 dépend du modèle~: fortement positif pour les modèles qui étaient limités par la troncature, mais variable pour les modèles déjà performants en requête unique.
 

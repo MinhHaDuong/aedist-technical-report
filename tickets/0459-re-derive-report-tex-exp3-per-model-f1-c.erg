@@ -2,10 +2,12 @@
 Title: Re-derive report.tex Exp3 per-model F1 comparison table against v2.1
 Created: 2026-06-08
 Author: HDMX-coding-agent
+Closed: implemented: tabulate_decomposition.py + render.mk rule; tab:decomposition replaced by \input from generated artifact
 
 --- log ---
 2026-06-08T09:07Z HDMX-coding-agent created
 
+2026-06-08T19:15Z HDMX-coding-agent closed — implemented: tabulate_decomposition.py + render.mk rule; tab:decomposition replaced by \input from generated artifact
 --- body ---
 ## Context
 

@@ -382,6 +382,10 @@ exp1-analysis-figures: $(ANALYSIS_EXP1_SPIDER_FAMILIES) $(ANALYSIS_EXP1_SPIDER_C
 # committed artifacts. Regenerate them from this file:
 #     make -f experiments/render.mk report-tables report-figures
 
+$(ANALYSIS_GEN)/tab_decomposition.tex: $(ANALYSIS_MEASUREMENTS) $(ANALYSIS_REPO_ROOT)/src/aedist/tabulate_decomposition.py
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.tabulate_decomposition --output $@
+
 $(ANALYSIS_GEN)/tab_census.tex: $(ANALYSIS_MEASUREMENTS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.tabulate_census --output $@
@@ -505,6 +509,7 @@ exp1-reasoning-topup: $(ANALYSIS_EXP1_TOPUP_TEX)
 # artifacts. tab_self_consistency.tex and tab_per_run.tex are produced by the
 # `self-consistency` verb above (single producer, 0354 → migrated here 0410).
 report-tables: \
+	$(ANALYSIS_GEN)/tab_decomposition.tex \
 	$(ANALYSIS_GEN)/tab_census.tex \
 	$(ANALYSIS_GEN)/macros.tex \
 	$(ANALYSIS_GEN)/macros_census.tex \
