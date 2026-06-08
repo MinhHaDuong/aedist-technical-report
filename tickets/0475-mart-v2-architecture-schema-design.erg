@@ -1,0 +1,73 @@
+%erg 0.1
+Title: Mart v2 architecture decision + schema extension (tracker: 0297)
+Created: 2026-06-08
+Author: HDMX-coding-agent
+Blocked-by: 0297
+
+--- log ---
+2026-06-08T12:00Z HDMX-coding-agent created
+--- body ---
+## Context
+
+0297 (tracking ticket) wants to retire `measurements.jsonl` in favour of a unified mart.
+Before any code can land, two architectural questions must be resolved by the author:
+
+1. **Generalize or shoehorn?**
+   The current mart is named `exp2_mart` (schema v3, `_MART_SCHEMA_NAME = "exp2_mart"`).
+   - *Generalize*: rename to `mart.py`, schema name `"mart"`, add experiment-generic
+     record kinds. This is the clean approach for "all experiments" scope.
+   - *Shoehorn*: keep `exp2_mart` naming, map exp1 to a synthetic arm value.
+   Generalize is architecturally correct per the ticket's stated goal.
+
+2. **Raw counts in ScoreSummary?**
+   The ticket lists `result_summary.tp / fp / fn` (raw counts) as required fields.
+   The current `ScoreSummary` stores only ratios (f1, coverage, precision as
+   `MetricValue`). Before an exp1 adapter can work, raw counts must be added.
+   Where do they go: on `ScoreSummary` directly, or on a new `RawCountsSummary`?
+
+## Relevant files
+
+- `src/aedist/exp2_mart.py` — current mart schema (531 lines)
+- `src/aedist/schema.py` — RunRecord source of truth for what must be absorbed
+- `experiments/derived/score.mk` — builds both mart and measurements.jsonl
+- `experiments/derived/exp2_mart.jsonl` — 80 run + 80 score records
+
+## Actions
+
+1. Author answers: generalize vs shoehorn, raw counts placement.
+2. Once decided: rename `exp2_mart.py` if generalizing (update all imports, Makefile).
+3. Add raw count fields to `ScoreSummary` (tp, fp, fn as `int | None`).
+4. Bump `_MART_SCHEMA_VERSION` to 4 with changelog comment.
+5. Update `build_exp2_mart.py` to populate raw counts from scorer output.
+
+## Test
+
+```python
+def test_score_summary_has_raw_counts():
+    from aedist.exp2_mart import ScoreSummary
+    s = ScoreSummary(n_rows=10, tp=7, fp=1, fn=3)
+    assert s.tp == 7
+    assert s.fp == 1
+    assert s.fn == 3
+```
+
+## Verification
+
+- [ ] Author has confirmed generalize vs shoehorn decision (written in ticket log).
+- [ ] `ScoreSummary` carries `tp`, `fp`, `fn` as `int | None` fields.
+- [ ] Schema version bumped, changelog comment updated.
+- [ ] `build_exp2_mart.py` populates raw counts.
+- [ ] `make check` passes.
+
+## Invariants
+
+- `exp2_mart.jsonl` format must not break existing consumers (`check_exp2_mart_parity.py`).
+- Schema version bump is mandatory when adding fields (enforced by `model_config extra="forbid"`).
+- Do not touch `measurements.jsonl`, `RunRecord`, or `evaluate.py assemble` in this PR.
+
+## Exit criteria
+
+- Architecture decision is documented (in ticket log or commit message).
+- `ScoreSummary` carries `tp`, `fp`, `fn`.
+- `make check` passes.
+- 0476 can proceed without further schema changes.

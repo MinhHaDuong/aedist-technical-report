@@ -9,6 +9,7 @@ Label: deferred
 2026-05-25T11:00Z haduong note Architectural direction set in conversation: mart (exp2_mart.jsonl) is the v2 successor to measurements.jsonl; retirement is post-talk
 
 2026-05-25T12:22Z HDMX-coding-agent tag deferred
+2026-06-08T12:00Z HDMX-coding-agent note Converted to tracking ticket. Child tickets created: 0475 (architect question + schema), 0476 (exp1 adapter + equivalence), 0477 (port consumers), 0478 (delete old stack). This tracker stays open until all children merge and make check passes.
 --- body ---
 ## Context
 
@@ -35,3 +36,83 @@ single source of truth for all experiments (exp1 through exp3+), and the old sta
 - [ ] All figures/tables that currently read `measurements.jsonl` ported to read the mart
 - [ ] `measurements.jsonl`, `evaluate.py assemble`, `schema.RunRecord` deleted
 - [ ] `make check` passes with no reference to the old stack
+
+## Tracking: child tickets
+
+This is a tracking ticket. Children must land in dependency order:
+
+| ID | Title | Status |
+|----|-------|--------|
+| 0475 | Architect question: generalize vs shoehorn + schema design | open |
+| 0476 | Exp1 adapter + mart equivalence test | blocked on 0475 |
+| 0477 | Port reporting consumers from measurements.jsonl to mart | blocked on 0476 |
+| 0478 | Delete old stack (measurements.jsonl, evaluate.py assemble, RunRecord) | blocked on 0477 |
+
+Tracker closes only after 0478 merges and a final `make check` confirms no old-stack references remain.
+
+## Architectural question (must resolve before 0475)
+
+The current mart is named `exp2_mart` (schema v3). Retirement means making it the
+single source of truth for exp1 through exp3+. The author must answer:
+
+> **Generalize or shoehorn?**
+> - *Generalize*: rename `exp2_mart.py` → `mart.py`, rename schema `"exp2_mart"` → `"mart"`,
+>   add an `Exp1RunMartRecord` record kind (no arm, single turn, method=direct).
+> - *Shoehorn*: reuse `exp2_mart` schema as-is, mapping exp1 arms to a synthetic arm value.
+>
+> Generalize is architecturally cleaner (the ticket's stated goal is "all experiments").
+> Shoehorn risks silent data corruption if exp1 fields don't fit exp2 field semantics.
+
+The exp2_mart schema currently stores **ratios** in score_summary (f1, coverage, precision
+as MetricValue), not raw counts (tp/fp/fn). The ticket lists raw counts as required.
+The raw counts must be added to ScoreSummary before an exp1 adapter is possible.
+
+## Key files
+
+- `src/aedist/exp2_mart.py` — current mart schema (v3, exp2-named)
+- `src/aedist/schema.py` — RunRecord and related classes (531 lines, to be deleted)
+- `src/aedist/measurements.py` — sole read interface (253 lines, to be deleted)
+- `src/aedist/evaluate.py` — `assemble` subcommand writes measurements.jsonl (to be deleted)
+- `experiments/derived/score.mk` — builds measurements.jsonl and exp2_mart.jsonl
+- `experiments/derived/exp2_mart.jsonl` — 80 run + 80 score records (exp2 only)
+- `measurements.jsonl` — 669 records (exp1 + exp2 + exp3, live as of 2026-06-08)
+
+## Consumer inventory (things that read measurements.jsonl / RunRecord)
+
+These must all be ported before deletion:
+
+Scripts that call `load_metrics()` or `load()`:
+- `src/aedist/select_models.py`
+- `src/aedist/plot_scaling_curve.py`
+- `src/aedist/tabulate_comparaison.py`
+- `src/aedist/tabulate_relances.py`
+- `src/aedist/tabulate_self_consistency.py`
+- `src/aedist/variance_decomposition.py`
+- `src/aedist/exp1_census.py`
+- `src/aedist/plot_method_convergence.py`
+- `src/aedist/plot_regimes_scatter.py`
+- `src/aedist/tabulate_census_macros.py`
+- `src/aedist/tabulate_cost_quality.py`
+- `src/aedist/exp1_cost_quality.py`
+- `src/aedist/tabulate_macros.py`
+- `src/aedist/tabulate_census.py`
+- `src/aedist/tabulate_decomposition.py`
+- `src/aedist/tabulate_exp1_cost_summary.py`
+- `src/aedist/tabulate_reconciliation.py`
+
+Collection-side code that builds RunRecord (must be rewritten, not just ported):
+- `src/aedist/adapter_base.py`
+- `src/aedist/adapter_qwen_dashscope.py`
+- `src/aedist/query_anthropic.py`
+- `experiments/sota/exp2_interactive_smoke.py`
+- (other query_*.py and adapter_*.py files)
+
+Tests that reference RunRecord or records_to_metrics (289 occurrences total):
+- `tests/test_measurements.py`
+- `tests/test_measurements_agent_fields.py`
+- `tests/test_worker.py`
+- `tests/test_evaluate.py`
+- `tests/test_harness.py`
+- `tests/test_tabulate_macros.py`
+- `tests/test_tabulate_decomposition.py`
+- `tests/test_plot_cost_quality.py`

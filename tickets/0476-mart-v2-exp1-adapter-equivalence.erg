@@ -1,0 +1,79 @@
+%erg 0.1
+Title: Exp1 adapter + mart equivalence test (tracker: 0297)
+Created: 2026-06-08
+Author: HDMX-coding-agent
+Blocked-by: 0475
+
+--- log ---
+2026-06-08T12:00Z HDMX-coding-agent created
+--- body ---
+## Context
+
+After 0475 resolves the architecture and schema, this ticket builds the exp1 adapter
+that reads `exp1_batch2/*.json` (RunRecord-shaped raw outputs) and writes mart records.
+This is the safety rail: prove the mart can represent exp1 data before porting consumers.
+
+The equivalence test is the critical deliverable: mart-derived exp1 metrics must match
+measurements.jsonl values run-for-run before any consumer is migrated.
+
+## Relevant files
+
+- `src/aedist/exp2_mart.py` (or `mart.py` if renamed) — mart schema (post-0475)
+- `src/aedist/measurements.py` — reference metrics for equivalence test
+- `src/aedist/evaluate.py` — `assemble` command writes measurements.jsonl (source of RunRecord)
+- `experiments/derived/exp2_mart.jsonl` — existing mart (exp2 only, 80 run + 80 score)
+- `experiments/derived/score.mk` — build pipeline
+
+## Scope
+
+Exp1 runs: `experiments/derived/exp1_batch2/` (70 runs, single-turn, no arm, method=direct).
+The mart record kind for exp1 runs must map:
+- `method=direct` → `arm` field (the decision from 0475 determines the value)
+- single turn → `run_summary.turns = 1`
+- `result_summary.tp/fp/fn` → `ScoreSummary.tp/fp/fn` (added in 0475)
+- `resource_use.cost_usd` / `wall_s` → `RunSummary.cost_usd` / `wall_s`
+
+## Actions
+
+1. Write `src/aedist/build_exp1_mart.py` — reads exp1_batch2/*.record.json,
+   emits mart records to `experiments/derived/exp1_mart.jsonl`.
+2. Add `experiments/derived/exp1_mart.jsonl` target to `score.mk`.
+3. Write equivalence test in `tests/test_mart_exp1_equivalence.py`:
+   - load exp1 mart records + measurements.jsonl exp1 subset
+   - compare f1, coverage, precision, n_matched, n_missed, n_hallucinated per run
+   - assert max absolute difference < 0.0001 (float rounding tolerance)
+
+## Test (write first — TDD red step)
+
+```python
+# tests/test_mart_exp1_equivalence.py
+import pytest
+
+@pytest.mark.slow
+def test_exp1_mart_matches_measurements_jsonl():
+    """Mart exp1 metrics must match measurements.jsonl for every run."""
+    from aedist.measurements import load_metrics
+    # Load exp1 mart once build_exp1_mart.py exists
+    # Compare f1, coverage, precision, n_matched, n_missed, n_hallucinated
+    # per run_id match
+    pass  # Replace with real assertions after adapter exists
+```
+
+## Verification
+
+- [ ] `experiments/derived/exp1_mart.jsonl` exists and has 70 records.
+- [ ] Equivalence test passes (all metrics within 0.0001 tolerance).
+- [ ] `make check` passes.
+- [ ] `measurements.jsonl` is NOT modified or deleted by this PR.
+
+## Invariants
+
+- `measurements.jsonl` stays intact — this PR only adds the mart parallel.
+- No consumer code is ported yet (that's 0477).
+- Schema version stable (no changes after 0475).
+
+## Exit criteria
+
+- `exp1_mart.jsonl` exists with 70 exp1 records.
+- Equivalence test demonstrates mart == measurements.jsonl for exp1 metrics.
+- 0477 can safely replace measurements.jsonl readers with mart readers.

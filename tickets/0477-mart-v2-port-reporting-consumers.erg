@@ -1,0 +1,80 @@
+%erg 0.1
+Title: Port all reporting consumers from measurements.jsonl to mart (tracker: 0297)
+Created: 2026-06-08
+Author: HDMX-coding-agent
+Blocked-by: 0476
+
+--- log ---
+2026-06-08T12:00Z HDMX-coding-agent created
+--- body ---
+## Context
+
+After 0476 proves the exp1 mart is equivalent to measurements.jsonl, this ticket
+ports the 17 reporting scripts to read from the mart. The old stack is NOT deleted
+yet — both run in parallel until all consumers are green, then 0478 deletes.
+
+This ticket may need to be split further if the consumer surface is too large.
+The inventory is:
+
+## Relevant files
+
+Consumers to port (all read `measurements.jsonl` via `load_metrics()` or `load()`):
+- `src/aedist/select_models.py`
+- `src/aedist/plot_scaling_curve.py`
+- `src/aedist/tabulate_comparaison.py`
+- `src/aedist/tabulate_relances.py`
+- `src/aedist/tabulate_self_consistency.py`
+- `src/aedist/variance_decomposition.py`
+- `src/aedist/exp1_census.py`
+- `src/aedist/plot_method_convergence.py`
+- `src/aedist/plot_regimes_scatter.py`
+- `src/aedist/tabulate_census_macros.py`
+- `src/aedist/tabulate_cost_quality.py`
+- `src/aedist/exp1_cost_quality.py`
+- `src/aedist/tabulate_macros.py`
+- `src/aedist/tabulate_census.py`
+- `src/aedist/tabulate_decomposition.py`
+- `src/aedist/tabulate_exp1_cost_summary.py`
+- `src/aedist/tabulate_reconciliation.py`
+
+Collection-side code that constructs RunRecord (must be rewritten, not just ported):
+- `src/aedist/adapter_base.py`
+- `src/aedist/adapter_qwen_dashscope.py`
+- `src/aedist/query_anthropic.py`
+- Other `query_*.py` and `adapter_*.py` files
+
+Test files that reference RunRecord or records_to_metrics:
+- `tests/test_measurements.py` (replace with mart-equivalent tests)
+- `tests/test_measurements_agent_fields.py`
+- `tests/test_worker.py`
+- `tests/test_evaluate.py`
+- `tests/test_harness.py`
+- `tests/test_tabulate_macros.py`
+- `tests/test_tabulate_decomposition.py`
+- `tests/test_plot_cost_quality.py`
+
+## Actions
+
+1. Assess: may need to split into sub-tickets (e.g. reporting-only vs collection-side).
+   Collection-side is higher risk — RunRecord is used at write time by adapters.
+2. For each reporting consumer: replace `load_metrics()` → mart reader function.
+3. Run golden-output tests for each ported figure/table (no visual regression).
+4. For collection-side: design the mart-write path (adapter emits mart record instead of RunRecord).
+
+## Verification
+
+- [ ] All 17 reporting scripts ported.
+- [ ] Golden-output tests pass (figures/tables produce identical results).
+- [ ] `make check` passes.
+- [ ] `measurements.jsonl` is NOT deleted yet.
+
+## Invariants
+
+- No figures or tables may change values during porting (equivalence test in 0476 is the guard).
+- Collection-side changes must preserve backward compat until 0478 deletes.
+
+## Exit criteria
+
+- All consumers in inventory above read from mart, not measurements.jsonl.
+- `make check` passes.
+- 0478 can safely delete the old stack.
