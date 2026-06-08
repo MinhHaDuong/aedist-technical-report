@@ -21,21 +21,7 @@ This paper builds the argument in six steps.
 
 Submitting a direct query to a large language model produces an inventory-shaped answer, but not one that meets statistical or scientific quality standards. Numbers shift between runs, citations are absent or fabricated, and there is no way to tell which cells one should trust.
 
-**Experiment 1 — Parametric baseline.** We query sixteen language models from the *modelset_ablation_journal* set — spanning three language families (EN/FR/ZH) and five laboratories from mid-range through frontier-class systems — with a fixed structured table specification prompt (the locked `2_goal + 5_table` composition, reproduced in Annex B). No documents are provided; models draw exclusively on parametric knowledge and receive a system instruction forbidding web search. Each model is queried five times at temperature zero, yielding 80 runs against a 173-plant reference inventory of Vietnamese thermal power plants (coal and gas, all lifecycle statuses). Runs are evaluated by matching extracted plant names against the reference using fuzzy string matching, yielding row-level precision, recall, and F1; fuel type, operational status, and province accuracy are scored at the cell level for matched rows. Cost in USD and wall-clock time are recorded per run.
-
-The table below decomposes the difficulty by status (library `aedist.exp1_recognition`; same data derivation as the per-plant recognition matrix in Annex E, Figure 7). The reference list is dominated by proposed plants — the largest share — which parametric memory cannot know; their mean recognition rate is far below that of operational plants. The low overall recognition is therefore structural, a property of the list's composition, not merely a model failure.
-
-| Status | n | Share of list | Recognition rate |
-|---|---:|---:|---:|
-| Proposed | 67 | 38.7% | 8.0% |
-| Planned | 21 | 12.1% | 29.6% |
-| Under construction | 10 | 5.8% | 40.3% |
-| Operational | 56 | 32.4% | 45.7% |
-| Retired | 2 | 1.2% | 63.6% |
-| Cancelled | 17 | 9.8% | 17.0% |
-| **All** | **173** | **100.0%** | **26.2%** |
-
-*Table: composition of the reference list by status, and mean recognition rate (Experiment 1, direct method: 14 models × 5 repetitions). The rate is the share of run × plant cells recognized among plants of that status.*
+**Experiment 1 — Parametric baseline.** We query sixteen language models from the *modelset_exp1_journal* set — spanning three language families (EN/FR/ZH) and five laboratories from mid-range through frontier-class systems — with a fixed structured table specification prompt (the locked `2_goal + 5_table` composition, reproduced in Annex B). No documents are provided; models draw exclusively on parametric knowledge and receive a system instruction forbidding web search. Each model is queried five times at temperature zero, yielding 80 runs against a 173-plant reference inventory of Vietnamese thermal power plants (coal and gas, all lifecycle statuses). Runs are evaluated by matching extracted plant names against the reference using fuzzy string matching, yielding row-level precision, recall, and F1; fuel type, operational status, and province accuracy are scored at the cell level for matched rows. Cost in USD and wall-clock time are recorded per run.
 
 **Results.** Across 80 runs (16 models × 5 repeats), 77 produced usable tables and 3 were refusals (all GPT-5.5). Row-level F1 across the 77 usable runs ranges from 0.01 to 0.76, with a mean of 0.38. Within-model F1 variance is large: DeepSeek V4-Flash ranges from 0.01 to 0.65 across 5 identical runs, and GPT-OSS-20B from 0.23 to 0.76 — spreads wider than the gap between many adjacent model means. Even for correctly matched plants, attribute classification remains mediocre: mean fuel accuracy 0.53, mean status accuracy 0.53, mean province accuracy 0.61. No monotonic relationship between API cost and F1 is observed: Claude Opus 4.6 at \$1.23 total achieves mean F1 = 0.46, while GPT-OSS-20B at \$0.01 reaches 0.58. To our knowledge, this non-monotone cost-versus-F1 relationship for structured factual extraction has not been documented in prior literature. The total experiment cost is \$2.85. Five qualitative failure modes organise the model-by-run distribution: GPT-5.5 refuses the task on 3 of 5 runs (*Récalcitrant*), citing inability to produce sourced data from parametric knowledge; Claude Haiku consistently finds only 17 plants (*Incomplet*); Qwen 3.6-27B fabricates up to 268 false positives in a single run (*Hallucinant*); DeepSeek V4-Flash and GPT-OSS-20B exhibit the widest within-model variance (*Non-déterministe*); and no cost ordering predicts quality (*Non-monotone*).
 
@@ -46,7 +32,7 @@ The table below decomposes the difficulty by status (library `aedist.exp1_recogn
 ![](../report/inputs/generated/fig_direct_cost_quality.pdf)\
 <!-- raw data: report/inputs/generated/cost_quality.csv -->
 
-*Figure 2. Plants correctly identified vs cost per call across the Experiment 1 lineup, split by architectural family across two panels with shared axes: **panel (a)** Claude, GPT, Mistral; **panel (b)** Qwen, DeepSeek. Each of the sixteen models from `modelset_ablation_journal` contributes: a **filled square** at the pooled median TP count, **unfilled circles** at every rep from the 2026-05-20 journal sweep, and **✕ markers** at every rep from the 2026-05-21 reasoning-token top-up (ticket 0198, pooled unconditionally — no canary gate, intra-day variability absorbed into the reported within-model spread). Each rep is plotted at its **own** per-call cost (cents USD, decimal, log scale) — within-model horizontal spread reflects the rep-to-rep variation in output-token counts. A thin polyline connects the reps for each model in cost order. The dashed reference line at 173 marks the full Vietnam thermal inventory and is repeated on both panels. The Y axis starts at -5 so that refusal markers at TP=0 sit visibly above the axis line. Marker colour encodes the architectural family: Claude (blue), GPT (vermillion), Mistral (bluish-green), Qwen (reddish-purple), DeepSeek (orange), all from the colorblind-safe palette in `palette.toml`. Per-model numbers backing this figure are written to `report/inputs/generated/cost_quality.csv` for audit.*
+*Figure 2. Plants correctly identified vs cost per call across the Experiment 1 lineup, split by architectural family across two panels with shared axes: **panel (a)** Claude, GPT, Mistral; **panel (b)** Qwen, DeepSeek. Each of the sixteen models from `modelset_exp1_journal` contributes: a **filled square** at the pooled median TP count, **unfilled circles** at every rep from the 2026-05-20 journal sweep, and **✕ markers** at every rep from the 2026-05-21 reasoning-token top-up (ticket 0198, pooled unconditionally — no canary gate, intra-day variability absorbed into the reported within-model spread). Each rep is plotted at its **own** per-call cost (cents USD, decimal, log scale) — within-model horizontal spread reflects the rep-to-rep variation in output-token counts. A thin polyline connects the reps for each model in cost order. The dashed reference line at 173 marks the full Vietnam thermal inventory and is repeated on both panels. The Y axis starts at -5 so that refusal markers at TP=0 sit visibly above the axis line. Marker colour encodes the architectural family: Claude (blue), GPT (vermillion), Mistral (bluish-green), Qwen (reddish-purple), DeepSeek (orange), all from the colorblind-safe palette in `palette.toml`. Per-model numbers backing this figure are written to `report/inputs/generated/cost_quality.csv` for audit.*
 
 ![](../report/inputs/generated/fig_spider_exp1_families.pdf)\
 
@@ -203,7 +189,7 @@ No persona, no narratives, no quality bullets — those land in ablation sweeps,
 
 ### Models
 
-Sixteen models from `modelset_ablation_journal` (v2, defined in `experiments/experiments.toml`), organised around three language families with multiple labs per family:
+Sixteen models from `modelset_exp1_journal` (v2, defined in `experiments/experiments.toml`), organised around three language families with multiple labs per family:
 
 | Model | Lab | Family | Size class | Reasoning tokens* |
 |---|---|---|---|---|
@@ -267,9 +253,9 @@ Run outcomes other than `ok` (refusal, empty, parse error) are recorded with `f1
 
 ### Sweep configuration
 
-The sweep is defined in `experiments/experiments.toml` as `sweep_ablation_p1_direct_base` (model_set = `modelset_ablation_journal`, repeat = 5, T = 0, seed = 42, budget_usd = 10, max_tokens = 8192, prompt_modules = []). Outputs land in `experiments/outputs/ablation/direct/p1_base/`; the prior pilot runs are preserved under `p1_base.pilot/` (ticket 0175 renamed the directory to keep journal and pilot data separate). Results are ingested into `measurements.jsonl` via `make rebuild-measurements`.
+The sweep is defined in `experiments/experiments.toml` as `sweep_exp1_baseline` (model_set = `modelset_exp1_journal`, repeat = 5, T = 0, seed = 42, budget_usd = 10, max_tokens = 8192, prompt_modules = []). Outputs land in `experiments/outputs/exp1/baseline/`; the prior pilot runs are preserved under `baseline.pilot/` (ticket 0175 renamed the directory to keep journal and pilot data separate). Results are ingested into `measurements.jsonl` via `make rebuild-measurements`.
 
-Experiment 1 was run as 5 reps per model on 2026-05-20 and topped up with 3 additional reps per model on 2026-05-21 after a harness fix (PR #379) restored capture of `reasoning_tokens`. The top-up reps land in `experiments/outputs/ablation/direct/p1_base.topup_canary/` and `p1_base.topup/`; we pool them with the original five unconditionally — no canary gate. Intra-day variability across the two acquisition windows is absorbed into the reported within-model spread rather than filtered out.
+Experiment 1 was run as 5 reps per model on 2026-05-20 and topped up with 3 additional reps per model on 2026-05-21 after a harness fix (PR #379) restored capture of `reasoning_tokens`. The top-up reps land in `experiments/outputs/exp1/baseline.topup_canary/` and `baseline.topup/`; we pool them with the original five unconditionally — no canary gate. Intra-day variability across the two acquisition windows is absorbed into the reported within-model spread rather than filtered out.
 
 ### What this experiment does and does not test
 
@@ -300,7 +286,7 @@ Anthropic is pinned to Opus 4.6 (not 4.7) per the 2026-05-20 compose decision: i
 
 ### Baseline reference for cross-comparison
 
-The naive one-shot baseline that §4 compares against is **not** §1's `modelset_ablation_journal` sweep. It is the pre-existing `experiments/outputs/direct_complete/` artifact from `sweep_direct_complete` over `modelset_frontier_10labs` — a wider lab survey at a single rep per model. Phase C will read from it directly; it is not re-run.
+The naive one-shot baseline that §4 compares against is **not** §1's `modelset_exp1_journal` sweep. It is the pre-existing `experiments/outputs/direct_complete/` artifact from `sweep_direct_complete` over `modelset_frontier_10labs` — a wider lab survey at a single rep per model. Phase C will read from it directly; it is not re-run.
 
 ### Phase structure
 
@@ -396,9 +382,9 @@ The narrative inventory component of §5 handles longitudinal aspects pragmatica
 
 ---
 
-## Annex E — Experiment 1: per-plant recognition matrix
+## Annex E — Experiment 1: per-plant recognition matrix and the status composition of task difficulty
 
-Figure 7 aligns each of the 173 reference plants on a fixed column, for the 70 Experiment 1 runs (14 models × 5 repetitions, ordered as in Figure 1: by architectural family, then by decreasing effective parameter count). A blue cell marks a recognized plant (true positive); an empty cell, a miss. Reference columns are ordered by status group, then by decreasing capacity, so the status bands align with the difficulty table in §1. The left panel shows the 40 most frequent false positives across all runs, sorted by decreasing occurrence; red follows the paper's false-positive convention (unrecognized — possibly real, not necessarily fabricated). Unlike Figure 1, which packs recognized plants leftward, the fixed-column alignment reveals *which* plants each model misses: famous plants form dense columns, obscure ones sparse columns.
+Figure 7 aligns each of the 173 reference plants on a fixed column, for the 70 Experiment 1 runs (14 models × 5 repetitions, ordered as in Figure 1: by architectural family, then by decreasing effective parameter count). A blue cell marks a recognized plant (true positive); an empty cell, a miss. Reference columns are ordered by status group, then by decreasing capacity, so the status bands align with the difficulty table below. The left panel shows the 40 most frequent false positives across all runs, sorted by decreasing occurrence; red follows the paper's false-positive convention (unrecognized — possibly real, not necessarily fabricated). Unlike Figure 1, which packs recognized plants leftward, the fixed-column alignment reveals *which* plants each model misses: famous plants form dense columns, obscure ones sparse columns.
 
 ```{=latex}
 \begin{landscape}
@@ -412,7 +398,19 @@ Figure 7 aligns each of the 173 reference plants on a fixed column, for the 70 E
 \end{landscape}
 ```
 
-The status-composition difficulty table (same data derivation: library `aedist.exp1_recognition`) appears in §1.
+The table below shares the same data derivation as the figure (library `aedist.exp1_recognition` — common cause, no producer–consumer chaining) and decomposes the difficulty by status. The reference list is dominated by proposed plants — the largest share — which parametric memory cannot know; their mean recognition rate is far below that of operational plants. The low overall recognition is therefore structural, a property of the list's composition, not merely a model failure.
+
+| Status | n | Share of list | Recognition rate |
+|---|---:|---:|---:|
+| Proposed | 67 | 38.7% | 8.0% |
+| Planned | 21 | 12.1% | 29.6% |
+| Under construction | 10 | 5.8% | 40.3% |
+| Operational | 56 | 32.4% | 45.7% |
+| Retired | 2 | 1.2% | 63.6% |
+| Cancelled | 17 | 9.8% | 17.0% |
+| **All** | **173** | **100.0%** | **26.2%** |
+
+*Table: composition of the reference list by status, and mean recognition rate (Experiment 1, direct method: 14 models × 5 repetitions). The rate is the share of run × plant cells recognized among plants of that status.*
 
 ---
 

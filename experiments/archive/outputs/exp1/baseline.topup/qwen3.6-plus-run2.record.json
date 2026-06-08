@@ -1,0 +1,44 @@
+{
+  "run_id": "ea9617dba536",
+  "timestamp": "2026-06-08T08:20:05.687579Z",
+  "method": "direct",
+  "method_params": {
+    "model": "qwen/qwen3.6-plus",
+    "temperature": 0.0,
+    "max_tokens": 32768,
+    "prompt_version": "p1_base.topup",
+    "extra": {
+      "size_class": "frontier",
+      "country": "CN",
+      "architecture": "moe",
+      "provider": "Alibaba",
+      "context_window": 1000000,
+      "system_instruction": "You have no web search capability. Do not claim to perform searches, do not invoke tools, do not fabricate URLs. Answer from parametric knowledge only.",
+      "seed": 42,
+      "num_ctx": 32768,
+      "web_search": false,
+      "finish_reason": "stop"
+    }
+  },
+  "resource_use": {
+    "wall_s": 181.239,
+    "cost_usd": 0.019583200000000002,
+    "tokens_in": 250,
+    "tokens_out": 10001,
+    "thinking_tokens": 6677
+  },
+  "result_file": "experiments/archive/outputs/exp1/baseline.topup/qwen3.6-plus-run2.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 32,
+    "tp": 28,
+    "fp": 4,
+    "fn": 145,
+    "f1": 0.2732,
+    "fuel_accuracy": 0.5,
+    "status_accuracy": 0.6071,
+    "province_accuracy": 0.8571
+  },
+  "finish_reason": "stop",
+  "reference": "vietnam_thermal_plants_v2_classified.csv"
+}

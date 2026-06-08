@@ -28,19 +28,19 @@ def test_exp1_cost_summary_includes_wall_time_column():
 def test_aggregate_per_model_uses_median_wall_time():
     records = [
         {
-            "result_file": "experiments/outputs/ablation/direct/p1_base/qwen/run01.json",
+            "result_file": "experiments/archive/outputs/exp1/baseline/qwen/run01.json",
             "method_params": {"model": "qwen/test"},
             "resource_use": {"tokens_in": 10, "tokens_out": 20, "cost_usd": 0.1, "wall_s": 10},
             "result_summary": {"status": "ok"},
         },
         {
-            "result_file": "experiments/outputs/ablation/direct/p1_base/qwen/run02.json",
+            "result_file": "experiments/archive/outputs/exp1/baseline/qwen/run02.json",
             "method_params": {"model": "qwen/test"},
             "resource_use": {"tokens_in": 11, "tokens_out": 21, "cost_usd": 0.2, "wall_s": 100},
             "result_summary": {"status": "ok"},
         },
         {
-            "result_file": "experiments/outputs/ablation/direct/p1_base/qwen/run03.json",
+            "result_file": "experiments/archive/outputs/exp1/baseline/qwen/run03.json",
             "method_params": {"model": "qwen/test"},
             "resource_use": {"tokens_in": 12, "tokens_out": 22, "cost_usd": 0.3, "wall_s": 1000},
             "result_summary": {"status": "ok"},

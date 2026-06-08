@@ -1,0 +1,42 @@
+{
+  "run_id": "e485549e772c",
+  "timestamp": "2026-06-08T08:20:09.081914Z",
+  "method": "direct",
+  "method_params": {
+    "model": "openai/gpt-oss-120b",
+    "temperature": 0.0,
+    "max_tokens": 32768,
+    "prompt_version": "p1_base",
+    "extra": {
+      "size_class": "large",
+      "country": "US",
+      "architecture": "moe",
+      "provider": "OpenAI",
+      "context_window": 131072,
+      "system_instruction": "You have no web search capability. Do not claim to perform searches, do not invoke tools, do not fabricate URLs. Answer from parametric knowledge only.",
+      "reasoning_effort": "minimal",
+      "seed": 42,
+      "finish_reason": "stop"
+    }
+  },
+  "resource_use": {
+    "wall_s": 83.932,
+    "cost_usd": 0.0021313499999999997,
+    "tokens_in": 285,
+    "tokens_out": 3481
+  },
+  "result_file": "experiments/archive/outputs/exp1/baseline/gpt-oss-120b-run2.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 20,
+    "tp": 12,
+    "fp": 8,
+    "fn": 161,
+    "f1": 0.1244,
+    "fuel_accuracy": 0.3333,
+    "status_accuracy": 0.5,
+    "province_accuracy": 0.6667
+  },
+  "finish_reason": "stop",
+  "reference": "vietnam_thermal_plants_v2_classified.csv"
+}

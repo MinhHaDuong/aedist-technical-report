@@ -60,7 +60,7 @@
 ### 5. Operationalize "F1 vs cost" — sweep small-local → frontier for Pareto front
 > *"Pick one primary axis, report the others. Sweep across 3–5 models spanning small-local → frontier-API."*
 
-**Reply:** Addressed in Figure 2 (Pareto frontier placeholder spanning Experiments 1–3). The journal model set spans cheap reasoning models ($0.07/M) through frontier-class ($7.50/M). A local model is not in `modelset_ablation_journal` — this is a scope decision to revisit in ticket 0175 if the local/sovereign comparison is needed for Experiment 1 specifically (vs. being implicit in the census data).
+**Reply:** Addressed in Figure 2 (Pareto frontier placeholder spanning Experiments 1–3). The journal model set spans cheap reasoning models ($0.07/M) through frontier-class ($7.50/M). A local model is not in `modelset_exp1_journal` — this is a scope decision to revisit in ticket 0175 if the local/sovereign comparison is needed for Experiment 1 specifically (vs. being implicit in the census data).
 
 ---
 

@@ -9,8 +9,8 @@ not by this script (ticket 0436 — figures emit figures only, no side-output
 another rule consumes).
 
 Scope: **Experiment 1 only** (the parametric baseline sweep,
-``experiments/outputs/ablation/direct/p1_base/``). Pilot rows under
-``p1_base.pilot/`` are excluded. The figure is descriptive — no
+``experiments/archive/outputs/exp1/baseline/``). Pilot rows under
+``baseline.pilot/`` are excluded. The figure is descriptive — no
 Pareto-efficient envelope is drawn.
 
 Y axis: per-model **count of correctly identified plants** (true positives,

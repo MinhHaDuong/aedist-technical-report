@@ -121,9 +121,9 @@ model_ids = [
 ]
 
 # ── Ablation model sets ──────────────────────────────────────────
-# Two tiers: modelset_ablation_dev (cheap, use now) and modelset_ablation_journal
+# Two tiers: modelset_ablation_dev (cheap, use now) and modelset_exp1_journal
 # (expensive, gated for final production runs).
-# Switch model_set in sweep configs from modelset_ablation_dev → modelset_ablation_journal
+# Switch model_set in sweep configs from modelset_ablation_dev → modelset_exp1_journal
 # when pipeline is validated and human approves the cost.
 
 # Dev tier — cheap reasoning models for pipeline validation
@@ -159,7 +159,7 @@ model_ids = [
 # claim can be tested within-model. No -thinking variants in the parametric
 # baseline; reasoning-configurable models (gpt-oss-*, qwen3.7-max) declare
 # reasoning_effort="minimal" in models.yaml.
-[sets.modelset_ablation_journal]
+[sets.modelset_exp1_journal]
 model_ids = [
     # EN — Anthropic
     "anthropic/claude-opus-4.6",
@@ -185,10 +185,10 @@ model_ids = [
 ]
 
 # Frozen replica of the 2026-05-20 Experiment 1 baseline cohort (ticket
-# 0198). Differs from modelset_ablation_journal in two slots that were
+# 0198). Differs from modelset_exp1_journal in two slots that were
 # renamed in-registry since the baseline ran (qwen3.6-flash → 3.5-flash-02-23,
 # deepseek-v4-flash:free → no :free suffix on the paid variant). Used by
-# sweep_ablation_p1_direct_base_topup so the new reps call the same
+# sweep_exp1_baseline_topup so the new reps call the same
 # upstream model the baseline did, preserving the pooling claim.
 # Batch 2 rerun: aligned to protocol_07_naive_prompt.md (GEM vocab, unified schema).
 # Drops Mistral (not a SOTA target) and the three excluded models from the figure
@@ -258,7 +258,7 @@ model_ids = [
 model_ids = []
 
 # Phase 2 single-module sweeps — 4 reasoning models used for composition analysis.
-# Note: these are a subset of modelset_ablation_journal (same 4 models that were
+# Note: these are a subset of modelset_exp1_journal (same 4 models that were
 # previously in the legacy [sets.ablation] alias).
 [sets.modelset_ablation_phase2]
 model_ids = [
@@ -565,48 +565,48 @@ output = "qualitative/scenarios"
 
 # Phase 1 — Selection: base vs composite across 3 regimes
 # Uses modelset_ablation_dev (cheap reasoning models) for pipeline validation.
-# Upgrade to modelset_ablation_journal for final production runs.
+# Upgrade to modelset_exp1_journal for final production runs.
 
 # Parametric regime (no docs, no search) — Experiment 1 production baseline.
 # Locked by ticket 0175: 16-model journal set × 5 reps = 80 runs.
 # prompt_modules = [] → assemble_prompt() returns the always-pair only
 # (2_goal + 5_table); see harness.py and modules/README.md.
 # system_instruction declares no-web-search for the parametric regime.
-[sweeps.sweep_ablation_p1_direct_base]
+[sweeps.sweep_exp1_baseline]
 mode = "single"
 prompt_modules = []
 models = "models.yaml"
-model_set = "modelset_ablation_journal"
+model_set = "modelset_exp1_journal"
 repeat = 5
 temperature = 0.0
 seed = 42
 budget_usd = 15
 max_tokens = 32768
 system_instruction = "You have no web search capability. Do not claim to perform searches, do not invoke tools, do not fabricate URLs. Answer from parametric knowledge only."
-output = "outputs/ablation/direct/p1_base"
+output = "outputs/exp1/baseline"
 
 # Ticket 0198: reasoning-intensity top-up. Same call shape as the base
 # sweep; new reps capture reasoning_tokens (PR #379). Canary = repeat 1,
 # then repeat 3 for top-up (run 1 skipped by should_skip). Pooled with
 # original 5-rep baseline for outcome metrics; reasoning_tokens reported
 # from post-fix cohort only.
-[sweeps.sweep_ablation_p1_direct_base_topup]
+[sweeps.sweep_exp1_baseline_topup]
 mode = "single"
 prompt_modules = []
 models = "models.yaml"
-model_set = "modelset_exp1_baseline"
+model_set = "modelset_exp1_batch2"
 repeat = 3
 temperature = 0.0
 seed = 42
 budget_usd = 8
 max_tokens = 32768
 system_instruction = "You have no web search capability. Do not claim to perform searches, do not invoke tools, do not fabricate URLs. Answer from parametric knowledge only."
-output = "outputs/ablation/direct/p1_base.topup"
+output = "outputs/exp1/baseline.topup"
 
 # Ticket 0057 retained as pilot extension: 9 cheap cloud models on the
 # 2-rep dev set. Ticket 0175 repoints output to p1_base.pilot/ so the
 # journal sweep above writes to a clean p1_base/ directory.
-[sweeps.sweep_ablation_p1_direct_base_extended]
+[sweeps.sweep_exp1_baseline_extended]
 mode = "single"
 prompt_modules = []
 models = "models.yaml"
@@ -614,7 +614,7 @@ model_set = "modelset_census_extended"
 repeat = 2
 budget_usd = 5
 seed = 42
-output = "outputs/ablation/direct/p1_base.pilot"
+output = "outputs/exp1/baseline.pilot"
 
 [sweeps.sweep_ablation_p1_direct_composite]
 mode = "single"

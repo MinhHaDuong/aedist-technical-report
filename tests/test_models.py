@@ -331,11 +331,11 @@ def test_sweep_output_dirs_unique(experiments):
         if out in outputs:
             # Some sweep pairs intentionally share an output directory:
             # - census/census_local: cloud + local models writing to same dir
-            # - ablation_p1_parametric_base/_extended: extended set mixes into base dir
+            # - exp1_baseline/_extended: extended set mixes into base dir
             pair = {name, outputs[out]}
             allowed_pairs = [
                 {"sweep_direct_extract", "sweep_direct_extract_local"},
-                {"sweep_ablation_p1_direct_base", "sweep_ablation_p1_direct_base_extended"},
+                {"sweep_exp1_baseline", "sweep_exp1_baseline_extended"},
                 {"sweep_regimes_direct_cloud", "sweep_regimes_direct_local"},
                 {"sweep_regimes_multiturn_cloud", "sweep_regimes_multiturn_local"},
                 {"sweep_regimes_rag_cloud", "sweep_regimes_rag_local"},

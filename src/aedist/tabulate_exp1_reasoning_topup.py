@@ -3,8 +3,8 @@
 Pipeline phase: P3 (analyze & render) — invoked by experiments/render.mk.
 
 Joins two cohorts of Experiment 1 runs:
-- baseline: ``outputs/ablation/direct/p1_base/``  (2026-05-20, N=5)
-- topup:    ``outputs/ablation/direct/p1_base.topup/``  (2026-05-21, N≤3)
+- baseline: ``archive/outputs/exp1/baseline/``  (2026-05-20, N=5)
+- topup:    ``archive/outputs/exp1/baseline.topup/``  (2026-05-21, N≤3)
 
 Per model, computes:
 - F1 mean/sd for each cohort (over reps with status=ok)
@@ -28,9 +28,9 @@ from .tabulate_utils import format_model_name
 
 log = logging.getLogger(__name__)
 
-BASELINE_PREFIX = "experiments/outputs/ablation/direct/p1_base/"
-TOPUP_PREFIX = "experiments/outputs/ablation/direct/p1_base.topup/"
-PILOT_MARKER = "/p1_base.pilot/"
+BASELINE_PREFIX = "experiments/archive/outputs/exp1/baseline/"
+TOPUP_PREFIX = "experiments/archive/outputs/exp1/baseline.topup/"
+PILOT_MARKER = "/baseline.pilot/"
 
 
 def _cohort(rec: dict) -> str | None:
