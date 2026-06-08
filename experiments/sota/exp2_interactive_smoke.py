@@ -87,8 +87,8 @@ METAPROMPT_PATH = REPO_ROOT / "experiments" / "sota" / "protocol_02_metaprompt.m
 MODELS_YAML = REPO_ROOT / "experiments" / "models.yaml"
 DEFAULT_OUTPUT_DIR = REPO_ROOT / "experiments" / "outputs" / "sota_exp2_phase_b0"
 
-QUALITY_BAR_START = "## Second, the quality bar"
-QUALITY_BAR_END = "## Third,"
+QUALITY_BAR_START = "## 2. Quality dimensions"
+QUALITY_BAR_END = "## 3. AI capability"
 
 FAMILY_BY_AGENT = {
     "mistral": "mistral-direct",

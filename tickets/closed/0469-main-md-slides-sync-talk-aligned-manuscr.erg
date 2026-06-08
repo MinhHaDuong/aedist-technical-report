@@ -1,0 +1,106 @@
+%erg 0.1
+Title: main.md ↔ slides sync — talk-aligned manuscript revision (naive readership)
+Created: 2026-06-08
+Author: claude
+Closed: Talk-aligned manuscript revision complete
+
+--- log ---
+2026-06-08T14:39Z claude created
+2026-06-08T12:30Z claude note re-scoped from 'slides sync' to synopsis→paper restructure
+
+2026-06-08T18:29Z HDMX-coding-agent closed — Talk-aligned manuscript revision complete
+--- body ---
+## Context
+
+`slides/manuscript/main.md` is a conference **SYNOPSIS** — title
+"# Synopsis — Beyond RAG…", rhetorical "First / Second / Third / Fourth /
+Fifth" sections, Related Work buried in Annex A, no abstract / introduction /
+conclusion / affiliations / heading numbers. Convert it to a **proper paper**
+for arXiv / journal. **Author-ratified this session.** The readership is naive
+to LLMs (a general energy-statistics / methods audience). Align with the
+talk / slides narrative.
+
+Part of tracker 0464 (Paper A, role A5). Prose-only. The sequencing predecessors
+#793/#794/#795 (tickets 0448/0433/0455 — caption style, Annex C as-run Exp2
+story, figure-language sweep) have all merged, so the restructure proceeds
+unblocked. This ticket may legitimately **spawn sub-tickets** (children of 0464)
+if a section-sized rewrite surfaces; split per the IDH multi-PR convention
+rather than ballooning one merge request.
+
+## Relevant files
+
+- `slides/manuscript/main.md` — the synopsis to restructure into a paper
+- `slides/` talk source — the narrative reference to align with
+- `slides/manuscript/macros.tex`, `slides/manuscript/macros_exp1_matrix.tex` — the generated numeric macros (the abstract numbers MUST come from these, not re-typed)
+- `.claude/rules/writing.md` — Related Work citation budget, per-paragraph mix, gap-paragraph rules
+
+## Actions / Exit-criteria checklist
+
+- [ ] **Real title** — drop "Synopsis".
+- [ ] **Structured ABSTRACT** that LEADS with the frontier-falls-short result,
+      then the other key results: the parametric ceiling (best model ~71.5 F1 /
+      DeepSeek V3.2 68.6; best local ~24.4 — **PIN the canonical macro**:
+      `macros.tex` says best = 71.5 but `macros_exp1_matrix` says 65.5 / Qwen,
+      two contexts. **Verify which is the abstract's number, do not pick
+      blindly.**), the conjunctive quality bar, the reference-free coherence
+      screen, and the fusion potential. Numbers come from the generated
+      macros / artifacts **ONLY**; guard the abstract literals with an
+      adherence test.
+- [ ] **Numbered IMRaD** — Introduction · Methods · Results (Exp 1/2/3) ·
+      Discussion · Conclusion — replacing the rhetorical "First…Fifth" headings.
+- [ ] **Author(s) + affiliations.**
+- [ ] **Related Work OUT of Annex A INTO the body** (respect
+      `.claude/rules/writing.md`: citation budget, per-paragraph mix, gap
+      paragraph).
+- [ ] **Decorative figures OUT of the body to an annex** — Fig 2b (quality
+      spider, superseded by the heatmap, ticket 0466), Fig 5 (capability DAG),
+      Fig 6 (exp2 coverage-certainty). **Results artifacts INTO the body** —
+      the model-grain floor heatmap (0466, positioned as a follow-up to
+      Figure 1) and the difficulty table (0468).
+- [ ] **§5 reframed** from "a tailored solution can work" to "Need and potential
+      for fusion" — the analysis / figure is the new leaf **0473**; §5 prose
+      frames it as the answer to the talk Q&A "did you fuse the results?" → yes,
+      naive fusion already helps, full treatment is Paper B (0465).
+- [ ] **PURGE leaked dev / historical notes** from the prose ("since resolved",
+      "now scored", status parentheticals, process commentary).
+- [ ] `make -C slides manuscript` clean.
+
+## Test
+
+Placement / consistency checks (source-inspection):
+
+```python
+def test_no_synopsis_framing():
+    md = open("slides/manuscript/main.md").read()
+    assert "Synopsis" not in md             # retitled to a real paper title
+    assert "## First" not in md             # rhetorical headings replaced by IMRaD
+
+def test_abstract_number_from_macros():
+    # the abstract's parametric-ceiling literal is re-derived from the
+    # canonical macro, never re-typed (guards the 71.5 / 65.5 ambiguity)
+    ...
+```
+
+## Verification
+
+- [ ] Real title; structured abstract leading with the frontier result.
+- [ ] Numbered IMRaD; Related Work in the body; author + affiliations.
+- [ ] Decorative figures moved to annex; heatmap (0466) + difficulty table
+      (0468) in the body.
+- [ ] §5 reframed to "Need and potential for fusion" around leaf 0473.
+- [ ] Dev/historical notes purged.
+- [ ] Abstract literals guarded by an adherence test re-deriving from macros.
+
+## Invariants
+
+- Figures stay generated artifacts (no inline plots); numeric literals stay
+  derived from generated artifacts, never re-typed.
+
+## Exit criteria
+
+- [ ] `main.md` restructured from synopsis to a proper IMRaD paper for a
+      naive-to-LLM readership; abstract numbers derived from canonical macros
+      and guarded; `make -C slides manuscript` clean; sub-tickets filed for any
+      deferred section rewrites.
+
+Part of: 0464 — role A5 (synopsis→paper restructure; predecessors #793/#794/#795 merged).
