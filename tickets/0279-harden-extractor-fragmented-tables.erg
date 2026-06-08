@@ -2,10 +2,12 @@
 Title: Harden extractor for fragmented plant tables
 Created: 2026-05-24
 Author: haduong
+Closed: merge_fragmented_tables implemented; regression tests pass; spot-check 76 rows (correct); make check-fast green
 
 --- log ---
 2026-05-24T14:30Z haduong created
 
+2026-06-08T19:14Z HDMX-coding-agent closed — merge_fragmented_tables implemented; regression tests pass; spot-check 76 rows (correct); make check-fast green
 --- body ---
 ## Context
 

@@ -198,6 +198,170 @@ def _merge_pipe_table_candidates(tables: list[str]) -> str | None:
     return "\n".join([best_header, *merged_rows])
 
 
+def _headers_compatible(h1: str, h2: str) -> bool:
+    """Return True when two CSV header lines share ≥2 identical canonical column names.
+
+    This detects tables with the same logical schema expressed with slightly
+    different column labels (e.g. "Units × MW" vs "Technology" columns added
+    or dropped between fuel sub-tables in the same response).
+    """
+    try:
+        cells1 = next(csv.reader([h1]))
+        cells2 = next(csv.reader([h2]))
+    except Exception:
+        return False
+    norms1 = {map_header_to_canonical(norm_header(c)) for c in cells1}
+    norms2 = {map_header_to_canonical(norm_header(c)) for c in cells2}
+    norms1.discard(None)
+    norms2.discard(None)
+    return len(norms1 & norms2) >= 2
+
+
+def _norm_plant_name(name: str) -> str:
+    """Normalise a plant name for deduplication: lowercase, strip diacritics."""
+    import unicodedata
+
+    nfd = unicodedata.normalize("NFKD", name.strip().lower())
+    return "".join(c for c in nfd if not unicodedata.combining(c))
+
+
+def merge_fragmented_tables(text: str, tables: list[str]) -> str | None:
+    """Merge plant-inventory sub-tables that are fragments of one logical table.
+
+    Fragmentation heuristic: two or more inventory tables within 50 source
+    lines of each other that share the same column count **and** have
+    compatible headers (≥2 identical normalised canonical column names) are
+    treated as fuel-split fragments and concatenated.
+
+    Data rows are deduplicated by normalised plant name (case-insensitive,
+    diacritics stripped via NFKD decomposition) so that repeated header rows
+    and copy-pasted plants do not inflate counts.
+
+    Returns the merged CSV string for the largest compatible group, or None
+    when no multi-table group is found.
+    """
+    if len(tables) < 2:
+        return None
+
+    # Locate each table's start line in the source text.
+    source_lines = text.splitlines()
+    table_starts: list[int] = []
+    table_ends: list[int] = []
+    for tbl in tables:
+        first_row = tbl.splitlines()[0] if tbl.strip() else ""
+        # Recover the original pipe-row text from the first CSV row of the table.
+        # The CSV row was built as `",".join(f'"{c}"' for c in cells)`, so we
+        # can extract the cell content to search for it in the source.
+        try:
+            first_cells = next(csv.reader([first_row]))
+        except Exception:
+            first_cells = []
+        # Search for the source line containing the first cell of the header.
+        anchor = first_cells[0] if first_cells else ""
+        start = 0
+        for i, ln in enumerate(source_lines):
+            if anchor and anchor in ln and "|" in ln:
+                start = i
+                break
+        tbl_line_count = len(tbl.splitlines())
+        table_starts.append(start)
+        table_ends.append(start + tbl_line_count)
+
+    # Filter to inventory tables only.
+    inv_indices: list[int] = []
+    for idx, tbl in enumerate(tables):
+        lines = [ln for ln in tbl.splitlines() if ln.strip()]
+        if len(lines) >= 2 and _is_inventory_header(lines[0]):
+            inv_indices.append(idx)
+
+    if len(inv_indices) < 2:
+        return None
+
+    # Group inventory tables into compatible clusters using proximity + schema.
+    # A greedy chain: seed from the largest inventory table, absorb neighbours.
+    def _ncols(tbl: str) -> int:
+        try:
+            return len(next(csv.reader([tbl.splitlines()[0]])))
+        except Exception:
+            return 0
+
+    # Build proximity + compatibility graph edges.
+    clusters: list[list[int]] = []
+    used: set[int] = set()
+
+    # Sort inv_indices by source position so we can walk forward.
+    inv_indices_sorted = sorted(inv_indices, key=lambda i: table_starts[i])
+
+    for i_pos, i in enumerate(inv_indices_sorted):
+        if i in used:
+            continue
+        cluster = [i]
+        used.add(i)
+        cluster_end = table_ends[i]
+        cluster_header = tables[i].splitlines()[0] if tables[i].strip() else ""
+        cluster_ncols = _ncols(tables[i])
+
+        for j in inv_indices_sorted[i_pos + 1 :]:
+            if j in used:
+                continue
+            gap = table_starts[j] - cluster_end
+            if gap > 50:
+                break  # sorted by start; no further table can be close enough
+            j_header = tables[j].splitlines()[0] if tables[j].strip() else ""
+            j_ncols = _ncols(tables[j])
+            if j_ncols == cluster_ncols and _headers_compatible(cluster_header, j_header):
+                cluster.append(j)
+                used.add(j)
+                cluster_end = max(cluster_end, table_ends[j])
+
+        clusters.append(cluster)
+
+    # Pick the largest cluster by total data-row count.
+    def _row_count(cluster: list[int]) -> int:
+        return sum(len(tables[i].splitlines()) - 1 for i in cluster)
+
+    multi_clusters = [c for c in clusters if len(c) > 1]
+    if not multi_clusters:
+        return None
+
+    best_cluster = max(multi_clusters, key=_row_count)
+
+    # Merge: use header from the largest table in the cluster; concatenate
+    # data rows; deduplicate by normalised plant name.
+    best_idx = max(best_cluster, key=lambda i: len(tables[i].splitlines()))
+    merged_header = tables[best_idx].splitlines()[0]
+
+    seen_names: set[str] = set()
+    merged_rows: list[str] = []
+    for idx in best_cluster:
+        tbl_lines = [ln for ln in tables[idx].splitlines() if ln.strip()]
+        for row in tbl_lines[1:]:  # skip header
+            try:
+                cells = next(csv.reader([row]))
+            except Exception:
+                merged_rows.append(row)
+                continue
+            # First non-empty cell that maps to "name" in any position
+            name_val = ""
+            try:
+                hdr_cells = next(csv.reader([tables[idx].splitlines()[0]]))
+            except Exception:
+                hdr_cells = []
+            for ci, hc in enumerate(hdr_cells):
+                if map_header_to_canonical(norm_header(hc)) == "name" and ci < len(cells):
+                    name_val = cells[ci]
+                    break
+            key = _norm_plant_name(name_val) if name_val else row
+            if key in seen_names:
+                continue
+            seen_names.add(key)
+            merged_rows.append(row)
+
+    if len(merged_rows) < 2:
+        return None
+    return "\n".join([merged_header, *merged_rows])
+
+
 def fallback_extract_inline_csv(text: str) -> str | None:
     """Extract a CSV-looking region when there are no fenced blocks."""
     lines = text.splitlines()
@@ -452,10 +616,13 @@ def count_best_table_rows(text: str) -> int:
     more plant-like inventory table is present in the same markdown response.
     """
     pipe_candidates = _extract_pipe_tables(text)
-    merged_pipe = _merge_pipe_table_candidates(pipe_candidates)
     candidates = list(pipe_candidates)
+    merged_pipe = _merge_pipe_table_candidates(pipe_candidates)
     if merged_pipe:
         candidates.append(merged_pipe)
+    fragmented = merge_fragmented_tables(text, pipe_candidates)
+    if fragmented:
+        candidates.append(fragmented)
     if not candidates:
         return 0
 
@@ -498,6 +665,11 @@ def extract_one(json_path: Path, output_dir: Path, overwrite: bool) -> ExtractRe
     merged_subtables = merged_pipe is not None
     if merged_pipe:
         candidates.append(merged_pipe)
+    fragmented = merge_fragmented_tables(response, pipe_candidates)
+    if fragmented:
+        if not merged_subtables:
+            merged_subtables = True
+        candidates.append(fragmented)
     # Only try inline fallback when no fenced blocks or pipe tables found
     if not candidates:
         inline = fallback_extract_inline_csv(response)

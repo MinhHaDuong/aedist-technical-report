@@ -7,6 +7,7 @@ import pytest
 from aedist.extract import (
     ExtractStatus,
     _extract_pipe_tables,
+    _headers_compatible,
     _is_inventory_header,
     _merge_pipe_table_candidates,
     count_best_table_rows,
@@ -14,11 +15,16 @@ from aedist.extract import (
     extract_one,
     main,
     map_header_to_canonical,
+    merge_fragmented_tables,
     norm_header,
     parse_and_canonicalize,
     score_csv_like_block,
     sniff_dialect,
 )
+
+# Verify the newly imported names are actually used below to prevent ruff stripping:
+# merge_fragmented_tables is used in TestMergeFragmentedTables
+# _headers_compatible is used in TestMergeFragmentedTables.test_headers_compatible_*
 
 
 class TestHeaderMapping:
@@ -732,3 +738,128 @@ class TestMainSkipsDerivedJson:
         # None of the derived files should produce CSVs
         csv_files = list(out.glob("*.csv"))
         assert len(csv_files) == 1, f"Expected 1 CSV, got {[f.name for f in csv_files]}"
+
+
+# ---------------------------------------------------------------------------
+# merge_fragmented_tables — compatible-header merge (ticket 0279)
+# ---------------------------------------------------------------------------
+class TestMergeFragmentedTables:
+    """merge_fragmented_tables merges inventory sub-tables with compatible but
+    non-identical headers (fuel-split fragments) within a 50-line proximity window.
+
+    The heuristic requires: same column count AND compatible headers (>=2 shared
+    canonical names) AND proximity within 50 source lines.
+    """
+
+    def test_merges_three_compatible_tables_consecutive(self):
+        """Three consecutive compatible tables (coal/gas/LNG split, same col count)
+        are merged. Merged row count equals the sum of data rows across all three.
+
+        Canonical test for the fragmented-table scenario described in ticket 0279:
+        headers have the same number of columns but differ in one column label
+        (e.g. coal table has "Technology" while gas table has "Owner").
+        """
+        text = (
+            "**Coal plants:**\n\n"
+            # 6-column header: Name Province Fuel Technology Total_MWe Status
+            "| Name | Province | Fuel | Technology | Total MWe | Status |\n"
+            "| --- | --- | --- | --- | --- | --- |\n"
+            "| Pha Lai | Hai Duong | Coal | Subcritical | 440 | Operating |\n"
+            "| Uong Bi | Quang Ninh | Coal | Subcritical | 630 | Operating |\n\n"
+            "**Gas plants:**\n\n"
+            # 6-column header: Name Province Fuel Owner Total_MWe Status
+            "| Name | Province | Fuel | Owner | Total MWe | Status |\n"
+            "| --- | --- | --- | --- | --- | --- |\n"
+            "| Phu My 1 | Ba Ria-Vung Tau | Gas | EVN | 1090 | Operating |\n"
+            "| Ca Mau 1 | Ca Mau | Gas | PetroVietnam | 750 | Operating |\n"
+            "| Ca Mau 2 | Ca Mau | Gas | PetroVietnam | 750 | Operating |\n\n"
+            "**LNG plants:**\n\n"
+            # 6-column header: Name Province Fuel COD Total_MWe Status
+            "| Name | Province | Fuel | COD | Total MWe | Status |\n"
+            "| --- | --- | --- | --- | --- | --- |\n"
+            "| Nhon Trach 3 | Dong Nai | LNG | 2026 | 750 | Construction |\n"
+        )
+        tables = _extract_pipe_tables(text)
+        merged = merge_fragmented_tables(text, tables)
+        assert merged is not None, "Expected compatible tables to be merged"
+        lines = [ln for ln in merged.splitlines() if ln.strip()]
+        # header + 6 data rows (2+3+1)
+        assert len(lines) == 7, f"Expected 7 lines (header+6 rows), got {len(lines)}: {lines}"
+
+    def test_merges_compatible_tables_with_prose_paragraph(self):
+        """Compatible sub-tables (same col count, compatible headers) separated by
+        ~10 prose lines are still merged (within the 50-line proximity window).
+        """
+        prose_block = "\n".join(
+            [
+                "",
+                "The following gas-fired power plants are also part of the inventory.",
+                "They were developed under BOT contracts with EVN.",
+                "Capacity figures represent gross installed capacity in MWe.",
+                "Status reflects commissioning as of the latest available data.",
+                "Sources include GEM Global Gas Plant Tracker and EVN Annual Reports.",
+                "Plants marked Planned have financial close pending.",
+                "COD dates for planned plants are indicative estimates only.",
+                "This section covers all gas plants above 30 MW nameplate capacity.",
+                "LNG regasification terminal details are excluded from this table.",
+                "",
+            ]
+        )
+        text = (
+            # 6-column coal table: Name Province Fuel Technology Total_MWe Status
+            "| Name | Province | Fuel | Technology | Total MWe | Status |\n"
+            "| --- | --- | --- | --- | --- | --- |\n"
+            "| Pha Lai | Hai Duong | Coal | Subcritical | 440 | Operating |\n"
+            "| Uong Bi | Quang Ninh | Coal | Subcritical | 630 | Operating |\n"
+            + prose_block
+            # 6-column gas table: Name Province Fuel Owner Total_MWe Status
+            + "| Name | Province | Fuel | Owner | Total MWe | Status |\n"
+            "| --- | --- | --- | --- | --- | --- |\n"
+            "| Phu My 1 | Ba Ria-Vung Tau | Gas | EVN | 1090 | Operating |\n"
+            "| Ca Mau 1 | Ca Mau | Gas | PetroVietnam | 750 | Operating |\n"
+        )
+        tables = _extract_pipe_tables(text)
+        merged = merge_fragmented_tables(text, tables)
+        assert merged is not None, "Tables within 50-line window should be merged"
+        lines = [ln for ln in merged.splitlines() if ln.strip()]
+        # header + 4 data rows
+        assert len(lines) == 5, f"Expected 5 lines (header+4 rows), got {len(lines)}"
+
+    def test_no_merge_for_unrelated_tables_different_column_counts(self):
+        """Tables with different column counts are not merged even if headers share
+        some keywords. A statistical recap table (2 cols) must not be fused with
+        the inventory table (6 cols).
+        """
+        text = (
+            "| Name | Province | Fuel | Total MWe | Status | COD |\n"
+            "| --- | --- | --- | --- | --- | --- |\n"
+            "| Pha Lai | Hai Duong | Coal | 440 | Operating | 1983 |\n"
+            "| Uong Bi | Quang Ninh | Coal | 630 | Operating | 2002 |\n\n"
+            "Summary by fuel:\n\n"
+            "| Fuel | Total MWe |\n"
+            "| --- | --- |\n"
+            "| Coal | 1070 |\n"
+            "| Gas | 900 |\n"
+        )
+        tables = _extract_pipe_tables(text)
+        merged = merge_fragmented_tables(text, tables)
+        # The summary table (2 cols) must not be merged with the inventory (6 cols).
+        assert merged is None, "Unrelated tables with different column counts must not be merged"
+
+    def test_headers_compatible_detects_shared_canonical_columns(self):
+        """_headers_compatible returns True when two CSV header lines share >=2
+        canonical column names even with different raw labels.
+        """
+        # Both have name, province, fuel, capacity_mwe, status in common (5 shared)
+        h1 = '"Name","Province","Fuel","Technology","Total MWe","Status","COD"'
+        h2 = '"Name","Province","Fuel","Owner","Total MWe","Status","COD"'
+        assert _headers_compatible(h1, h2) is True
+
+    def test_headers_incompatible_for_unrelated_tables(self):
+        """_headers_compatible returns False when headers share fewer than 2
+        canonical columns (e.g. only one canonical column in common).
+        """
+        # Only 'capacity_mwe' is shared canonical between these two
+        h_inventory = '"Name","Province","Fuel","Total MWe","Status","COD"'
+        h_other = '"Rank","Region","Total MWe"'
+        assert _headers_compatible(h_inventory, h_other) is False
