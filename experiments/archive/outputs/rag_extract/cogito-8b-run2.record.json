@@ -1,0 +1,36 @@
+{
+  "run_id": "50323a5d549c",
+  "timestamp": "2026-06-08T08:20:40.825914Z",
+  "method": "rag",
+  "method_params": {
+    "model": "cogito:8b",
+    "prompt_version": "rag_extract",
+    "extra": {
+      "size_class": "small",
+      "country": "US",
+      "architecture": "dense",
+      "provider": "Ollama/Padme",
+      "context_window": 131072,
+      "finish_reason": "stop"
+    }
+  },
+  "resource_use": {
+    "wall_s": 22.639,
+    "tokens_in": 67588,
+    "tokens_out": 514
+  },
+  "result_file": "experiments/archive/outputs/rag_extract/cogito-8b-run2.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 22,
+    "tp": 14,
+    "fp": 8,
+    "fn": 159,
+    "f1": 0.1436,
+    "fuel_accuracy": 0.1429,
+    "status_accuracy": 0.0,
+    "province_accuracy": 0.0
+  },
+  "finish_reason": "stop",
+  "reference": "vietnam_thermal_plants_v2_classified.csv"
+}

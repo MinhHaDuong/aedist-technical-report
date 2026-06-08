@@ -1,0 +1,37 @@
+{
+  "run_id": "b5a7de71a23f",
+  "timestamp": "2026-06-08T08:20:28.692969Z",
+  "method": "direct",
+  "method_params": {
+    "model": "moonshotai/kimi-k2.5",
+    "prompt_version": "direct_extract",
+    "extra": {
+      "size_class": "large",
+      "country": "CN",
+      "architecture": "moe",
+      "provider": "Moonshot AI",
+      "context_window": 262144,
+      "finish_reason": "stop"
+    }
+  },
+  "resource_use": {
+    "wall_s": 241.66,
+    "cost_usd": 0.01505487,
+    "tokens_in": 61,
+    "tokens_out": 7553
+  },
+  "result_file": "experiments/archive/outputs/direct_extract/kimi-k2.5-run3.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 47,
+    "tp": 45,
+    "fp": 2,
+    "fn": 128,
+    "f1": 0.4091,
+    "fuel_accuracy": 0.7333,
+    "status_accuracy": 0.8,
+    "province_accuracy": 0.9778
+  },
+  "finish_reason": "stop",
+  "reference": "vietnam_thermal_plants_v2_classified.csv"
+}

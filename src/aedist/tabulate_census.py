@@ -21,11 +21,14 @@ log = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 
 
-_CENSUS_PREFIX = "census/"
+_CONVERGENCE_METHODS = {"direct", "direct+multiturn", "rag_livesearch", "rag"}
 
 
 def _is_census(entry: dict) -> bool:
-    return entry.get("label", "").startswith(_CENSUS_PREFIX)
+    return (
+        entry.get("method") in _CONVERGENCE_METHODS
+        and entry.get("prompt_version") != "exp1_batch2"
+    )
 
 
 def _format_f1(row: dict) -> str:

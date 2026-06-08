@@ -1,0 +1,33 @@
+{
+  "run_id": "6766fd6333b8",
+  "timestamp": "2026-06-08T08:20:40.598021Z",
+  "method": "direct+multiturn",
+  "method_params": {
+    "model": "z-ai/glm-5-turbo",
+    "prompt_version": "direct_multiturn",
+    "extra": {
+      "size_class": "large",
+      "country": "CN",
+      "architecture": "dense",
+      "provider": "Zhipu AI",
+      "context_window": 202752
+    }
+  },
+  "resource_use": {
+    "wall_s": 534.718,
+    "cost_usd": 0.139462
+  },
+  "result_file": "experiments/archive/outputs/direct_multiturn/glm-5-turbo-run2.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 123,
+    "tp": 79,
+    "fp": 44,
+    "fn": 94,
+    "f1": 0.5338,
+    "fuel_accuracy": 0.6582,
+    "status_accuracy": 0.5823,
+    "province_accuracy": 0.9367
+  },
+  "reference": "vietnam_thermal_plants_v2_classified.csv"
+}

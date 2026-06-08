@@ -1,0 +1,33 @@
+{
+  "run_id": "7d39bcdb8fea",
+  "timestamp": "2026-06-08T08:20:39.899915Z",
+  "method": "direct+multiturn",
+  "method_params": {
+    "model": "openai/gpt-5.4",
+    "prompt_version": "direct_multiturn",
+    "extra": {
+      "size_class": "frontier",
+      "country": "US",
+      "architecture": "dense",
+      "provider": "OpenAI",
+      "context_window": 1050000
+    }
+  },
+  "resource_use": {
+    "wall_s": 85.326,
+    "cost_usd": 0.144335
+  },
+  "result_file": "experiments/archive/outputs/direct_multiturn/gpt-5.4-run1.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 88,
+    "tp": 79,
+    "fp": 9,
+    "fn": 94,
+    "f1": 0.6054,
+    "fuel_accuracy": 0.443,
+    "status_accuracy": 0.5696,
+    "province_accuracy": 0.9241
+  },
+  "reference": "vietnam_thermal_plants_v2_classified.csv"
+}

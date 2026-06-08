@@ -1,0 +1,44 @@
+{
+  "run_id": "ae010a753267",
+  "timestamp": "2026-06-08T08:20:04.189702Z",
+  "method": "direct",
+  "method_params": {
+    "model": "mistralai/mistral-medium-3-5",
+    "temperature": 0.0,
+    "max_tokens": 32768,
+    "prompt_version": "p1_base.topup",
+    "extra": {
+      "size_class": "medium",
+      "country": "FR",
+      "architecture": "dense",
+      "provider": "Mistral",
+      "context_window": 131072,
+      "system_instruction": "You have no web search capability. Do not claim to perform searches, do not invoke tools, do not fabricate URLs. Answer from parametric knowledge only.",
+      "seed": 42,
+      "num_ctx": 32768,
+      "web_search": false,
+      "finish_reason": "stop"
+    }
+  },
+  "resource_use": {
+    "wall_s": 31.93,
+    "cost_usd": 0.009319200000000001,
+    "tokens_in": 253,
+    "tokens_out": 4609,
+    "thinking_tokens": 0
+  },
+  "result_file": "experiments/archive/outputs/ablation/direct/p1_base.topup/mistral-medium-3-5-run3.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 54,
+    "tp": 47,
+    "fp": 7,
+    "fn": 126,
+    "f1": 0.4141,
+    "fuel_accuracy": 0.5106,
+    "status_accuracy": 0.5106,
+    "province_accuracy": 0.9362
+  },
+  "finish_reason": "stop",
+  "reference": "vietnam_thermal_plants_v2_classified.csv"
+}

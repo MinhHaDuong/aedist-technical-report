@@ -1,0 +1,27 @@
+{
+  "run_id": "155c344a43ce",
+  "timestamp": "2026-06-08T08:21:43.158165Z",
+  "method": "rag",
+  "method_params": {
+    "model": "gemma4:e4b",
+    "prompt_version": "rag_extract",
+    "extra": {
+      "size_class": "edge",
+      "country": "US",
+      "architecture": "dense",
+      "provider": "Ollama/Padme",
+      "context_window": 131072,
+      "finish_reason": "stop"
+    }
+  },
+  "resource_use": {
+    "wall_s": 148.848,
+    "tokens_in": 80421,
+    "tokens_out": 2647
+  },
+  "result_file": "experiments/archive/outputs/rag_extract/gemma4-e4b-run2.json",
+  "result_summary": {
+    "status": "refusal"
+  },
+  "finish_reason": "stop"
+}

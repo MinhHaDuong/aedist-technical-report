@@ -1,0 +1,33 @@
+{
+  "run_id": "b4bb25249120",
+  "timestamp": "2026-06-08T08:20:40.012516Z",
+  "method": "direct+multiturn",
+  "method_params": {
+    "model": "anthropic/claude-sonnet-4.6",
+    "prompt_version": "direct_multiturn",
+    "extra": {
+      "size_class": "frontier",
+      "country": "US",
+      "architecture": "dense",
+      "provider": "Anthropic",
+      "context_window": 1000000
+    }
+  },
+  "resource_use": {
+    "wall_s": 173.768,
+    "cost_usd": 0.251823
+  },
+  "result_file": "experiments/archive/outputs/direct_multiturn/claude-sonnet-4.6-run3.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 96,
+    "tp": 84,
+    "fp": 12,
+    "fn": 89,
+    "f1": 0.6245,
+    "fuel_accuracy": 0.6429,
+    "status_accuracy": 0.5952,
+    "province_accuracy": 0.9643
+  },
+  "reference": "vietnam_thermal_plants_v2_classified.csv"
+}

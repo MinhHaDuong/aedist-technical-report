@@ -21,18 +21,18 @@ This paper builds the argument in six steps.
 
 Submitting a direct query to a large language model produces an inventory-shaped answer, but not one that meets statistical or scientific quality standards. Numbers shift between runs, citations are absent or fabricated, and there is no way to tell which cells one should trust.
 
-**Experiment 1 — Parametric baseline.** We query sixteen language models from the *modelset_ablation_journal* set — spanning three language families (EN/FR/ZH) and five laboratories from mid-range through frontier-class systems — with a fixed structured table specification prompt (the locked `2_goal + 5_table` composition, reproduced in Annex B). No documents are provided; models draw exclusively on parametric knowledge and receive a system instruction forbidding web search. Each model is queried five times at temperature zero, yielding 80 runs against a 170-plant reference inventory of Vietnamese thermal power plants (coal and gas, all lifecycle statuses). Runs are evaluated by matching extracted plant names against the reference using fuzzy string matching, yielding row-level precision, recall, and F1; fuel type, operational status, and province accuracy are scored at the cell level for matched rows. Cost in USD and wall-clock time are recorded per run.
+**Experiment 1 — Parametric baseline.** We query sixteen language models from the *modelset_ablation_journal* set — spanning three language families (EN/FR/ZH) and five laboratories from mid-range through frontier-class systems — with a fixed structured table specification prompt (the locked `2_goal + 5_table` composition, reproduced in Annex B). No documents are provided; models draw exclusively on parametric knowledge and receive a system instruction forbidding web search. Each model is queried five times at temperature zero, yielding 80 runs against a 173-plant reference inventory of Vietnamese thermal power plants (coal and gas, all lifecycle statuses). Runs are evaluated by matching extracted plant names against the reference using fuzzy string matching, yielding row-level precision, recall, and F1; fuel type, operational status, and province accuracy are scored at the cell level for matched rows. Cost in USD and wall-clock time are recorded per run.
 
 **Results.** Across 80 runs (16 models × 5 repeats), 77 produced usable tables and 3 were refusals (all GPT-5.5). Row-level F1 across the 77 usable runs ranges from 0.01 to 0.76, with a mean of 0.38. Within-model F1 variance is large: DeepSeek V4-Flash ranges from 0.01 to 0.65 across 5 identical runs, and GPT-OSS-20B from 0.23 to 0.76 — spreads wider than the gap between many adjacent model means. Even for correctly matched plants, attribute classification remains mediocre: mean fuel accuracy 0.53, mean status accuracy 0.53, mean province accuracy 0.61. No monotonic relationship between API cost and F1 is observed: Claude Opus 4.6 at \$1.23 total achieves mean F1 = 0.46, while GPT-OSS-20B at \$0.01 reaches 0.58. To our knowledge, this non-monotone cost-versus-F1 relationship for structured factual extraction has not been documented in prior literature. The total experiment cost is \$2.85. Five qualitative failure modes organise the model-by-run distribution: GPT-5.5 refuses the task on 3 of 5 runs (*Récalcitrant*), citing inability to produce sourced data from parametric knowledge; Claude Haiku consistently finds only 17 plants (*Incomplet*); Qwen 3.6-27B fabricates up to 268 false positives in a single run (*Hallucinant*); DeepSeek V4-Flash and GPT-OSS-20B exhibit the widest within-model variance (*Non-déterministe*); and no cost ordering predicts quality (*Non-monotone*).
 
 ![Figure 1](../report/inputs/generated/fig_direct_p1_base.pdf)
 
-*Figure 1. Direct-query performance across 16 models and 80 runs on the 170-plant Vietnam thermal reference. Each bar is one run; family-coloured segments to the right are correctly identified plants (TP), red segments to the left are unrecognized plants (FP). The dashed green line marks the 170-plant reference. Models are grouped on the vertical axis. Five qualitative failure modes are visible: Récalcitrant (refusal), Incomplet (systematic under-coverage), Hallucinant (fabricated plants), Non-déterministe (high within-model variance), Non-monotone (no cost–quality ordering).*
+*Figure 1. Direct-query performance across 16 models and 80 runs on the 173-plant Vietnam thermal reference. Each bar is one run; family-coloured segments to the right are correctly identified plants (TP), red segments to the left are unrecognized plants (FP). The dashed green line marks the 173-plant reference. Models are grouped on the vertical axis. Five qualitative failure modes are visible: Récalcitrant (refusal), Incomplet (systematic under-coverage), Hallucinant (fabricated plants), Non-déterministe (high within-model variance), Non-monotone (no cost–quality ordering).*
 
 ![Figure 2](../report/inputs/generated/fig_direct_cost_quality.pdf)
 <!-- raw data: report/inputs/generated/cost_quality.csv -->
 
-*Figure 2. Plants correctly identified vs cost per call across the Experiment 1 lineup, split by architectural family across two panels with shared axes: **panel (a)** Claude, GPT, Mistral; **panel (b)** Qwen, DeepSeek. Each of the sixteen models from `modelset_ablation_journal` contributes: a **filled square** at the pooled median TP count, **unfilled circles** at every rep from the 2026-05-20 journal sweep, and **✕ markers** at every rep from the 2026-05-21 reasoning-token top-up (ticket 0198, pooled unconditionally — no canary gate, intra-day variability absorbed into the reported within-model spread). Each rep is plotted at its **own** per-call cost (cents USD, decimal, log scale) — within-model horizontal spread reflects the rep-to-rep variation in output-token counts. A thin polyline connects the reps for each model in cost order. The dashed reference line at 170 marks the full Vietnam thermal inventory and is repeated on both panels. The Y axis starts at -5 so that refusal markers at TP=0 sit visibly above the axis line. Marker colour encodes the architectural family: Claude (blue), GPT (vermillion), Mistral (bluish-green), Qwen (reddish-purple), DeepSeek (orange), all from the colorblind-safe palette in `palette.toml`. Per-model numbers backing this figure are written to `report/inputs/generated/cost_quality.csv` for audit.*
+*Figure 2. Plants correctly identified vs cost per call across the Experiment 1 lineup, split by architectural family across two panels with shared axes: **panel (a)** Claude, GPT, Mistral; **panel (b)** Qwen, DeepSeek. Each of the sixteen models from `modelset_ablation_journal` contributes: a **filled square** at the pooled median TP count, **unfilled circles** at every rep from the 2026-05-20 journal sweep, and **✕ markers** at every rep from the 2026-05-21 reasoning-token top-up (ticket 0198, pooled unconditionally — no canary gate, intra-day variability absorbed into the reported within-model spread). Each rep is plotted at its **own** per-call cost (cents USD, decimal, log scale) — within-model horizontal spread reflects the rep-to-rep variation in output-token counts. A thin polyline connects the reps for each model in cost order. The dashed reference line at 173 marks the full Vietnam thermal inventory and is repeated on both panels. The Y axis starts at -5 so that refusal markers at TP=0 sit visibly above the axis line. Marker colour encodes the architectural family: Claude (blue), GPT (vermillion), Mistral (bluish-green), Qwen (reddish-purple), DeepSeek (orange), all from the colorblind-safe palette in `palette.toml`. Per-model numbers backing this figure are written to `report/inputs/generated/cost_quality.csv` for audit.*
 
 ![Figure 2b](../report/inputs/generated/fig_spider_exp1_families.pdf)
 
@@ -86,11 +86,11 @@ The empirical envelope nonetheless leaves the §2 quality bar uncleared, which i
 
 How well do the state of the art tools perform when it comes to producing research-quality statistical datasets? The parametric ceiling of §1 is a deliberately handicapped baseline — no web, no tools, no reasoning budget beyond what each model carries internally. The commercially available frontier, by contrast, ships agents that combine extended reasoning, web search, document ingestion, and tool use into a single "deep research" surface. The question is whether removing the §1 handicaps suffices to clear the §2 quality bar.
 
-**Experiment 2 — SOTA frontier (Annex C).** We conduct an experiment with four state-of-the-art cloud AI agents that have extended reasoning and web access, queried over direct vendor APIs (no browser automation): Anthropic Claude Opus 4.6 (US, web_search + adaptive thinking), OpenAI GPT-5.5 (US, Responses API + web_search + reasoning), Mistral Large 2512 (FR, Agents API + web_search connector), and Qwen3-Max via DashScope (CN, web_search inside thinking mode). The fourth slot is hypothesis-relevant rather than decorative: Chinese-language investor and trade documents on Vietnamese power assets are under-indexed by Western search. The experiment runs two arms over the same four agents (N=5 each). **Arm 1 (naive)** — a single-shot prompt (Doc-07) with no scaffolding, web on; the null comparator. **Arm 2 (optimised)** — a multi-turn protocol in which each agent first designs its own prompt and settings (Phase A, $10 / overnight budget), runs once as a smoke gate (Phase B-0), then runs N=5 against a single provider (Phase B). The naive-vs-optimised contrast isolates the protocol's contribution over raw model capability. Row-level F1 against the 170-plant reference is now scored for all four arms (see the 2×2 factorial table); cross-model judging on the four §2 dimensions remains reserved for post-conference analysis (Phase C, ticket 0171).
+**Experiment 2 — SOTA frontier (Annex C).** We conduct an experiment with four state-of-the-art cloud AI agents that have extended reasoning and web access, queried over direct vendor APIs (no browser automation): Anthropic Claude Opus 4.6 (US, web_search + adaptive thinking), OpenAI GPT-5.5 (US, Responses API + web_search + reasoning), Mistral Large 2512 (FR, Agents API + web_search connector), and Qwen3-Max via DashScope (CN, web_search inside thinking mode). The fourth slot is hypothesis-relevant rather than decorative: Chinese-language investor and trade documents on Vietnamese power assets are under-indexed by Western search. The experiment runs two arms over the same four agents (N=5 each). **Arm 1 (naive)** — a single-shot prompt (Doc-07) with no scaffolding, web on; the null comparator. **Arm 2 (optimised)** — a multi-turn protocol in which each agent first designs its own prompt and settings (Phase A, $10 / overnight budget), runs once as a smoke gate (Phase B-0), then runs N=5 against a single provider (Phase B). The naive-vs-optimised contrast isolates the protocol's contribution over raw model capability. Row-level F1 against the 173-plant reference is now scored for all four arms (see the 2×2 factorial table); cross-model judging on the four §2 dimensions remains reserved for post-conference analysis (Phase C, ticket 0171).
 
 ![Figure 3](../report/inputs/generated/fig_exp2_arms_comparison.pdf)
 
-*Figure 3. Experiment 2 — naive (arm 1, single-shot) vs optimised (arm 2, multi-turn) comparison, N=5 per agent. Panel (a): Plants found — TP bars (blue, upward, matched against the 170-plant reference) and FP bars (red, downward, unrecognized plants), median over runs with scored outputs; left bar = arm 1, right bar = arm 2 per agent group. Grey bars indicate runs with no matched-row scores available. Panel (b): API cost per run (USD), individual runs as scatter points. Dashed green line marks the 170-plant reference count. Row-level F1 against the 170-plant reference is now scored for all 80 runs; the 2×2 factorial analysis of F1 and cost (query mode × documents) appears in the slides and Annex C. With N=4 agents as the blocking factor, effects are reported as directional consistency (k/n agents agreeing in sign) rather than significance tests, since the minimum attainable p at n=4 is 1/2⁴ = 0.0625.*
+*Figure 3. Experiment 2 — naive (arm 1, single-shot) vs optimised (arm 2, multi-turn) comparison, N=5 per agent. Panel (a): Plants found — TP bars (blue, upward, matched against the 173-plant reference) and FP bars (red, downward, unrecognized plants), median over runs with scored outputs; left bar = arm 1, right bar = arm 2 per agent group. Grey bars indicate runs with no matched-row scores available. Panel (b): API cost per run (USD), individual runs as scatter points. Dashed green line marks the 173-plant reference count. Row-level F1 against the 173-plant reference is now scored for all 80 runs; the 2×2 factorial analysis of F1 and cost (query mode × documents) appears in the slides and Annex C. With N=4 agents as the blocking factor, effects are reported as directional consistency (k/n agents agreeing in sign) rather than significance tests, since the minimum attainable p at n=4 is 1/2⁴ = 0.0625.*
 
 <!-- TODO(ticket-0307): Re-enable the turn-trajectory figure once probe-per-turn mart data is available. -->
 
@@ -148,7 +148,7 @@ The claims of the form *"to our knowledge"* and *"we did not find"* throughout t
 
 ### Task
 
-Identify all thermal power plants in Vietnam from parametric model knowledge alone. The target population is defined by the reference inventory `data/reference/vietnam_thermal_plants_v2_classified.csv`: 170 plant-level records covering coal (78) and gas/gas-oil (92), across all lifecycle statuses (operational, under construction, proposed, planned, cancelled, retired). The reference was compiled by the author from primary sources (PDP7, PDP7A, PDP8 annexes, EVN annual reports, MOIT decisions) and is version-locked for this experiment.
+Identify all thermal power plants in Vietnam from parametric model knowledge alone. The target population is defined by the reference inventory `data/reference/vietnam_thermal_plants_v2_classified.csv`: 173 plant-level records covering coal (81) and gas/gas-oil (92), across all lifecycle statuses (operational, under construction, proposed, planned, cancelled, retired). The reference was compiled by the author from primary sources (PDP7, PDP7A, PDP8 annexes, EVN annual reports, MOIT decisions) and is version-locked for this experiment.
 
 ### Reference dataset provenance
 
@@ -265,7 +265,7 @@ This experiment establishes the *parametric ceiling*: the best row-level quality
 
 ### Task
 
-Identify all thermal power plants in Vietnam using four SOTA cloud agents with extended reasoning and web access. Same target population as Experiment 1: the 170-plant version-locked reference inventory at `data/reference/vietnam_thermal_plants_v2_classified.csv`.
+Identify all thermal power plants in Vietnam using four SOTA cloud agents with extended reasoning and web access. Same target population as Experiment 1: the 173-plant version-locked reference inventory at `data/reference/vietnam_thermal_plants_v2_classified.csv`.
 
 ### Agents
 
@@ -336,7 +336,7 @@ This experiment is script-based, not sweep-based. No `sweep_exp2_*` block exists
 
 ### Evaluation
 
-Phase B outputs are evaluated against the 170-plant reference using the same `src/aedist/evaluate.py` machinery as §1 (LP matcher, ADR-2/3, `similarity_threshold = 90`, `capacity_weight = 0.001`). Phase C cross-evaluation adds four LLM-judged dimension scores per output using the rubric in ticket 0171. The per-run schema in `measurements.jsonl` carries the four-dimension scores alongside the standard `f1` / attribute-accuracy fields.
+Phase B outputs are evaluated against the 173-plant reference using the same `src/aedist/evaluate.py` machinery as §1 (LP matcher, ADR-2/3, `similarity_threshold = 90`, `capacity_weight = 0.001`). Phase C cross-evaluation adds four LLM-judged dimension scores per output using the rubric in ticket 0171. The per-run schema in `measurements.jsonl` carries the four-dimension scores alongside the standard `f1` / attribute-accuracy fields.
 
 ### What this experiment does and does not test
 
@@ -378,7 +378,7 @@ The narrative inventory component of §5 handles longitudinal aspects pragmatica
 
 ## Annex E — Experiment 1: per-plant recognition matrix and the status composition of task difficulty
 
-Figure 7 aligns each of the 170 reference plants on a fixed column, for the 70 Experiment 1 runs (14 models × 5 repetitions, ordered as in Figure 1: by architectural family, then by decreasing effective parameter count). A blue cell marks a recognized plant (true positive); an empty cell, a miss. Reference columns are ordered by status group, then by decreasing capacity, so the status bands align with the difficulty table below. The left panel shows the 40 most frequent false positives across all runs, sorted by decreasing occurrence; red follows the paper's false-positive convention (unrecognized — possibly real, not necessarily fabricated). Unlike Figure 1, which packs recognized plants leftward, the fixed-column alignment reveals *which* plants each model misses: famous plants form dense columns, obscure ones sparse columns.
+Figure 7 aligns each of the 173 reference plants on a fixed column, for the 70 Experiment 1 runs (14 models × 5 repetitions, ordered as in Figure 1: by architectural family, then by decreasing effective parameter count). A blue cell marks a recognized plant (true positive); an empty cell, a miss. Reference columns are ordered by status group, then by decreasing capacity, so the status bands align with the difficulty table below. The left panel shows the 40 most frequent false positives across all runs, sorted by decreasing occurrence; red follows the paper's false-positive convention (unrecognized — possibly real, not necessarily fabricated). Unlike Figure 1, which packs recognized plants leftward, the fixed-column alignment reveals *which* plants each model misses: famous plants form dense columns, obscure ones sparse columns.
 
 ```{=latex}
 \begin{landscape}
@@ -386,7 +386,7 @@ Figure 7 aligns each of the 170 reference plants on a fixed column, for the 70 E
 
 ![Figure 7](../report/inputs/generated/fig_exp1_recognition_matrix.pdf){width=100% height=85%}\
 
-*Figure 7. Experiment 1 recognition matrix: 170 reference plants (columns, ordered by status then decreasing capacity) against 70 runs (rows, one label per model, 5 repetitions each). Blue = plant recognized; left panel: the 40 most frequent false positives (red).*
+*Figure 7. Experiment 1 recognition matrix: 173 reference plants (columns, ordered by status then decreasing capacity) against 70 runs (rows, one label per model, 5 repetitions each). Blue = plant recognized; left panel: the 40 most frequent false positives (red).*
 
 ```{=latex}
 \end{landscape}
@@ -396,13 +396,13 @@ The table below shares the same data derivation as the figure (library `aedist.e
 
 | Status | n | Share of list | Recognition rate |
 |---|---:|---:|---:|
-| Proposed | 67 | 39.4% | 7.8% |
-| Planned | 21 | 12.4% | 29.7% |
-| Under construction | 10 | 5.9% | 40.7% |
-| Operational | 54 | 31.8% | 46.9% |
-| Retired | 1 | 0.6% | 62.9% |
-| Cancelled | 17 | 10.0% | 16.9% |
-| **All** | **170** | **100.0%** | **26.1%** |
+| Proposed | 67 | 38.7% | 8.0% |
+| Planned | 21 | 12.1% | 29.6% |
+| Under construction | 10 | 5.8% | 40.3% |
+| Operational | 56 | 32.4% | 45.7% |
+| Retired | 2 | 1.2% | 63.6% |
+| Cancelled | 17 | 9.8% | 17.0% |
+| **All** | **173** | **100.0%** | **26.2%** |
 
 *Table: composition of the reference list by status, and mean recognition rate (Experiment 1, direct method: 14 models × 5 repetitions). The rate is the share of run × plant cells recognized among plants of that status.*
 

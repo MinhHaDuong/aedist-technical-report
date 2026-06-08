@@ -1,0 +1,34 @@
+{
+  "run_id": "8f734e52bc61",
+  "timestamp": "2026-06-08T08:20:28.654282Z",
+  "method": "direct",
+  "method_params": {
+    "model": "xiaomi/mimo-v2-pro",
+    "prompt_version": "direct_extract",
+    "extra": {
+      "size_class": "large",
+      "country": "CN",
+      "architecture": "dense",
+      "provider": "Xiaomi",
+      "context_window": 1048576,
+      "finish_reason": "stop"
+    }
+  },
+  "resource_use": {
+    "wall_s": 10.367,
+    "cost_usd": 0.001808,
+    "tokens_in": 302,
+    "tokens_out": 502
+  },
+  "result_file": "experiments/archive/outputs/direct_extract/mimo-v2-pro-run2.csv",
+  "result_summary": {
+    "status": "empty",
+    "n_plants": 0,
+    "tp": 0,
+    "fp": 0,
+    "fn": 173,
+    "f1": 0.0
+  },
+  "finish_reason": "stop",
+  "reference": "vietnam_thermal_plants_v2_classified.csv"
+}

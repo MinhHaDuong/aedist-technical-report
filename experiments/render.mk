@@ -300,7 +300,7 @@ $(ANALYSIS_GEN)/macros.tex: $(ANALYSIS_MEASUREMENTS)
 $(ANALYSIS_GEN)/macros_census.tex: $(ANALYSIS_MEASUREMENTS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.tabulate_census_macros \
-	    --prompt-version census --output $@
+	    --result-dir experiments/archive/outputs --output $@
 
 $(ANALYSIS_GEN)/tab_relances.tex: $(ANALYSIS_MEASUREMENTS)
 	@mkdir -p $(dir $@)

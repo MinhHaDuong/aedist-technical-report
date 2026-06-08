@@ -1,0 +1,36 @@
+{
+  "run_id": "1989573eea98",
+  "timestamp": "2026-06-08T08:20:31.812226Z",
+  "method": "direct",
+  "method_params": {
+    "model": "nemotron-3-nano",
+    "prompt_version": "direct_extract",
+    "extra": {
+      "size_class": "medium",
+      "country": "US",
+      "architecture": "moe",
+      "provider": "Ollama/Padme",
+      "context_window": 131072,
+      "finish_reason": "stop"
+    }
+  },
+  "resource_use": {
+    "wall_s": 35.107,
+    "tokens_in": 72,
+    "tokens_out": 2380
+  },
+  "result_file": "experiments/archive/outputs/direct_extract/padme--nemotron-3-nano-run1.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 9,
+    "tp": 7,
+    "fp": 2,
+    "fn": 166,
+    "f1": 0.0769,
+    "fuel_accuracy": 1.0,
+    "status_accuracy": 0.8571,
+    "province_accuracy": 0.5
+  },
+  "finish_reason": "stop",
+  "reference": "vietnam_thermal_plants_v2_classified.csv"
+}

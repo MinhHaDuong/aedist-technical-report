@@ -1,0 +1,33 @@
+{
+  "run_id": "1a4c9d8def78",
+  "timestamp": "2026-06-08T08:20:38.944379Z",
+  "method": "direct+multiturn",
+  "method_params": {
+    "model": "google/gemini-2.5-flash-lite",
+    "prompt_version": "direct_multiturn",
+    "extra": {
+      "size_class": "edge",
+      "country": "US",
+      "architecture": "dense",
+      "provider": "Google",
+      "context_window": 1048576
+    }
+  },
+  "resource_use": {
+    "wall_s": 36.665,
+    "cost_usd": 0.0046661
+  },
+  "result_file": "experiments/archive/outputs/direct_multiturn/gemini-2.5-flash-lite-run1.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 71,
+    "tp": 50,
+    "fp": 21,
+    "fn": 123,
+    "f1": 0.4098,
+    "fuel_accuracy": 0.74,
+    "status_accuracy": 0.54,
+    "province_accuracy": 0.96
+  },
+  "reference": "vietnam_thermal_plants_v2_classified.csv"
+}

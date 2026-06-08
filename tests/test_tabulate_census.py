@@ -9,51 +9,63 @@ from aedist.tabulate_utils import format_model_name, group_and_summarize, strip_
 
 SAMPLE_METRICS = [
     {
-        "label": "census/gpt-5.4-run1",
+        "label": "direct_extract/gpt-5.4-run1",
+        "method": "direct",
+        "prompt_version": "direct_extract",
         "coverage": 0.491,
         "precision": 1.0,
         "f1": 0.658,
-        "n_reference": 163,
+        "n_reference": 173,
         "n_matched": 80,
     },
     {
-        "label": "census/gpt-5.4-run2",
+        "label": "direct_extract/gpt-5.4-run2",
+        "method": "direct",
+        "prompt_version": "direct_extract",
         "coverage": 0.500,
         "precision": 0.980,
         "f1": 0.660,
-        "n_reference": 163,
+        "n_reference": 173,
         "n_matched": 82,
     },
     {
-        "label": "census/gpt-5.4-run3",
+        "label": "direct_extract/gpt-5.4-run3",
+        "method": "direct",
+        "prompt_version": "direct_extract",
         "coverage": 0.470,
         "precision": 0.990,
         "f1": 0.640,
-        "n_reference": 163,
+        "n_reference": 173,
         "n_matched": 77,
     },
     {
-        "label": "census/padme-qwen3.5-122b-run1",
+        "label": "direct_extract/padme-qwen3.5-122b-run1",
+        "method": "direct",
+        "prompt_version": "direct_extract",
         "coverage": 0.300,
         "precision": 0.800,
         "f1": 0.436,
-        "n_reference": 163,
+        "n_reference": 173,
         "n_matched": 49,
     },
     {
-        "label": "census/padme-qwen3.5-122b-run2",
+        "label": "direct_extract/padme-qwen3.5-122b-run2",
+        "method": "direct",
+        "prompt_version": "direct_extract",
         "coverage": 0.320,
         "precision": 0.850,
         "f1": 0.465,
-        "n_reference": 163,
+        "n_reference": 173,
         "n_matched": 52,
     },
     {
-        "label": "census/padme-qwen3.5-122b-run3",
+        "label": "direct_extract/padme-qwen3.5-122b-run3",
+        "method": "direct",
+        "prompt_version": "direct_extract",
         "coverage": 0.310,
         "precision": 0.820,
         "f1": 0.450,
-        "n_reference": 163,
+        "n_reference": 173,
         "n_matched": 51,
     },
 ]
@@ -63,15 +75,15 @@ SAMPLE_METRICS = [
 
 
 def test_strip_label_basic():
-    assert strip_label("census/gpt-5.4-run1") == "gpt-5.4"
+    assert strip_label("direct_extract/gpt-5.4-run1") == "gpt-5.4"
 
 
 def test_strip_label_padme():
-    assert strip_label("census/padme-qwen3.5-122b-run1") == "padme-qwen3.5-122b"
+    assert strip_label("direct_extract/padme-qwen3.5-122b-run1") == "padme-qwen3.5-122b"
 
 
 def test_strip_label_multi_digit_run():
-    assert strip_label("census/claude-opus-4.6-run12") == "claude-opus-4.6"
+    assert strip_label("direct_extract/claude-opus-4.6-run12") == "claude-opus-4.6"
 
 
 def test_strip_label_no_dir():
@@ -135,7 +147,7 @@ def test_group_and_summarize_median_matched():
 def test_group_and_summarize_n_reference():
     rows = group_and_summarize(SAMPLE_METRICS)
     gpt_row = next(r for r in rows if r["slug"] == "gpt-5.4")
-    assert gpt_row["n_reference"] == 163
+    assert gpt_row["n_reference"] == 173
 
 
 def test_group_and_summarize_sorted_by_f1_desc():
@@ -199,8 +211,8 @@ def test_generate_census_table_percentages():
 
 def test_generate_census_table_matched_over_total():
     latex = generate_census_table(SAMPLE_METRICS)
-    # GPT row: 80/163
-    assert "80/163" in latex
+    # GPT row: 80/173
+    assert "80/173" in latex
 
 
 # --- CLI integration via file ---

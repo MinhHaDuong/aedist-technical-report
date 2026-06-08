@@ -59,6 +59,7 @@ SCORE_REFERENCE := $(ANALYSIS_REPO_ROOT)/data/reference/vietnam_thermal_plants_v
 SCORE_SRC       := $(ANALYSIS_REPO_ROOT)/src/aedist
 SCORE_OUTPUTS   := $(ANALYSIS_OUTPUTS_DIR)
 SCORE_DERIVED   := $(ANALYSIS_DERIVED_DIR)
+SCORE_ARCHIVE   := $(ANALYSIS_EXPERIMENTS_DIR)/archive/outputs
 
 # === measurements.jsonl: materialized view of all outputs ===================
 # (migrated from the P1 makefile (now experiments/acquire.mk), tracker 0406 S3)
@@ -88,10 +89,12 @@ extract:
 	        --input $(SCORE_OUTPUTS)/$$dir --output $(SCORE_OUTPUTS)/$$dir; \
 	done
 
-.PRECIOUS: $(SCORE_OUTPUTS)/%.record.json $(SCORE_DERIVED)/%.record.json
+.PRECIOUS: $(SCORE_OUTPUTS)/%.record.json $(SCORE_DERIVED)/%.record.json $(SCORE_ARCHIVE)/%.record.json
 $(SCORE_OUTPUTS)/%.record.json: $(SCORE_OUTPUTS)/%.csv $(SCORE_REFERENCE)
 	@$(SCORE_EVAL) evaluate $< --reference $(SCORE_REFERENCE) --output $(dir $<)
 $(SCORE_DERIVED)/%.record.json: $(SCORE_DERIVED)/%.csv $(SCORE_REFERENCE)
+	@$(SCORE_EVAL) evaluate $< --reference $(SCORE_REFERENCE) --output $(dir $<)
+$(SCORE_ARCHIVE)/%.record.json: $(SCORE_ARCHIVE)/%.csv $(SCORE_REFERENCE)
 	@$(SCORE_EVAL) evaluate $< --reference $(SCORE_REFERENCE) --output $(dir $<)
 
 # Recursive Make: extract may create CSVs, so the second invocation must
@@ -101,14 +104,14 @@ $(SCORE_DERIVED)/%.record.json: $(SCORE_DERIVED)/%.csv $(SCORE_REFERENCE)
 $(ANALYSIS_MEASUREMENTS): $(SCORE_OUTPUT_FILES)
 	@$(MAKE) --no-print-directory -f $(SCORE_MK_SELF) extract
 	@$(MAKE) --no-print-directory -f $(SCORE_MK_SELF) evaluate-all-records
-	@$(SCORE_EVAL) assemble $$(find $(SCORE_OUTPUTS) $(SCORE_DERIVED) -name '*.record.json' ! -path '*/_extracted/*' | sort) --output $@
+	@$(SCORE_EVAL) assemble $$(find $(SCORE_OUTPUTS) $(SCORE_DERIVED) $(SCORE_ARCHIVE) -name '*.record.json' ! -path '*/_extracted/*' | sort) --output $@
 
 .PHONY: evaluate-all-records
 evaluate-all-records:
 	@$(MAKE) --no-print-directory -f $(SCORE_MK_SELF) -j$$(nproc) \
-	    $$(find $(SCORE_OUTPUTS) $(SCORE_DERIVED) -name '*.csv' ! -name 'reconciliation_*' ! -name '*_audit.csv' ! -path '*/_extracted/*' | sed 's/\.csv$$/.record.json/')
+	    $$(find $(SCORE_OUTPUTS) $(SCORE_DERIVED) $(SCORE_ARCHIVE) -name '*.csv' ! -name 'reconciliation_*' ! -name '*_audit.csv' ! -path '*/_extracted/*' | sed 's/\.csv$$/.record.json/')
 	@shopt -s nullglob; \
-	for f in $(SCORE_OUTPUTS)/*/*-run*.json $(SCORE_OUTPUTS)/*/*/*-run*.json $(SCORE_DERIVED)/*/*-run*.json; do \
+	for f in $(SCORE_OUTPUTS)/*/*-run*.json $(SCORE_OUTPUTS)/*/*/*-run*.json $(SCORE_DERIVED)/*/*-run*.json $(SCORE_ARCHIVE)/*/*-run*.json; do \
 	    [[ "$$f" == *.record.json ]] && continue; \
 	    [ -f "$${f%.json}.csv" ] && continue; \
 	    rec="$${f%.json}.record.json"; \
@@ -124,7 +127,7 @@ evaluate-all-records:
 # Never run as a side effect; run it intentionally and inspect the diff.
 .PHONY: rebuild-measurements
 rebuild-measurements:
-	find $(SCORE_OUTPUTS) $(SCORE_DERIVED) -name '*.record.json' ! -path '*/_extracted/*' -delete
+	find $(SCORE_OUTPUTS) $(SCORE_DERIVED) $(SCORE_ARCHIVE) -name '*.record.json' ! -path '*/_extracted/*' -delete
 	$(MAKE) --no-print-directory -f $(SCORE_MK_SELF) $(ANALYSIS_MEASUREMENTS)
 
 # === Full-phase aggregate (P2 outcomes) =====================================
