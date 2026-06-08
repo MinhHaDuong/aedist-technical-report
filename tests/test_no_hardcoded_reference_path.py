@@ -1,16 +1,19 @@
-"""No hardcoded default-reference filename outside config.py, docstrings, comments.
+"""No hardcoded data/reference CSV filename outside config.py, docstrings, comments.
 
-Exit criterion 1 of ticket 0419 (extended by 0413's v2 adoption): a single
-source of truth for the default reference path. The literal filename may only
-live in ``src/aedist/config.py``; everywhere else modules import
-``config.VN_THERMAL_PLANTS_RELEASE_CSV``. ``TARGET`` tracks the *current*
-adopted default (v2) so the guard stays live.
+Exit criterion 1 of ticket 0419, extended by 0413 (v2 adoption) and 0428
+(GEM reference dedup): any ``data/reference/*.csv`` filename may only appear
+as a string literal in ``src/aedist/config.py``.  Everywhere else, modules
+import the constant from config.  This guards the full *class* — not just one
+filename — so renaming or adding a new reference CSV doesn't silently
+re-introduce hardcoded strings.
 
 The filename can only appear inside a Python string literal, so exempting all
 string literals would make this check vacuous. Instead we exempt only
 *docstrings* (the first ``Expr``-wrapped string statement of a module, class, or
 function) and ``#`` comments. Ordinary string literals — including path-building
 expressions and ``help=`` strings — are checked.
+
+Coverage: ``src/aedist/*.py`` (0419) + ``scripts/*.py`` (0428).
 """
 
 import ast
@@ -22,12 +25,9 @@ pytestmark = pytest.mark.adherence
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 SRC_DIR = REPO_ROOT / "src" / "aedist"
+SCRIPTS_DIR = REPO_ROOT / "scripts"
 CONFIG_MODULE = SRC_DIR / "config.py"
-# The adopted default reference filename (ticket 0413: v2 replaced v1). Tracking
-# the *current* default keeps the guard live — if it lagged on the retired v1
-# name, nothing would reference it and the check would pass while protecting
-# nothing.
-TARGET = "vietnam_thermal_plants_v2_classified.csv"
+REF_DIR = REPO_ROOT / "data" / "reference"
 
 
 def _docstring_lines(tree: ast.Module) -> set[int]:
@@ -72,14 +72,28 @@ def _code_lines(path: Path) -> list[tuple[int, str]]:
 
 
 def test_no_hardcoded_reference_path():
-    """TARGET must not appear in code lines of any src/aedist/*.py except config.py."""
+    """No data/reference CSV filename may appear as a code literal outside config.py.
+
+    Guards src/aedist/*.py (ticket 0419) and scripts/*.py (ticket 0428).
+    The set of guarded filenames is derived from data/reference/*.csv on disk,
+    so adding a new reference CSV file automatically extends the ratchet.
+    """
+    # Derive the guarded set from disk — no manual maintenance.
+    targets = {f.name for f in REF_DIR.glob("*.csv")}
+    assert targets, f"No CSV files found in {REF_DIR}; check REPO_ROOT resolution"
+
+    py_files = sorted(SRC_DIR.glob("*.py")) + sorted(SCRIPTS_DIR.glob("*.py"))
     violations = []
-    for py_file in sorted(SRC_DIR.glob("*.py")):
+    for py_file in py_files:
         if py_file == CONFIG_MODULE:
             continue  # config.py is the single allowed home
         for lineno, line in _code_lines(py_file):
-            if TARGET in line:
-                violations.append(f"{py_file.relative_to(REPO_ROOT)}:{lineno}: {line.strip()}")
+            for target in targets:
+                if target in line:
+                    violations.append(
+                        f"{py_file.relative_to(REPO_ROOT)}:{lineno}: {line.strip()}"
+                    )
+                    break  # one violation per line is enough
     assert not violations, (
         f"{len(violations)} hardcoded reference path(s) outside config.py:\n"
         + "\n".join(f"  {v}" for v in violations)

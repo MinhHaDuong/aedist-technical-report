@@ -22,7 +22,7 @@ from pathlib import Path
 import numpy as np
 from scipy import stats as scipy_stats
 
-from .config import VN_THERMAL_PLANTS_RELEASE_CSV
+from .config import GEM_THERMAL_REFERENCE_CSV, VN_THERMAL_PLANTS_RELEASE_CSV
 from .evaluate import load_plants_csv
 from .measurements import SYNTHETIC_SUFFIXES, load, load_metrics
 from .metrics import compute_metrics
@@ -33,7 +33,7 @@ from .tabulate_utils import strip_label
 log = logging.getLogger(__name__)
 
 _REPO_ROOT = Path(__file__).parent.parent.parent
-_GEM_REF = _REPO_ROOT / "data" / "reference" / "gem_thermal.csv"
+_GEM_REF = GEM_THERMAL_REFERENCE_CSV
 
 _MATCHED_TYPES = {
     MatchType.EXACT,
