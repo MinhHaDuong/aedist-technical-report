@@ -3,6 +3,7 @@ Title: Automated provenance spot-check — verify N=10 source URLs per run
 Created: 2026-05-24
 Author: haduong
 Blocked-by: 0118
+Closed: implemented in PR #823
 
 --- log ---
 2026-05-24T14:30Z haduong created
@@ -11,6 +12,7 @@ Blocked-by: 0118
 2026-05-24T17:37Z HDMX-coding-agent note blocker 0276 closed — Blocked-by removed.
 2026-05-24T18:05Z HDMX-coding-agent note deferred post-conference and linked to 0118 — 0281 is now scoped as a lightweight companion metric to Phase 2 source-grounding adjudication, not a pre-conference standalone track.
 2026-05-27T20:59Z Claude untag deferred
+2026-06-08T19:22Z HDMX-coding-agent closed — implemented in PR #823
 --- body ---
 ## Context
 
