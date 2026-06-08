@@ -5,6 +5,7 @@ Author: claude
 
 --- log ---
 2026-05-21T12:30Z claude created — follow-up from ticket 0196 (Pareto figure)
+2026-06-08T11:00Z claude note linked to tracker 0464
 
 --- body ---
 
@@ -37,3 +38,5 @@ variants (RAG, decomposed, agentic) that Exp 1 deliberately excludes.
   composite via a `--quality-axis` flag.
 - [ ] Manuscript Figure 2 caption updated to reflect whichever axis
   ends up canonical.
+
+Part of: 0464 — role A1 (deterministic reference-free scorer; 4 free criteria + source quality resolve→tier→value-in-source; accuracy is the only reference-full axis)

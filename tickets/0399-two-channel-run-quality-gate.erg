@@ -5,6 +5,7 @@ Author: claude
 
 --- log ---
 2026-06-03T00:00Z claude created from imagine-mode design + deep-research litreview
+2026-06-08T11:00Z claude note linked to tracker 0464
 
 --- body ---
 ## Context
@@ -88,3 +89,5 @@ def test_t0_reps_identical_is_not_degenerate():
   they can also gate runs BEFORE fusion (cheap early kill, cf. "test one before blasting").
 - Keep detectors generic/configurable (thresholds per attribute type), not hardcoded to
   power-plant specifics where avoidable (project rule: design for genericity).
+
+Split: model-free VETO half → 0464 (folds into 0453); CONSENSUS half → 0465

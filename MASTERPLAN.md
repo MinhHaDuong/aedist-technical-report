@@ -66,6 +66,34 @@ Can the method scale to other countries? Update when plants change status?
 Fill gaps from totals? Resolve incoherences or escalate them?
 Prioritize sources when they conflict?
 
+## The methods contribution: a zero-reference coherence screen
+
+The quality bar of §2 is a *conjunction*: an acceptable dataset must clear
+accuracy, coherence, provenance, *and* temporality. The operational
+consequence is sharp — a **zero on any criterion means the bar is not
+cleared**, so that run, and aggregated upward that model, is trash. This is
+why the benchmark's headline contribution is a **screen**, not a leaderboard:
+the question is not "who scores highest" but "who fails to clear the floor at
+all."
+
+The non-obvious move is that the screen is **usable without ground truth**.
+Accuracy is the only criterion that needs the reference list; the other four
+are reference-free *by construction* — computable from a single run's own
+output. A model that emits 496 identical rows betrays itself on internal
+coherence with no gold standard in sight. That makes the screen deployable on
+the very campaigns (other countries, other component classes) where no
+reference yet exists — the whole point of Auto-PyPSA ASEAN.
+
+Two papers follow, at two units of analysis. **Paper A** (the manuscript MVP,
+tracker 0464) takes the **model** as the unit: a *capability floor*, written
+for a readership naive to LLMs, asking which models are even fit to be
+trusted as a source. **Paper B** (the information-fusion follow-up, tracker
+0465) takes the **run** as the unit, with the model demoted to a covariate:
+having screened out the uninformative runs, fuse the survivors into a single
+latent-truth estimate and bound the residual unseen share against a control
+total. The screen is the bridge — it is what lets fusion proceed on noisy,
+reference-free lists without being poisoned by degenerate runs.
+
 ## Method traits
 
 Beyond the four evaluation levels, certain architectural properties shape whether a method can scale from one country × one component class to 60 extraction campaigns (Auto-PyPSA ASEAN). These are *traits of the fusion primitive*, not quality scores.

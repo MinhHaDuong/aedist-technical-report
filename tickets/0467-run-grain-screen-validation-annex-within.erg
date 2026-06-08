@@ -1,0 +1,76 @@
+%erg 0.1
+Title: Run-grain screen validation annex (within-model, non-tautological)
+Created: 2026-06-08
+Author: claude
+Blocked-by: 0201
+
+--- log ---
+2026-06-08T14:39Z claude created
+
+--- body ---
+## Context
+
+Part of tracker 0464 (Paper A, role A3). The internal-coherence screen
+(0453/0201) vetoes runs on the four reference-free criteria. A reviewer's
+first objection: "of course coherence tracks accuracy — weak models are weak
+on everything." **At the model grain the screen is near-tautological**: weak
+models produce both incoherent and inaccurate runs.
+
+This annex must show the screen earns its keep at the **RUN grain, ideally
+WITHIN a model**: holding the model fixed, runs the four free criteria veto
+also have lower reference-based accuracy. Within-model removes the confound,
+so the result is non-tautological — the screen discriminates good from bad
+runs of the *same* model, not just good from bad models.
+
+This sets up Paper B's (0465) "uninformative run" claim: vetoed runs carry
+little information, so discarding them before fusion is sound.
+
+## Relevant files
+
+- `docs/internal-coherence-screen.md` — the verified ρ≈0.90 analysis (model-grain; this annex is the within-model strengthening)
+- `experiments/derived/exp1_cross_eval.csv` — per-run accuracy + screen sub-scores
+- `slides/manuscript/main.md` — annex destination (one validation panel/stat)
+- new: `src/aedist/plot_screen_validation_within_model.py` (or a stat table)
+
+## Actions
+
+1. For each model with both vetoed and non-vetoed runs, compute the
+   within-model accuracy gap (vetoed vs surviving runs). Aggregate as a paired
+   within-model statistic (e.g. mean within-model F1 delta, or a stratified
+   rank test) so the across-model confound is removed.
+2. Produce **one** manuscript-annex panel or stat: vetoed runs also have low
+   accuracy, *within model*.
+3. Wire the artifact into the Makefile (one output per rule) and include it in
+   the annex with a caption stating the non-tautology guard.
+
+## Test
+
+`tests/test_screen_validation_within_model.py`:
+
+```python
+def test_within_model_stratification_removes_across_model_signal():
+    # Two models, each with vetoed (low-F1) and surviving (high-F1) runs.
+    # A naive across-model correlation would be inflated by the model gap;
+    # the within-model statistic must isolate the run-grain effect.
+    stat = within_model_accuracy_gap(rows)
+    assert stat.is_within_model            # strata are (model,) not pooled
+    assert stat.vetoed_mean_f1 < stat.surviving_mean_f1
+```
+
+## Verification
+
+- [ ] Statistic / panel is RUN grain, stratified WITHIN model (not pooled).
+- [ ] Vetoed runs shown to also have lower accuracy within model.
+- [ ] One annex artifact committed + wired in the Makefile DAG.
+
+## Invariants
+
+- The screen sub-scores consumed here are the reference-free ones from 0201;
+  accuracy (reference-full) is the *outcome*, never an input to the veto.
+
+## Exit criteria
+
+- [ ] Non-tautological within-model validation panel/stat in the manuscript
+      annex; `make check` green.
+
+Part of: 0464 — role A3 (run-grain, within-model screen validation; sets up Paper B's "uninformative run" claim).

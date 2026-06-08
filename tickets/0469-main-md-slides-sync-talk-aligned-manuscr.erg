@@ -1,0 +1,79 @@
+%erg 0.1
+Title: main.md ↔ slides sync — talk-aligned manuscript revision (naive readership)
+Created: 2026-06-08
+Author: claude
+
+--- log ---
+2026-06-08T14:39Z claude created
+
+--- body ---
+## Context
+
+Part of tracker 0464 (Paper A, role A5). Prose-only. The slides have been
+narratively refined past the preprint; the manuscript (`slides/manuscript/main.md`)
+should be brought into line with the talk's framing. **The readership is naive
+to LLMs** — the manuscript should explain, not assume, the concepts a general
+energy-statistics / methods audience needs. This is the talk-aligned MVP
+revision that makes Paper A read as a coherent whole around the
+internal-coherence run-screen contribution.
+
+**Sequencing — IMPORTANT.** This ticket touches figures and captions that are
+currently being modified by in-flight merge requests:
+
+- **#793** (ticket 0448) — global caption style (kill "Figure N: Figure N")
+- **#794** (ticket 0433) — rewrite Annex C to the as-run Exp2 story
+- **#795** (ticket 0455) — preprint figure-language sweep (all `main.md`
+  figures in English)
+
+**Do this work AFTER #793/#794/#795 have merged** — otherwise the sync conflicts
+with their figure/caption edits. (Deliberately NOT encoded as `Blocked-by:`:
+those tickets archive to `tickets/closed/` on merge, and a `Blocked-by:` ref to
+an archived ticket breaks `erg check`. The sequencing constraint lives here in
+the body, by design.)
+
+This ticket may legitimately **spawn sub-tickets** if the sync surfaces
+section-sized rewrites; split per the IDH multi-PR convention rather than
+ballooning one merge request.
+
+## Relevant files
+
+- `slides/manuscript/main.md` — the preprint to revise
+- `slides/` talk source — the more narratively-refined reference
+
+## Actions
+
+1. After #793/#794/#795 merge, diff the talk narrative against `main.md`
+   section by section; list the divergences.
+2. Align framing, terminology, and figure captions to the talk; expand
+   explanations for a readership naive to LLMs.
+3. Where a divergence is section-sized, spawn a sub-ticket (child of 0464)
+   rather than bundling it here.
+
+## Test
+
+Placement / consistency checks (source-inspection):
+
+```python
+def test_no_stale_figure_caption_pattern():
+    md = open("slides/manuscript/main.md").read()
+    assert "Figure N: Figure N" not in md      # post-#793 convention holds
+```
+
+## Verification
+
+- [ ] Sequenced after #793/#794/#795 (confirm those are merged before starting).
+- [ ] Manuscript framing matches the talk; naive-reader explanations added.
+- [ ] Any oversized divergence captured as a child sub-ticket, not silently dropped.
+
+## Invariants
+
+- Figures stay generated artifacts (no inline plots); numeric literals stay
+  derived from generated artifacts, never re-typed.
+
+## Exit criteria
+
+- [ ] `main.md` aligned with the refined talk narrative for a naive-to-LLM
+      readership; manuscript builds clean; sub-tickets filed for any deferred
+      section rewrites.
+
+Part of: 0464 — role A5 (talk-aligned manuscript sync; sequence after #793/#794/#795).

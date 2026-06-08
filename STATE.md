@@ -1,4 +1,4 @@
-Last updated: 2026-06-08T10:18Z
+Last updated: 2026-06-08T11:10Z
 
 ## North star
 
@@ -28,6 +28,10 @@ Reference v2 (170 plants) adopted end-to-end: snapshot policy → aggregator (#7
 1. **0435 finalization** — acknowledgements (blessed wording), author read (incl. new coherence-screen paragraph), arXiv build. 0445 blocker cleared (173 settled + propagated).
 2. 0446-review follow-ons: 0453 (two-level coherence scoring), 0455 (preprint figures EN sweep), 0448 (caption dup), 0449 (Exp2 matrices), 0457 (cohort-filter test); imagines awaiting discussion: 0450/0451/0454. 0255–0262 deferred (Blocked-by 0435), owed to journal.
 3. Backlog: 0459 (re-derive+wire report.tex Exp3 decomposition table), 0461 (.DELETE_ON_ERROR build-wide + adherence guard), 0462 (armN stamp wildcard parse-time fragility), 0447 (hardcoded-size ratchet), 0441–0443, 0377.
+
+## Next: methods contribution
+
+Ratified internal-coherence run-screen roadmap captured under **tracker 0464** (Paper A, manuscript MVP: 0201 scorer → 0466 model-grain floor heatmap → 0467 run-grain validation → 0468 table move → 0469 slides sync). Fil rouge = §2 conjunctive quality bar = zero-is-trash. Information fusion (run-as-unit) deferred to **tracker 0465** (Paper B: 0470/0471/0398/0399-consensus/0293).
 
 ## Open issues
 

@@ -1,0 +1,69 @@
+%erg 0.1
+Title: Move the why-it-is-hard difficulty table from Annex E into task setup
+Created: 2026-06-08
+Author: claude
+
+--- log ---
+2026-06-08T14:39Z claude created
+
+--- body ---
+## Context
+
+Part of tracker 0464 (Paper A, role A4). Prose-only. The "why it is hard"
+difficulty table currently lives in **Annex E** of `slides/manuscript/main.md`
+(the status-composition table at ~L379–395: the reference list is dominated by
+proposed plants, whose mean recognition rate is far below operational plants —
+so the low overall recognition is *structural*, a property of the list's
+composition).
+
+That table characterises the **task** — it is a property of the *reference*,
+not of any model — so it belongs **up front**, where it motivates the
+difficulty before any results are shown. Promote it from the annex into the
+**task setup (§2)** or the **head of the Exp1 results** section, and leave a
+short pointer in Annex E ("the difficulty table appears in §… ").
+
+## Relevant files
+
+- `slides/manuscript/main.md` — Annex E table (~L379–395); destination §2 / Exp1 results head
+- the table's data derivation (library `aedist.exp1_recognition`) — keep the
+  generated artifact wiring intact; only the prose placement moves
+
+## Actions
+
+1. Move the difficulty table block (table + its motivating sentences) from
+   Annex E to §2 task setup or the head of Exp1 results.
+2. Leave a one-line forward/backward pointer in Annex E (project writing rule:
+   forward-reference within the document, do not duplicate the table).
+3. Confirm any `\input`/include or generated-CSV reference still resolves from
+   the new location (artifact discipline — the table is generated, not hand-typed).
+
+## Test
+
+Adherence / placement check (source-inspection, no subprocess):
+
+```python
+def test_difficulty_table_in_task_setup_not_annex_only():
+    md = open("slides/manuscript/main.md").read()
+    setup = md.split("Annex E")[0]
+    assert "proposed" in setup and "recognition rate" in setup  # table moved up
+    # Annex E retains only a pointer, not the full table:
+    annex = md.split("Annex E")[1]
+    assert annex.count("| ") < FULL_TABLE_ROW_THRESHOLD
+```
+
+## Verification
+
+- [ ] Difficulty table renders in §2 / Exp1-results head, not the annex.
+- [ ] Annex E keeps a pointer, not a duplicate.
+- [ ] Generated-table wiring still resolves; manuscript builds clean.
+
+## Invariants
+
+- No new numeric literals introduced; the table stays generated, not hand-typed.
+
+## Exit criteria
+
+- [ ] Table moved up front with annex pointer; manuscript builds; placement
+      test green.
+
+Part of: 0464 — role A4 (promote the task-difficulty table from Annex E into task setup).

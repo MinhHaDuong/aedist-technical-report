@@ -8,6 +8,7 @@ Author: HDMX-coding-agent
 2026-06-06T09:55Z HDMX-coding-agent note — author conjecture verified during the 0446 session; analysis committed at docs/internal-coherence-screen.md
 
 2026-06-06T11:15Z author idea (2026-06-06): once screen columns land, overlay the verdict on the recognition matrix — draw a line across rejected runs (--mark-incoherent on plot_exp1_matrix); deferred from 0446 review: rule is in-sample and scoring belongs in P2, not the renderer
+2026-06-08T11:00Z claude note linked to tracker 0464
 --- body ---
 ## Context
 
@@ -80,3 +81,5 @@ def test_capacity_variability_flags_template_runs():
 - 0436 (render DAG discipline), 0445 (extension FPs — orthogonal FP track)
 - main.md Discussion "Internal coherence as a zero-reference screen"
   (future-work paragraph added 2026-06-06)
+
+Part of: 0464 — two-level screen: run-grain veto (zero-is-trash on the 4 free criteria) + model-grain majority-red floor

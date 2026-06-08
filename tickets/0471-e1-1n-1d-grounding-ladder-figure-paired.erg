@@ -1,0 +1,82 @@
+%erg 0.1
+Title: E1→1N→1D grounding ladder figure (paired, within-agent)
+Created: 2026-06-08
+Author: claude
+Label: deferred
+
+--- log ---
+2026-06-08T14:39Z claude created
+
+--- body ---
+## Context
+
+Part of tracker 0465 (Paper B). **Post-preprint / future work.** A grounding
+ladder figure that decomposes *what changes quality* along the experimental
+arms, as paired **within-agent** deltas.
+
+**Arm coding** (Exp2): the digit is the number of turns (1 or 5), the letter is
+whether documents are provided — N = no docs, D = documents. **E1** is the Exp1
+parametric-memory condition (no harness, no docs). The ladder isolates one
+factor per step:
+
+- **E1 → 1N**: isolates the **harness + tier** (single-shot agentic scaffold and
+  source tier, no documents yet).
+- **1N → 1D**: isolates the **documents** — web/harness held fixed in code
+  (confirmed by the author), so the only change is the provided documents.
+- **1D → 5D**: isolates **multi-turn** (turns 1 → 5 with documents).
+
+**Restrict to the 4 agents present in BOTH Exp1 & Exp2** — the keys of
+`_AGENT_EXP1_SLUG` in `src/aedist/plot_exp2_arms_split.py`:
+anthropic (claude-opus-4.6), mistral (mistral-large-2512), openai (gpt-5.5),
+qwen (qwen3.7-max). Plot **paired within-agent deltas** (each agent is its own
+control across the ladder) and **emphasise the source / provenance axes** — the
+ladder's point is grounding, so provenance/source-diversity deltas are the
+headline, not raw coverage.
+
+## Relevant files
+
+- `src/aedist/plot_exp2_arms_split.py` — `_AGENT_EXP1_SLUG` (the 4 agents) + the arm→label map (`_CONDITION_LABEL`: arm1=1N, arm2=5N, arm3=1D, arm4=5D)
+- `experiments/derived/` — Exp1 + Exp2 cross-eval CSVs (the E1 and arm sub-scores)
+- `experiments/render.mk` — wire the new `.pdf` artifact
+- new: `src/aedist/plot_grounding_ladder.py`
+
+## Actions
+
+1. Assemble, per agent, the ladder E1 → 1N → 1D → 5D from the cross-eval CSVs.
+2. Compute paired within-agent deltas at each rung; emphasise source/provenance
+   axes.
+3. New plot script + Makefile `.pdf` target (one output per rule, no inline plots).
+
+## Test
+
+`tests/test_plot_grounding_ladder.py`:
+
+```python
+def test_restricted_to_shared_four_agents():
+    from aedist.plot_exp2_arms_split import _AGENT_EXP1_SLUG
+    assert set(ladder_agents()) == set(_AGENT_EXP1_SLUG)   # exactly the 4
+
+def test_deltas_are_within_agent_paired():
+    d = ladder_deltas(rows)
+    # each rung delta is computed within one agent, never pooled across agents
+    assert all(step.agent is not None for step in d)
+```
+
+## Verification
+
+- [ ] Exactly the 4 shared agents (test-guarded against `_AGENT_EXP1_SLUG`).
+- [ ] Rungs E1→1N (harness+tier), 1N→1D (documents), 1D→5D (multi-turn),
+      each a within-agent paired delta.
+- [ ] Source/provenance axes emphasised; figure is a committed Makefile artifact.
+
+## Invariants
+
+- Within-agent pairing (no cross-agent pooling); arm→rung mapping reads the
+  existing `_CONDITION_LABEL`, not a re-typed map.
+
+## Exit criteria
+
+- [ ] Grounding-ladder figure landed with tests; deferred, post-preprint —
+      does not block the arXiv preprint.
+
+Part of: 0465 — E1→1N→1D grounding ladder (paired within-agent; documents-isolating rung).

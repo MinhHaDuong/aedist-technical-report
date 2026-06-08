@@ -5,6 +5,7 @@ Author: claude
 
 --- log ---
 2026-06-03T00:00Z claude created — promote row atomicity (1NF) from a matcher artefact (0393) to a first-class reference-free coherence indicator, measured at the verbal level
+2026-06-08T11:00Z claude note linked to tracker 0464
 
 --- body ---
 ## Context
@@ -112,3 +113,5 @@ rate is in `[0.01, 0.06]` (catches a naive regex).
   `src/aedist/exp2_mart.py` (schema bump), `src/aedist/measurements.py`
   (records_to_metrics, ADR-7)
 - 0393 (the matcher-side counterpart this may make optional)
+
+Part of: 0464 — atomicity (1NF) sub-score within A1 (0201)
