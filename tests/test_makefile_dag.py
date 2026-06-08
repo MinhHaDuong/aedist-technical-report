@@ -441,6 +441,65 @@ def test_no_p3_to_p3_side_output_edges() -> None:
 
 
 @pytest.mark.adherence
+def test_clean_never_lists_runs_floor() -> None:
+    """render.mk RENDER_CLEAN_FILES must not include any P2 outcome.
+
+    The clean target (ticket 0360) is the P3 reproducibility oracle: it deletes
+    P3 render outputs so that `make -f render.mk all` is forced to regenerate
+    them from committed P2 sources. If RENDER_CLEAN_FILES ever lists a P2
+    outcome (measurements.jsonl, *.record.json, the Exp2 mart, or a cross-eval
+    CSV), a `make cleaner` run would delete experiment data that requires API
+    calls to recreate.
+
+    This guard prevents silent regression as new paths are added to the
+    RENDER_CLEAN_FILES variable.
+    """
+    render_mk = REPO_ROOT / "experiments" / "render.mk"
+    assert render_mk.is_file(), f"render.mk not found at {render_mk}"
+
+    # Parse variables, then expand RENDER_CLEAN_FILES.
+    variables, _ = _parse_to_vars_rules(render_mk)
+    clean_files_raw = variables.get("RENDER_CLEAN_FILES", "")
+    clean_files = _expand(clean_files_raw, variables).split()
+
+    # P2 outcome floors: never in a clean set.
+    # Patterns (repo-root-relative, case-sensitive):
+    # - measurements.jsonl (mart v0, transitional — do NOT move or rename)
+    # - experiments/derived/exp2_mart.jsonl
+    # - experiments/derived/sota_cross_eval.csv
+    # - experiments/derived/exp1_cross_eval.csv
+    # - *.record.json anywhere under experiments/ or archive/
+    p2_outcome_names = {
+        "measurements.jsonl",
+        "exp2_mart.jsonl",
+        "sota_cross_eval.csv",
+        "exp1_cross_eval.csv",
+    }
+
+    def _is_p2_outcome(path: str) -> bool:
+        basename = os.path.basename(path)
+        if basename.endswith(".record.json"):
+            return True
+        # Exact basenames that are P2 outcomes (regardless of directory).
+        # Cross-eval CSVs live under experiments/derived/ — guard by basename
+        # since the path variables expand to that directory.
+        if basename in p2_outcome_names:
+            return True
+        return False
+
+    violations = [f for f in clean_files if _is_p2_outcome(f)]
+    detail = "\n".join(f"  - {v}" for v in sorted(violations))
+    assert not violations, (
+        "RENDER_CLEAN_FILES in experiments/render.mk lists P2 outcome(s) "
+        "(ticket 0360: clean must stop at the P3 render floor, never touch "
+        "data that requires API calls to regenerate):\n"
+        f"{detail}\n\n"
+        "Remove these paths from RENDER_CLEAN_FILES — they are P2 sources, "
+        "not P3 render outputs."
+    )
+
+
+@pytest.mark.adherence
 def test_no_empty_outputs_wildcard_with_nonempty_archive_sibling() -> None:
     """$(wildcard experiments/outputs/...) empty + non-empty archive sibling → fail.
 

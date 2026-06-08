@@ -379,13 +379,22 @@ $(ANALYSIS_EXP2_WIKI_CSV) $(ANALYSIS_EXP2_WIKI_MACROS) &: \
 
 .PHONY: exp2-analysis-report exp1-analysis-figures report-tables report-figures chart-figures
 
-exp2-analysis-report: $(ANALYSIS_EXP2_REPORT_TARGETS) \
+RENDER_EXP2_ANALYSIS_REPORT := \
+	$(ANALYSIS_EXP2_REPORT_TARGETS) \
 	$(ANALYSIS_EXP2_2X2_TEX) $(ANALYSIS_EXP2_2X2_FR_TEX) \
 	$(ANALYSIS_EXP2_COVERAGE_SPLIT) $(ANALYSIS_EXP2_COST_SPLIT) \
-	$(ANALYSIS_SLIDE_MACROS)
+	$(ANALYSIS_SLIDE_MACROS) \
+	$(ANALYSIS_GEN)/stat_tests_arm1_vs_arm2.txt
 
-exp1-analysis-figures: $(ANALYSIS_EXP1_SPIDER_FAMILIES) $(ANALYSIS_EXP1_SPIDER_CLAUDE) \
-	$(ANALYSIS_EXP1_SPIDER_FAMILIES_FR) $(ANALYSIS_EXP1_SPIDER_CLAUDE_FR)
+exp2-analysis-report: $(RENDER_EXP2_ANALYSIS_REPORT)
+
+RENDER_EXP1_ANALYSIS_FIGURES := \
+	$(ANALYSIS_EXP1_SPIDER_FAMILIES) \
+	$(ANALYSIS_EXP1_SPIDER_CLAUDE) \
+	$(ANALYSIS_EXP1_SPIDER_FAMILIES_FR) \
+	$(ANALYSIS_EXP1_SPIDER_CLAUDE_FR)
+
+exp1-analysis-figures: $(RENDER_EXP1_ANALYSIS_FIGURES)
 
 # --- Report-side tables and figures (migrated from root Makefile by 0352) ---
 # These produce committed handoff artifacts under $(ANALYSIS_GEN). The root
@@ -543,7 +552,13 @@ exp3-fn-triage: $(ANALYSIS_EXP3_FN_TRIAGE_TEX)
 # Grouping targets — drive end-to-end regeneration of report-side handoff
 # artifacts. tab_self_consistency.tex and tab_per_run.tex are produced by the
 # `self-consistency` verb above (single producer, 0354 → migrated here 0410).
-report-tables: \
+#
+# DESIGN: the prerequisite lists are held in variables (RENDER_REPORT_TABLES,
+# RENDER_REPORT_FIGURES, RENDER_CHART_FIGURES) so the `clean` target below
+# can source its deletion set from the same vars — no hand-listed rm paths
+# that drift from the actual targets (ticket 0360).
+
+RENDER_REPORT_TABLES := \
 	$(ANALYSIS_GEN)/tab_decomposition.tex \
 	$(ANALYSIS_GEN)/tab_census.tex \
 	$(ANALYSIS_GEN)/macros.tex \
@@ -560,8 +575,14 @@ report-tables: \
 	$(ANALYSIS_GEN)/tab_status_difficulty.tex \
 	$(ANALYSIS_EXP2_WIKI_CSV)
 
-report-figures: $(ANALYSIS_EXP1_SPIDER_FAMILIES) $(ANALYSIS_EXP1_QUALITY_HEATMAP) \
+report-tables: $(RENDER_REPORT_TABLES)
+
+RENDER_REPORT_FIGURES := \
+	$(ANALYSIS_EXP1_SPIDER_FAMILIES) \
+	$(ANALYSIS_EXP1_QUALITY_HEATMAP) \
 	$(ANALYSIS_EXP1_SCREEN_VALID_CSV)
+
+report-figures: $(RENDER_REPORT_FIGURES)
 
 # --- Chart-data figures (migrated from root Makefile by 0370) -----------------
 # These produce committed handoff artifacts consumed by both report and slides.
@@ -689,11 +710,13 @@ $(ANALYSIS_GEN)/fig_spider_cross_exp.pdf: $(ANALYSIS_EXP1_CROSS_EVAL_CSV) $(ANAL
 	    --exp2 $(ANALYSIS_EXP2_CROSS_EVAL_CSV) \
 	    --output $@
 
-chart-figures: \
+RENDER_CHART_FIGURES := \
 	$(ANALYSIS_GEN)/fig_direct_cost_quality.pdf \
 	$(ANALYSIS_GEN)/cost_quality.csv \
 	$(ANALYSIS_GEN)/fig_direct_p1_base.pdf \
+	$(ANALYSIS_GEN)/macros_p1_base.tex \
 	$(ANALYSIS_GEN)/fig_exp1_recognition_matrix.pdf \
+	$(ANALYSIS_GEN)/macros_exp1_matrix.tex \
 	$(ANALYSIS_GEN)/fig_exp1_recognition_matrix_fr.pdf \
 	$(ANALYSIS_GEN)/fig_exp1_recognition_matrix_strong.pdf \
 	$(ANALYSIS_GEN)/fig_exp1_recognition_matrix_top.pdf \
@@ -708,6 +731,8 @@ chart-figures: \
 	$(ANALYSIS_GEN)/fig_scaling_curve.pdf \
 	$(ANALYSIS_GROUNDING_LADDER_FIG)
 
+chart-figures: $(RENDER_CHART_FIGURES)
+
 # --- Full-phase aggregate (P3 render surface) -------------------------------
 # `all` rebuilds every committed handoff artifact this phase produces, so the
 # root `world`/`staleness` entries (tracker 0406 S5, ticket 0415) drive the
@@ -720,3 +745,54 @@ chart-figures: \
 all: report-tables report-figures chart-figures self-consistency \
 	exp1-cost-summary exp1-reasoning-topup \
 	exp2-analysis-report exp1-analysis-figures
+
+# --- Clean: remove all P3 render outputs (ticket 0360) ----------------------
+# The deletion set is sourced from the SAME variables used by the grouping
+# targets above — never a hand-listed glob that could drift from actual targets
+# and delete the FROZEN tab_decomposition_fix.tex (which has no rule, so it
+# appears in no variable here). Also removes P3-internal intermediates
+# (variance_decomposition.json, tradeoff.csv) whose only consumers are render
+# targets; they are NOT P2 outcomes (those never get cleaned — see ticket body).
+#
+# Post-clean oracle: make -f experiments/render.mk all && git diff --exit-code
+# A non-empty diff means a committed handoff artifact is out of sync with
+# the data (timestamp-gated world misses this because it sees existing files as
+# up-to-date; forcing regeneration reveals the divergence).
+#
+# Usage:
+#   make -f experiments/render.mk clean   # P3 clean alone
+#   make cleaner                          # root entry: P3 clean + oracle check
+
+# (Reuse the grouping-target vars — clean set stays in sync with all targets.)
+RENDER_EXP2_ANALYSIS := $(RENDER_EXP2_ANALYSIS_REPORT)
+RENDER_EXP1_ANALYSIS := $(RENDER_EXP1_ANALYSIS_FIGURES)
+
+RENDER_SELF_CONSISTENCY := $(ANALYSIS_SC_TEX) $(ANALYSIS_SC_PERRUN)
+
+RENDER_EXP1_EXTRAS := $(ANALYSIS_EXP1_COST_TEX) $(ANALYSIS_EXP1_TOPUP_TEX)
+
+# P3-internal intermediates: produced by render.mk rules, consumed only by
+# later render.mk rules — not P2 outcomes (no rule in score.mk produces them).
+# Also includes ANALYSIS_EXP2_2X2_CSV, which lives under ANALYSIS_DERIVED_DIR
+# (not ANALYSIS_GEN) but is a P3 render output produced by the 2x2 table rule.
+RENDER_INTERMEDIATES := \
+	$(ANALYSIS_VARIANCE_JSON) \
+	$(ANALYSIS_VERIFICATION_TRADEOFF) \
+	$(ANALYSIS_EXP2_2X2_CSV) \
+	$(ANALYSIS_REF_COUNT_CSV) \
+	$(ANALYSIS_EXP2_WIKI_MACROS)
+
+RENDER_CLEAN_FILES := \
+	$(RENDER_REPORT_TABLES) \
+	$(RENDER_REPORT_FIGURES) \
+	$(RENDER_CHART_FIGURES) \
+	$(RENDER_EXP2_ANALYSIS) \
+	$(RENDER_EXP1_ANALYSIS) \
+	$(RENDER_SELF_CONSISTENCY) \
+	$(RENDER_EXP1_EXTRAS) \
+	$(RENDER_INTERMEDIATES)
+
+.PHONY: clean
+clean:
+	@echo 'render.mk clean: removing P3 render outputs (keeping P2 sources: measurements.jsonl, mart, cross-eval CSVs)'
+	rm -f $(RENDER_CLEAN_FILES)

@@ -37,7 +37,7 @@
 # replies only by explicitly invoking experiments/acquire.mk.
 
 .PHONY: test test-fast test-slow coverage lint check-fast check show-prompts \
-	report slides staleness world
+	report slides staleness world cleaner
 
 # --- Tests --------------------------------------------------------------------
 
@@ -141,3 +141,26 @@ world:
 	$(MAKE) -f $(RENDER_MK) all
 	$(MAKE) -C report
 	$(MAKE) -C slides
+
+# cleaner: content-diff reproducibility oracle for the P3 render phase.
+#
+# Removes every P3 render output (report/inputs/generated/**) whose source is
+# declared in render.mk's grouping-target variables, then regenerates them
+# from committed P2 outcomes. A non-empty `git diff` after regeneration means
+# a committed handoff artifact diverged from the data — the DAG is stale.
+# Never touches P2 sources (measurements.jsonl, mart, cross-eval CSVs) or
+# anything that requires an API call (P1 acquire).
+#
+# Usage (locally, or in a fresh checkout):
+#   make cleaner && git diff --exit-code -- report/inputs/generated/
+#
+# The `git diff --exit-code` is intentionally left to the caller:
+#   * in CI, `make cleaner` and the git-diff oracle are separate steps so
+#     the diff is visible in the log before the build fails;
+#   * locally, the caller may want to inspect the diff before deciding;
+#   * a combined "clean + regen + diff" single Make target would require
+#     the clean step, a sub-make, AND git invocation — three different tools
+#     in one recipe, with no way to surface the diff nicely.
+cleaner:
+	$(MAKE) -f $(RENDER_MK) clean
+	$(MAKE) -f $(RENDER_MK) all
