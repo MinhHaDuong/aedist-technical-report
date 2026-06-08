@@ -1041,7 +1041,7 @@ def test_run_anthropic_call_turn1_sends_system_and_messages(monkeypatch, tmp_pat
     fake_client = type("C", (), {})()
     fake_client.messages = type("M", (), {"create": staticmethod(fake_create)})()
     monkeypatch.setattr("anthropic.Anthropic", lambda **kw: fake_client)  # noqa: ARG005
-    monkeypatch.setattr("aedist.query_anthropic._load_key", lambda _: "sk-ant-test")
+    monkeypatch.setattr("aedist.query_anthropic._load_key", lambda *_: "sk-ant-test")
 
     record = mod.run_anthropic_call(
         "the prompt",
@@ -1098,7 +1098,7 @@ def test_run_anthropic_call_turn2_replays_full_history(monkeypatch, tmp_path):
     fake_client = type("C", (), {})()
     fake_client.messages = type("M", (), {"create": staticmethod(fake_create)})()
     monkeypatch.setattr("anthropic.Anthropic", lambda **kw: fake_client)  # noqa: ARG005
-    monkeypatch.setattr("aedist.query_anthropic._load_key", lambda _: "sk-ant-test")
+    monkeypatch.setattr("aedist.query_anthropic._load_key", lambda *_: "sk-ant-test")
 
     prior_history = [
         {"role": "user", "content": "first user message"},

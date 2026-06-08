@@ -51,7 +51,6 @@ AGENT_FAMILY = "mistral-direct"
 DEFAULT_MODEL = "mistral-large-2512"
 API_BASE = "https://api.mistral.ai"
 API_DOCS_VERIFIED = "2026-05-20"
-KEY_PATH = Path.home() / ".config" / "keys" / "mistral.env"
 TOKENS_PER_MTOK = 1_000_000
 
 
@@ -60,28 +59,18 @@ TOKENS_PER_MTOK = 1_000_000
 # ---------------------------------------------------------------------------
 
 
-def _load_api_key(path: Path = KEY_PATH) -> str:
-    """Read ``MISTRAL_API_KEY`` from ``~/.config/keys/mistral.env``.
+def _load_api_key() -> str:
+    """Read ``MISTRAL_API_KEY`` from the environment.
 
-    Falls back to the environment variable of the same name so callers
-    can override in tests. Raises ``SystemExit`` if neither is set.
+    Injected at Make level via ``uv run --env-file ../.env``.
+    Raises ``SystemExit`` if the variable is absent.
     """
-    if path.exists():
-        for raw in path.read_text().splitlines():
-            line = raw.strip()
-            if not line or line.startswith("#"):
-                continue
-            if line.startswith("MISTRAL_API_KEY="):
-                value = line.split("=", 1)[1].strip()
-                # Strip surrounding quotes if present.
-                if value and value[0] in {'"', "'"} and value[-1] == value[0]:
-                    value = value[1:-1]
-                if value:
-                    return value
-    env = os.environ.get("MISTRAL_API_KEY")
-    if env:
-        return env
-    raise SystemExit(f"MISTRAL_API_KEY not found in {path} or environment")
+    key = os.environ.get("MISTRAL_API_KEY")
+    if key:
+        return key
+    raise SystemExit(
+        "MISTRAL_API_KEY not set — inject via uv run --env-file ../.env"
+    )
 
 
 # ---------------------------------------------------------------------------

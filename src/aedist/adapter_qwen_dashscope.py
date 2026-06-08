@@ -34,7 +34,6 @@ import logging
 import os
 import random
 import time
-from pathlib import Path
 from typing import Any
 
 import dashscope
@@ -326,27 +325,16 @@ def parse_response(
 
 
 def _resolve_api_key() -> str:
-    """Resolve the DashScope API key, preferring the project key file.
+    """Resolve ``QWEN_API_KEY_AEDIST`` from the environment.
 
-    Order: environment ``QWEN_API_KEY_AEDIST``, then
-    ``~/.config/keys/alibaba.env`` (KEY=VALUE format).
+    Injected at Make level via ``uv run --env-file ../.env``.
+    Raises ``SystemExit`` if the variable is absent.
     """
-    env_key = os.environ.get("QWEN_API_KEY_AEDIST")
-    if env_key:
-        return env_key
-    key_file = Path.home() / ".config" / "keys" / "alibaba.env"
-    if key_file.exists():
-        for line in key_file.read_text().splitlines():
-            line = line.strip()
-            if not line or line.startswith("#"):
-                continue
-            if "=" not in line:
-                continue
-            k, v = line.split("=", 1)
-            if k.strip() == "QWEN_API_KEY_AEDIST":
-                return v.strip().strip('"').strip("'")
-    raise RuntimeError(
-        "QWEN_API_KEY_AEDIST not found in environment or ~/.config/keys/alibaba.env"
+    key = os.environ.get("QWEN_API_KEY_AEDIST")
+    if key:
+        return key
+    raise SystemExit(
+        "QWEN_API_KEY_AEDIST not set — inject via uv run --env-file ../.env"
     )
 
 

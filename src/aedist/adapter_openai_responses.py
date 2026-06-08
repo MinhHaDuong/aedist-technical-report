@@ -332,26 +332,16 @@ def parse_response(resp: Any, price_card: dict) -> RunRecord:
 
 
 def _load_openai_key() -> str:
-    """Load OpenAI key from env or ``~/.config/keys/openai.env``.
+    """Load ``OPENAI_API_KEY_AEDIST`` from the environment.
 
-    Accepts only the project key ``OPENAI_API_KEY_AEDIST``.
+    Injected at Make level via ``uv run --env-file ../.env``.
+    Raises ``SystemExit`` if the variable is absent.
     """
     key = os.environ.get("OPENAI_API_KEY_AEDIST")
     if key:
         return key
-    env_file = Path.home() / ".config" / "keys" / "openai.env"
-    if env_file.exists():
-        for line in env_file.read_text().splitlines():
-            line = line.strip()
-            if not line or line.startswith("#"):
-                continue
-            if "=" in line:
-                k, _, v = line.partition("=")
-                if k.strip() == "OPENAI_API_KEY_AEDIST":
-                    return v.strip().strip('"').strip("'")
     raise SystemExit(
-        "OpenAI key not set (expected OPENAI_API_KEY_AEDIST) "
-        "and not found in ~/.config/keys/openai.env"
+        "OPENAI_API_KEY_AEDIST not set — inject via uv run --env-file ../.env"
     )
 
 
