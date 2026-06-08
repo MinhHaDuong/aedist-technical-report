@@ -2,11 +2,14 @@
 Title: Consider alternate anchoring score using reference count
 Created: 2026-05-25
 Author: HDMX-coding-agent
+Closed: REJECT: reference count does not add reliable anchoring signal; analysis in src/aedist/analyze_ref_count_anchoring.py
 
 --- log ---
 2026-05-25T00:00Z HDMX-coding-agent created
 2026-06-08T11:00Z claude note linked to tracker 0465
+2026-06-08T12:00Z HDMX-coding-agent close REJECT — analysis complete, reference count not a useful anchoring signal
 
+2026-06-08T19:45Z HDMX-coding-agent closed — REJECT: reference count does not add reliable anchoring signal; analysis in src/aedist/analyze_ref_count_anchoring.py
 --- body ---
 ## Context
 
@@ -20,16 +23,62 @@ indicator (not a standalone quality score).
 
 ## Scope
 
-- [ ] Define candidate metrics:
+- [x] Define candidate metrics:
       total references, unique references, references per table row,
       references per 1k output tokens.
-- [ ] Test sensitivity to citation inflation (spam references without grounding).
-- [ ] Evaluate relationship with existing provenance pass/fail outcomes.
-- [ ] Recommend whether/how to integrate in reporting.
+- [x] Test sensitivity to citation inflation (spam references without grounding).
+- [x] Evaluate relationship with existing provenance pass/fail outcomes.
+- [x] Recommend whether/how to integrate in reporting.
 
 ## Exit criteria
 
-- [ ] One-page note with recommendation and caveats.
-- [ ] If retained, add explicit formula and anti-gaming guardrails.
+- [x] One-page note with recommendation and caveats.
+- [x] If retained, add explicit formula and anti-gaming guardrails. (Not retained — see below.)
 
 Part of: 0465 — alternate anchoring score
+
+## Findings
+
+Analysis script: `src/aedist/analyze_ref_count_anchoring.py`
+Per-run dataset: `report/inputs/generated/ref_count_anchoring_analysis.csv`
+
+Data: 80 Exp2 runs across 4 agents × 2 arms × 5 reps.
+Focused analysis on the optimised arm (arm3, n=40).
+
+### Candidate metrics evaluated
+
+| Metric | r with F1 (optimised arm, n=40) |
+|--------|-------------------------------|
+| n_bib_entries | 0.24 |
+| bib_primary (primary-source bib entries) | 0.19 |
+| bib_entries / n_rows | −0.18 |
+| prov_presence (existing metric) | 0.07 |
+
+### Key findings
+
+1. **Weak correlation with quality.** Pearson r(bib_entries, F1) = 0.24 —
+   no practical signal. All candidate metrics fall below |r| = 0.25.
+
+2. **Top agents produce zero-bib runs routinely.** 14/40 optimised-arm
+   runs have n_bib_entries = 0. OpenAI (F1 mean 0.67, best agent) produces
+   5/10 zero-bib runs. The count reflects output *format*, not grounding.
+
+3. **Citation inflation confirmed.** One Mistral run has 72 bibliography
+   entries yet F1 = 0.257. High bib counts coexist with both high and
+   low quality — the inflation scenario materialises in the data.
+
+4. **Agent-specific format, not a generalizable signal.** Anthropic always
+   produces a bibliography; OpenAI and Qwen do so inconsistently; Mistral
+   produces large bibliographies in the optimised arm but zero in naive.
+
+## Recommendation
+
+**REJECT** reference count as a standalone or complementary anchoring score.
+
+The metric confounds output format with grounding quality. An agent can
+produce no bibliography and achieve high F1, or produce 72 entries with
+poor F1. Anti-gaming guardrails cannot rescue a metric whose baseline
+variance is dominated by agent style differences.
+
+Retain `n_bib_entries` as diagnostic metadata in `exp2_mart run_summary`
+(already present) — useful for profiling agent behavior, not for scoring.

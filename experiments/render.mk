@@ -63,6 +63,8 @@ ANALYSIS_EXP2_COVERAGE_FIG_FR := $(ANALYSIS_GEN)/fig_exp2_coverage_certainty_fr.
 ANALYSIS_EXP1_QUALITY_HEATMAP := $(ANALYSIS_GEN)/fig_quality_floor_heatmap_exp1.pdf
 # Within-model screen validation summary CSV (ticket 0467).
 ANALYSIS_EXP1_SCREEN_VALID_CSV := $(ANALYSIS_GEN)/tab_screen_validation_within_model.csv
+# Reference-count anchoring analysis CSV (ticket 0293 — one-time exploration).
+ANALYSIS_REF_COUNT_CSV := $(ANALYSIS_GEN)/ref_count_anchoring_analysis.csv
 
 ANALYSIS_EXP2_OUTLINE_ARTIFACTS := \
 	$(ANALYSIS_GEN)/tab_exp2_outline_dataset.tex \
@@ -128,6 +130,16 @@ $(ANALYSIS_EXP2_TURN_FIG): $(ANALYSIS_GEN)/exp2_turn_trajectory_view.csv
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_exp2_turn_trajectory \
 	    --input $< \
+	    --output $@
+
+$(ANALYSIS_REF_COUNT_CSV): $(ANALYSIS_EXP2_MART_JSONL) \
+		$(ANALYSIS_GEN)/sota_cross_eval_view.csv \
+		$(ANALYSIS_GEN)/tab_exp2_bib_quality_view.csv
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.analyze_ref_count_anchoring \
+	    --mart $(ANALYSIS_EXP2_MART_JSONL) \
+	    --cross-eval $(ANALYSIS_GEN)/sota_cross_eval_view.csv \
+	    --bib-quality $(ANALYSIS_GEN)/tab_exp2_bib_quality_view.csv \
 	    --output $@
 
 $(ANALYSIS_EXP2_BIB_TABLE): $(ANALYSIS_GEN)/tab_exp2_bib_quality_view.csv
