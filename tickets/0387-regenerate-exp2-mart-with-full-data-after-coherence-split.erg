@@ -3,11 +3,14 @@ Title: Regenerate exp2_mart.jsonl with full data after coherence field split
 Created: 2026-05-29
 Author: Claude
 Label: needs-human
+Closed: satisfied by prior work — see log entry 2026-06-08
 
 --- log ---
 2026-05-29T12:14Z Claude created — follow-up to PR #651 (coherence status_vocab/capacity split). The committed mart cannot be regenerated in a clean clone, so #651 ships a defensive reader as an interim; the artifact itself still needs a full-data regen.
 2026-05-29T13:00Z Claude renamed 0383 → 0387 to resolve an ID collision with the mart-audit tracking ticket 0383 (which 0384/0385/0386 are Blocked-by); the tracking ticket keeps 0383.
+2026-06-08T14:00Z Claude verified — exit criteria satisfied by prior work (no new regen needed). The artifact was correctly rebuilt by commits 0383/0385/0413/0445, all after PR #651 merged (2026-05-29). Verification: 160 records, 4 arms (naive/optimised/arm3/arm4), all 80 score records have both status_vocab_adherence and capacity_nonnegative keys, 27 records have distinct sv != cn values (the bug caused 0 distinct). Non-destructive re-run of build_exp2_mart (--output /tmp) produces 0 coherence mismatches against the committed artifact. View regeneration (build_exp2_mart_views) completes without errors and emits both coherence fields. All worktree tests pass (2049 passed). Closing as already-satisfied.
 
+2026-06-08T19:31Z HDMX-coding-agent closed — satisfied by prior work — see log entry 2026-06-08
 --- body ---
 ## Context
 
