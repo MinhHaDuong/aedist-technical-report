@@ -1,0 +1,36 @@
+%erg 0.1
+Title: manuscript: wire pandoc+citeproc bibliography build target
+Created: 2026-06-08
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-08T22:25Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+The `## Bibliography` section of `slides/manuscript/main.md` is a `[PLACEHOLDER]`. The document uses `[@key]` pandoc-citeproc citations throughout, resolving against `report/refs.bib`. The current pandoc invocation in `slides/Makefile` (or equivalent) omits `--citeproc`, so all cite keys render verbatim in the output PDF.
+
+The Bibliography placeholder also documents the manual pandoc command:
+`pandoc slides/manuscript/main.md -o slides/manuscript/main.pdf --pdf-engine=tectonic --resource-path=slides --citeproc --bibliography=report/refs.bib`
+
+A Makefile target needs to encode this permanently.
+
+## Relevant files
+
+- `slides/manuscript/main.md` — the manuscript with cite keys
+- `report/refs.bib` — the BibTeX bibliography
+- `slides/Makefile` or equivalent build file — needs the new target
+
+## Actions
+
+1. Locate the current Makefile that builds `slides/manuscript/main.pdf`.
+2. Add or update the target to pass `--citeproc --bibliography=report/refs.bib` to pandoc.
+3. Replace the `## Bibliography` `[PLACEHOLDER]` note with a brief note pointing to `report/refs.bib` (since citeproc auto-populates the section).
+4. Verify the built PDF renders all citations and the bibliography section.
+
+## Exit criteria
+
+- [ ] `make slides/manuscript/main.pdf` (or equivalent) builds without error and with citations rendered
+- [ ] The `## Bibliography` section is no longer a placeholder
+- [ ] `make check` passes
