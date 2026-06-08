@@ -206,7 +206,6 @@ Null conditions: `n_rows == 0` → `no_rows`; all values are sentinels → `colu
 `score_exp1.py` for `exp1_cross_eval.csv`. They are intentionally **not** wired
 into the Exp2 mart `ScoreSummary` (ticket 0386 Option B carve-out; see
 `docs/scoring-contract.md` §Mart schema section).
-
 ---
 
 ## Provenance URL spot-check — `check_provenance_urls.py`
@@ -286,7 +285,6 @@ currently has no effect on row selection.
 
 ---
 
->>>>>>> a5ff2499 (wip: ticket 0396 — coherence_row_atomicity indicator (temp commit))
 ### Temporality
 
 As-of date is resolved from the first non-empty of: `status_as_of`, `as_of`,
