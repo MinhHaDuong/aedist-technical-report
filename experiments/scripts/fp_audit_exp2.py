@@ -77,15 +77,19 @@ def _proposed_norm(s: str) -> str:
 
 
 # Domain knowledge: real plants verified ABSENT from the reference name list.
+# Update this list when plants are added to the reference:
+#   kien luong -> added in v2.2 (ticket 0472)
+#   kim son, yen hung, rang dong -> added in v2.3 (ticket 0395)
+# "hoa phat" remains: the BFG captive power at Hòa Phát Hải Dương is not in reference.
+# "bao dai" remains: still absent from reference.
+# "cai lan" remains: still absent (1 occurrence; capacity 39 MW is borderline).
+# "luc nam" remains: still absent (may be <30 MW threshold; watch appearances).
 _REF_HOLE = [
-    "kien luong",
     "hoa phat",
-    "kim son",
-    "yen hung",
-    "rang dong",
     "bao dai",
     "cai lan",
     "luc nam",
+    "vedan",
 ]
 _OTHER = ["hat nhan", "bourbon", "dam phu my"]  # nuclear / <30 MWe scope
 _HALLU = ["phu yen", "than an giang"]  # implausible / non-existent
