@@ -1,0 +1,40 @@
+%erg 0.1
+Title: manuscript: audit and fix figure numbering
+Created: 2026-06-08
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-08T22:25Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+In `slides/manuscript/main.md`, the current figure numbering is inconsistent:
+- Figure 1 (§4, direct query bar chart)
+- Figure 2 (§4, cost-quality scatter)
+- Figure 2b (§4, quality-floor heatmap) — non-standard suffix
+- Figure 3 (§5, Exp2 arms comparison)
+- Figure 4 (§3, capability timeline)
+- Figure 5 (§6, fusion MVP — added by inline-fixes PR)
+- Annex D: Figure 7 (recognition matrix) — gaps at 6
+- Annex E: Figures S1, S2, S3 (supplementary)
+
+"Figure 2b" is non-standard. After Figure 5 is inserted in §6, the Annex D figure (currently "Figure 7") may need renumbering to "Figure 6". The supplementary "S" prefix in Annex E is inconsistently applied relative to the main-text numbered sequence.
+
+## Relevant files
+
+- `slides/manuscript/main.md` — all figure captions (lines 48–59, 89–92, 111–113, 402–404, 428–438)
+
+## Actions
+
+1. Audit all figure captions end-to-end and produce a table of current assignments.
+2. Renumber to a consistent scheme: 1, 2, 3, 4, 5, 6 (main text in document order) + S1, S2, S3 (supplementary in Annex E). Eliminate "2b".
+3. Update all in-text figure references to match.
+4. Check §7 Discussion references to figure numbers.
+
+## Exit criteria
+
+- [ ] All main-text figures numbered consecutively without gaps or non-standard suffixes
+- [ ] All in-text references to figures match the assigned numbers
+- [ ] Supplementary figures consistently labeled S1, S2, S3
+- [ ] `make check` passes

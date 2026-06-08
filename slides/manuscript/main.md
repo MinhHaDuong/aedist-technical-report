@@ -23,7 +23,7 @@ CIRED — Centre International de Recherche sur l'Environnement et le Développe
 
 Economic and engineering analysis using open energy-system models such as PyPSA-ASEAN need power-plant inventories of industrial assets that are complete, accurately dated, and traceable to primary sources — enabling quasi-real-time support for policy analysis in countries where the data landscape changes faster than publication cycles. Yet across most of the world the relevant facts arrive late, incomplete, or under licences that forbid redistribution, even though the underlying information is already public — scattered across project documents, master plans, environmental assessments, operator reports, and press releases. The general problem behind the specific one is older than AI: science needs knowledge, not opinions. Statistical work requires facts that are sourced, reproducible, and auditable, not plausible-sounding outputs from a random words generator somewhere in the cloud.
 
-This paper addresses a concrete task — building a complete, sourced inventory of Vietnam's thermal power plants — as a lens for evaluating whether current AI systems can produce research-grade statistical data. We define a four-dimensional quality bar (§2), establish a parametric ceiling with 16 language models (§3), test the state-of-the-art commercial frontier (§4), and show that targeted pipeline design is needed to bridge the gap (§5). The Discussion (§6) examines the limits of F1 as an aggregate and prefigures a fusion-based research programme.
+This paper addresses a concrete task — building a complete, sourced inventory of Vietnam's thermal power plants — as a lens for evaluating whether current AI systems can produce research-grade statistical data. We define a four-dimensional quality bar (§2), establish a parametric ceiling with 14 language models (§4), test the state-of-the-art commercial frontier (§5), and show that targeted pipeline design is needed to bridge the gap (§6). The Discussion (§7) examines the limits of F1 as an aggregate and prefigures a fusion-based research programme.
 
 ## Related work
 
@@ -128,7 +128,12 @@ Each cell in a power-plant inventory — one plant, one attribute, one value —
 
 To our knowledge, no published benchmark or system targets open-world enumeration of a national asset class with per-cell provenance at this granularity. To our knowledge, the conjunction of per-cell provenance with per-cell temporal validity in LLM-augmented inventories has not been published; demonstrating it is part of the contribution we aim for in the follow-on paper.
 
-**Run aggregation as a coverage lever.** The 14-model exp1\_batch2 cohort (a subset of the 16-model Experiment 1 sweep, excluding two models with unreliable outputs) allows a controlled evaluation of self-ensembling without any new API calls. We swept a 4 × 3 × 4 factorial — four merge methods (union; majority at $k$=2 and $k$=3; confidence-weighted), three pool sizes (2, 3, 4), and four diversity rules (intra-model; cross-model selecting the cheapest, most expensive, or alternating models by run cost) — scoring each aggregated list against the 173-plant reference using the same LP matcher as §4. Union aggregation dominates as a **recall** lever across all diversity rules and pool sizes: the best union recipe — three runs from the three most expensive models — achieves recall = 0.633 at a combined cost of \$0.94, compared to a single-run mean recall of 0.262. This is a 2.4× improvement over the mean, though it remains below the best individual run's recall (0.671 for claude-sonnet-4.6) because precision falls as the union list grows (166 candidate plants for 173 reference plants). F1 for the best union cell (0.659) is slightly below the best single-run F1 (0.689); union buys coverage breadth at a precision cost, not a free F1 gain. Majority voting and confidence-weighting both reduce recall relative to union at every pool size, because the Experiment 1 vocabulary is rich enough that most true plants appear in at most one run in any given pool; a majority gate filters them out. Intra-model pooling (averaging over the 14 models) reaches recall = 0.391 at pool size 3 for \$0.25, a practical option when budget constrains the model set. The cross-model-low recipe (cheapest models only) performs poorly (recall ≈ 0.31–0.41), confirming that marginal plant recall is concentrated in the frontier models. These results do not update the headline F1 from §4, which reports per-model single-run performance for comparability with existing benchmarks; they establish that cross-model union is the recommended aggregation recipe for practitioners targeting maximum coverage at a fixed token budget.
+**Run aggregation as a coverage lever.** The 14-model exp1\_batch2 cohort (a subset of the 16-model Experiment 1 sweep, excluding two models with unreliable outputs) allows a controlled evaluation of self-ensembling without any new API calls. Figure 5 illustrates the ≥2-models rule applied separately to Experiment 1 (4 SOTA parametric models × 5 repeats) and Experiment 2 naive arm. We swept a 4 × 3 × 4 factorial — four merge methods (union; majority at $k$=2 and $k$=3; confidence-weighted), three pool sizes (2, 3, 4), and four diversity rules (intra-model; cross-model selecting the cheapest, most expensive, or alternating models by run cost) — scoring each aggregated list against the 173-plant reference using the same LP matcher as §4. Union aggregation dominates as a **recall** lever across all diversity rules and pool sizes: the best union recipe — three runs from the three most expensive models — achieves recall = 0.633 at a combined cost of \$0.94, compared to a single-run mean recall of 0.262. This is a 2.4× improvement over the mean, though it remains below the best individual run's recall (0.671 for claude-sonnet-4.6) because precision falls as the union list grows (166 candidate plants for 173 reference plants). F1 for the best union cell (0.659) is slightly below the best single-run F1 (0.689); union buys coverage breadth at a precision cost, not a free F1 gain. Majority voting and confidence-weighting both reduce recall relative to union at every pool size, because the Experiment 1 vocabulary is rich enough that most true plants appear in at most one run in any given pool; a majority gate filters them out. Intra-model pooling (averaging over the 14 models) reaches recall = 0.391 at pool size 3 for \$0.25, a practical option when budget constrains the model set. The cross-model-low recipe (cheapest models only) performs poorly (recall ≈ 0.31–0.41), confirming that marginal plant recall is concentrated in the frontier models. These results do not update the headline F1 from §4, which reports per-model single-run performance for comparability with existing benchmarks; they establish that cross-model union is the recommended aggregation recipe for practitioners targeting maximum coverage at a fixed token budget.
+
+![](../report/inputs/generated/fig_fusion_mvp.pdf)\
+<!-- raw data: report/inputs/generated/fusion_mvp.csv -->
+
+*Figure 5. Naive presence fusion across the 4-SOTA-model Experiment 1 cohort and Experiment 2 naive arm (N=20 runs each: 4 models × 5 repeats, evaluated against the 176-plant reference). Top panel (E1): UNION and ≥2-models rules vs best single model. Bottom panel (E2 naive arm): same rules. TP = plants matched against the reference; FP = unrecognized plants. Under ≥2-models in E1: F1=0.747, TP=105, FP=0. Under ≥2-models in E2-1D: F1=0.805, TP=122, FP=5.*
 
 ---
 
@@ -227,7 +232,7 @@ Mistral's per-tier branding (Small 4 / Medium 3.5 / Large 3) is the lab's own sc
 | Seed | 42 | Reproducibility where supported by provider |
 | Max tokens | 32768 | Sized to accommodate verbose frontier models (Opus, GPT-5.5) on the full Vietnam thermal-plant table; an 8k cap truncated Opus 4.6/4.7 mid-table during pilot |
 | Budget | $15 | Per-sweep cap; the runner halts at exceedance |
-| Total runs | 80 | 16 models × 5 repeats |
+| Total runs | 70 | 14 models × 5 repeats |
 
 `seed` is best-effort on OpenRouter: Anthropic and OpenAI honour it for sampling RNG, Mistral and DeepSeek treat it as advisory. The MoE entries (gpt-oss-*, mistral-large-2512, qwen3.6-35b-a3b, qwen3.6-plus, qwen3-max-thinking, deepseek-v4-pro, deepseek-v4-flash) carry residual non-determinism even at T=0 + seed pinning, characterised in ticket 0139 work; the 5-repeat budget surfaces this as observed within-model variance rather than treating it as noise to be eliminated. To our knowledge, MoE non-determinism specifically for multi-row structured outputs at deterministic decoding settings has not been characterised in prior literature; the present discipline is informed by in-project measurement rather than external benchmarks.
 
@@ -277,7 +282,7 @@ Identify all thermal power plants in Vietnam using four SOTA cloud agents with e
 
 ### Agents
 
-Four direct-API agents, ordered by ascending baseline smoke cost. API keys live at `~/.config/keys/`. OpenRouter is not used here — vendor-direct invocation keeps web-search billing transparent.
+Four direct-API agents, ordered by ascending baseline smoke cost. OpenRouter is not used here — vendor-direct invocation keeps web-search billing transparent.
 
 | # | Vendor | Model | Country | Surface | Ticket |
 |---|---|---|---|---|---|
@@ -321,15 +326,15 @@ The registered design has two arms over the same four agents, five reps each (40
 - **Naive arm** — Doc-07 (`experiments/sota/protocol_07_naive_prompt.md`) sent verbatim as the sole user message, no system prompt, web search on, one model response per session. This carries the v2 task statement and quality criteria but none of the optimised arm's methodology (budget rules, planning headroom, source admissibility, calibrated confidence vocabulary). It is the null comparator: the contrast between arms isolates the protocol scaffolding's contribution.
 - **Optimised arm** — Phase A design call followed by the Phase B multi-turn state machine above (Phase B-0 then Phase B-full).
 
-Both arms share one **dual-axis per-session budget cap: 50 000 tokens *or* a \$3 dollar guard, whichever fires first triggers TERMINAL.** Per protocol_05, dollar-only caps disadvantage models with expensive output tokens; the token cap binds reasoning capacity comparably across vendors while the dollar guard binds total bill. The cap is the experimental condition — no session is dropped for cost or wall-time reasons. The realised per-session and per-batch costs are reported in §4's Figure 3 and the technical report chapter, not pinned here.
+Both arms share one **dual-axis per-session budget cap: 50 000 tokens *or* a \$3 dollar guard, whichever fires first triggers TERMINAL.** Per protocol_05, dollar-only caps disadvantage models with expensive output tokens; the token cap binds reasoning capacity comparably across vendors while the dollar guard binds total bill. The cap is the experimental condition — no session is dropped for cost or wall-time reasons. The realised per-session and per-batch costs are reported in §5's Figure 3 and the technical report chapter, not pinned here.
 
 ### As-run deviations from the registration
 
 The experiment was pre-registered (protocol locked before the production batch, with an H1–H6 analysis plan). Execution deviated from the registration in three headline ways, all reported candidly rather than hidden:
 
-- **A documents axis was added.** Beyond the two registered arms, two further *unregistered, exploratory* conditions — the same naive and optimised surfaces with a reference document pack attached — were run, expanding the corpus from 40 to 80 sessions and forming the 2×2 factorial (query mode × documents) of §4's Figure 3. These two conditions are exploratory by construction: they are never aggregated with the two registered arms.
+- **A documents axis was added.** Beyond the two registered arms, two further *unregistered, exploratory* conditions — the same naive and optimised surfaces with a reference document pack attached — were run, expanding the corpus from 40 to 80 sessions and forming the 2×2 factorial (query mode × documents) of §5's Figure 3. These two conditions are exploratory by construction: they are never aggregated with the two registered arms.
 - **Claude's optimised arm is excluded from the bibliography-quality table (0 of 5 runs).** None of Claude's five optimised-arm sessions yielded a bibliography parseable by the structure analyser, so the cell is blank in the bibliography-quality table. This is a *bibliography-parsability* exclusion only: those same five sessions remain row-level-F1-scorable (N=5) via the LP matcher, and they are present in the 2×2 F1 table. The 0/5 must not be read as the runs failing outright.
-- **Phase C cross-evaluation is deferred.** The four-dimension peer cross-evaluation (ticket 0171) was reserved for post-conference analysis; the as-run results below and in §4 are the operational and F1-based metrics, not the §2-dimension cross-eval scores.
+- **Phase C cross-evaluation is deferred.** The four-dimension peer cross-evaluation (ticket 0171) was reserved for post-conference analysis; the as-run results below and in §5 are the operational and F1-based metrics, not the §2-dimension cross-eval scores.
 
 The registered-report treatment of these — the locked H1–H6 plan, per-arm validity and exclusion criteria, and the descriptive F1/cost statistics — is in the technical report's Experiment 2 chapter; this annex does not reproduce those statistics.
 
@@ -452,6 +457,10 @@ The §4 Discussion paragraph "Internal coherence as a zero-reference screen" rep
 *Supporting data: `report/inputs/generated/tab_screen_validation_within_model.csv` (produced by `src/aedist/screen_validation_within_model.py`, wired in `experiments/render.mk`).*
 
 ---
+
+## Acknowledgements
+
+We thank Econom'IA 2026 participants for their comments, in particular those that led to the updated reference list, the per-plant recognition matrix, and the status-composition analysis of task difficulty in the annex.
 
 ## Bibliography
 

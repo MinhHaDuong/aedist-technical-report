@@ -1,0 +1,31 @@
+%erg 0.1
+Title: manuscript: fix physical section order vs numbering
+Created: 2026-06-08
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-08T22:25Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+In `slides/manuscript/main.md`, sections are physically ordered as:
+§1 Introduction, Related Work (unnumbered), §4 Experiment 1, §2 Quality bar, §3 AI landscape, §5 Experiment 2, §6 Fusion, §7 Discussion, §8 Conclusion.
+
+The intro roadmap (§1, now fixed) assumes §2 precedes §4, but a reader encounters §4 before §2 and §3. This is a structural decision for the author: either reorder physical sections to match their numbers (§1→§2→§3→§4→§5...) or keep the current "results first" talk-style order and make the intro roadmap reflect it explicitly.
+
+## Relevant files
+
+- `slides/manuscript/main.md` — full manuscript; check section headers at lines 22, 28, 40, 61, 75
+
+## Actions
+
+1. Decide (author judgment required): reorder sections to match numbers, OR keep "results first" and update roadmap prose.
+2. If reordering: move §4 block (lines ~40–59) after §3 block (lines ~75–103); verify all cross-references inside the moved block still work.
+3. If keeping current order: revise intro roadmap to say explicitly that §4 (Exp 1) appears before the framework sections (§2, §3), or renumber the out-of-order sections.
+
+## Exit criteria
+
+- [ ] Physical order of sections matches the section numbers, OR
+- [ ] A deliberate decision is documented in the intro roadmap and the ordering is self-consistent
+- [ ] `make check` passes
