@@ -52,6 +52,10 @@ _EXP1_SPIDER_REASON = (
     "mart scope; consumed from exp1_cross_eval.csv, not the mart "
     "(see docs/scoring-contract.md, ticket 0386 carve-out)"
 )
+_TICKET_0402_REASON = (
+    "ticket 0402 — new level/capacity coherence scorers; Exp2 mart wiring pending "
+    "(ScoreSummary CoherenceMetrics extension deferred to a follow-up PR)"
+)
 SCORER_OUT_OF_SCOPE = {
     "provenance_source_diversity": _EXP1_SPIDER_REASON,
     "provenance_source_diversity_annotation": _EXP1_SPIDER_REASON,
@@ -59,6 +63,10 @@ SCORER_OUT_OF_SCOPE = {
     "provenance_source_spread_annotation": _EXP1_SPIDER_REASON,
     "temporality_cod_plausible": _EXP1_SPIDER_REASON,
     "temporality_cod_plausible_annotation": _EXP1_SPIDER_REASON,
+    "coherence_capacity_plausible_for_level": _TICKET_0402_REASON,
+    "coherence_capacity_plausible_for_level_annotation": _TICKET_0402_REASON,
+    "coherence_level_consistent_with_name": _TICKET_0402_REASON,
+    "coherence_level_consistent_with_name_annotation": _TICKET_0402_REASON,
 }
 
 # Source-JSON keys that ``extract_arm_*.py`` may emit and that the mart wiring in

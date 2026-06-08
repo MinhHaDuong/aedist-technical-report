@@ -99,6 +99,10 @@ _CSV_COLUMNS = [
     "coherence_capacity_nonnegative_annotation",
     "coherence_row_atomicity",
     "coherence_row_atomicity_annotation",
+    "coherence_capacity_plausible_for_level",
+    "coherence_capacity_plausible_for_level_annotation",
+    "coherence_level_consistent_with_name",
+    "coherence_level_consistent_with_name_annotation",
     "provenance_source_presence",
     "provenance_source_presence_annotation",
     "provenance_high_conf_dual_source",
@@ -136,6 +140,10 @@ class CoherenceScores:
     vocab_adherence: float | None
     status_vocab_adherence: float | None
     row_atomicity: float | None
+    capacity_plausible_for_level: float | None = None
+    capacity_plausible_for_level_annotation: str | None = None
+    level_consistent_with_name: float | None = None
+    level_consistent_with_name_annotation: str | None = None
     annotation: str | None = None
 
 
@@ -286,6 +294,14 @@ def score_accuracy(rows: list[dict[str, str]], ref_path: Path | None) -> Accurac
 
 
 def score_coherence(rows: list[dict[str, str]]) -> CoherenceScores:
+    # Local import to avoid a circular dependency:
+    # score_coherence_level imports _ATOMICITY_VIOLATION_RE, _CAPACITY_KEYS,
+    # and _as_float from this module at the top level.
+    from .score_coherence_level import (
+        score_capacity_plausible_for_level,
+        score_level_consistent_with_name,
+    )
+
     if not rows:
         return CoherenceScores(None, None, None, annotation="no_rows")
 
@@ -305,10 +321,17 @@ def score_coherence(rows: list[dict[str, str]]) -> CoherenceScores:
         if not _ATOMICITY_VIOLATION_RE.search(name):
             atomic_rows += 1
 
+    cap_plaus, cap_plaus_ann = score_capacity_plausible_for_level(rows)
+    level_name, level_name_ann = score_level_consistent_with_name(rows)
+
     return CoherenceScores(
         vocab_adherence=_fraction(valid_fuel, len(rows)),
         status_vocab_adherence=_fraction(valid_status, len(rows)),
         row_atomicity=_fraction(atomic_rows, len(rows)),
+        capacity_plausible_for_level=cap_plaus,
+        capacity_plausible_for_level_annotation=cap_plaus_ann,
+        level_consistent_with_name=level_name,
+        level_consistent_with_name_annotation=level_name_ann,
         annotation=None,
     )
 
