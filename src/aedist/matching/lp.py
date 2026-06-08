@@ -45,6 +45,7 @@ Adjustable parameters:
 """
 
 import math
+import re
 
 import pandas as pd
 from pulp import (
@@ -106,6 +107,54 @@ def _handle_empty(df1: pd.DataFrame, df2: pd.DataFrame) -> pd.DataFrame | None:
 def _extract_digit_tokens(name: str) -> frozenset[str]:
     """Return the set of standalone digit tokens in a name_clean string."""
     return frozenset(tok for tok in name.split() if tok.isdigit())
+
+
+# Matches "BASE N & M", "BASE N&M", or "BASE N va M" where N and M are digits.
+# Capture groups: (1) base prefix, (2) first digit, (3) second digit.
+_COMBINED_UNITS_RE = re.compile(
+    r"^(.*\S)\s*(\d+)\s*(?:&|va)\s*(\d+)\s*$",
+    re.IGNORECASE,
+)
+
+
+def expand_combined_units(df: pd.DataFrame) -> pd.DataFrame:
+    """Split combined-unit rows like 'nhon trach 3 & 4' into two single-unit rows.
+
+    A model sometimes lists two reference units as one combined row, e.g.
+    "Nhơn Trạch 3 & 4" or "Cà Mau 1 và 2".  After name cleaning these appear
+    as ``name_clean`` values matching "BASE N & M" or "BASE N va M".  The
+    unit-number veto in ``_compute_costs`` then prevents either unit number from
+    matching the corresponding reference row, producing a false SYSTEM_ONLY.
+
+    This function pre-expands each such row into two rows—one for each unit—so
+    the LP receives the correct one-to-one candidates.  Only the model side
+    (df2 / sys_df) should be expanded; the reference is not touched.
+
+    Capacity: each split row inherits the full combined capacity.  The LP cost
+    function uses ``capacity_weight=0.001``, so a combined-capacity split row
+    matches its single-unit reference counterpart even with a capacity
+    discrepancy; no downstream coverage metric sums matched capacity at this
+    stage.
+
+    Rows that do not match the combined pattern are returned unchanged.
+    """
+    if df.empty:
+        return df
+
+    expanded_rows: list[dict] = []
+    for _, row in df.iterrows():
+        name_clean = str(row.get("name_clean", ""))
+        m = _COMBINED_UNITS_RE.match(name_clean)
+        if m:
+            base, n1, n2 = m.group(1).rstrip(), m.group(2), m.group(3)
+            for n in (n1, n2):
+                new_row = row.to_dict()
+                new_row["name_clean"] = f"{base} {n}"
+                expanded_rows.append(new_row)
+        else:
+            expanded_rows.append(row.to_dict())
+
+    return pd.DataFrame(expanded_rows).reset_index(drop=True)
 
 
 def _compute_costs(
@@ -419,6 +468,12 @@ def reconcile(df1: pd.DataFrame, df2: pd.DataFrame, **kwargs: object) -> pd.Data
         raise ValueError("df1 must contain columns: 'name', 'name_clean', 'capacity_clean'.")
     if not req_cols.issubset(df2.columns):
         raise ValueError("df2 must contain columns: 'name', 'name_clean', 'capacity_clean'.")
+
+    # Expand combined-unit system rows (e.g. "nhon trach 3 & 4" → two rows)
+    # before handing off to the LP so the one-to-one assignment can match each
+    # unit against its own reference row.  Only df2 (system side) is expanded;
+    # the reference (df1) is never modified — see expand_combined_units docstring.
+    df2 = expand_combined_units(df2)
 
     empty_result = _handle_empty(df1, df2)
     if empty_result is not None:
