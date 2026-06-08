@@ -2,6 +2,7 @@
 Title: Two-level internal-coherence scoring: run screen + model source-reliability grade
 Created: 2026-06-06
 Author: HDMX-coding-agent
+Closed: implemented: score_variability + model_reliability_grade in score_mechanical.py; wired into score_exp1.py; exp1_cross_eval.csv regenerated with coherence_capacity_distinct/status_distinct/run_veto columns; unit + regression tests added; make check green
 
 --- log ---
 2026-06-06T09:01Z HDMX-coding-agent created
@@ -9,6 +10,7 @@ Author: HDMX-coding-agent
 
 2026-06-06T11:15Z author idea (2026-06-06): once screen columns land, overlay the verdict on the recognition matrix — draw a line across rejected runs (--mark-incoherent on plot_exp1_matrix); deferred from 0446 review: rule is in-sample and scoring belongs in P2, not the renderer
 2026-06-08T11:00Z claude note linked to tracker 0464
+2026-06-08T21:36Z HDMX-coding-agent closed — implemented: score_variability + model_reliability_grade in score_mechanical.py; wired into score_exp1.py; exp1_cross_eval.csv regenerated with coherence_capacity_distinct/status_distinct/run_veto columns; unit + regression tests added; make check green
 --- body ---
 ## Context
 

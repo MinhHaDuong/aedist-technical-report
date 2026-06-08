@@ -19,6 +19,7 @@ from .score_mechanical import (
     score_field_completeness,
     score_provenance,
     score_temporality,
+    score_variability,
 )
 
 log = logging.getLogger(__name__)
@@ -52,6 +53,10 @@ _CSV_COLUMNS = [
     "coherence_vocab_adherence_annotation",
     "coherence_capacity_nonnegative",
     "coherence_capacity_nonnegative_annotation",
+    # Run-level variability screen (ticket 0453)
+    "coherence_capacity_distinct",
+    "coherence_status_distinct",
+    "coherence_run_veto",
     "provenance_source_presence",
     "provenance_source_presence_annotation",
     "provenance_high_conf_dual_source",
@@ -71,6 +76,16 @@ _CSV_COLUMNS = [
     "field_completeness_capacity",
     "field_completeness_capacity_annotation",
 ]
+
+
+def _score_variability_row(rows: list[dict[str, str]]) -> dict[str, str]:
+    """Call score_variability and format the three variability columns."""
+    v = score_variability(rows)
+    return {
+        "coherence_capacity_distinct": str(v.capacity_distinct),
+        "coherence_status_distinct": str(v.status_distinct),
+        "coherence_run_veto": "1" if v.veto else "0",
+    }
 
 
 def _fmt(value: float | None) -> str:
@@ -196,6 +211,7 @@ def score_file(csv_path: Path, reference: Path, prompt_version: str) -> dict[str
 
     accuracy = score_accuracy(rows, ref_path=reference)
     coherence = score_coherence(rows)
+    variability = _score_variability_row(rows)
     provenance = score_provenance(rows)
     temporality = score_temporality(rows)
     completeness = score_field_completeness(rows)
@@ -227,6 +243,7 @@ def score_file(csv_path: Path, reference: Path, prompt_version: str) -> dict[str
         "coherence_vocab_adherence_annotation": coherence.annotation or "",
         "coherence_capacity_nonnegative": _fmt(coherence_capacity),
         "coherence_capacity_nonnegative_annotation": coherence_capacity_annotation or "",
+        **variability,
         "provenance_source_presence": _fmt(provenance.source_presence),
         "provenance_source_presence_annotation": provenance.source_presence_annotation or "",
         "provenance_high_conf_dual_source": _fmt(provenance.high_conf_dual_source),
