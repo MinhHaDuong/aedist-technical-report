@@ -20,9 +20,6 @@ passes on current code; the intent is to shrink this list in follow-up work.
 - ``adapter_qwen_dashscope.py`` — reads ``~/.config/keys/alibaba.env``
 - ``query_anthropic.py`` — accepts ``--key-file`` defaulting to
   ``~/.config/keys/anthropic.env``
-- ``prototype_v1_verify_agent.py`` — reads ``~/.claude/.env`` (pre-policy
-  prototype; never wired into the main pipeline)
-
 Any new module exhibiting these patterns must be explicitly added here or
 the pattern eliminated; adding an exception is a conscious decision, not
 drift.
@@ -66,7 +63,6 @@ APPROVED_EXCEPTIONS: frozenset[str] = frozenset(
         "adapter_openai_responses.py",
         "adapter_qwen_dashscope.py",
         "query_anthropic.py",
-        "prototype_v1_verify_agent.py",
     }
 )
 
