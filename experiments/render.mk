@@ -67,6 +67,10 @@ ANALYSIS_EXP1_SCREEN_VALID_CSV := $(ANALYSIS_GEN)/tab_screen_validation_within_m
 ANALYSIS_EXP1_RUN_STATS_MACROS := $(ANALYSIS_GEN)/macros_exp1_run_stats.tex
 # Reference-count anchoring analysis CSV (ticket 0293 — one-time exploration).
 ANALYSIS_REF_COUNT_CSV := $(ANALYSIS_GEN)/ref_count_anchoring_analysis.csv
+# Fusion MVP outputs (ticket 0473): §5 discovery gain figure + CSV + macros.
+ANALYSIS_FUSION_MVP_CSV    := $(ANALYSIS_GEN)/fusion_mvp.csv
+ANALYSIS_FUSION_MVP_MACROS := $(ANALYSIS_GEN)/macros_fusion_mvp.tex
+ANALYSIS_FUSION_MVP_FIG    := $(ANALYSIS_GEN)/fig_fusion_mvp.pdf
 
 ANALYSIS_EXP2_OUTLINE_ARTIFACTS := \
 	$(ANALYSIS_GEN)/tab_exp2_outline_dataset.tex \
@@ -260,6 +264,28 @@ $(ANALYSIS_GEN)/stat_tests_arm1_vs_arm2.txt: $(ANALYSIS_GEN)/tab_exp2_arms_runs_
 	uv run python -m aedist.tabulate_stat_tests \
 	    --input $< \
 	    --output $@
+
+# --- Fusion MVP (ticket 0473): §5 discovery gain — UNION vs ≥2-MODELS --------
+# Three outputs from one script invocation (&: grouped rule).
+# Sources: Exp1 batch2 .record.json files (P1) + arm3_flat .md files (P1).
+# The record files are tracked; reconciliation CSVs are gitignored (generated
+# on-the-fly by the script from record + raw CSV inputs).
+$(ANALYSIS_FUSION_MVP_CSV) $(ANALYSIS_FUSION_MVP_MACROS) $(ANALYSIS_FUSION_MVP_FIG) &: \
+		$(ANALYSIS_EXP1_BATCH2_RECORDS) \
+		$(wildcard $(ANALYSIS_DERIVED_DIR)/arm3_flat/*.md) \
+		$(ANALYSIS_REPO_ROOT)/src/aedist/plot_fusion_mvp.py \
+		$(ANALYSIS_REPO_ROOT)/src/aedist/exp1_recognition.py
+	@mkdir -p $(dir $(ANALYSIS_FUSION_MVP_CSV))
+	uv run python -m aedist.plot_fusion_mvp \
+	    --records-glob "$(ANALYSIS_EXPERIMENTS_DIR)/outputs/exp1_batch2/*.record.json" \
+	    --arm3-dir $(ANALYSIS_DERIVED_DIR)/arm3_flat \
+	    --reference $(ANALYSIS_EXPERT_REF) \
+	    --output-csv $(ANALYSIS_FUSION_MVP_CSV) \
+	    --output-macros $(ANALYSIS_FUSION_MVP_MACROS) \
+	    --output-figure $(ANALYSIS_FUSION_MVP_FIG)
+
+.PHONY: fusion-mvp
+fusion-mvp: $(ANALYSIS_FUSION_MVP_CSV) $(ANALYSIS_FUSION_MVP_MACROS) $(ANALYSIS_FUSION_MVP_FIG)
 
 # --- Outline placeholder artifacts (post-conference skeleton) ----------------
 
@@ -850,7 +876,10 @@ RENDER_CHART_FIGURES := \
 	$(ANALYSIS_GEN)/fig_method_convergence.pdf \
 	$(ANALYSIS_GEN)/fig_regimes_scatter.pdf \
 	$(ANALYSIS_GEN)/fig_scaling_curve.pdf \
-	$(ANALYSIS_GROUNDING_LADDER_FIG)
+	$(ANALYSIS_GROUNDING_LADDER_FIG) \
+	$(ANALYSIS_FUSION_MVP_CSV) \
+	$(ANALYSIS_FUSION_MVP_MACROS) \
+	$(ANALYSIS_FUSION_MVP_FIG)
 
 chart-figures: $(RENDER_CHART_FIGURES)
 
