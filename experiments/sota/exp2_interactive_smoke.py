@@ -564,7 +564,7 @@ def run_anthropic_call(
     )
     enforce_cost_cap(estimated, cap_usd=cap_usd)
 
-    api_key = query_anthropic._load_key(query_anthropic.DEFAULT_KEY_PATH)
+    api_key = query_anthropic._load_key()
     client = anthropic.Anthropic(api_key=api_key)
     t0 = time.monotonic()
     resp = query_anthropic._call_with_retry(client, payload)

@@ -11,18 +11,11 @@ Policy (documented in experiments/common.mk):
 
 Approved exceptions
 -------------------
-The following modules pre-date the policy consolidation (ticket 0240) and
-contain file-fallback key loading. They are allowlisted here so the guard
-passes on current code; the intent is to shrink this list in follow-up work.
-
-- ``adapter_mistral.py`` — reads ``~/.config/keys/mistral.env``
-- ``adapter_openai_responses.py`` — reads ``~/.config/keys/openai.env``
-- ``adapter_qwen_dashscope.py`` — reads ``~/.config/keys/alibaba.env``
-- ``query_anthropic.py`` — accepts ``--key-file`` defaulting to
-  ``~/.config/keys/anthropic.env``
-Any new module exhibiting these patterns must be explicitly added here or
-the pattern eliminated; adding an exception is a conscious decision, not
-drift.
+All four pre-policy adapters (adapter_mistral, adapter_openai_responses,
+adapter_qwen_dashscope, query_anthropic) were cleaned up in ticket 0479.
+The allowlist is now empty.  Any new module exhibiting these patterns must
+be explicitly added here or the pattern eliminated; adding an exception is
+a conscious decision, not drift.
 """
 
 import re
@@ -57,14 +50,7 @@ _KEY_FILE_RE = re.compile(
 
 # ── allowlist: filenames exempt from the guard ───────────────────────────────
 
-APPROVED_EXCEPTIONS: frozenset[str] = frozenset(
-    {
-        "adapter_mistral.py",
-        "adapter_openai_responses.py",
-        "adapter_qwen_dashscope.py",
-        "query_anthropic.py",
-    }
-)
+APPROVED_EXCEPTIONS: frozenset[str] = frozenset()
 
 # ── helpers ───────────────────────────────────────────────────────────────────
 

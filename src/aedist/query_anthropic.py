@@ -63,8 +63,6 @@ DEFAULT_PRICE_PER_WEB_SEARCH_USD = 0.010
 TOKENS_PER_MTOK = 1_000_000
 API_DOCS_VERIFIED = "2026-05-20"
 
-# Path resolved at call time, never at import — `~` expansion + override-friendly.
-DEFAULT_KEY_PATH = "~/.config/keys/anthropic.env"
 
 
 # ---------------------------------------------------------------------------
@@ -72,26 +70,20 @@ DEFAULT_KEY_PATH = "~/.config/keys/anthropic.env"
 # ---------------------------------------------------------------------------
 
 
-def _load_key(path: str | os.PathLike = DEFAULT_KEY_PATH) -> str:
-    """Read ANTHROPIC_API_KEY from a KEY=value env file.
+def _load_key(*_: object) -> str:
+    """Read ``ANTHROPIC_API_KEY`` from the environment.
 
-    Lines starting with ``#`` and blank lines are ignored. Raises
-    ``SystemExit`` (matching ``harness.make_client``) when the key cannot
-    be found, so a missing key fails loudly at CLI exit.
+    Injected at Make level via ``uv run --env-file ../.env``.
+    The optional positional argument is accepted but ignored (backward
+    compatibility with experiment scripts that pass a key-file path).
+    Raises ``SystemExit`` if the variable is absent.
     """
-    p = Path(os.path.expanduser(str(path)))
-    if not p.exists():
-        raise SystemExit(f"Anthropic key file not found: {p}")
-    for raw in p.read_text().splitlines():
-        line = raw.strip()
-        if not line or line.startswith("#"):
-            continue
-        if "=" not in line:
-            continue
-        k, _, v = line.partition("=")
-        if k.strip() == "ANTHROPIC_API_KEY":
-            return v.strip().strip('"').strip("'")
-    raise SystemExit(f"ANTHROPIC_API_KEY not found in {p}")
+    key = os.environ.get("ANTHROPIC_API_KEY")
+    if key:
+        return key
+    raise SystemExit(
+        "ANTHROPIC_API_KEY not set — inject via uv run --env-file ../.env"
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -460,7 +452,6 @@ def dispatch(
     agent_mode: str = "smoke",
     budget: BudgetTracker | None = None,
     cap_usd: float = 0.50,
-    key_path: str | os.PathLike = DEFAULT_KEY_PATH,
     continuation: dict | None = None,
     extra_metadata: dict | None = None,
 ) -> dict:
@@ -532,7 +523,7 @@ def dispatch(
     # Live call — import the SDK lazily so dry-run + tests stay import-light.
     import anthropic
 
-    api_key = _load_key(key_path)
+    api_key = _load_key()
     client = anthropic.Anthropic(api_key=api_key)
 
     t0 = time.monotonic()
@@ -673,11 +664,6 @@ def _build_arg_parser() -> argparse.ArgumentParser:
         default=1,
         help="Run number (used in the output filename).",
     )
-    p.add_argument(
-        "--key-path",
-        default=DEFAULT_KEY_PATH,
-        help=f"Path to anthropic.env (default: {DEFAULT_KEY_PATH}).",
-    )
     return p
 
 
@@ -715,7 +701,6 @@ def main(argv: list[str] | None = None) -> int:
             run=args.run,
             agent_mode=args.agent_mode,
             cap_usd=args.cap_usd,
-            key_path=args.key_path,
         )
     except CostCapExceeded as e:
         print(f"ERROR: {e}", flush=True)
