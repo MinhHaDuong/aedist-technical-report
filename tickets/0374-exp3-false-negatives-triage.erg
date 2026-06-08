@@ -5,7 +5,7 @@ Author: minh
 
 --- log ---
 2026-05-28T19:47Z minh created — Exp 3 false negatives currently lumped together; need to know how much of the gap is real model failure vs. evaluation artifact
-2026-06-08T00:00Z HDMX-coding-agent note — scaffold delivered: tabulate_exp3_fn_triage.py (worksheet+summary modes), tests/test_tabulate_exp3_fn_triage.py (16 tests), experiments/derived/exp3_fn_triage.csv (40-row blank worksheet, arm3/gpt-5.5/run4), render.mk exp3-fn-triage rule. Invariant respected: bucket+rationale columns empty, awaiting human judgment. make check passes.
+2026-06-08T00:00Z HDMX-coding-agent note — scaffold delivered: tabulate_exp3_fn_triage.py (worksheet+summary modes), tests/test_tabulate_exp3_fn_triage.py (17 tests), experiments/derived/exp3_fn_triage.csv (40-row blank worksheet, arm3/gpt-5.5/run4), render.mk exp3-fn-triage rule. Invariant respected: bucket+rationale columns empty, awaiting human judgment. pytest -m "not slow" passes (2066 tests). Note: "arm3" in data directories = Exp2 with-documents exploratory condition; LaTeX caption has TODO note for manuscript label alignment.
 
 --- body ---
 ## Context
