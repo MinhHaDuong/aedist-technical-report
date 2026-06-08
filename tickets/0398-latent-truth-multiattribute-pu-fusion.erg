@@ -2,11 +2,13 @@
 Title: Latent-truth multi-attribute PU fusion of model runs with status-stratified reliability
 Created: 2026-06-03
 Author: claude
+Closed: implemented fuse_runs.py with LTM EM, PU correction, domain-separated reliability; all 7 tests pass
 
 --- log ---
 2026-06-03T00:00Z claude created from imagine-mode design + deep-research litreview
 2026-06-08T11:00Z claude note linked to tracker 0465
 
+2026-06-08T21:49Z HDMX-coding-agent closed — implemented fuse_runs.py with LTM EM, PU correction, domain-separated reliability; all 7 tests pass
 --- body ---
 ## Context
 
