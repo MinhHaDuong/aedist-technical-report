@@ -58,6 +58,8 @@ ANALYSIS_EXP1_SPIDER_CLAUDE := $(ANALYSIS_GEN)/fig_spider_exp1_claude.pdf
 ANALYSIS_EXP1_SPIDER_FAMILIES_FR := $(ANALYSIS_GEN)/fig_spider_exp1_families_fr.pdf
 ANALYSIS_EXP1_SPIDER_CLAUDE_FR := $(ANALYSIS_GEN)/fig_spider_exp1_claude_fr.pdf
 ANALYSIS_EXP2_COVERAGE_FIG_FR := $(ANALYSIS_GEN)/fig_exp2_coverage_certainty_fr.pdf
+# Quality-floor heatmap (ticket 0466): replaces spider in manuscript (main.md).
+ANALYSIS_EXP1_QUALITY_HEATMAP := $(ANALYSIS_GEN)/fig_quality_floor_heatmap_exp1.pdf
 
 ANALYSIS_EXP2_OUTLINE_ARTIFACTS := \
 	$(ANALYSIS_GEN)/tab_exp2_outline_dataset.tex \
@@ -203,6 +205,16 @@ $(ANALYSIS_EXP1_SPIDER_CLAUDE_FR): $(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
 	    --model claude-opus-4.6 \
 	    --output $@ \
 	    --lang fr
+
+# Quality-floor heatmap (ticket 0466): manuscript Figure 2b replacement.
+# Rows = spider panel model set (families claude/gpt/mistral/qwen; deepseek excluded).
+# A cell is red iff ≥ majority of runs scored zero; any red cell disqualifies the row.
+$(ANALYSIS_EXP1_QUALITY_HEATMAP): $(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
+		$(ANALYSIS_REPO_ROOT)/src/aedist/plot_quality_floor_heatmap_exp1.py
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.plot_quality_floor_heatmap_exp1 \
+	    --input $(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
+	    --output $@
 
 $(ANALYSIS_GEN)/stat_tests_arm1_vs_arm2.txt: $(ANALYSIS_GEN)/tab_exp2_arms_runs_view.csv
 	@mkdir -p $(dir $@)
@@ -478,7 +490,7 @@ report-tables: \
 	$(ANALYSIS_GEN)/tab_status_difficulty.tex \
 	$(ANALYSIS_EXP2_WIKI_CSV)
 
-report-figures: $(ANALYSIS_EXP1_SPIDER_FAMILIES)
+report-figures: $(ANALYSIS_EXP1_SPIDER_FAMILIES) $(ANALYSIS_EXP1_QUALITY_HEATMAP)
 
 # --- Chart-data figures (migrated from root Makefile by 0370) -----------------
 # These produce committed handoff artifacts consumed by both report and slides.
@@ -619,6 +631,7 @@ chart-figures: \
 	$(ANALYSIS_GEN)/fig_spider_cross_exp.pdf \
 	$(ANALYSIS_EXP1_SPIDER_FAMILIES) \
 	$(ANALYSIS_EXP1_SPIDER_FAMILIES_FR) \
+	$(ANALYSIS_EXP1_QUALITY_HEATMAP) \
 	$(ANALYSIS_GEN)/fig_method_convergence.pdf \
 	$(ANALYSIS_GEN)/fig_regimes_scatter.pdf \
 	$(ANALYSIS_GEN)/fig_scaling_curve.pdf
