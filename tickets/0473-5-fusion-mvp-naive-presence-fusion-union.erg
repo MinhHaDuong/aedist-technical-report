@@ -1,0 +1,84 @@
+%erg 0.1
+Title: §5 fusion MVP: naive presence fusion (union vs ≥2-models) — discovery gain vs best single model
+Created: 2026-06-08
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-08T15:43Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+§5 of the manuscript ("Need and potential for fusion") needs a quantified
+demo. **NO copulas** (deferred to Paper B / 0465). This is naive **PRESENCE
+fusion** over a **MAXIMAL pool** — all valid runs, all models, no
+coherence-screen restraint. A "valid run" = parseable list, F1 ≠ None, not a
+refusal / parse-failure. This is the *unconstrained discovery exercise*; the
+answer to the talk Q&A "did you fuse the results?".
+
+## Relevant files
+
+- `experiments/derived/` — Exp1 (E1) + Exp2 (arm 1D) cross-eval CSVs with per-run plant detections
+- `src/aedist/measurements.py` — `reference_plant_count()` (do NOT hardcode the reference size)
+- `experiments/render.mk` — wire the new `.pdf` artifact (one output per rule)
+- new: `src/aedist/plot_fusion_mvp.py`
+
+## Actions
+
+Pool plant detections across the maximal set of valid runs in a regime, then
+apply **two merge rules**:
+- **R1 UNION** — a plant is in the fused list if detected by ≥1 valid run
+  (any model).
+- **R2 ≥2-MODELS** — a plant is in the fused list if detected by ≥2 DISTINCT
+  models.
+
+Score each fused list's **precision / recall / F1** against the reference
+(use `reference_plant_count()`, do not hardcode). Compare to the **BEST SINGLE
+MODEL's** F1 in the regime. Do this in **two regimes**:
+- **E1** — Exp1 memory-only.
+- **E2-1D** — Exp2 single-turn WITH documents (arm 1D).
+
+Expected narrative: UNION maximizes TP (and FP); ≥2-models trims FP at some TP
+cost — the FP/TP tradeoff; fused F1 exceeds the best single model (discovery
+gain). Produce the figure (committed PDF, wired in `experiments/render.mk`) +
+the macro numbers for §5 prose.
+
+## Test (first)
+
+A unit test on the two merge rules over a tiny synthetic multi-run /
+multi-model fixture (R1 and R2 yield the expected fused sets); then the regime
+computation reads the mart.
+
+```python
+def test_union_and_2models_merge_rules():
+    runs = synthetic_runs()   # tiny multi-run / multi-model fixture
+    assert union_fuse(runs) == {expected_union_set}
+    assert at_least_2_models_fuse(runs) == {expected_2model_set}
+```
+
+## Verification
+
+- [ ] Fused F1 (R1, R2) vs best-single computed for E1 and E2-1D from the mart.
+- [ ] Figure built + committed; wired in `experiments/render.mk` (no inline plots).
+- [ ] Macros generated + guarded by an adherence test.
+- [ ] `make check-fast` + adherence green.
+- [ ] Author review of the gain figure.
+
+## Invariants
+
+- Reference size via `reference_plant_count()`, never hardcoded.
+- Naive presence only — NO copulas / latent-truth / capture–recapture (those
+  are Paper B, 0465 / 0471).
+- Figure is a committed Makefile artifact; numeric literals in §5 prose derive
+  from the generated macros.
+
+## Exit criteria
+
+- Fused F1 (R1, R2) vs best-single computed for E1 and E2-1D from the mart;
+  figure built + committed; macros generated + guarded; `make check-fast` +
+  adherence green; author review of the gain figure.
+
+## Part of: 0464 — role A6 (Paper A fusion teaser)
+
+Full latent-truth / capture–recapture / copula or advanced fusion is Paper B
+(0465 / 0471).
