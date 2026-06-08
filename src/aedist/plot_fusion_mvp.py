@@ -11,7 +11,9 @@ Both TP (reference identity) and FP (system-only names) are tracked so
 precision is meaningful (see ADR-7 and advisor note 2026-06-08).
 
 Regimes evaluated:
-  E1   — Exp1 memory-only, 14 models × 5 runs = 70 valid runs
+  E1   — Exp1 memory-only, SOTA-4 models × 5 runs = 20 valid runs
+           (same 4 SOTA models as E2-1D: claude-opus-4.6, gpt-5.5,
+           mistral-large-2512, qwen3.7-max)
   E2-1D — Exp2 arm3 (single-turn WITH documents), 4 models × 5 runs = 20 valid runs
 
 Outputs:
@@ -48,6 +50,19 @@ from .util import COLOR_MATCHED as _COLOR_UNION
 from .util import COLOR_REFERENCE as _COLOR_R2
 
 log = logging.getLogger(__name__)
+
+# ---------------------------------------------------------------------------
+# SOTA-4 model filter for E1 (must match normalized names from record.json)
+# normalize_model() strips provider prefix: 'anthropic/claude-opus-4.6' → 'claude-opus-4.6'
+# ---------------------------------------------------------------------------
+SOTA_4_MODELS: frozenset[str] = frozenset(
+    {
+        "claude-opus-4.6",
+        "gpt-5.5",
+        "mistral-large-2512",
+        "qwen3.7-max",
+    }
+)
 
 # Colors for the three fusion rules, routed through palette.toml via util.
 _RULE_COLORS = {
@@ -193,6 +208,9 @@ def _load_e1_runs(records_glob: str, reference_path: Path) -> list[dict]:
 
     runs = []
     for (model, run), fps in data.fp_presence.items():
+        if model not in SOTA_4_MODELS:
+            log.debug("E1: skipping model %r (not in SOTA_4_MODELS)", model)
+            continue
         runs.append(
             {
                 "model": model,
@@ -202,7 +220,8 @@ def _load_e1_runs(records_glob: str, reference_path: Path) -> list[dict]:
             }
         )
 
-    log.info("E1: loaded %d valid runs from %d (model, run) pairs", len(runs), len(runs))
+    n_models = len({r["model"] for r in runs})
+    log.info("E1: loaded %d valid runs from %d SOTA-4 models", len(runs), n_models)
     return runs
 
 
@@ -317,12 +336,19 @@ class RegimeResult:
     best_single_f1: float
     best_single_recall: float
     best_single_precision: float
+    # best_single TP/FP are per-run means over the best model's runs (fractional)
+    best_single_tp: float
+    best_single_fp: float
     union_recall: float
     union_precision: float
     union_f1: float
+    union_tp: int  # absolute count from set cardinality
+    union_fp: int
     r2_recall: float
     r2_precision: float
     r2_f1: float
+    r2_tp: int  # absolute count from set cardinality
+    r2_fp: int
 
 
 def analyze_regime(regime: str, runs: list[dict]) -> RegimeResult:
@@ -339,10 +365,12 @@ def analyze_regime(regime: str, runs: list[dict]) -> RegimeResult:
     # Best single-model
     best_f1 = _best_single_model_f1(runs, n_ref)
 
-    # Compute best single recall/precision at the model level (mean across runs)
+    # Compute best single recall/precision/TP/FP at the model level (mean across runs)
     f1_by_model: dict[str, list[float]] = defaultdict(list)
     recall_by_model: dict[str, list[float]] = defaultdict(list)
     prec_by_model: dict[str, list[float]] = defaultdict(list)
+    tp_by_model: dict[str, list[float]] = defaultdict(list)
+    fp_by_model: dict[str, list[float]] = defaultdict(list)
     for run in runs:
         tp = len(run["tp_plants"])
         fp = len(run["fp_plants"])
@@ -353,10 +381,15 @@ def analyze_regime(regime: str, runs: list[dict]) -> RegimeResult:
         f1_by_model[run["model"]].append(f1)
         recall_by_model[run["model"]].append(r)
         prec_by_model[run["model"]].append(p)
+        tp_by_model[run["model"]].append(float(tp))
+        fp_by_model[run["model"]].append(float(fp))
 
     best_model = max(f1_by_model, key=lambda m: sum(f1_by_model[m]) / len(f1_by_model[m]))
     best_recall = sum(recall_by_model[best_model]) / len(recall_by_model[best_model])
     best_prec = sum(prec_by_model[best_model]) / len(prec_by_model[best_model])
+    # Per-run mean TP/FP for best model (fractional — documented in RegimeResult)
+    best_tp = sum(tp_by_model[best_model]) / len(tp_by_model[best_model])
+    best_fp = sum(fp_by_model[best_model]) / len(fp_by_model[best_model])
 
     return RegimeResult(
         regime=regime,
@@ -366,12 +399,18 @@ def analyze_regime(regime: str, runs: list[dict]) -> RegimeResult:
         best_single_f1=best_f1,
         best_single_recall=best_recall,
         best_single_precision=best_prec,
+        best_single_tp=best_tp,
+        best_single_fp=best_fp,
         union_recall=union_result.recall,
         union_precision=union_result.precision,
         union_f1=union_result.f1,
+        union_tp=len(union_result.tp_plants),
+        union_fp=len(union_result.fp_plants),
         r2_recall=r2_result.recall,
         r2_precision=r2_result.precision,
         r2_f1=r2_result.f1,
+        r2_tp=len(r2_result.tp_plants),
+        r2_fp=len(r2_result.fp_plants),
     )
 
 
@@ -389,20 +428,47 @@ _CSV_FIELDS = [
     "recall",
     "precision",
     "f1",
+    "tp",
+    "fp",
 ]
 
 
 def write_csv(results: list[RegimeResult], output: Path) -> None:
-    """Write one row per (regime, rule) to a CSV."""
+    """Write one row per (regime, rule) to a CSV.
+
+    TP/FP for best_single are per-run means (may be fractional).
+    TP/FP for union and r2_models are integer set cardinalities.
+    """
     output.parent.mkdir(parents=True, exist_ok=True)
     with output.open("w", newline="") as fh:
         writer = csv.DictWriter(fh, fieldnames=_CSV_FIELDS)
         writer.writeheader()
         for res in results:
-            for rule, r, p, f1 in [
-                ("best_single", res.best_single_recall, res.best_single_precision, res.best_single_f1),
-                ("union", res.union_recall, res.union_precision, res.union_f1),
-                ("r2_models", res.r2_recall, res.r2_precision, res.r2_f1),
+            for rule, r, p, f1, tp, fp in [
+                (
+                    "best_single",
+                    res.best_single_recall,
+                    res.best_single_precision,
+                    res.best_single_f1,
+                    res.best_single_tp,
+                    res.best_single_fp,
+                ),
+                (
+                    "union",
+                    res.union_recall,
+                    res.union_precision,
+                    res.union_f1,
+                    res.union_tp,
+                    res.union_fp,
+                ),
+                (
+                    "r2_models",
+                    res.r2_recall,
+                    res.r2_precision,
+                    res.r2_f1,
+                    res.r2_tp,
+                    res.r2_fp,
+                ),
             ]:
                 writer.writerow(
                     {
@@ -414,6 +480,8 @@ def write_csv(results: list[RegimeResult], output: Path) -> None:
                         "recall": round(r, 4),
                         "precision": round(p, 4),
                         "f1": round(f1, 4),
+                        "tp": round(tp, 1) if isinstance(tp, float) else tp,
+                        "fp": round(fp, 1) if isinstance(fp, float) else fp,
                     }
                 )
     log.info("Wrote CSV: %s", output)
@@ -433,6 +501,9 @@ def write_macros(results: list[RegimeResult], output: Path) -> None:
     ]
     for res in results:
         regime_key = res.regime.replace("-", "").lower()  # "e1" or "e21d"
+        # best_single TP/FP are per-run means; displayed as integer for prose clarity
+        best_tp_int = round(res.best_single_tp)
+        best_fp_int = round(res.best_single_fp)
         lines += [
             f"% Regime: {res.regime}",
             rf"\newcommand{{\FusionN{regime_key.upper()}Runs}}{{{res.n_runs}}}",
@@ -440,12 +511,18 @@ def write_macros(results: list[RegimeResult], output: Path) -> None:
             rf"\newcommand{{\FusionBest{regime_key.upper()}F}}{{{_pct(res.best_single_f1)}\%}}",
             rf"\newcommand{{\FusionBest{regime_key.upper()}Recall}}{{{_pct(res.best_single_recall)}\%}}",
             rf"\newcommand{{\FusionBest{regime_key.upper()}Prec}}{{{_pct(res.best_single_precision)}\%}}",
+            rf"\newcommand{{\FusionBest{regime_key.upper()}TP}}{{{best_tp_int}}}",
+            rf"\newcommand{{\FusionBest{regime_key.upper()}FP}}{{{best_fp_int}}}",
             rf"\newcommand{{\FusionUnion{regime_key.upper()}F}}{{{_pct(res.union_f1)}\%}}",
             rf"\newcommand{{\FusionUnion{regime_key.upper()}Recall}}{{{_pct(res.union_recall)}\%}}",
             rf"\newcommand{{\FusionUnion{regime_key.upper()}Prec}}{{{_pct(res.union_precision)}\%}}",
+            rf"\newcommand{{\FusionUnion{regime_key.upper()}TP}}{{{res.union_tp}}}",
+            rf"\newcommand{{\FusionUnion{regime_key.upper()}FP}}{{{res.union_fp}}}",
             rf"\newcommand{{\FusionRTwo{regime_key.upper()}F}}{{{_pct(res.r2_f1)}\%}}",
             rf"\newcommand{{\FusionRTwo{regime_key.upper()}Recall}}{{{_pct(res.r2_recall)}\%}}",
             rf"\newcommand{{\FusionRTwo{regime_key.upper()}Prec}}{{{_pct(res.r2_precision)}\%}}",
+            rf"\newcommand{{\FusionRTwo{regime_key.upper()}TP}}{{{res.r2_tp}}}",
+            rf"\newcommand{{\FusionRTwo{regime_key.upper()}FP}}{{{res.r2_fp}}}",
             "",
         ]
 

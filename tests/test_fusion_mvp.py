@@ -212,10 +212,23 @@ class TestFusionMvpCsvAdherence:
         )
 
     def test_e1_n_runs(self):
-        """E1 must have 70 valid runs (14 models × 5 reps)."""
+        """E1 must have 20 valid runs (4 SOTA models × 5 reps)."""
         data = self._load_csv()
         n_runs = int(data[("E1", "union")]["n_runs"])
-        assert n_runs == 70, f"Expected 70 E1 runs, got {n_runs}"
+        assert n_runs == 20, f"Expected 20 E1 runs (4 SOTA models × 5 reps), got {n_runs}"
+
+    def test_csv_has_tp_fp_columns(self):
+        """CSV must include tp and fp columns for all rows."""
+        if not _CSV_PATH.exists():
+            pytest.skip("fusion_mvp.csv not yet generated")
+        with _CSV_PATH.open() as fh:
+            rows = list(csv.DictReader(fh))
+        for row in rows:
+            assert "tp" in row, f"Missing 'tp' column in row {row}"
+            assert "fp" in row, f"Missing 'fp' column in row {row}"
+            # tp and fp must be non-negative numbers
+            assert float(row["tp"]) >= 0, f"Negative tp in row {row}"
+            assert float(row["fp"]) >= 0, f"Negative fp in row {row}"
 
     def test_e2_n_runs(self):
         """E2-1D must have 20 valid runs (4 models × 5 reps)."""
