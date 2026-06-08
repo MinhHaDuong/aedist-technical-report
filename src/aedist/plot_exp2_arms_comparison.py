@@ -1,4 +1,4 @@
-"""Two-panel comparison figure for Exp2 4-arm design.
+"""Two-panel comparison figure: Exp1 memory-only baseline plus Exp2 four arms.
 
 Pipeline phase: P3 (analyze & render) — invoked by experiments/render.mk.
 
@@ -11,9 +11,10 @@ Panels (left to right):
     (a) coverage (plants enumerated)
     (b) cost (USD per run)
 
-Each panel groups by agent on the x-axis. Within each group, all four arms are
-shown with project glyphs and per-model colours. Runs classified no_report are
-rendered as x markers at y=0.
+Each panel groups by agent on the x-axis. Within each group, the hatched E1 bar
+shows the Exp1 memory-only baseline, followed by the four Exp2 arms (1N/5N/1D/5D)
+with project glyphs and per-model colours. Runs classified no_report are rendered
+as x markers at y=0.
 """
 
 import argparse
