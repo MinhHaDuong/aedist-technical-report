@@ -129,6 +129,7 @@ def save_response(result: dict) -> Path:
     path = OUTPUT_DIR / f"{slug}.json"
     with open(path, "w") as f:
         json.dump(result, f, indent=2)
+        f.write("\n")
     return path
 
 

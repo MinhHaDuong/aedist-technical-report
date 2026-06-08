@@ -218,7 +218,7 @@ def probe_openai(prompt: str, output_dir: Path) -> dict:
                         if isinstance(url, str):
                             sources.append((str(title), url))
     raw_path = output_dir / "openai_probe.raw.json"
-    raw_path.write_text(resp.model_dump_json(indent=2), encoding="utf-8")
+    raw_path.write_text(resp.model_dump_json(indent=2) + "\n", encoding="utf-8")
     usage = resp.usage
     tokens_in = getattr(usage, "input_tokens", 0) or 0
     tokens_out = getattr(usage, "output_tokens", 0) or 0
@@ -269,7 +269,7 @@ def probe_qwen(prompt: str, output_dir: Path) -> dict:
         except (KeyError, IndexError, TypeError):
             narrative = ""
     raw_path = output_dir / "qwen_probe.raw.json"
-    raw_path.write_text(json.dumps(dict(resp), default=str, indent=2), encoding="utf-8")
+    raw_path.write_text(json.dumps(dict(resp), default=str, indent=2) + "\n", encoding="utf-8")
     usage = getattr(resp, "usage", None) or {}
     tokens_in = (usage.get("input_tokens") if isinstance(usage, dict) else 0) or 0
     tokens_out = (usage.get("output_tokens") if isinstance(usage, dict) else 0) or 0
@@ -412,7 +412,7 @@ def main(argv: list[str] | None = None) -> int:
                 ),
             }
             (args.output_dir / f"{tag}.json").write_text(
-                json.dumps(meta_record, indent=2),
+                json.dumps(meta_record, indent=2) + "\n",
                 encoding="utf-8",
             )
             summary.append(meta_record)
@@ -428,7 +428,7 @@ def main(argv: list[str] | None = None) -> int:
             )
 
     (args.output_dir / "summary.json").write_text(
-        json.dumps(summary, indent=2),
+        json.dumps(summary, indent=2) + "\n",
         encoding="utf-8",
     )
     summary_md_path = _write_summary_md(args.output_dir, summary)

@@ -409,6 +409,7 @@ def save_json(filepath: Path, record: dict) -> None:
     filepath.parent.mkdir(parents=True, exist_ok=True)
     with open(filepath, "w") as f:
         json.dump(record, f, indent=2, ensure_ascii=False)
+        f.write("\n")
     log.info("Saved %s", filepath)
 
 

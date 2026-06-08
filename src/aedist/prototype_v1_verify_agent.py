@@ -302,7 +302,7 @@ def main():
     print("=" * 60)
 
     if args.output:
-        Path(args.output).write_text(json.dumps(result_dict, indent=2, ensure_ascii=False))
+        Path(args.output).write_text(json.dumps(result_dict, indent=2, ensure_ascii=False) + "\n")
         log.info("Saved to %s", args.output)
 
 

@@ -629,7 +629,7 @@ def run(
     if output_path is not None:
         output_path.parent.mkdir(parents=True, exist_ok=True)
         # Persist the raw response — never lose the source of truth.
-        output_path.write_text(json.dumps(raw, indent=2, ensure_ascii=False))
+        output_path.write_text(json.dumps(raw, indent=2, ensure_ascii=False) + "\n")
         log.info("Saved Mistral raw response to %s", output_path)
 
     record = parse_response(raw, meta, wall_s=wall_s, agent_mode=agent_mode, prompt=prompt)

@@ -272,7 +272,7 @@ def consolidate(phase_b0_dir: Path, run_number: int = 1) -> None:
 
         run_json = {k: v for k, v in rec.items()}
         (phase_b0_dir / f"{agent}_{run_slug}.json").write_text(
-            json.dumps(run_json, indent=2), encoding="utf-8"
+            json.dumps(run_json, indent=2) + "\n", encoding="utf-8"
         )
 
         if final_turn_base:
@@ -307,7 +307,7 @@ def consolidate(phase_b0_dir: Path, run_number: int = 1) -> None:
         kept = []
     all_records = kept + records
     all_records.sort(key=lambda r: (r.get("run", 0), r.get("agent", "")))
-    summary_path.write_text(json.dumps(all_records, indent=2), encoding="utf-8")
+    summary_path.write_text(json.dumps(all_records, indent=2) + "\n", encoding="utf-8")
     _write_readme(phase_b0_dir, all_records, run_date, probes_dir)
 
     log.info("Consolidation complete. Output: %s", phase_b0_dir)

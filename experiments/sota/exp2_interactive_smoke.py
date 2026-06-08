@@ -459,7 +459,7 @@ def run_openai_call(
     resp = client.responses.create(**payload)
     wall = round(time.monotonic() - t0, 3)
 
-    raw_output_path.write_text(resp.model_dump_json(indent=2), encoding="utf-8")
+    raw_output_path.write_text(resp.model_dump_json(indent=2) + "\n", encoding="utf-8")
 
     record = adapter_openai_responses.parse_response(resp, meta)
     record.agent_mode = agent_mode
@@ -571,7 +571,7 @@ def run_anthropic_call(
     wall = round(time.monotonic() - t0, 3)
 
     raw_output_path.write_text(
-        json.dumps(query_anthropic._response_to_dict(resp), indent=2, default=str),
+        json.dumps(query_anthropic._response_to_dict(resp), indent=2, default=str) + "\n",
         encoding="utf-8",
     )
 
@@ -705,7 +705,7 @@ def run_qwen_call(
     wall = round(time.monotonic() - t0, 3)
 
     raw_dump = adapter_qwen_dashscope._response_to_dict(resp)
-    raw_output_path.write_text(json.dumps(raw_dump, indent=2, default=str), encoding="utf-8")
+    raw_output_path.write_text(json.dumps(raw_dump, indent=2, default=str) + "\n", encoding="utf-8")
 
     record = adapter_qwen_dashscope.parse_response(
         resp,
@@ -1086,7 +1086,7 @@ def run_phase_b_multiturn(
         remaining_tokens -= tokens_this_turn
         elapsed_s += record.resource_use.wall_s or 0.0
 
-        paths["record"].write_text(record.model_dump_json(indent=2), encoding="utf-8")
+        paths["record"].write_text(record.model_dump_json(indent=2) + "\n", encoding="utf-8")
 
         # Classify the assistant's response. Classifier cost is harness
         # overhead, tracked separately from the SOTA agent's spend.
@@ -1094,13 +1094,13 @@ def run_phase_b_multiturn(
         conversation_history.append({"role": "user", "content": user_text})
         conversation_history.append({"role": "assistant", "content": narrative})
         conversation_path.write_text(
-            json.dumps({"messages": conversation_history}, indent=2, ensure_ascii=False),
+            json.dumps({"messages": conversation_history}, indent=2, ensure_ascii=False) + "\n",
             encoding="utf-8",
         )
         cls_result = dialogue_classifier.classify_report(narrative)
         total_classifier_cost_usd += cls_result.classifier_cost_usd
         paths["classification"].write_text(
-            json.dumps(dialogue_classifier.result_to_artefact_dict(cls_result), indent=2),
+            json.dumps(dialogue_classifier.result_to_artefact_dict(cls_result), indent=2) + "\n",
             encoding="utf-8",
         )
 
@@ -1121,7 +1121,8 @@ def run_phase_b_multiturn(
                     "classifier_cost_usd": cls_result.classifier_cost_usd,
                 },
                 indent=2,
-            ),
+            )
+            + "\n",
             encoding="utf-8",
         )
 
@@ -1328,12 +1329,12 @@ def _run_one_agent(args: argparse.Namespace, agent: str) -> dict:
             max_tokens=args.phase_a_max_tokens,
         )
         phase_a_path = agent_output_dir / f"{agent}_phase_a.json"
-        phase_a_path.write_text(phase_a.model_dump_json(indent=2), encoding="utf-8")
+        phase_a_path.write_text(phase_a.model_dump_json(indent=2) + "\n", encoding="utf-8")
 
         narrative_a = _narrative_from_record_or_raw(phase_a, phase_a_raw_path)
         design = extract_phase_a_design(narrative_a)
         design_path = agent_output_dir / f"{agent}_phase_a_design.json"
-        design_path.write_text(json.dumps(design, indent=2, ensure_ascii=False), encoding="utf-8")
+        design_path.write_text(json.dumps(design, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
     if args.stop_after_phase_a:
         return {
@@ -1486,7 +1487,7 @@ def main(argv: list[str] | None = None) -> int:
 
     summary_path = _write_summary(args.output_dir, per_agent)
     (args.output_dir / "summary.json").write_text(
-        json.dumps(per_agent, indent=2), encoding="utf-8"
+        json.dumps(per_agent, indent=2) + "\n", encoding="utf-8"
     )
 
     total_cost_usd = sum(float(item.get("total_cost_usd", 0.0)) for item in per_agent)

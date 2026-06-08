@@ -56,3 +56,13 @@ Rules:
 - If the hook fires and strips your import anyway, do not re-add the import alone — re-add import + usage together (or import alone if usages now exist).
 
 **Why:** The ruff hook runs after every Edit. This trap hit twice in ticket 0302, and twice again in the 0439 session (2026-06-05) where both Edits were in the same message — proving the parallel-Edits loophole is imaginary. The failure mode is subtle because the NameError appears at test time, not at edit time.
+
+## JSON EOF newline policy
+
+All single-object JSON files written by this project end with exactly one trailing newline (`\n`).
+
+**Applies to:** `*.json` output files — `json.dump()` + `f.write("\n")`, and `.write_text(json.dumps(...) + "\n")`, and `.write_text(model.model_dump_json(...) + "\n")`.
+
+**Does not apply to:** JSONL writers (`to_jsonl_line() + "\n"` per record, no extra newline after the last line), or in-memory `json.dumps()` that is not written to a file.
+
+**Why:** Newline-only diffs (`No newline at end of file`) are non-semantic but noisy in reviews and audits. Verified by `tests/test_json_eof_newline.py` (`@pytest.mark.adherence`).

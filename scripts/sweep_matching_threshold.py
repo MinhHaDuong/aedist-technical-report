@@ -186,6 +186,7 @@ def sweep_thresholds(
     stability_path = output_path.parent / "matching_stability.json"
     with open(stability_path, "w", encoding="utf-8") as f:
         json.dump(stability, f, indent=2)
+        f.write("\n")
 
     # Print summary
     _print_stability_summary(stability)

@@ -594,6 +594,7 @@ def save_provenance(master: list[MasterRecord], path: Path) -> None:
         out.append(entry)
     with path.open("w", encoding="utf-8") as fh:
         json.dump(out, fh, ensure_ascii=False, indent=2)
+        fh.write("\n")
     log.info("Saved provenance: %s", path)
 
 

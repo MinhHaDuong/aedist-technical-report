@@ -147,7 +147,7 @@ def smoke_one(
     output_dir.mkdir(parents=True, exist_ok=True)
     suffix = "run" if promote_as_production else "smoke"
     filepath = output_dir / f"{slug}-{suffix}{call_number}.json"
-    filepath.write_text(json.dumps(record, indent=2))
+    filepath.write_text(json.dumps(record, indent=2) + "\n")
     log.info("Saved %s", filepath)
 
     return {
@@ -290,7 +290,7 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.summary_output:
         args.summary_output.parent.mkdir(parents=True, exist_ok=True)
-        args.summary_output.write_text(json.dumps(summaries, indent=2))
+        args.summary_output.write_text(json.dumps(summaries, indent=2) + "\n")
         log.info("Summary written to %s", args.summary_output)
 
     # Exit non-zero if any call errored or any call hit finish=length —

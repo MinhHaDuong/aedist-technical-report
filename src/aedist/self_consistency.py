@@ -497,6 +497,7 @@ def main() -> None:
     summary_path = output_dir / "self_consistency_summary.json"
     with open(summary_path, "w") as f:
         json.dump(results, f, indent=2)
+        f.write("\n")
     log.info("\nSaved: %s", summary_path)
 
     # Write RunRecords to measurements.jsonl
