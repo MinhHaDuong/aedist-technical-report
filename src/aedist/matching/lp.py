@@ -469,6 +469,12 @@ def reconcile(df1: pd.DataFrame, df2: pd.DataFrame, **kwargs: object) -> pd.Data
     if not req_cols.issubset(df2.columns):
         raise ValueError("df2 must contain columns: 'name', 'name_clean', 'capacity_clean'.")
 
+    # Expand combined-unit system rows (e.g. "nhon trach 3 & 4" → two rows)
+    # before handing off to the LP so the one-to-one assignment can match each
+    # unit against its own reference row.  Only df2 (system side) is expanded;
+    # the reference (df1) is never modified — see expand_combined_units docstring.
+    df2 = expand_combined_units(df2)
+
     empty_result = _handle_empty(df1, df2)
     if empty_result is not None:
         return empty_result
