@@ -209,6 +209,40 @@ def validate_status_vocabulary(df: pd.DataFrame) -> None:
         )
 
 
+def validate_capacity_numeric(df: pd.DataFrame) -> None:
+    """Abort if any Capacity cell is non-empty and non-numeric.
+
+    A spreadsheet error value (e.g. ``Err:510``, ``#VALUE!``, ``#REF!``) is
+    corruption leaked from a formula cell, not data — writing it to the CSV
+    would silently break downstream numeric aggregation (the capacity sum in
+    aggregate_units.py). Empty is allowed (legitimately unknown capacity for
+    planned plants). The message names the offending spreadsheet row and the
+    bad value so the author can fix the master.
+
+    Ticket 0442: Err:510 leaked through extraction into the CSV; the failure
+    surfaced only downstream in aggregate_units.py's capacity guard (0416).
+    Per the layered-guards doctrine, extraction is the primary catch.
+    """
+    offenders = []
+    for idx, value in df["Capacity (MW)"].items():
+        cell = _cell(value)
+        if not cell:
+            continue
+        try:
+            float(cell)
+        except ValueError:
+            offenders.append(
+                f"row {idx + HEADER_ROW + 2}: {cell!r}"
+            )
+    if offenders:
+        raise ValueError(
+            "Non-numeric capacity cells in the master ODS — a spreadsheet "
+            "formula error (e.g. Err:510, #VALUE!, #REF!) leaked through. "
+            "Fix the formula in the master, then re-import:\n  "
+            + "\n  ".join(offenders)
+        )
+
+
 def validate_input(df: pd.DataFrame) -> None:
     """Run every input validator. Hard stop on the first failure.
 
@@ -218,6 +252,7 @@ def validate_input(df: pd.DataFrame) -> None:
     validate_address_shape(df)
     validate_no_duplicate_names(df)
     validate_status_vocabulary(df)
+    validate_capacity_numeric(df)
 
 
 def read_ods(path: Path) -> pd.DataFrame:

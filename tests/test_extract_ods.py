@@ -13,6 +13,7 @@ All extraction is dtype=str (no coercion ever): the zero-prefix preservation
 principle that bit ires_code (0121 -> 121) applies to every column here.
 """
 
+import re
 import sys
 from pathlib import Path
 
@@ -28,6 +29,7 @@ from data.reference.extract_ods import (
     read_ods,
     select_columns,
     validate_address_shape,
+    validate_capacity_numeric,
     validate_input,
     validate_no_duplicate_names,
     validate_status_vocabulary,
@@ -211,6 +213,89 @@ def test_validate_input_includes_vocabulary():
     """validate_input composes the vocabulary check."""
     df = _df([("", "Plant A", "")], **{"Project stage": ["bogus"]})
     with pytest.raises(ValueError, match="bogus"):
+        validate_input(df)
+
+
+# --- validate_capacity_numeric (ticket 0442) ------------------------------------
+
+
+@pytest.mark.parametrize(
+    "bad_value",
+    [
+        "Err:510",
+        "#VALUE!",
+        "#REF!",
+        "#DIV/0!",
+        "#NAME?",
+        "#N/A",
+        "#NULL!",
+        "abc",
+    ],
+    ids=lambda v: v.replace("#", "hash-").replace("!", "").replace("/", "-").replace(":", "-"),
+)
+def test_capacity_error_string_hard_stops(bad_value):
+    """Spreadsheet error strings in capacity must hard-stop extraction.
+
+    Ticket 0442: Err:510 leaked through extract_ods into the CSV; the failure
+    surfaced only downstream in aggregate_units. Extraction is the primary
+    catch — it must refuse with an actionable message naming both the offending
+    row and the bad value.
+    """
+    df = _df(
+        [("", "Plant A", "Unit 1")],
+        **{"Capacity (MW)": [bad_value]},
+    )
+    with pytest.raises(ValueError, match=re.escape(bad_value)):
+        validate_capacity_numeric(df)
+
+
+def test_capacity_empty_is_allowed():
+    """Empty capacity is legitimate (planned plants with unknown MW)."""
+    df = _df(
+        [("", "Plant A", "")],
+        **{"Capacity (MW)": [""]},
+    )
+    validate_capacity_numeric(df)  # must not raise
+
+
+def test_capacity_nan_is_allowed():
+    """NaN capacity (raw ODS blank cell) is treated like empty — allowed."""
+    df = _df(
+        [("", "Plant A", "")],
+        **{"Capacity (MW)": [float("nan")]},
+    )
+    validate_capacity_numeric(df)  # must not raise
+
+
+def test_capacity_valid_number_passes():
+    """A valid numeric capacity string passes validation."""
+    df = _df(
+        [("", "Plant A", "Unit 1"), ("", "Plant B", "")],
+        **{"Capacity (MW)": ["650", "1200.5"]},
+    )
+    validate_capacity_numeric(df)  # must not raise
+
+
+def test_capacity_error_message_names_row():
+    """The diagnostic must name the offending spreadsheet row number.
+
+    Row numbering: df index 0 + HEADER_ROW(4) + 2 = row 6 in the spreadsheet.
+    """
+    df = _df(
+        [("", "Plant A", "Unit 1")],
+        **{"Capacity (MW)": ["Err:510"]},
+    )
+    with pytest.raises(ValueError, match="row 6"):
+        validate_capacity_numeric(df)
+
+
+def test_validate_input_includes_capacity_check():
+    """validate_input composes the capacity numericness check (ticket 0442)."""
+    df = _df(
+        [("", "Plant A", "")],
+        **{"Capacity (MW)": ["Err:510"], "Project stage": ["6 operating"]},
+    )
+    with pytest.raises(ValueError, match="Err:510"):
         validate_input(df)
 
 
