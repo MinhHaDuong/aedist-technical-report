@@ -27,7 +27,7 @@ Schema mirrors the worker's _query_and_save record shape so
 the smoke directory. The recommended practice is to inspect smoke records
 manually and exclude them from any measurements.jsonl build.
 
-Configuration mirrors `sweep_ablation_p1_direct_base` in experiments.toml
+Configuration mirrors `sweep_exp1_baseline` in experiments.toml
 unless overridden via CLI flags:
     prompt_modules = []           (-> 2_goal + 5_table always-pair)
     temperature    = 0.0
@@ -209,7 +209,7 @@ def main(argv: list[str] | None = None) -> int:
         "--max-tokens",
         type=int,
         default=32768,
-        help="Max completion tokens (default: 32768, matches sweep_ablation_p1_direct_base).",
+        help="Max completion tokens (default: 32768, matches sweep_exp1_baseline).",
     )
     parser.add_argument(
         "--seed",

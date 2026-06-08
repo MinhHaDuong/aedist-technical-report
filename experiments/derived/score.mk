@@ -81,7 +81,7 @@ SCORE_ARCHIVE   := $(ANALYSIS_EXPERIMENTS_DIR)/archive/outputs
 #   decomposed (→ rag_per_fuel): record-only after edda724b
 #   decomposed_v2 (→ rag_per_fuel_v2): record-only after edda724b
 #   sourced (→ rag_cited): record-only after edda724b
-#   ablation/direct/p1_base, p1_base.topup, p1_composite: record-only
+#   exp1/baseline, baseline.topup, ablation/direct/p1_composite: record-only
 SCORE_STRUCTURED_DIRS := exp1_batch2
 
 SCORE_OUTPUT_FILES := $(filter-out %.record.json $(SCORE_DERIVED)/rag_consistency/%,\

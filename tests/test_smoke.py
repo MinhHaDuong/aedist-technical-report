@@ -19,10 +19,10 @@ def test_main_has_argparse():
 
 
 def test_default_seed_matches_locked_sweep():
-    """Smoke defaults must mirror sweep_ablation_p1_direct_base so a
+    """Smoke defaults must mirror sweep_exp1_baseline so a
     smoke and a production rep are comparable.
 
-    See experiments/experiments.toml [sweeps.sweep_ablation_p1_direct_base].
+    See experiments/experiments.toml [sweeps.sweep_exp1_baseline].
     """
     src = inspect.getsource(smoke.main)
     assert "default=42" in src, "seed default should match sweep seed=42"

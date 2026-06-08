@@ -1,0 +1,39 @@
+{
+  "run_id": "e48b38a4c21b",
+  "timestamp": "2026-06-08T08:19:58.779192Z",
+  "method": "direct",
+  "method_params": {
+    "model": "bytedance-seed/seed-2.0-lite",
+    "temperature": 0.0,
+    "max_tokens": 32768,
+    "prompt_version": "p1_base.pilot",
+    "extra": {
+      "size_class": "medium",
+      "country": "CN",
+      "architecture": "dense",
+      "provider": "ByteDance",
+      "context_window": 262144,
+      "finish_reason": "stop"
+    }
+  },
+  "resource_use": {
+    "wall_s": 202.639,
+    "cost_usd": 0.013214,
+    "tokens_in": 480,
+    "tokens_out": 6547
+  },
+  "result_file": "experiments/archive/outputs/exp1/baseline.pilot/seed-2.0-lite-run1.csv",
+  "result_summary": {
+    "status": "ok",
+    "n_plants": 39,
+    "tp": 35,
+    "fp": 4,
+    "fn": 138,
+    "f1": 0.3302,
+    "fuel_accuracy": 0.6571,
+    "status_accuracy": 0.6286,
+    "province_accuracy": 0.9429
+  },
+  "finish_reason": "stop",
+  "reference": "vietnam_thermal_plants_v2_classified.csv"
+}

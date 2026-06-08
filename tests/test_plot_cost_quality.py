@@ -95,12 +95,12 @@ def test_is_exp1_row():
     """Filter accepts exp1_batch2, rejects everything else."""
     assert _is_exp1_row("experiments/outputs/exp1_batch2/claude-opus-4.6-run1.csv")
     assert _is_exp1_row("experiments/outputs/exp1_batch2/mistral-large-2512-run3.json")
-    # Rejected — old p1_base directories no longer included:
+    # Rejected — archived exp1/baseline rows are not live outputs:
     assert not _is_exp1_row(
-        "experiments/outputs/ablation/direct/p1_base/claude-opus-4.6-run1.csv"
+        "experiments/archive/outputs/exp1/baseline/claude-opus-4.6-run1.csv"
     )
     assert not _is_exp1_row(
-        "experiments/outputs/ablation/direct/p1_base.pilot/claude-opus-4.6-run1.csv"
+        "experiments/archive/outputs/exp1/baseline.pilot/claude-opus-4.6-run1.csv"
     )
     assert not _is_exp1_row(
         "experiments/outputs/ablation/livesearch/p1_base/claude-opus-4.6-run1.csv"

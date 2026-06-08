@@ -284,7 +284,7 @@ class TestJobSpecSweepRemap:
             JobSpec.from_toml_section(section)
 
     def test_canary_sweep_loads(self):
-        """The live Exp 1 sweep (sweep_ablation_p1_direct_base) must load.
+        """The live Exp 1 sweep (sweep_exp1_baseline) must load.
 
         This is the regression check for the forbid flip — if it ever fails,
         a new field was added to the canary sweep without being declared on
@@ -294,14 +294,14 @@ class TestJobSpecSweepRemap:
             "mode": "single",
             "prompt_modules": [],
             "models": "models.yaml",
-            "model_set": "modelset_ablation_journal",
+            "model_set": "modelset_exp1_journal",
             "repeat": 5,
             "temperature": 0.0,
             "seed": 42,
             "budget_usd": 15,
             "max_tokens": 32768,
             "system_instruction": "You have no web search capability.",
-            "output": "outputs/ablation/direct/p1_base",
+            "output": "outputs/exp1/baseline",
         }
         j = JobSpec.from_toml_section(section)
         assert j.mode == Method.SINGLE

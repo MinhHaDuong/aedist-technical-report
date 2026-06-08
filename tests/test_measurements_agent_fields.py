@@ -39,7 +39,7 @@ FIXTURE_LINE_32 = (
     '"moe", "provider": "DeepSeek", "context_window": 163840}}, '
     '"resource_use": {"wall_s": 79.067, "cost_usd": 0.0017366, '
     '"tokens_in": 418, "tokens_out": 4284}, "result_file": '
-    '"experiments/outputs/ablation/direct/p1_base/deepseek-v3.2-run1.csv", '
+    '"experiments/archive/outputs/exp1/baseline/deepseek-v3.2-run1.csv", '
     '"result_summary": {"status": "ok", "n_plants": 73, "tp": 73, "fp": 0, '
     '"fn": 90, "f1": 0.6186, "fuel_accuracy": 0.5616, "status_accuracy": '
     '0.4521, "province_accuracy": 0.6986}, "justification": null, '

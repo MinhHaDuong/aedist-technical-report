@@ -3,7 +3,7 @@
 Pipeline phase: P3 (analyze & render) — invoked by experiments/render.mk.
 
 Per-model totals for the parametric baseline sweep
-(``experiments/outputs/ablation/direct/p1_base/``): how many reps succeeded,
+(``experiments/archive/outputs/exp1/baseline/``): how many reps succeeded,
 how many refused, how many tokens in / out the sweep cost, and total
 wall time. Plus a TOTAL row.
 
@@ -13,7 +13,7 @@ Usage:
         --output report/inputs/generated/tab_exp1_cost_summary.tex
 
 Sources rows whose ``result_file`` starts with
-``experiments/outputs/ablation/direct/p1_base/`` (excluding ``p1_base.pilot/``).
+``experiments/archive/outputs/exp1/baseline/`` (excluding ``baseline.pilot/``).
 """
 
 import argparse
@@ -26,8 +26,8 @@ from .tabulate_utils import format_model_name
 
 log = logging.getLogger(__name__)
 
-P1_BASE_PATH_PREFIX = "experiments/outputs/ablation/direct/p1_base/"
-P1_PILOT_MARKER = "/p1_base.pilot/"
+P1_BASE_PATH_PREFIX = "experiments/archive/outputs/exp1/baseline/"
+P1_PILOT_MARKER = "/baseline.pilot/"
 
 
 def _is_p1_base_row(result_file: str) -> bool:

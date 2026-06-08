@@ -145,10 +145,10 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="Canary gate analysis (ticket 0198)")
     parser.add_argument(
-        "--base", default="outputs/ablation/direct/p1_base", help="Baseline output dir"
+        "--base", default="experiments/archive/outputs/exp1/baseline", help="Baseline output dir"
     )
     parser.add_argument(
-        "--topup", default="outputs/ablation/direct/p1_base.topup", help="Topup output dir"
+        "--topup", default="experiments/archive/outputs/exp1/baseline.topup", help="Topup output dir"
     )
     args = parser.parse_args()
 
