@@ -237,6 +237,9 @@ def records_to_metrics(records: list[RunRecord]) -> list[dict]:
                 ("verification_mode", "verification_mode"),
                 ("mean_evidence_score", "mean_evidence_score"),
                 ("verification_cost_usd", "verification_cost_usd"),
+                # 0470: LLM-judge faithfulness scalar (upgrade of deterministic baseline)
+                # None = no verdicts cached yet (see f1=None semantics); 0.0 would mislead.
+                ("faithfulness_score", "faithfulness_score"),
             ):
                 if r.justification.get(src_key) is not None:
                     d[out_key] = r.justification[src_key]
