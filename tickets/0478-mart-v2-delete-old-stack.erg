@@ -1,0 +1,60 @@
+%erg 0.1
+Title: Delete old stack: measurements.jsonl, evaluate.py assemble, RunRecord (tracker: 0297)
+Created: 2026-06-08
+Author: HDMX-coding-agent
+Blocked-by: 0477
+
+--- log ---
+2026-06-08T12:00Z HDMX-coding-agent created
+--- body ---
+## Context
+
+Final step of the retirement (0297 tracker). After 0477 ports all consumers, this
+ticket deletes the old stack. This is the riskiest step — deletion is irreversible.
+Run `make check` and a full grep audit before committing.
+
+## Relevant files
+
+To delete:
+- `measurements.jsonl` (top-level, 669 records — data already in mart)
+- `src/aedist/evaluate.py` `assemble` subcommand (the only path that writes measurements.jsonl)
+- `src/aedist/schema.py` `RunRecord` class and associated infrastructure
+- `src/aedist/measurements.py` (entire module — replaced by mart reader)
+- `experiments/derived/score.mk` targets that build measurements.jsonl
+
+Tests to delete/replace:
+- `tests/test_measurements.py`
+- `tests/test_measurements_agent_fields.py`
+- Any test that imports from `aedist.measurements` or `aedist.schema.RunRecord`
+
+## Actions
+
+1. Grep audit: `grep -rn "measurements.jsonl\|RunRecord\|records_to_metrics" --include="*.py" --include="*.mk" --include="Makefile" .`
+   Confirm zero hits (excluding archive/ and worktrees/).
+2. Delete `measurements.jsonl` from git.
+3. Delete `src/aedist/measurements.py`.
+4. Remove `RunRecord`, `Method`, `MethodParams`, `ResourceUse`, `ResultSummary` from `schema.py`
+   (or delete `schema.py` if nothing else uses it).
+5. Remove `assemble` subcommand from `evaluate.py`.
+6. Remove `measurements.jsonl` target from `score.mk`.
+7. Delete or rewrite `tests/test_measurements.py` and `tests/test_measurements_agent_fields.py`.
+8. Run `make check` — must pass clean.
+
+## Verification
+
+- [ ] `grep -rn "measurements.jsonl\|RunRecord\|records_to_metrics" src/ tests/ experiments/` → zero hits.
+- [ ] `make check` passes.
+- [ ] No report figure or table value changed (verify against golden outputs from 0477).
+- [ ] Tracking ticket 0297 closes after this PR merges.
+
+## Invariants
+
+- Deletion is LAST — only after all consumers are ported and green (0477 done).
+- Do not delete `evaluate.py` subcommands other than `assemble` — other verbs remain.
+- `schema.py` may retain non-RunRecord classes (Plant, FuelType, PlantStatus, etc.).
+
+## Exit criteria
+
+- Zero grep hits for old-stack symbols in src/, tests/, experiments/ (excluding archive/).
+- `make check` passes.
+- 0297 tracker can be closed.
