@@ -297,11 +297,14 @@ Cinq axes pour juger la qualité des données statistiques de recherche~:
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{La méthode --- Condition architecture agentique}
+\begin{frame}{La méthode --- Condition harnais simple (bras 2 \& 4)}
 \begin{description}\setlength\itemsep{8pt}
   \item[\textbf{Phase A, réflexive}] Chaque agent optimise son propre prompt, connaissant le protocole.
   \item[\textbf{Phase B, scriptée}] Jusqu'à 3 tours de recherche + 1 tour de finalisation. DeepSeek V3.2 lit le travail de l'agent et répond par des prompts Encourage\_Continue ou Ask\_Final\_Verify.
 \end{description}
+
+\smallskip
+{\small\textit{Harnais simple = orchestrateur (classifieur DeepSeek) + boucle + outil (LLM testé). «~Simple~» car les prompts sont fixes, non générés de manière adaptative.}}
 
 \medskip
 \begin{center}

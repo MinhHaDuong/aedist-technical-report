@@ -297,11 +297,14 @@ Five axes for judging the quality of research statistical data:
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{The method --- Agentic architecture condition}
+\begin{frame}{The method --- Simple-harness condition (arms 2 \& 4)}
 \begin{description}\setlength\itemsep{8pt}
   \item[\textbf{Phase A is reflexive}] Each agent optimizes its own prompt, knowing the protocol.
   \item[\textbf{Phase B is scripted}] Up to 3 research turns + 1 finalization turn. DeepSeek V3.2 reads the agent's work and replies with Encourage\_Continue or Ask\_Final\_Verify prompts.
 \end{description}
+
+\smallskip
+{\small\textit{Simple harness = orchestrator (DeepSeek classifier) + loop + tool (tested LLM). ``Simple'' because the prompts are fixed, not generated adaptively.}}
 
 \medskip
 \begin{center}
