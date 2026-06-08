@@ -1,0 +1,72 @@
+%erg 0.1
+Title: Cached LLM-judge source-faithfulness scorer (fuel/capacity/status in source)
+Created: 2026-06-08
+Author: claude
+Label: deferred
+
+--- log ---
+2026-06-08T14:39Z claude created
+
+--- body ---
+## Context
+
+Part of tracker 0465 (Paper B). **Post-preprint / future work.** The Paper A
+provenance baseline (0201) is a **deterministic** value-in-source check: the
+RAG sources are tabular, so "does the cited source contain value V for plant P"
+is a string/number lookup. This ticket is the **LLM-judge upgrade**: an
+adjudicator asks, in natural language, *does document X say plant P has fuel F,
+capacity C, status S?* — catching paraphrase, unit-restated, and table-layout
+cases the deterministic check misses.
+
+To keep the judge **reproducible and cheap**, every verdict is written to a
+**cache** keyed by (document-id, plant, attribute, claimed-value, judge-model,
+prompt-version). Re-runs read the cache; only novel (plant, claim) tuples hit
+the API. This is the standard cost/repro discipline for LLM-judge scorers.
+
+## Relevant files
+
+- `src/aedist/` — provenance/scoring modules (0201 baseline is the deterministic sibling)
+- the RAG corpus / source registry (judge reads documents from here)
+- new: `src/aedist/llm_judge_faithfulness.py` + a verdict cache (JSONL or sqlite)
+
+## Actions
+
+1. Define the judge prompt (fuel/capacity/status faithfulness, one verdict per
+   (plant, attribute)); pin model + seed/temperature + prompt-version.
+2. Implement a verdict cache; cache hit ⇒ no API call. Key includes judge-model
+   and prompt-version so a prompt change invalidates cleanly.
+3. Expose a per-run faithfulness scalar via `records_to_metrics()` (ADR-7) so
+   it sits alongside the deterministic provenance score.
+4. Follow project rule "test one before blasting": dry-run prompt assembly +
+   one real verdict per attribute before any batch.
+
+## Test
+
+`tests/test_llm_judge_faithfulness.py` (judge mocked — unit grain):
+
+```python
+def test_cache_hit_skips_api(monkeypatch):
+    judge = FaithfulnessJudge(cache=tmp_cache)
+    judge.verdict(doc, plant="P", attr="capacity", claim="600")   # API call #1
+    monkeypatch.setattr(judge, "_call_api", _boom)                # would raise
+    v = judge.verdict(doc, plant="P", attr="capacity", claim="600")  # cache hit
+    assert v.supported in (True, False)                            # no API call
+```
+
+## Verification
+
+- [ ] Verdicts cached and keyed by judge-model + prompt-version; re-run is API-free.
+- [ ] Per-run faithfulness scalar in the metrics dict (ADR-7).
+- [ ] Deterministic baseline (0201) left intact as the cheap first pass.
+
+## Invariants
+
+- The deterministic value-in-source check remains the baseline; this is an
+  upgrade layered on top, not a replacement.
+
+## Exit criteria
+
+- [ ] Cached LLM-judge faithfulness scorer landed with tests; deferred,
+      post-preprint — does not block the arXiv preprint.
+
+Part of: 0465 — cached LLM-judge faithfulness scorer (upgrade of the deterministic value-in-source baseline).

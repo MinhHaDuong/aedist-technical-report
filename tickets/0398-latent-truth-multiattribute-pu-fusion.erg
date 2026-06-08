@@ -5,6 +5,7 @@ Author: claude
 
 --- log ---
 2026-06-03T00:00Z claude created from imagine-mode design + deep-research litreview
+2026-06-08T11:00Z claude note linked to tracker 0465
 
 --- body ---
 ## Context
@@ -100,3 +101,5 @@ def test_pu_anchor_absence_is_not_negative():
 - Keep the model **generic** (Country X / subsector Y), with ASEAN thermal as the first
   parameterized application (project rule: design for genericity).
 - Do not hard-discard models/runs in this ticket — emit continuous weights; gating is 0399.
+
+Part of: 0465 — PU/latent-truth fusion (run as unit)

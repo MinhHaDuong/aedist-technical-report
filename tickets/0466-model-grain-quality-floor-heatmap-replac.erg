@@ -1,0 +1,104 @@
+%erg 0.1
+Title: Model-grain quality floor heatmap (replaces decorative quality spider)
+Created: 2026-06-08
+Author: claude
+Blocked-by: 0201
+
+--- log ---
+2026-06-08T14:39Z claude created
+
+--- body ---
+## Context
+
+Part of tracker 0464 (Paper A, role A2). The manuscript's quality figure is
+currently a decorative spider (`fig_spider_exp1_families`, four polar panels
+by family). It is hard for a naive reader to read off the **fil rouge** claim:
+the §2 quality bar is a *conjunction* — a zero on any criterion means the bar
+is not cleared. A heatmap makes that legible at a glance: a model with any
+disqualifying cell stands out as a red row.
+
+Replace the spider's **manuscript role** with a **model-grain quality floor
+heatmap**. The spider may stay for the talk (slides), but `main.md` shows the
+heatmap.
+
+**Cell rule.** Rows = the exact model set the current Exp1 spider renders
+(resolved from `_PANELS` in `plot_quality_spider_exp1.py`: families claude /
+gpt / mistral / qwen; deepseek is excluded — it has no panel). That is **12
+models**:
+
+```
+claude-haiku-4.5, claude-opus-4.6, claude-sonnet-4.6,
+gpt-5.5, gpt-oss-120b, gpt-oss-20b,
+mistral-large-2512, mistral-medium-3-5, mistral-small-2603,
+qwen3.6-35b-a3b, qwen3.6-flash, qwen3.7-max
+```
+
+(Resolve this set programmatically at build time from the same input the
+spider uses — `experiments/derived/exp1_cross_eval.csv` filtered by the
+spider's family panels — do **not** hardcode the list; project rule: never
+hardcode the model/reference set.)
+
+Columns = criteria × sub-scores (the 5-criteria × K-sub-score scoring from
+0201; accuracy is the only reference-full criterion).
+
+A **MODEL CELL is RED** iff a **majority (≥3 of 5)** of that model's runs score
+**zero** there. **Any red cell in a row ⇒ that model is disqualified** ("too
+weak to clear the bar"). Naive-reader legible (clear colour legend + a
+disqualified-row marker).
+
+## Relevant files
+
+- `src/aedist/plot_quality_spider_exp1.py` — current spider; `_PANELS` defines the model set to replicate
+- `experiments/derived/exp1_cross_eval.csv` — per-run sub-scores (input)
+- `experiments/render.mk` — wire the new `.pdf` artifact here (the spider targets are at ~L141–152)
+- `slides/manuscript/main.md` — Figure 2b include (~L37) swaps spider → heatmap
+- new: `src/aedist/plot_quality_floor_heatmap_exp1.py`
+
+## Actions
+
+1. New plot script `plot_quality_floor_heatmap_exp1.py`: read `exp1_cross_eval.csv`,
+   resolve the spider model set, compute per (model, sub-score) the fraction of
+   the 5 runs scoring zero, mark red iff ≥3/5.
+2. Add a Makefile `.pdf` target in `experiments/render.mk` (one output per rule).
+3. Swap the `main.md` Figure 2b include from `fig_spider_exp1_families.pdf` to
+   the heatmap; update the caption to state the conjunctive-bar reading.
+4. Leave the spider script + its slide include intact (talk role).
+
+## Test
+
+`tests/test_plot_quality_floor_heatmap_exp1.py`:
+
+```python
+def test_majority_zero_marks_red():
+    # 3 of 5 runs score zero on a sub-score → cell is red (disqualifying).
+    runs = [0.0, 0.0, 0.0, 0.4, 0.6]
+    assert cell_is_red(runs)           # 3/5 zero ≥ majority
+
+def test_minority_zero_not_red():
+    runs = [0.0, 0.0, 0.4, 0.5, 0.6]   # 2/5 zero < majority
+    assert not cell_is_red(runs)
+
+def test_model_set_matches_spider_panels():
+    # the heatmap rows == the models the spider renders (families claude/gpt/
+    # mistral/qwen), resolved from the same CSV — deepseek excluded.
+    assert set(heatmap_models(csv)) == set(spider_panel_models(csv))
+```
+
+## Verification
+
+- [ ] Heatmap PDF rebuilds via `make` and is committed (artifact discipline).
+- [ ] `main.md` includes the heatmap, not the spider; caption states the rule.
+- [ ] Model set equals the spider's 12 (test-guarded, not hardcoded).
+- [ ] No inline pgfplots (adherence test green).
+
+## Invariants
+
+- Spider script and slide include unchanged (talk still uses it).
+- Reference/model set never hardcoded.
+
+## Exit criteria
+
+- [ ] Heatmap supersedes the spider's **manuscript** role; any red cell ⇒
+      model disqualified; naive-reader legible; `make check` green.
+
+Part of: 0464 — role A2 (model-grain quality floor heatmap; supersedes the spider's manuscript role).

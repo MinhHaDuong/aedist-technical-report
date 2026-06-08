@@ -1,0 +1,70 @@
+%erg 0.1
+Title: Internal-coherence run-screen → manuscript MVP (Paper A)
+Created: 2026-06-08
+Author: claude
+Blocked-by: 0201
+Blocked-by: 0453
+Blocked-by: 0466
+Blocked-by: 0467
+Blocked-by: 0468
+Blocked-by: 0469
+
+--- log ---
+2026-06-08T14:39Z claude created
+
+--- body ---
+## Context
+
+The paper's methods contribution is an **internal-coherence run-screen**.
+Fil rouge: §2 of the manuscript (`slides/manuscript/main.md`) defines the
+quality bar as a **conjunction** of criteria — any acceptable dataset must
+clear *all* of them. A **zero on any criterion therefore means the bar is
+not cleared**: the run (or, aggregated, the model) is trash. This promotes
+the existing #771 Discussion paragraph "Internal coherence as a zero-reference
+screen" (`main.md` line ~123) from future-work to the present contribution.
+
+Scoring = **5 criteria × K sub-scores**. ACCURACY is the *only* reference-full
+criterion; the other four (coherence, provenance, temporality, source quality)
+are **reference-free by construction** — computable from the run alone. That is
+what makes the screen usable without ground truth.
+
+**Unit for Paper A = the MODEL** (a capability floor). A model whose runs
+systematically zero a free criterion is "too weak to clear the bar".
+Paper A is the MVP: talk-aligned, written for a readership naive to LLMs.
+The run-as-unit information-fusion programme is the sibling tracker 0465
+(Paper B), where the model becomes a covariate.
+
+This tracker captures the roadmap ratified with the author this session.
+It holds no production code of its own; each child lands its own merge request.
+
+## Children (ordered)
+
+- **A1 = 0201** (re-scoped): deterministic reference-free scorer — 4 free
+  criteria + source-quality (resolve → tier → value-in-source); accuracy is
+  the only reference-full axis. Folds in **0396** (atomicity / 1NF sub-score)
+  and depends on **0454** (status-vocabulary alignment → status-correct sub-score).
+- **A2 = 0466** (NEW): model-grain quality floor **heatmap** — replaces the
+  decorative quality spider's manuscript role; any red cell ⇒ model disqualified.
+- **A3 = 0467** (NEW): run-grain screen **validation annex** — proves the four
+  free criteria flag genuinely worse runs, within model, non-tautologically.
+- **A4 = 0468** (NEW): move the "why it is hard" difficulty table from Annex E
+  into task setup / head of Exp1 results (it characterises the task, so it
+  motivates difficulty up front).
+- **A5 = 0469** (NEW): `main.md ↔ slides` sync — talk-aligned manuscript revision.
+- **screen-design = 0453** (re-scoped): two-level screen — run-grain veto
+  (zero-is-trash on the four free criteria) + model-grain majority-red floor.
+
+## Relevant files
+
+- `slides/manuscript/main.md` — §2 quality bar; #771 Discussion paragraph (~L123); Annex E difficulty table (~L379–395)
+- `src/aedist/plot_quality_spider_exp1.py` — current decorative spider (A2 supersedes its manuscript role)
+- `docs/internal-coherence-screen.md` — the verified zero-reference analysis (0453)
+
+## Exit criteria (IDH tracking-ticket convention)
+
+- [ ] All children merged: 0201, 0453, 0466, 0467, 0468, 0469.
+- [ ] Manuscript presents the internal-coherence run-screen as a present
+      contribution (not future work) with the model-grain floor heatmap as
+      the canonical quality figure.
+- [ ] Closes only after the integration review (re-read child diffs, full
+      suite green, exit criteria verified), never on the bare last-child merge.

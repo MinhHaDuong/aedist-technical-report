@@ -1,0 +1,57 @@
+%erg 0.1
+Title: Information-fusion follow-up — run as unit (Paper B)
+Created: 2026-06-08
+Author: claude
+
+--- log ---
+2026-06-08T14:39Z claude created
+
+--- body ---
+## Context
+
+Paper B is the information-fusion follow-up to the manuscript MVP (Paper A,
+tracker 0464). **The unit of analysis is the RUN; the model is a covariate**
+(not the capability floor it is in Paper A). Paper B builds *on top of* Paper
+A's internal-coherence screen: the screen discards uninformative runs (those
+that zero a reference-free criterion) **before** fusion, so the latent-truth /
+capture–recapture machinery is not poisoned by template-like degenerate runs.
+
+Each reference plant becomes a column observed by many noisy runs — precisely
+the input object of latent-truth discovery and capture–recapture estimation
+(see `main.md` Discussion "From noisy runs to fused estimates", ~L125). Fusing
+incomplete, differently-reliable lists into a single estimate — bounding the
+residual share of unseen plants by linear programming against a control total
+(installed capacity per fuel) — is the research axis this opens.
+
+**Post-preprint.** This is a long-horizon tracker; its children are not on the
+arXiv-preprint critical path. It stays open until all children are merged
+(IDH tracking-ticket convention).
+
+## Children
+
+- **Cached LLM-judge faithfulness = 0470** (NEW): does document X say plant P
+  has fuel F / capacity C / status S? The deterministic value-in-source check
+  (Paper A / 0201) is the baseline; this is the LLM-judge upgrade with a
+  verdict cache for reproducibility and cost.
+- **E1→1N→1D grounding ladder = 0471** (NEW): paired within-agent deltas
+  isolating harness+tier (E1→1N), documents (1N→1D), and multi-turn (1D→5D);
+  emphasises source/provenance axes.
+- **0398**: PU / latent-truth multi-attribute fusion (run as unit).
+- **Consensus half of 0399**: the consensus / spammer-score channel of the
+  two-channel run-quality gate (the model-free VETO half folds into Paper A
+  via 0453).
+- **0293**: alternate anchoring score (reference-count based).
+
+## Relevant files
+
+- `slides/manuscript/main.md` — Discussion "From noisy runs to fused estimates" (~L125)
+- `src/aedist/plot_exp2_arms_split.py` — `_AGENT_EXP1_SLUG` map (the 4 agents in both Exp1 & Exp2; consumed by 0471)
+- `docs/2026-06-03-list-fusion-litreview.md` — fusion litreview (0398/0399)
+
+## Exit criteria
+
+- [ ] All children merged: 0470, 0471, 0398, the consensus half of 0399, 0293.
+- [ ] A run-as-unit fusion estimate exists that consumes Paper A's screen to
+      discard uninformative runs before fusion.
+- [ ] Closes only after integration review across the children, never on the
+      bare last-child merge.
