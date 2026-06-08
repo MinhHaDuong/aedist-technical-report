@@ -61,7 +61,7 @@ def test_exp1_mart_matches_measurements_jsonl():
 
 ## Verification
 
-- [ ] `experiments/derived/exp1_mart.jsonl` exists and has 70 records.
+- [ ] `experiments/derived/exp1_mart.jsonl` exists and record count matches exp1_batch2 artifact count.
 - [ ] Equivalence test passes (all metrics within 0.0001 tolerance).
 - [ ] `make check` passes.
 - [ ] `measurements.jsonl` is NOT modified or deleted by this PR.
@@ -74,6 +74,6 @@ def test_exp1_mart_matches_measurements_jsonl():
 
 ## Exit criteria
 
-- `exp1_mart.jsonl` exists with 70 exp1 records.
+- `exp1_mart.jsonl` exists with one record per exp1_batch2 output file.
 - Equivalence test demonstrates mart == measurements.jsonl for exp1 metrics.
 - 0477 can safely replace measurements.jsonl readers with mart readers.
