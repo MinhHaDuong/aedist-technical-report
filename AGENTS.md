@@ -70,7 +70,7 @@ Cleanup worktrees and branches, summarize what was accomplished, reflect on less
 | `/start-ticket N` | Starting work on a GitHub issue | Create worktree, write first test, transition to Execute |
 | `/celebrate` | After completing a ticket | Reflect, update STATE, clean up |
 | `/end-session` | User ends a work session | Push branches, run tests, refresh STATE |
-| `/ticket-new` | Creating a ticket | Write handoff document with test spec |
+| `/ticket-new` | Creating a ticket (à créer, IDH) | Write handoff document with test spec |
 | `/review-pr N` | Reviewing a merge request (code) | Multi-perspective agent review |
 | `/review-pr-prose N` | Reviewing a merge request (prose) | Simulated peer review panel |
 | `/memory` | Writing or sweeping persistent memory | Enforce caps, TTLs, staleness |
