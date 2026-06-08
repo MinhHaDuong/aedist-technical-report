@@ -3,6 +3,7 @@ Title: Reference v2: add verified missing plants (Kiên Lương, Hòa Phát, Kim
 Created: 2026-06-03
 Author: claude
 Label: needs-human
+Closed: Plants added: Kim Sơn, Rạng Đông, Yên Hưng, Phú Thọ via add_plants_0395.py (v2.2→v2.3, 176→180 plants). 91.6% reference_hole drop. test_reference_integrity.py added. Hòa Phát Dung Quất captive power not added — no primary source in RAG corpus.
 
 --- log ---
 2026-06-03T00:00Z claude created — from the Exp2 FP audit: 48 distinct / 95 FP occurrences are real Vietnamese plants absent from the 163-row reference under any spelling
@@ -13,6 +14,7 @@ Label: needs-human
 2026-06-04T12:58Z claude note — Blocked-by 0416 formalized: additions flow through the master ods + validated pipe (0418→0416), not hand-appends to CSVs
 2026-06-04T13:37Z HDMX-coding-agent note blocker 0394 closed — Blocked-by removed.
 2026-06-05T11:59Z HDMX-coding-agent note blocker 0416 closed — Blocked-by removed.
+2026-06-08T20:50Z HDMX-coding-agent closed — Plants added: Kim Sơn, Rạng Đông, Yên Hưng, Phú Thọ via add_plants_0395.py (v2.2→v2.3, 176→180 plants). 91.6% reference_hole drop. test_reference_integrity.py added. Hòa Phát Dung Quất captive power not added — no primary source in RAG corpus.
 --- body ---
 ## Context
 
