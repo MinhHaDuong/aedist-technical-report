@@ -605,17 +605,13 @@ def test_score_mechanical_columns_match_sota_cross_eval_header() -> None:
 def test_variability_screen_regression_exp1_batch2() -> None:
     """Regression: variability screen on Exp1 batch2 (70 runs).
 
-    Reproduces docs/internal-coherence-screen.md findings:
-    - Spearman(cap_distinct, F1) >= 0.85 (original: 0.904 with v1 reference)
-    - Rule cap_distinct<=4 OR status_distinct<=1 rejects exactly 23 runs
-    - No run with F1 >= 0.40 is rejected (strong models all pass)
+    Locks two reference-free invariants (raw capacity/status counts only):
+    - Spearman(cap_distinct, F1) >= 0.85  (calibrated at 0.906 on current data)
+    - The exact set of 23 vetoed (model, run) pairs does not change
 
-    Note: the original "zero false rejections (F1>=0.25)" was calibrated on v1
-    reference data.  With the current v2 reference, borderline models
-    (claude-haiku-4.5 at F1≈0.28, qwen3.6-35b-a3b at F1≈0.31) are also
-    vetoed — this is the "in-sample calibration" caveat in the analysis doc.
-    The F1>=0.40 threshold is the clear-sky boundary where no genuinely weak
-    model lands in the current Exp1 batch2 data.
+    The exact veto set is the hard invariant: it depends only on raw CSVs and
+    the VETO rule (cap_distinct<=4 OR status_distinct<=1), not on the reference
+    or F1 values. Any change to this set requires an explicit code review.
 
     status_as_of variability is NOT a criterion per the design doc.
     """
@@ -645,8 +641,7 @@ def test_variability_screen_regression_exp1_batch2() -> None:
     # Compute variability per run
     cap_distincts = []
     f1_values = []
-    vetoed_count = 0
-    false_rejections = []  # runs with F1 >= 0.30 that are vetoed
+    vetoed_runs: set[tuple[str, str]] = set()
 
     for fpath in sorted(exp1_dir.glob("*.csv")):
         m = run_re.match(fpath.name)
@@ -664,24 +659,44 @@ def test_variability_screen_regression_exp1_batch2() -> None:
         cap_distincts.append(v.capacity_distinct)
         f1_values.append(f1)
         if v.veto:
-            vetoed_count += 1
-            if f1 >= 0.40:
-                false_rejections.append({"model": model, "run": run, "f1": f1})
+            vetoed_runs.add((model, run))
 
     assert len(cap_distincts) == 70, f"Expected 70 exp1_batch2 runs, got {len(cap_distincts)}"
 
     rho, _ = spearmanr(cap_distincts, f1_values)
     assert rho >= 0.85, (
         f"Spearman(cap_distinct, F1) = {rho:.3f} < 0.85; "
-        f"variability screen has degraded (original 0.904 with v1 reference)"
+        f"variability screen has degraded (calibrated at 0.906 on current data)"
     )
 
-    assert vetoed_count == 23, (
-        f"Expected 23 vetoed runs, got {vetoed_count}. "
-        f"Check threshold definitions (cap<=4 OR status<=1)."
-    )
-
-    assert false_rejections == [], (
-        f"Vetoed runs with F1>=0.40 (strong models should never be vetoed): "
-        f"{false_rejections}"
+    # Hard invariant: exact vetoed set (reference-free, raw-CSV only)
+    expected_vetoed = {
+        ("claude-haiku-4.5", "1"),
+        ("claude-haiku-4.5", "2"),
+        ("claude-haiku-4.5", "3"),
+        ("claude-haiku-4.5", "4"),
+        ("claude-haiku-4.5", "5"),
+        ("deepseek-v4-flash", "5"),
+        ("gpt-oss-120b", "1"),
+        ("gpt-oss-120b", "3"),
+        ("gpt-oss-120b", "4"),
+        ("gpt-oss-120b", "5"),
+        ("gpt-oss-20b", "1"),
+        ("gpt-oss-20b", "2"),
+        ("gpt-oss-20b", "3"),
+        ("gpt-oss-20b", "4"),
+        ("gpt-oss-20b", "5"),
+        ("qwen3.6-35b-a3b", "1"),
+        ("qwen3.6-35b-a3b", "2"),
+        ("qwen3.6-35b-a3b", "3"),
+        ("qwen3.6-35b-a3b", "4"),
+        ("qwen3.6-35b-a3b", "5"),
+        ("qwen3.6-flash", "1"),
+        ("qwen3.6-flash", "4"),
+        ("qwen3.6-flash", "5"),
+    }
+    assert vetoed_runs == expected_vetoed, (
+        f"Vetoed set mismatch.\n"
+        f"  Unexpected vetoes: {vetoed_runs - expected_vetoed}\n"
+        f"  Missing vetoes: {expected_vetoed - vetoed_runs}"
     )
