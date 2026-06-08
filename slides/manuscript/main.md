@@ -23,6 +23,20 @@ Submitting a direct query to a large language model produces an inventory-shaped
 
 **Experiment 1 — Parametric baseline.** We query sixteen language models from the *modelset_ablation_journal* set — spanning three language families (EN/FR/ZH) and five laboratories from mid-range through frontier-class systems — with a fixed structured table specification prompt (the locked `2_goal + 5_table` composition, reproduced in Annex B). No documents are provided; models draw exclusively on parametric knowledge and receive a system instruction forbidding web search. Each model is queried five times at temperature zero, yielding 80 runs against a 173-plant reference inventory of Vietnamese thermal power plants (coal and gas, all lifecycle statuses). Runs are evaluated by matching extracted plant names against the reference using fuzzy string matching, yielding row-level precision, recall, and F1; fuel type, operational status, and province accuracy are scored at the cell level for matched rows. Cost in USD and wall-clock time are recorded per run.
 
+The table below decomposes the difficulty by status (library `aedist.exp1_recognition`; same data derivation as the per-plant recognition matrix in Annex E, Figure 7). The reference list is dominated by proposed plants — the largest share — which parametric memory cannot know; their mean recognition rate is far below that of operational plants. The low overall recognition is therefore structural, a property of the list's composition, not merely a model failure.
+
+| Status | n | Share of list | Recognition rate |
+|---|---:|---:|---:|
+| Proposed | 67 | 38.7% | 8.0% |
+| Planned | 21 | 12.1% | 29.6% |
+| Under construction | 10 | 5.8% | 40.3% |
+| Operational | 56 | 32.4% | 45.7% |
+| Retired | 2 | 1.2% | 63.6% |
+| Cancelled | 17 | 9.8% | 17.0% |
+| **All** | **173** | **100.0%** | **26.2%** |
+
+*Table: composition of the reference list by status, and mean recognition rate (Experiment 1, direct method: 14 models × 5 repetitions). The rate is the share of run × plant cells recognized among plants of that status.*
+
 **Results.** Across 80 runs (16 models × 5 repeats), 77 produced usable tables and 3 were refusals (all GPT-5.5). Row-level F1 across the 77 usable runs ranges from 0.01 to 0.76, with a mean of 0.38. Within-model F1 variance is large: DeepSeek V4-Flash ranges from 0.01 to 0.65 across 5 identical runs, and GPT-OSS-20B from 0.23 to 0.76 — spreads wider than the gap between many adjacent model means. Even for correctly matched plants, attribute classification remains mediocre: mean fuel accuracy 0.53, mean status accuracy 0.53, mean province accuracy 0.61. No monotonic relationship between API cost and F1 is observed: Claude Opus 4.6 at \$1.23 total achieves mean F1 = 0.46, while GPT-OSS-20B at \$0.01 reaches 0.58. To our knowledge, this non-monotone cost-versus-F1 relationship for structured factual extraction has not been documented in prior literature. The total experiment cost is \$2.85. Five qualitative failure modes organise the model-by-run distribution: GPT-5.5 refuses the task on 3 of 5 runs (*Récalcitrant*), citing inability to produce sourced data from parametric knowledge; Claude Haiku consistently finds only 17 plants (*Incomplet*); Qwen 3.6-27B fabricates up to 268 false positives in a single run (*Hallucinant*); DeepSeek V4-Flash and GPT-OSS-20B exhibit the widest within-model variance (*Non-déterministe*); and no cost ordering predicts quality (*Non-monotone*).
 
 ![](../report/inputs/generated/fig_direct_p1_base.pdf)\
@@ -382,9 +396,9 @@ The narrative inventory component of §5 handles longitudinal aspects pragmatica
 
 ---
 
-## Annex E — Experiment 1: per-plant recognition matrix and the status composition of task difficulty
+## Annex E — Experiment 1: per-plant recognition matrix
 
-Figure 7 aligns each of the 173 reference plants on a fixed column, for the 70 Experiment 1 runs (14 models × 5 repetitions, ordered as in Figure 1: by architectural family, then by decreasing effective parameter count). A blue cell marks a recognized plant (true positive); an empty cell, a miss. Reference columns are ordered by status group, then by decreasing capacity, so the status bands align with the difficulty table below. The left panel shows the 40 most frequent false positives across all runs, sorted by decreasing occurrence; red follows the paper's false-positive convention (unrecognized — possibly real, not necessarily fabricated). Unlike Figure 1, which packs recognized plants leftward, the fixed-column alignment reveals *which* plants each model misses: famous plants form dense columns, obscure ones sparse columns.
+Figure 7 aligns each of the 173 reference plants on a fixed column, for the 70 Experiment 1 runs (14 models × 5 repetitions, ordered as in Figure 1: by architectural family, then by decreasing effective parameter count). A blue cell marks a recognized plant (true positive); an empty cell, a miss. Reference columns are ordered by status group, then by decreasing capacity, so the status bands align with the difficulty table in §1. The left panel shows the 40 most frequent false positives across all runs, sorted by decreasing occurrence; red follows the paper's false-positive convention (unrecognized — possibly real, not necessarily fabricated). Unlike Figure 1, which packs recognized plants leftward, the fixed-column alignment reveals *which* plants each model misses: famous plants form dense columns, obscure ones sparse columns.
 
 ```{=latex}
 \begin{landscape}
@@ -398,19 +412,7 @@ Figure 7 aligns each of the 173 reference plants on a fixed column, for the 70 E
 \end{landscape}
 ```
 
-The table below shares the same data derivation as the figure (library `aedist.exp1_recognition` — common cause, no producer–consumer chaining) and decomposes the difficulty by status. The reference list is dominated by proposed plants — the largest share — which parametric memory cannot know; their mean recognition rate is far below that of operational plants. The low overall recognition is therefore structural, a property of the list's composition, not merely a model failure.
-
-| Status | n | Share of list | Recognition rate |
-|---|---:|---:|---:|
-| Proposed | 67 | 38.7% | 8.0% |
-| Planned | 21 | 12.1% | 29.6% |
-| Under construction | 10 | 5.8% | 40.3% |
-| Operational | 56 | 32.4% | 45.7% |
-| Retired | 2 | 1.2% | 63.6% |
-| Cancelled | 17 | 9.8% | 17.0% |
-| **All** | **173** | **100.0%** | **26.2%** |
-
-*Table: composition of the reference list by status, and mean recognition rate (Experiment 1, direct method: 14 models × 5 repetitions). The rate is the share of run × plant cells recognized among plants of that status.*
+The status-composition difficulty table (same data derivation: library `aedist.exp1_recognition`) appears in §1.
 
 ---
 
