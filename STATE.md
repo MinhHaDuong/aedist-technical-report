@@ -1,4 +1,4 @@
-Last updated: 2026-06-06T12:19Z
+Last updated: 2026-06-08T09:15Z
 
 ## North star
 
@@ -25,11 +25,11 @@ Reference v2 (170 plants) adopted end-to-end: snapshot policy → aggregator (#7
 
 ## Next actions
 
-1. **0445** — extension-as-unit net measurement; now BLOCKS 0435 + 0444. mở-rộng FPs re-raised at 0446 review.
+1. **0445** — extension-as-unit net measurement; now BLOCKS 0435. mở-rộng FPs re-raised at 0446 review.
 2. **0435 finalization** — acknowledgements (blessed wording), author read (incl. new coherence-screen paragraph), arXiv build.
 3. 0446-review follow-ons: 0453 (two-level coherence scoring), 0455 (preprint figures EN sweep), 0448 (caption dup), 0449 (Exp2 matrices), 0457 (cohort-filter test); imagines awaiting discussion: 0450/0451/0454. 0255–0262 deferred (Blocked-by 0435), owed to journal.
-4. Backlog: 0444 (census re-score), 0447 (hardcoded-size ratchet), 0441–0443, 0377.
+4. Backlog: 0459 (re-derive+wire report.tex Exp3 decomposition table — deferred from 0444), 0447 (hardcoded-size ratchet), 0441–0443, 0377. 0444 (census re-score to v2.1) DONE — PR #781.
 
 ## Open issues
 
-- Census artifacts rebuild only in the primary checkout (archived outputs invisible from worktrees) — documented limitation, deferral 0444. (`census_bars.csv` untracked there awaits it.)
+- (resolved by 0444/PR #781) Census now re-scores from `experiments/archive/outputs/` via the wired score.mk archive path; mart on v2.1 (173 plants), 669 rows.
