@@ -322,21 +322,29 @@ def consolidate_batch(batch_dir: Path) -> None:
     This is the multi-rep variant of :func:`consolidate`.  Given a top-level
     batch directory such as ``sota_exp3_arm2_batch1/``, it discovers every
     ``run01/``, ``run02/``, … sub-directory and calls :func:`consolidate`
-    with the appropriate *run_number* for each.
+    on each.
+
+    The inner agent directories are always named ``{agent}_run01/`` regardless
+    of which outer ``run{N}/`` contains them — the outer run number is used only
+    for logging.  :func:`consolidate` is therefore always called with
+    ``run_number=1``.
 
     Directories that do not match the ``run{N}`` pattern are silently skipped.
     """
     run_dirs = sorted(
-        (d, int(m.group(1)))
-        for d in batch_dir.iterdir()
-        if d.is_dir() and (m := _RUN_DIR_RE.match(d.name))
+        (
+            (d, int(m.group(1)))
+            for d in batch_dir.iterdir()
+            if d.is_dir() and (m := _RUN_DIR_RE.match(d.name))
+        ),
+        key=lambda t: t[1],
     )
     if not run_dirs:
         log.warning("No run{N}/ subdirectories found in %s", batch_dir)
         return
     for run_dir, run_number in run_dirs:
-        log.info("Consolidating run%02d from %s ...", run_number, run_dir)
-        consolidate(run_dir, run_number=run_number)
+        log.info("Consolidating outer run%02d from %s ...", run_number, run_dir)
+        consolidate(run_dir, run_number=1)
 
 
 def main(argv: list[str] | None = None) -> int:

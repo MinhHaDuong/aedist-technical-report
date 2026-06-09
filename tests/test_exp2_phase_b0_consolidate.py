@@ -1,7 +1,6 @@
 """Tests for experiments.sota.exp2_phase_b0_consolidate."""
 
 import json
-import re
 from pathlib import Path
 
 from experiments.sota.exp2_phase_b0_consolidate import _count_table_rows, consolidate_batch
@@ -64,48 +63,48 @@ def _make_agent_run_dir(base: Path, agent: str, run: int) -> Path:
 
 
 def test_consolidate_batch_walks_run_subdirs(tmp_path):
-    """consolidate_batch discovers run{N}/ subdirs and processes each run.
+    """consolidate_batch discovers run{N}/ subdirs and processes each one.
 
-    Verifies the run{N}/ layout walk: given a batch directory with run01/ and
-    run02/ containing per-agent subdirectories, consolidate_batch must produce
-    {agent}_run{N}.md files and a summary.json aggregating both runs.
+    Real Exp3 layout: inner agent dirs are always {agent}_run01/ regardless
+    of which outer run{N}/ contains them.  consolidate_batch always calls
+    consolidate() with run_number=1 so output files are {agent}_run01.{ext}.
+    The outer directory distinguishes reps; the inner filename is always _run01.
     """
     batch_dir = tmp_path / "sota_exp3_arm2_batch1"
     agents = ["openai", "mistral"]
 
-    for run_number in (1, 2):
-        run_dir = batch_dir / f"run{run_number:02d}"
+    for outer_run in (1, 2):
+        run_dir = batch_dir / f"run{outer_run:02d}"
         run_dir.mkdir(parents=True)
         for agent in agents:
-            _make_agent_run_dir(run_dir, agent, run_number)
+            _make_agent_run_dir(run_dir, agent, 1)  # inner dirs always _run01
 
     consolidate_batch(batch_dir)
 
-    # Each run dir should have per-agent .md and .json artifacts
-    for run_number in (1, 2):
-        run_dir = batch_dir / f"run{run_number:02d}"
-        run_tag = f"run{run_number:02d}"
+    # Each outer run dir should have per-agent artifacts named _run01
+    for outer_run in (1, 2):
+        run_dir = batch_dir / f"run{outer_run:02d}"
         for agent in agents:
-            md_path = run_dir / f"{agent}_{run_tag}.md"
-            json_path = run_dir / f"{agent}_{run_tag}.json"
+            md_path = run_dir / f"{agent}_run01.md"
+            json_path = run_dir / f"{agent}_run01.json"
             assert md_path.exists(), f"Missing {md_path}"
             assert json_path.exists(), f"Missing {json_path}"
             rec = json.loads(json_path.read_text(encoding="utf-8"))
-            assert rec["run"] == run_number
+            assert rec["run"] == 1  # inner dirs always _run01; outer rep is dir context
             assert rec["agent"] == agent
 
-    # summary.json must aggregate all runs
-    for run_number in (1, 2):
-        run_dir = batch_dir / f"run{run_number:02d}"
+    # summary.json must exist in each run dir
+    for outer_run in (1, 2):
+        run_dir = batch_dir / f"run{outer_run:02d}"
         summary = json.loads((run_dir / "summary.json").read_text(encoding="utf-8"))
         run_agents = {r["agent"] for r in summary}
         assert set(agents).issubset(run_agents), (
-            f"run{run_number:02d}/summary.json missing agents: "
+            f"run{outer_run:02d}/summary.json missing agents: "
             f"{set(agents) - run_agents}"
         )
 
-    # Non-run directories must be ignored (no crash)
-    assert not re.match(r"run\d+", "probes")  # sanity-check the RE
-    probes_dir = batch_dir / "probes"
-    if probes_dir.exists():
-        assert (batch_dir / "run01" / "summary.json").exists()
+    # Non-run subdirectories must be silently ignored
+    (batch_dir / "probes").mkdir()
+    (batch_dir / "notes").mkdir()
+    consolidate_batch(batch_dir)  # idempotent, no crash
+    assert not (batch_dir / "probes" / "summary.json").exists()
