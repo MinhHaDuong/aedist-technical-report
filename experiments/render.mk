@@ -237,7 +237,8 @@ $(ANALYSIS_EXP1_SPIDER_CLAUDE_FR): $(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
 # Rows = spider panel model set (families claude/gpt/mistral/qwen; deepseek excluded).
 # A cell is red iff ≥ majority of runs scored zero; any red cell disqualifies the row.
 $(ANALYSIS_EXP1_QUALITY_HEATMAP): $(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
-		$(ANALYSIS_REPO_ROOT)/src/aedist/plot_quality_floor_heatmap_exp1.py
+		$(ANALYSIS_REPO_ROOT)/src/aedist/plot_quality_floor_heatmap_exp1.py \
+		$(ANALYSIS_REPO_ROOT)/src/aedist/plot_quality_spider_exp1.py
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_quality_floor_heatmap_exp1 \
 	    --input $(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
