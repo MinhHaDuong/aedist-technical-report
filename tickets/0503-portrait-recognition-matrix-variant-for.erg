@@ -1,0 +1,56 @@
+%erg 0.1
+Title: Portrait recognition matrix variant for the FR report.tex annex
+Created: 2026-06-09
+Author: HDMX-coding-agent
+Label: deferred
+
+--- log ---
+2026-06-09T15:28Z HDMX-coding-agent created
+
+2026-06-09T15:29Z Claude label deferred
+--- body ---
+## Context
+
+Branch `claude/busy-cori-82nu5p` portraited Figure 7 in the EN preprint
+(`slides/manuscript/main.md`, Annex E): the landscape
+`fig_exp1_recognition_matrix.pdf` was swapped for the transposed 3-page
+portrait (`fig_exp1_recognition_matrix_portrait.pdf`, from ticket 0451's
+`plot_exp1_matrix_portrait.py`), included via `\includepdf` (pdfpages),
+with the Annex E prose + body axis-references flipped to "rows".
+
+The French `report.tex` annex (`\label{annex:recognition-matrix}`, around
+report.tex:739) still ships the **landscape** `_fr` variant
+(`fig_exp1_recognition_matrix_fr.pdf`) in a `sidewaysfigure`. The portrait
+treatment was not propagated there.
+
+## Decision deferred (author, 2026-06-09)
+
+- The report→article class conversion is **declined** — keep `report.tex`
+  as `report` class. Do not ticket it.
+- Whether the FR report should also adopt the portrait orientation (or keep
+  the landscape `_fr`) is an open author call, deferred here.
+
+## Scope (if pursued)
+
+- Add `--lang` to `plot_exp1_matrix_portrait.py` mirroring
+  `plot_exp1_matrix.py` (`_STATUS_LABELS_BY_LANG`): localise the status
+  band/margin labels to FR; panel titles stay EN per the existing `_fr`
+  landscape precedent (only band labels are localised there).
+- Add a `_fr` portrait render rule in `experiments/render.mk` + the `all`
+  grouping target (mirror the existing `..._fr.pdf` landscape rule).
+- Wire `\includepdf[pages=-]{inputs/generated/fig_exp1_recognition_matrix_portrait_fr.pdf}`
+  into the report.tex annex; add `\usepackage{pdfpages}` to the preamble;
+  decide landscape-vs-portrait (keep one, or show both).
+
+## Exit criteria
+
+- [ ] Author decides: portrait, landscape, or both in the FR report annex
+- [ ] If portrait: FR-localised `_fr` portrait builds via the render DAG
+- [ ] report.tex annex includes the chosen variant; `make report` builds
+- [ ] `make check` passes
+
+## Related
+
+- 0451 (closed) — portrait renderer + EN PDF, the source artifact
+- 0455 (closed) — preprint figure language sweep (EN/FR convention)
+- 0446 (closed) — landscape matrix rework (shared derivation/conventions)
