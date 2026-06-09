@@ -1,102 +1,100 @@
 %erg 0.1
-Title: Comparison table: reference database vs GEM, OSM, Wikipedia — by asset status
+Title: Source concordance: reference vs GEM (+ Wikipedia bar) — annex table + figure bars
 Created: 2026-06-09
 Author: HDMX-coding-agent
 
 --- log ---
 2026-06-09T00:00Z HDMX-coding-agent created
-2026-06-09T08:30Z HDMX-coding-agent note DEFERRED by raid Imagine/Plan verification — three exit-criteria decisions are author-only (see ## Decisions needed). User framed this as "a conference remark" (non-blocking for the reviewable PDF). GEM data is already in-repo and ready (data/reference/gem_units.csv, gem_thermal.csv, GEM_aggregate.py), so once the source set is ratified this is a quick execute.
+2026-06-09T08:30Z HDMX-coding-agent note DEFERRED by raid Imagine/Plan verification — three exit-criteria decisions were author-only.
+2026-06-09T11:30Z HDMX-coding-agent note SCOPE LOCKED after the 0486 design dialogue + grounding computation. The three deferred decisions are resolved (see below). Numbers below are measured (light-reviewed); the executor consumes them, does not re-derive the design. Prototype scripts live in /tmp throwaway (explore_review.py, explore_superset.py) — productionise.
 
 --- body ---
 
-## Decisions needed (raid verification, 2026-06-09)
+## Scope (locked 2026-06-09)
 
-The Imagine/Plan agents flagged three points where the exit criteria as written
-cannot be safely executed autonomously. Each needs an author call:
+An **annex concordance table** + **two reviewed coverage bars on the experiment
+figures** + **quoted numbers in §4/§5**. Resolves the three deferred questions:
+source set = **GEM + Wikipedia** (OSM deferred); placement = **annex** (not the
+citation-budgeted Related Work); denominator = `reference_plant_count()`
+(**177** after ticket 0497 removes the 3 potential sites; recompute then).
 
-1. **Source set: drop OSM and Wikipedia?** Exit criteria #2/#4 name GEM, OSM, and
-   Wikipedia. But:
-   - **Wikipedia is a banned source** — Protocol §3.4 (manuscript line 395) bans
-     Wikipedia/Wikidata/DBpedia as admissible sources, and §5 includes a
-     Wikipedia-contamination audit. A Wikipedia coverage column in a paper that
-     bans and audits Wikipedia is rhetorically incoherent.
-   - **OSM via Overpass is not reproducible** — a live API query violates exit
-     criterion #1 ("from tracked raw inputs").
-   - **GEM is in-repo and reproducible** (`data/reference/gem_units.csv`,
-     `gem_thermal.csv`, `GEM_aggregate.py`).
-   - *Recommendation:* ship **GEM-only**; drop OSM (non-reproducible) and
-     Wikipedia (banned). Re-title the ticket accordingly.
+The author confirmed he seeded the Wikipedia coal list from the MOIT/PDP8
+reference, and that the protocol bans Wikipedia as **justification** but allows
+any source for **lead generation** — so Wikipedia coverage is a legitimate
+*parametric recall bar*, not a banned-source incoherence. (Wikipedia-bar early
+framing is its own ticket, 0494.)
 
-2. **Placement: Related Work vs Annex B.** Related Work has a strict citation
-   budget and per-paragraph structure (writing rules) that does not accommodate a
-   coverage table. The natural home is **Annex B line 203**, which already says
-   "the planned three-way reconciliation with Global Energy Monitor (see §2) … is
-   deferred." *Recommendation:* place the table in Annex B, satisfying that
-   deferred promise.
+## Measured numbers (light-reviewed; matcher + ASCII-fold variant recovery)
 
-3. **Reference count: 173 vs 180.** The count is contested across the manuscript.
-   *Recommendation:* pin to the **173-plant v2.1 frozen reference**
-   (`vietnam_thermal_plants_v2_classified.csv`), consistent with all current
-   prose and Exp 1/2 scoring. Revisit only if ticket 0458 lands a new count.
+Against the current 180-plant reference (rises to 177 post-0497; the 3 removed
+are all "announced", so they sit in the pipeline tail, not the bars' built core):
 
-Until these are ratified, the ticket stays open and unexecuted.
+- **GEM**: 153 rows → **119 distinct plants**. Reference coverage **120/180 raw →
+  159/180 (88%) reviewed**. Reference-only (in ref, not GEM) = **21** (4 operating
+  incl. 1 extension-grain artifact; the rest LNG pipeline). GEM-only (in GEM, not
+  ref) = **11** after review (0 operating; ~8 cancelled tail + 2 announced gas
+  megaprojects Millenium 9600 MW, Ka Ga 3600 MW — verify vs PDP8 under the
+  project-vs-potential-site boundary).
+- **Wikipedia** (coal+gas): reference coverage **90/180 raw → 131/180 (73%)
+  reviewed**.
+- **NOT a strict superset either way** — mutual ~88% concordance with
+  complementary tails (reference adds the PDP8 LNG pipeline; GEM retains a
+  cancelled/speculative tail). The table must show **both directions**.
 
-## Context
+**Honesty caveats (carry into prose):** raw matcher undercounts ~20 pts (Vietnamese
+diacritics: "Cà Mau I" ≠ "Ca Mau 1"); the ASCII-fold recovery slightly over-counts
+via grain mismatch (one source row ↔ several reference phases), so 88%/73% are
+upper-ish — label as light-reviewed, full per-plant HITL is post-arXiv (ticket 0498).
 
-The Related Work section and §2 quality bar mention Global Energy Monitor (GEM),
-OpenStreetMap (OSM), and Wikipedia as alternative sources for Vietnam's thermal
-fleet. The paper claims they do not fully substitute for a curated reference
-database. A direct comparison table — coverage by asset status — would make that
-claim empirical rather than asserted.
+## Deliverables
 
-Key expected asymmetry: our reference includes "Proposed" and "Planned" plants
-(67 + 21 rows) sourced from PDP8 annexes; GEM and Wikipedia typically cover
-only operational and under-construction assets; OSM covers only geolocated
-physical infrastructure.
-
-## Actions
-
-1. Download/query each source for Vietnam thermal plants (>30 MWe coal/gas):
-   - **GEM**: Global Energy Monitor's Global Coal Plant Tracker + Global Gas
-     Plant Tracker (CSV exports). Filter to Vietnam, merge by plant.
-   - **OSM**: Overpass API query for `power=plant` + fuel tags in Vietnam bounding
-     box. Save raw response under `data/reference/raw/osm_vietnam_power.json`.
-   - **Wikipedia**: The Vietnam thermal power plants article(s); mechanically
-     parse the infobox tables or section tables.
-2. Match each source against the 173-plant locked reference
-   (`data/reference/vietnam_thermal_plants_v2_classified.csv`) using the LP
-   matcher (`src/aedist/matching/lp.py`, `similarity_threshold=90`).
-3. Build a comparison table: rows = asset status (Operational, Under construction,
-   Planned, Proposed, Cancelled, Retired, All); columns = reference count, GEM
-   coverage %, OSM coverage %, Wikipedia coverage %.
-4. Save as `data/reference/tab_source_coverage_by_status.csv`; include a script
-   `src/aedist/build_source_coverage_table.py` with `--reference`, `--gem-coal`,
-   `--gem-gas`, `--osm-json`, `--wiki-csv` inputs.
-5. Wire in Makefile (one output per rule); include as a table in the Related Work
-   section of `slides/manuscript/main.md`.
+1. **Annex concordance table** (`data/reference/tab_source_concordance.csv` +
+   script, Makefile-wired): rows = asset status; for GEM and Wikipedia, columns
+   for matched / reference-only / source-only counts. The bidirectional view is
+   the point — neither source is a superset.
+2. **Figure bars** (aggregate coverage as a horizontal reference line, **light
+   grey, drawn on the background** behind the model-name column, same line style
+   on both):
+   - **Wikipedia bar on Exp 1** results (parametric recall ceiling).
+   - **GEM bar on Exp 2** results (best independent external DB). Gap GEM−Wiki ≈
+     28 reviewed → distinct heights, so showing both is justified.
+   - Built-fleet stratification is NOT drawn (the concordance/recognition matrix
+     already carries per-plant detail — author ruling).
+3. **Quoted numbers** in §4/§5 prose, from the generated artifact (never from this
+   ticket), with the light-reviewed caveat.
 
 ## Relevant files
 
-- `data/reference/vietnam_thermal_plants_v2_classified.csv` — the locked 173-plant reference
-- `src/aedist/matching/lp.py` — LP matcher for alignment
-- `slides/manuscript/main.md` — Related Work section (target for the table)
+- `data/reference/vietnam_thermal_plants_v2_classified.csv` — reference (177 post-0497)
+- `data/reference/gem_thermal.csv` — GEM (153 rows / 119 plants)
+- `data/reference/raw/wikipedia_coal_vietnam.wikitext`, `wikipedia_power_vietnam.wikitext` — cached Wikipedia (raw, reproducible); gas plants are in the general page "==Gas turbines==" section
+- `src/aedist/reconcile.py`, `src/aedist/evaluate.py` — matcher + reference loader
+- prototypes: `/tmp/wt-0486/explore_review.py`, `explore_superset.py`, `explore_bars.py`
+- `src/aedist/plot_*exp1*`, `plot_*exp2*` — figure scripts (add the bar lines)
+- `slides/manuscript/main.md` — annex (table) + §4/§5 (quoted numbers, bars referenced)
 
 ## Test
 
 ```python
-def test_table_has_all_status_rows():
-    df = pd.read_csv("data/reference/tab_source_coverage_by_status.csv")
-    assert set(df["status"]) >= {"Operational", "Under construction", "Proposed", "Planned", "All"}
-
-def test_reference_count_matches_reference_file():
-    df = pd.read_csv("data/reference/tab_source_coverage_by_status.csv")
-    assert df.loc[df["status"] == "All", "n_reference"].iloc[0] == 173
+def test_concordance_table_bidirectional():
+    df = pd.read_csv("data/reference/tab_source_concordance.csv")
+    assert {"matched", "reference_only", "gem_only"} <= set(df.columns)
+    # GEM-only is non-zero → not a superset; the table must surface it
+    assert df["gem_only"].sum() >= 1
 ```
 
 ## Exit criteria
 
-- [ ] `tab_source_coverage_by_status.csv` generated reproducibly from tracked raw inputs
-- [ ] Coverage rates computed per status for GEM, OSM, Wikipedia
-- [ ] Table included in Related Work section of `slides/manuscript/main.md`
-- [ ] Raw source snapshots committed under `data/reference/raw/` with provenance notes
+- [ ] Annex concordance table generated reproducibly (matched / ref-only / source-only by status), Makefile-wired
+- [ ] Wikipedia bar on Exp1 figures, GEM bar on Exp2 figures (light-grey background, same style)
+- [ ] §4/§5 prose quotes the reviewed numbers from the artifact, with the light-review caveat
+- [ ] Raw Wikipedia snapshots committed under `data/reference/raw/` with provenance
+- [ ] Denominator via `reference_plant_count()` (177); no hardcoded count
 - [ ] `make check` passes
+
+## Out of scope (spun out)
+
+- Full per-plant HITL concordance + resolving the 11 GEM-only / 21 reference-only / grain mismatches → **post-arXiv, ticket 0498**.
+- OSM cross-check (Overpass servers were overloaded; query cached-ready) → optional/deferred.
+
+Related: 0494 (Wikipedia recall-bar framing), 0497 (177 reference), 0498 (post-arXiv full reconciliation), 0464/0465 (trackers)
