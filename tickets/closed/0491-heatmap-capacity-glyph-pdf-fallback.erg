@@ -2,10 +2,12 @@
 Title: Heatmap PDF: "Capacity≥0" column label renders as "Capacityz0" (≥ glyph fallback)
 Created: 2026-06-09
 Author: HDMX-coding-agent
+Closed: Fixed: mathtext \geq replaces U+2265 glyph that PDF backend font lacked
 
 --- log ---
 2026-06-09T09:30Z HDMX-coding-agent created — surfaced during 0487 (heatmap veto fix). Pre-existing, cosmetic, label string unchanged by 0487.
 
+2026-06-09T12:06Z HDMX-coding-agent closed — Fixed: mathtext \geq replaces U+2265 glyph that PDF backend font lacked
 --- body ---
 ## Context
 
