@@ -6,22 +6,23 @@ Blocked-by: 0475
 
 --- log ---
 2026-06-09T08:12Z HDMX-coding-agent created
-2026-06-09T08:12Z HDMX-coding-agent note Derisk pass on 0297: the migration is a shape change (flat dict per run -> 3 nested mart records joined by parent_record_id), not a rename. This ticket builds the one shim that turns the irreversible 17/27-script rewrite (0477) into a one-line loader swap, and is the real cutover gate the exp2-only parity check (check_exp2_mart_parity.py) only pretends to be.
+2026-06-09T08:12Z HDMX-coding-agent note Derisk pass on 0297: the migration is a shape change (flat dict per run -> 3 nested mart records joined by parent_record_id), not a rename. This ticket builds the one shim that turns the irreversible consumer rewrite (0477) into a one-line loader swap, and is the real cutover gate the exp2-only parity check (check_exp2_mart_parity.py) only pretends to be.
 
 --- body ---
 ## Context
 
 `records_to_metrics()` (`measurements.py:75-248`) emits **one flat dict per run** — the
 metrics dict that ADR-7 calls "the complete scientific record." Every reporting consumer
-(27 scripts via `load_metrics()`) reads from this flat shape. The mart stores the same
+in the `load_metrics()` reader set (the 0297 inventory lists ~17; a 2026-06-09 grep found
+~13–14 that actually call `load_metrics()`/`load()`) reads from this flat shape. The mart stores the same
 information as **three nested records** (`run` / `probe` / `score`) joined by
 `parent_record_id`, with metrics split across typed sub-models.
 
 If 0477 ports consumers by making each script walk nested mart records and join
-run⋈score itself, that is 27 new join sites and 27 new failure modes — for an
-**irreversible** cutover. This ticket eliminates that risk with a single shim.
+run⋈score itself, that is one new join site per ported script and as many new failure
+modes — for an **irreversible** cutover. This ticket eliminates that risk with a single shim.
 
-The actual read surface is small (verified by consumer audit, 2026-06-09): the 27 scripts
+The actual read surface is small (verified by consumer audit, 2026-06-09): those scripts
 collectively read only ~11 metrics-dict keys — `label`, `f1`, `coverage`, `precision`,
 `n_matched`, `n_missed`, `n_hallucinated`, `cost_usd`, `method`, `prompt_version`, `model`.
 So the shim only has to reproduce those exactly; the rest of the metrics dict is projected
@@ -36,7 +37,8 @@ so 0477 becomes a loader-import swap (`from aedist.measurements import load_metr
 
 This is the keystone: with the shim + its golden test, the cutover is reversible
 (revert one import) and gated (row-for-row field equality), where today the exp2-only
-parity check covers ~20% of the rows being deleted and says nothing about exp1/exp3.
+parity check covers only the exp2 mart (80 score rows; ~12% of measurements.jsonl's 669)
+and says nothing about the exp1 benchmark that measurements.jsonl actually holds.
 
 ## The join is the hazard
 
@@ -74,7 +76,7 @@ def test_mart_to_metrics_field_equals_records_to_metrics_on_shared_raw():
     """Same raw inputs -> records_to_metrics() == mart_to_metrics(), field by field,
     on the ~11 keys consumers actually read. The cutover gate for 0477."""
     # Build both from the SAME raw artifacts (exp2 to start; exp1 lands with 0476,
-    # exp3/legacy with 0490). For each run, assert the read-surface keys are equal:
+    # record-only legacy rows with 0490). For each run, assert the read-surface keys are equal:
     #   label, f1, coverage, precision, n_matched, n_missed, n_hallucinated,
     #   cost_usd, method, prompt_version, model
     # Numeric tol < 1e-4; identity fields exact.
@@ -106,5 +108,5 @@ def test_mart_to_metrics_row_count_equals_run_count():
 
 - `mart_to_metrics()` lands with a passing golden equivalence test against
   `records_to_metrics()` on shared raw inputs.
-- 0476 (exp1) and 0490 (exp3/legacy) instantiate this golden test for their subsets.
+- 0476 (exp1) and 0490 (record-only legacy rows) instantiate this golden test for their subsets.
 - 0477 can cut over by swapping the loader import, with the golden test as the gate.

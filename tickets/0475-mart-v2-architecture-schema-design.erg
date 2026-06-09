@@ -48,8 +48,10 @@ Two architectural questions are resolved:
 ## Field audit
 
 0297's "fields to absorb" list (method, tp/fp/fn, web_search_calls, agent_mode, validation)
-is **incomplete** against what `records_to_metrics()` (`measurements.py:130-247`) actually
-projects. The mart must not silently drop the experimental axes.
+is **incomplete** against what `records_to_metrics()` (`measurements.py:75-248`) actually
+projects. The mart must not silently drop the experimental axes. The audit is over the FULL
+projected key set — the lists below are illustrative, not exhaustive; the executor diffs the
+real key set against the mart field tree.
 
 Has no mart home today and must be triaged here:
 
@@ -61,9 +63,11 @@ Has no mart home today and must be triaged here:
 - `validation` dict (run-quality flag from `validate_run()`) — listed by 0297, no mart field.
 - Justification scalars (source-grounding): `verification_mode`, `mean_evidence_score`,
   `verification_cost_usd`, `faithfulness_score`.
-- Partial run-level: `thinking_tokens`, `tool_calls_cost_usd`, `cost_breakdown`,
-  `reasoning_summary`, `retry_count`, `error`, `finish_reason` (RunSummary has cost/tokens
-  but not these).
+- Partial run-level / diagnostic: `tokens_in`, `tokens_out`, `thinking_tokens`,
+  `tool_calls_cost_usd`, `cost_breakdown`, `reasoning_summary`, `retry_count`, `error`,
+  `finish_reason` (RunSummary has cost but not all of these).
+- Agent-mode + trace: `agent_family`, `agent_mode`, `synopsis_sha`, `designed_prompt_sha`,
+  `n_web_search_calls`, `n_citations`, `parsed_table_path` (mart `Exp2MartBase` has none).
 
 Disposition for each: **absorb now** (wire into the schema this PR), **defer** (own ticket,
 named here), or **drop** (bookkeeping only — `run_id`, `timestamp`, `result_file`,
