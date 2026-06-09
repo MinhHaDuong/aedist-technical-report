@@ -1,10 +1,26 @@
 # Reference dataset provenance — Vietnam thermal fleet
 
+## Adopted release (v2.4, ticket 0497, 2026-06-09)
+
+**The frozen reference is `vietnam_thermal_plants_v2_classified.csv` at 177 plants**: v2.3 (180) minus the three E542 PL9.2 *potential sites* — Kim Sơn (Ninh Bình, 3000 MW), Rạng Đông (Nam Định, 2400 MW), Phú Thọ (Phú Thọ, 600 MW). These three are candidate *locations* a draft siting study (Study E542 Table PL9.2, *"tổng hợp các vị trí tiềm năng"* / summary of *potential* coal-power locations, PDP8 draft 3) flags as suitable for future capacity, **not** specific proposed projects — they violate the scope boundary ("a project is not a potential site", below) and are removed. **Yên Hưng is retained** (PDP7 Annex 1 + Annex 2 attest a specific planned 1200 MW / 2×600 coal project, a genuine gap absent from both v2.1/173 and v2.2/176). Removal was done by XML surgery on the ODS snapshot (`remove_plants_0497.py`, the inverse of `add_plants_0395.py` — it produces a new dated snapshot and keeps the 0395→0497 edit chain replayable), re-extracted through the standard pipeline.
+
+**Aliases (traceability without counting).** The three removed PL9.2 candidate names are retained here as aliases/notes so the cross-reference stays findable without a counted reference row (per "Traceability without counting" in the scope boundary below):
+
+| Removed potential site | Capacity | Source | Note / alias |
+|---|---|---|---|
+| Kim Sơn (Ninh Bình) | 3000 MW | Study E542 PL9.2 (PDP8 draft 3, potential coal sites) | Candidate location, northern region; no specific plant proposed. Cross-references the PDP7 northern *"NĐ Miền Bắc"* slots. |
+| Rạng Đông (Nam Định) | 2400 MW | Study E542 PL9.2 ("Không xác định") | Candidate location; distinct from the existing "Rang Dong cogeneration" (100 MW captive cogen) reference entry, which stays. |
+| Phú Thọ (Phú Thọ) | 600 MW | Study E542 PL9.2 (potential coal sites) | Candidate location; was not even FP-flagged in the Exp2 audit. |
+
+The reverse-sync (ticket 0458) must also exclude these three from the master replay and record them as aliases there.
+
+**Snapshot provenance.** The pinned snapshot is now `raw/pipeline+0497-2026-06-09.ods` (config.`VN_THERMAL_MASTER_SNAPSHOT_ODS`). It carries the same un-replayed local edits as v2.3 (see § v2.3 below), net of the 0497 removal, and yields 177 plants. Do NOT re-pin to a fresh master import until all these edits are replayed there (ticket 0458), or the adoption silently reverts 177 → 170.
+
 ## Adopted release (v2.3, ticket 0395, 2026-06-09)
 
 **The frozen reference is `vietnam_thermal_plants_v2_classified.csv` at 180 plants**: v2.2 (176) plus four potential coal sites from PDP planning documents — Kim Sơn (Ninh Bình, 3000 MW), Rạng Đông (Nam Định, 2400 MW, distinct from the existing Rang Dong cogeneration entry), Yên Hưng (Quảng Ninh, 1200 MW, PDP7 planned), and Phú Thọ (Phú Thọ, 600 MW). All four are status "1 announced". Primary sources: Study E542 Table PL9.2 (PDP8 draft 3, Institute of Energy, 2020-11) for Kim Sơn, Rạng Đông, and Phú Thọ; PDP7 Annex 1 + Annex 2 for Yên Hưng. Added via XML surgery on the ODS snapshot (`add_plants_0395.py`), re-extracted through the standard pipeline. The Exp2 FP audit `reference_hole` bucket drops from 95 occurrences (v1 baseline) to 8 occurrences (91.6% reduction).
 
-**Boundary correction (ticket 0497, 2026-06-09).** Three of these four — Kim Sơn, Rạng Đông, Phú Thọ — are **potential sites** from a draft planning study (Study E542 Table PL9.2, *"tổng hợp các vị trí tiềm năng"* / summary of *potential* coal-power locations, PDP8 draft 3), not projects, and violate the scope boundary below. They are scheduled for removal (180 → 177) and re-aliasing onto the corresponding PDP7 northern entries. Yên Hưng is **retained**: PDP7 Annex 1 + Annex 2 attest it as a planned 1200 MW (2×600) coal project genuinely missing from the gold list (absent in both v2.1/173 and v2.2/176) — a project, not a potential site.
+**Boundary correction (ticket 0497, 2026-06-09) — APPLIED.** Three of these four — Kim Sơn, Rạng Đông, Phú Thọ — are **potential sites** from a draft planning study (Study E542 Table PL9.2, *"tổng hợp các vị trí tiềm năng"* / summary of *potential* coal-power locations, PDP8 draft 3), not projects, and violate the scope boundary below. They were **removed** (180 → 177) and retained as aliases — see the v2.4 adoption record above. Yên Hưng is **retained**: PDP7 Annex 1 + Annex 2 attest it as a planned 1200 MW (2×600) coal project genuinely missing from the gold list (absent in both v2.1/173 and v2.2/176) — a project, not a potential site.
 
 Not added (needs-human, no primary source in RAG corpus): Hòa Phát Dung Quất captive power (operating BFG/coal ~240 MW); the RAG corpus only documents "NĐ khí dư Hòa Phát II" (300 MW, announced, PDP8 Table 4) which is already in the reference.
 

@@ -29,6 +29,18 @@ def _text() -> str:
     return MAIN_MD.read_text(encoding="utf-8")
 
 
+MACROS_FILE = REPO_ROOT / "report" / "inputs" / "generated" / "macros_exp1_run_stats.tex"
+
+
+def _parse_macro(tex: str, name: str) -> str:
+    """Return the value inside \\newcommand{\\<name>}{<value>} (string-based, no regex)."""
+    marker = "\\newcommand{\\" + name + "}{"
+    start = tex.find(marker)
+    assert start != -1, f"macro {name} not found in {MACROS_FILE.name}"
+    start += len(marker)
+    return tex[start : tex.index("}", start)]
+
+
 def test_no_synopsis_framing():
     md = _text()
     assert "Synopsis" not in md, "title still says 'Synopsis' — retitle to a real paper title"
@@ -70,20 +82,26 @@ def test_abstract_present_and_leads_with_frontier():
 
 
 def test_abstract_numbers_in_body():
-    """Key numeric claims in the abstract (F1 range, ρ) are consistent with the body.
+    """Key numeric claims (F1 min/mean/max, ρ) appear in the manuscript body.
 
-    We check that the batch-2 canonical numbers (0.00, 0.67, 0.37, ρ = 0.92) appear
-    somewhere in the manuscript body.  The deeper artifact-level guard lives in
+    The F1 stats are read from ``macros_exp1_run_stats.tex`` (regenerated from
+    ``exp1_cross_eval.csv``) rather than hardcoded, so a re-score that shifts the
+    numbers cannot leave this guard silently stale — it tracks the artifact, like
     ``test_abstract_numbers.py::test_abstract_numbers_derived_from_artifact``.
 
     Ticket 0474 corrected the cohort from batch-1 (16 models / 80 runs) to the
-    canonical batch-2 (14 models / 70 runs; exp1_cross_eval.csv).
+    canonical batch-2 (14 models / 70 runs; exp1_cross_eval.csv). Ticket 0497
+    de-hardcoded the F1 literals after the 180→177 reference re-score.
     """
     md = _text()
-    # These numbers appear in the Exp1 §4 results paragraph and §8 Conclusion.
-    assert "0.00" in md, "F1 lower bound 0.00 missing from manuscript"
-    assert "0.67" in md, "F1 upper bound 0.67 missing from manuscript"
-    assert "0.37" in md, "mean F1 0.37 missing from manuscript"
+    if not MACROS_FILE.exists():
+        pytest.skip(f"{MACROS_FILE.name} not yet generated")
+    macros = MACROS_FILE.read_text(encoding="utf-8")
+    # These F1 stats appear in the Exp1 §4 results paragraph and the abstract.
+    for macro in ("ExpOneFOneMin", "ExpOneFOneMean", "ExpOneFOneMax"):
+        val = _parse_macro(macros, macro)
+        assert val in md, f"F1 stat {val} ({macro}) missing from manuscript body — update main.md"
+    # ρ = 0.92 has no generated macro (coherence–F1 Spearman computed in §4); literal guard.
     assert "0.92" in md, "coherence–F1 correlation ρ = 0.92 missing from manuscript"
 
 
