@@ -6,136 +6,110 @@ from aedist.plot_quality_floor_heatmap_exp1 import (
     _NON_SUBSCORE_COLS,
     _VETO_COL,
     COLUMN_LABELS,
-    _cell_is_red_for_column,
+    _col_criterion,
+    _collect_runs,
     _scored_columns,
-    cell_is_red,
+    _subscore_value,
+    discriminating_columns,
     heatmap_models,
     make_figure,
+    mean_score,
 )
-from aedist.plot_quality_spider_exp1 import (
-    _PANELS,
-    _aggregate,
-    _load_rows,
-    _model_size_rank,
-)
+from aedist.plot_quality_spider_exp1 import _load_rows, _model_size_rank
 from aedist.util import model_family
 
-
-def _spider_panel_models_ref(rows):
-    """Reference implementation that mirrors plot_quality_spider_exp1.make_figure."""
-    stats = _aggregate(rows)
-    result = []
-    for _panel_key, _panel_title, families in _PANELS:
-        panel_models = [m for m in stats if model_family(m) in families]
-        panel_models.sort(key=lambda m: (_model_size_rank(m), m))
-        result.extend(panel_models)
-    return result
+_CSV_PATH = Path("experiments/derived/exp1_cross_eval.csv")
 
 
 def test_capacity_label_uses_mathtext_geq():
-    """The Capacity>=0 column label must use matplotlib mathtext (\\geq), not the
+    """The Capacity>=0 row label must use matplotlib mathtext (\\geq), not the
     bare U+2265 glyph, which the PDF backend's default font cannot render."""
     label = COLUMN_LABELS["coherence_capacity_nonnegative"]
     assert r"\geq" in label, label
     assert "≥" not in label, label
 
 
-def test_majority_zero_marks_red():
-    """3 of 5 runs score zero → cell is red (majority)."""
-    runs = [0.0, 0.0, 0.0, 0.4, 0.6]
-    assert cell_is_red(runs)
+# ── Continuous mean aggregation (replaces the old boolean red-cell rule) ──────
 
 
-def test_minority_zero_not_red():
-    """2 of 5 runs score zero → not a majority → not red."""
-    runs = [0.0, 0.0, 0.4, 0.5, 0.6]
-    assert not cell_is_red(runs)
+def test_mean_score_is_plain_mean_for_subscore():
+    """A genuine sub-score aggregates to the plain mean of its run values."""
+    assert mean_score("accuracy_coverage", [0.0, 0.0, 0.0, 0.4, 0.6]) == 0.2
 
 
-def test_all_zero_is_red():
-    """All runs score zero → trivially red."""
-    assert cell_is_red([0.0, 0.0, 0.0, 0.0, 0.0])
+def test_mean_score_zero_when_all_runs_zero():
+    """A model that zeros a criterion on every run aggregates to 0 (dark red)."""
+    assert mean_score("accuracy_coverage", [0.0, 0.0, 0.0, 0.0, 0.0]) == 0.0
 
 
-def test_no_zero_not_red():
-    """No run scores zero → not red."""
-    assert not cell_is_red([0.1, 0.2, 0.3, 0.4, 0.5])
+def test_mean_score_empty_is_none():
+    """No data → None (rendered as a no-data cell, not 0)."""
+    assert mean_score("accuracy_coverage", []) is None
 
 
-def test_empty_runs_not_red():
-    """Empty run list → conservative: not red."""
-    assert not cell_is_red([])
+# ── Internal-coherence veto merged into Coherence as its positive complement ──
 
 
-# ── Polarity-aware per-column red rule ─────────────────────────────────────────
-# The coherence veto column (coherence_run_veto) has INVERTED polarity: 1.0 means
-# the run was vetoed (bad), 0.0 means it passed the screen. It must NOT go through
-# the value==0 majority path used by genuine 0–1 sub-scores.
+def test_veto_value_is_inverted_to_quality():
+    """A vetoed run (1.0) maps to 0 quality; a passed run (0.0) maps to 1."""
+    assert _subscore_value(_VETO_COL, 1.0) == 0.0
+    assert _subscore_value(_VETO_COL, 0.0) == 1.0
 
 
-def test_veto_column_red_when_majority_vetoed():
-    """Veto column: majority of runs == 1.0 (vetoed) → RED (opposite of a sub-score)."""
-    runs = [1.0, 1.0, 1.0, 0.0, 0.0]  # 3/5 vetoed
-    assert _cell_is_red_for_column(_VETO_COL, runs)
+def test_subscore_value_passes_through_genuine_scores():
+    """Genuine sub-scores are already higher-is-better and pass through."""
+    assert _subscore_value("accuracy_coverage", 0.4) == 0.4
 
 
-def test_veto_column_green_when_majority_passed():
-    """Veto column: majority of runs == 0.0 (passed screen) → GREEN.
+def test_veto_mean_is_fraction_passing():
+    """The merged Internal-coherence score is the fraction of runs that passed.
 
-    A normal sub-score with these same values would be RED (3/5 zeros); the veto
-    column must invert that — this is the polarity bug the fix corrects.
+    3/5 vetoed → 2/5 passed → mean quality 0.4 (opposite polarity to a raw
+    zero-majority sub-score, which would read 0.4 of a different quantity).
     """
-    runs = [0.0, 0.0, 0.0, 1.0, 1.0]  # 3/5 passed, 2/5 vetoed
-    assert not _cell_is_red_for_column(_VETO_COL, runs)
+    assert mean_score(_VETO_COL, [1.0, 1.0, 1.0, 0.0, 0.0]) == 0.4
 
 
-def test_veto_column_all_vetoed_is_red():
-    """Veto column: 5/5 vetoed (e.g. claude-haiku-4.5) → RED."""
-    assert _cell_is_red_for_column(_VETO_COL, [1.0, 1.0, 1.0, 1.0, 1.0])
+def test_veto_all_vetoed_is_zero():
+    """5/5 vetoed (e.g. claude-haiku-4.5) → Internal coherence 0 (dark red)."""
+    assert mean_score(_VETO_COL, [1.0, 1.0, 1.0, 1.0, 1.0]) == 0.0
 
 
-def test_veto_column_none_vetoed_is_green():
-    """Veto column: 0/5 vetoed (e.g. claude-opus-4.6) → GREEN."""
-    assert not _cell_is_red_for_column(_VETO_COL, [0.0, 0.0, 0.0, 0.0, 0.0])
+def test_veto_none_vetoed_is_one():
+    """0/5 vetoed (e.g. claude-opus-4.6) → Internal coherence 1 (green)."""
+    assert mean_score(_VETO_COL, [0.0, 0.0, 0.0, 0.0, 0.0]) == 1.0
 
 
-def test_subscore_column_keeps_zero_majority_polarity():
-    """A genuine sub-score column keeps the value==0 majority rule (not inverted)."""
-    # 3/5 zeros → red for a normal sub-score.
-    assert _cell_is_red_for_column("accuracy_coverage", [0.0, 0.0, 0.0, 0.4, 0.6])
-    # 3/5 ones, 2/5 zeros → NOT a majority of zeros → green for a normal sub-score.
-    assert not _cell_is_red_for_column("accuracy_coverage", [1.0, 1.0, 1.0, 0.0, 0.0])
+def test_veto_label_says_internal_coherence():
+    """The veto sub-score is labelled as merged into Coherence, not as a veto column."""
+    assert COLUMN_LABELS[_VETO_COL] == "Internal coherence"
+
+
+def test_veto_is_in_coherence_dimension():
+    """The veto sub-score is grouped under the Coherence criterion, not standalone."""
+    assert _col_criterion(_VETO_COL) == "coherence"
+
+
+# ── Column (sub-score) selection from the CSV header ──────────────────────────
 
 
 def test_count_columns_excluded_from_rendered_columns():
     """The raw COUNT columns are diagnostic intermediates, not rendered sub-scores."""
-    csv_path = Path("experiments/derived/exp1_cross_eval.csv")
-    cols = _scored_columns(csv_path)
+    cols = _scored_columns(_CSV_PATH)
     assert "coherence_capacity_distinct" not in cols
     assert "coherence_status_distinct" not in cols
     assert {"coherence_capacity_distinct", "coherence_status_distinct"} <= _NON_SUBSCORE_COLS
 
 
-def test_veto_column_is_rendered():
-    """The coherence veto column IS rendered (as a single disqualifying column)."""
-    csv_path = Path("experiments/derived/exp1_cross_eval.csv")
-    cols = _scored_columns(csv_path)
+def test_veto_subscore_is_rendered():
+    """The coherence veto IS rendered (as the merged Internal-coherence sub-score)."""
+    cols = _scored_columns(_CSV_PATH)
     assert _VETO_COL in cols
-
-
-def test_model_set_matches_spider_panels():
-    """Heatmap rows == spider panel models (families claude/gpt/mistral/qwen)."""
-    csv_path = Path("experiments/derived/exp1_cross_eval.csv")
-    rows = _load_rows(csv_path)
-    assert set(heatmap_models(rows)) == set(_spider_panel_models_ref(rows))
 
 
 def test_scored_columns_covers_all_five_criteria():
     """_scored_columns returns sub-scores from all five criteria groups."""
-    from aedist.plot_quality_floor_heatmap_exp1 import _col_criterion
-
-    csv_path = Path("experiments/derived/exp1_cross_eval.csv")
-    cols = _scored_columns(csv_path)
+    cols = _scored_columns(_CSV_PATH)
     criteria = {_col_criterion(c) for c in cols}
     assert criteria == {"accuracy", "coherence", "field_completeness", "provenance", "temporality"}
     # The composite accuracy_f1 must be excluded (it double-counts accuracy).
@@ -144,18 +118,151 @@ def test_scored_columns_covers_all_five_criteria():
 
 def test_scored_columns_excludes_bookkeeping():
     """_scored_columns does not include bookkeeping or annotation columns."""
-    csv_path = Path("experiments/derived/exp1_cross_eval.csv")
-    cols = _scored_columns(csv_path)
+    cols = _scored_columns(_CSV_PATH)
     for col in cols:
         assert not col.endswith("_annotation"), f"annotation column leaked: {col}"
         assert col not in {"arm", "model", "run", "prompt_version", "reference", "n_rows"}
 
 
+# ── Model column order: identical to Figure 2, DeepSeek included ──────────────
+
+
+def _figure2_order_ref(rows):
+    """Reference: family alphabetical, size-rank descending, name (mirrors Fig 2)."""
+    models = sorted({str(r.get("model", "")).strip() for r in rows if str(r.get("model", "")).strip()})
+    models.sort(key=lambda m: (model_family(m), -_model_size_rank(m), m))
+    return models
+
+
+def test_model_order_matches_figure2_ordering():
+    """Heatmap columns follow the same ordering rule as Figure 2's census."""
+    rows = _load_rows(_CSV_PATH)
+    assert heatmap_models(rows) == _figure2_order_ref(rows)
+
+
+def test_model_order_literal_matches_figure2_render():
+    """Independent literal guard: the exact column order, verified visually
+    against the committed fig_direct_p1_base.pdf (PR #914, 2026-06-09).
+
+    _figure2_order_ref shares its sort key with heatmap_models, so it cannot
+    catch the name-rank heuristic diverging from Figure 2's size-registry sort
+    (e.g. '20b' substring-matching inside 'gpt-oss-120b'). This literal can:
+    if the model set changes, update it by re-reading Figure 2 — not by
+    copying heatmap_models output.
+    """
+    rows = _load_rows(_CSV_PATH)
+    assert heatmap_models(rows) == [
+        "claude-opus-4.6",
+        "claude-sonnet-4.6",
+        "claude-haiku-4.5",
+        "deepseek-v4-pro",
+        "deepseek-v4-flash",
+        "gpt-5.5",
+        "gpt-oss-120b",
+        "gpt-oss-20b",
+        "mistral-large-2512",
+        "mistral-medium-3-5",
+        "mistral-small-2603",
+        "qwen3.7-max",
+        "qwen3.6-35b-a3b",
+        "qwen3.6-flash",
+    ]
+
+
+def test_deepseek_included_in_columns():
+    """DeepSeek is part of the fourteen census models and must appear as columns."""
+    rows = _load_rows(_CSV_PATH)
+    models = heatmap_models(rows)
+    assert any(model_family(m) == "deepseek" for m in models), models
+
+
+def test_families_are_contiguous_and_alphabetical():
+    """Models are grouped by family in alphabetical family order (as Figure 2)."""
+    rows = _load_rows(_CSV_PATH)
+    families = [model_family(m) for m in heatmap_models(rows)]
+    # First occurrence order of families is alphabetical.
+    first_seen = list(dict.fromkeys(families))
+    assert first_seen == sorted(first_seen), first_seen
+    # Each family occupies one contiguous block.
+    assert len(first_seen) == len({*families}) == sum(
+        1 for i, f in enumerate(families) if i == 0 or families[i - 1] != f
+    )
+
+
+# ── Non-discriminating (all-green) sub-scores are dropped ─────────────────────
+
+
+def test_discriminating_drops_constant_subscore():
+    """A sub-score every model clears uniformly is dropped (spread below floor)."""
+    models = ["a", "b", "c"]
+    run_values = {m: {"x": [1.0, 1.0], "y": [0.0, 0.2]} for m in models}
+    run_values["a"]["y"] = [1.0, 1.0]
+    run_values["c"]["y"] = [0.0, 0.0]
+    kept = discriminating_columns(["x", "y"], run_values, models, min_spread=0.10)
+    assert "x" not in kept  # constant 1.0 across models → dropped
+    assert "y" in kept  # model means span 0..1 → kept
+
+
+def test_real_data_drops_uniform_field_completeness():
+    """On the real CSV the all-green criteria (incl. all of Field completeness)
+    are dropped, leaving only criteria that separate the models."""
+    rows = _load_rows(_CSV_PATH)
+    models = heatmap_models(rows)
+    candidates = _scored_columns(_CSV_PATH)
+    run_values = _collect_runs(rows, models, candidates)
+    kept = discriminating_columns(candidates, run_values, models)
+    # The uniform ≈1.0 criteria are gone.
+    for dropped in (
+        "coherence_capacity_nonnegative",
+        "field_completeness_core",
+        "field_completeness_capacity",
+        "provenance_source_presence",
+        "provenance_high_conf_dual_source",
+        "temporality_asof_presence",
+    ):
+        assert dropped not in kept, dropped
+    # The whole Field-completeness dimension drops out.
+    assert all(_col_criterion(c) != "field_completeness" for c in kept)
+    # Discriminating criteria survive, including the merged internal-coherence.
+    for survives in ("accuracy_coverage", "coherence_vocab_adherence", _VETO_COL):
+        assert survives in kept, survives
+
+
+# ── Cell annotation formatting ────────────────────────────────────────────────
+
+
+def test_fmt_score_extremes_are_exact_only():
+    """'1' and '0' are claims (every run cleared / every run failed) — values
+    that merely round to the extremes must not print them."""
+    from aedist.plot_quality_floor_heatmap_exp1 import _fmt_score
+
+    assert _fmt_score(1.0) == "1"
+    assert _fmt_score(0.0) == "0"
+    # Real cells from the current CSV: province 0.99534, vocab 0.9981.
+    assert _fmt_score(0.9981) == ">.99"
+    assert _fmt_score(0.003) == "<.01"
+    assert _fmt_score(0.52) == ".52"
+
+
+# ── Rendering smoke test ──────────────────────────────────────────────────────
+
+
+def test_make_figure_refuses_empty_grid(tmp_path):
+    """A single-model input zeroes every across-model spread, filtering all
+    rows — make_figure must refuse rather than silently emit an empty figure."""
+    import pytest
+
+    rows = [r for r in _load_rows(_CSV_PATH) if r["model"] == "gpt-5.5"]
+    out = tmp_path / "degenerate.pdf"
+    with pytest.raises(ValueError, match="no discriminating sub-scores"):
+        make_figure(rows, _CSV_PATH, out)
+    assert not out.exists()
+
+
 def test_make_figure_writes_pdf(tmp_path):
     """make_figure produces a non-empty PDF."""
-    csv_path = Path("experiments/derived/exp1_cross_eval.csv")
-    rows = _load_rows(csv_path)
+    rows = _load_rows(_CSV_PATH)
     out = tmp_path / "fig_quality_floor_heatmap_exp1.pdf"
-    make_figure(rows, csv_path, out)
+    make_figure(rows, _CSV_PATH, out)
     assert out.exists()
     assert out.stat().st_size > 1000

@@ -238,10 +238,12 @@ $(ANALYSIS_EXP1_SPIDER_CLAUDE_FR): $(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
 	    --lang fr
 
 # Quality-floor heatmap (ticket 0466): manuscript Figure 2b replacement.
-# Rows = spider panel model set (families claude/gpt/mistral/qwen; deepseek excluded).
-# A cell is red iff ≥ majority of runs scored zero; any red cell disqualifies the row.
+# Columns = the 14 census models in fig_direct_p1_base order (deepseek included).
+# Rows = discriminating 0–1 sub-scores (mean over runs, continuous red→green);
+# the internal-coherence veto renders as 1−veto inside the Coherence group.
 $(ANALYSIS_EXP1_QUALITY_HEATMAP): $(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
-		$(ANALYSIS_REPO_ROOT)/src/aedist/plot_quality_floor_heatmap_exp1.py
+		$(ANALYSIS_REPO_ROOT)/src/aedist/plot_quality_floor_heatmap_exp1.py \
+		$(ANALYSIS_REPO_ROOT)/src/aedist/plot_quality_spider_exp1.py
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_quality_floor_heatmap_exp1 \
 	    --input $(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
