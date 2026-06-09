@@ -53,14 +53,16 @@ The 0395 script added four rows. Under the PROVENANCE.md scope boundary
   gold list.
 
 - **DO NOT replay as rows — Kim Sơn, Rạng Đông, Phú Thọ**: Study E542 PL9.2 draft
-  *potential sites* (candidate locations, not projects). Record each as an
-  **alias / note** against the corresponding PDP7 northern entry — the three
-  `NĐ Miền Bắc 1 / 2 / 3` rows (status `9 cancelled`) — under PROVENANCE.md
-  "Traceability without counting".
+  *potential sites* (candidate locations, not projects). Record them as a free-text
+  **Note** on the three `NĐ Miền Bắc 1 / 2 / 3` rows (status `9 cancelled`) stating
+  there is **no specific correspondence** between a PL9.2 candidate and any one slot
+  — under PROVENANCE.md "Traceability without counting". Do **not** put the names in
+  the `Project alias` column: that would falsely assert a 1:1 match. Applied by
+  `note_potential_sites_0458.py`.
 
   ⚠ **Name collision**: an existing plant `Rang Dong cogeneration` is already in
-  the reference and is a *different* asset. Alias the E542 "Rạng Đông" potential
-  site against the `NĐ Miền Bắc` entry, **not** against `Rang Dong cogeneration`.
+  the reference and is a *different* asset — the note's "Rạng Đông" refers to the
+  E542 PL9.2 potential site, not to `Rang Dong cogeneration`.
 
 After all three edit-sets the master `Power plants` sheet extracts to **177**
 plants (173 extensions-adopted + 4 Kiên Lương + 1 Yên Hưng − 0 potential sites),
