@@ -31,8 +31,8 @@ SRC_DIR = REPO_ROOT / "src" / "aedist"
 
 # All historical and current reference sizes. The current literal hardcoded
 # is the same bug with a different number -- the ratchet must catch all of them.
-# v1 = 163, v2 = 170, v2.1 = 173, v2.2 = 176, v2.3 = 180.
-FORBIDDEN_SIZES = {163, 170, 173, 176, 180}
+# v1 = 163, v2 = 170, v2.1 = 173, v2.2 = 176, v2.3 = 180, v2.4 = 177.
+FORBIDDEN_SIZES = {163, 170, 173, 176, 177, 180}
 _PATTERN = re.compile(r"\b(" + "|".join(str(n) for n in sorted(FORBIDDEN_SIZES)) + r")\b")
 
 # Allowlist: (filename, set-of-allowed-values).

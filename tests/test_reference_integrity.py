@@ -22,17 +22,23 @@ def _load_reference() -> list[dict]:
         return list(csv.DictReader(f))
 
 
-# Plants explicitly required by ticket 0395 exit criteria.
+# Plants explicitly required by ticket 0395 exit criteria, as amended by the
+# ticket 0497 boundary correction: Kim Sơn and Rạng Đông were E542 PL9.2
+# *potential sites* (candidate locations, not projects) and were removed
+# (see _REMOVED_POTENTIAL_SITES below). Yên Hưng (PDP7 planned project) and the
+# Kiên Lương trio remain required.
 # Keys: normalised fragment that must appear in at least one reference row's
 # ``name`` field (case-insensitive substring match).
 _REQUIRED_PLANTS = [
     "Kiên Lương 1",
     "Kiên Lương 2",
     "Kiên Lương 3",
-    "Kim Sơn",
     "Yên Hưng",
-    "Rạng Đông",
 ]
+
+# E542 PL9.2 potential sites removed by ticket 0497 — must NOT appear as a
+# counted reference row (recorded as aliases in PROVENANCE.md instead).
+_REMOVED_POTENTIAL_SITES = ["Kim Sơn", "Rạng Đông", "Phú Thọ"]
 
 
 @pytest.mark.parametrize("plant_name", _REQUIRED_PLANTS)
@@ -59,6 +65,21 @@ def test_required_plant_capacity_at_least_30_mwe(plant_name: str) -> None:
             assert cap >= 30, (
                 f"Plant '{row['name']}' has capacity {cap} MWe < 30 MWe scope threshold"
             )
+
+
+@pytest.mark.parametrize("plant_name", _REMOVED_POTENTIAL_SITES)
+def test_removed_potential_site_absent(plant_name: str) -> None:
+    """The E542 PL9.2 potential sites (ticket 0497) are not counted reference rows.
+
+    Exact-name match: "Rạng Đông" (diacritics) is the removed potential site;
+    the unrelated "Rang Dong cogeneration" (100 MW captive cogen, ASCII) stays.
+    """
+    rows = _load_reference()
+    exact = [r for r in rows if r["name"].strip() == plant_name]
+    assert not exact, (
+        f"Removed potential site '{plant_name}' is still a counted reference row: "
+        f"{[r['name'] for r in exact]}"
+    )
 
 
 def test_no_reference_row_below_30_mwe() -> None:

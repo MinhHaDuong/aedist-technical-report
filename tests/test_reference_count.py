@@ -15,10 +15,18 @@ from aedist.evaluate import load_plants_csv, reference_plant_count
 
 
 def test_reference_plant_count_matches_release():
-    """The derived count equals the adopted reference CSV row count (v2.3 = 180 plants)."""
+    """The derived count equals the adopted reference CSV row count (v2.4 = 177 plants)."""
     n = len(load_plants_csv(VN_THERMAL_PLANTS_RELEASE_CSV))
     assert reference_plant_count() == n
-    assert n == 180, f"adopted reference has {n} plants, expected 180 (v2.3 = v2.2 + 4 potential coal sites: Kim Sơn, Rạng Đông, Yên Hưng, Phú Thọ)"
+    assert n == 177, f"adopted reference has {n} plants, expected 177 (v2.4 = v2.3 − 3 E542 PL9.2 potential sites: Kim Sơn, Rạng Đông, Phú Thọ removed; Yên Hưng kept)"
+
+
+def test_potential_sites_absent():
+    """The three E542 PL9.2 potential sites are removed; Yên Hưng (PDP7 project) stays (ticket 0497)."""
+    names = {p.name for p in load_plants_csv(VN_THERMAL_PLANTS_RELEASE_CSV)}
+    assert {"Kim Sơn", "Rạng Đông", "Phú Thọ"}.isdisjoint(names)
+    assert "Yên Hưng" in names  # the PDP7 project stays
+    assert reference_plant_count() == 177
 
 
 def test_all_module_constants_track_the_release():
