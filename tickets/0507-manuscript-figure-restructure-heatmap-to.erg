@@ -1,0 +1,72 @@
+%erg 0.1
+Title: Manuscript figure restructure heatmap to annex scatter to text
+Created: 2026-06-09
+Author: claude
+Blocked-by: 0506
+
+--- log ---
+2026-06-09T21:29Z claude created
+
+--- body ---
+## Context
+
+Re-rank the section-4 figures around the new reliability screen (0506):
+
+1. **Promote** the reliability-vs-accuracy scatter (`fig_exp1_reliability.pdf`)
+   into the section-4 main text as the headline quality figure.
+2. **Demote** the quality-floor heatmap (`fig_quality_floor_heatmap_exp1.pdf`,
+   currently Figure 4) into the annex where scoring is discussed — it is the
+   per-criterion diagnostic ("which dimension did each model fail"), i.e. methods
+   support, not the headline claim.
+3. **Remove** the Exp1 quality spider from the paper (Figure S1, Annex D,
+   `main.md` ~L401) — the scatter inherits its exact thesis ("source is the
+   universal failure mode"), so the spider is now redundant in the paper.
+
+## Constraints / traps
+
+- **Keep the spider CODE.** Remove only the Figure S1 block from `main.md` (and
+  the paper DAG target if it has a paper-only one). Do NOT delete
+  `src/aedist/plot_quality_spider_exp1.py`: (a) `plot_quality_floor_heatmap_exp1`
+  imports `_model_size_rank`, `_load_rows`, `_parse_optional_float` from it, and
+  (b) the French slides deck (`slides/slides.tex`) still renders spiders. This is
+  a paper-content edit, not a code deletion.
+- **Figure numbering** is guarded by `tests/test_manuscript_figure_numbering.py`
+  (gapless 1..N). Re-number after the move and update the guard.
+- Captions are derived from generated artifacts/macros, not hand-typed numbers.
+
+## Definition of done
+
+- [ ] Scatter inserted as the section-4 quality figure with author-set title /
+      labels; caption notes the four 0-reliability dots use F1 over all runs.
+- [ ] Heatmap relocated to the scoring annex with an updated caption framing it
+      as the per-criterion breakdown.
+- [ ] Figure S1 spider block removed from `main.md`; no dangling in-text
+      reference; spider module + slides untouched.
+- [ ] `test_manuscript_figure_numbering.py` updated and green; figures gapless.
+- [ ] `make check` and the manuscript build pass.
+
+## First test (write before code)
+
+```python
+def test_spider_removed_but_module_kept():
+    md = Path("slides/manuscript/main.md").read_text()
+    assert "fig_spider_exp1_families" not in md            # figure gone from paper
+    assert Path("src/aedist/plot_quality_spider_exp1.py").exists()  # code kept
+
+def test_reliability_in_text_heatmap_in_annex():
+    md = Path("slides/manuscript/main.md").read_text()
+    body, annex = md.split("## Annex", 1)
+    assert "fig_exp1_reliability" in body                   # scatter in main text
+    assert "fig_quality_floor_heatmap_exp1" in annex        # heatmap in annex
+```
+
+## Relevant files
+
+- `slides/manuscript/main.md` — section 4 + Annex D (Fig S1) + scoring annex
+- `tests/test_manuscript_figure_numbering.py` — gapless guard
+- `experiments/render.mk` — paper figure targets
+- `src/aedist/plot_quality_spider_exp1.py` — KEEP (imported + slides)
+
+## Priority
+
+Low/medium. Pure manuscript surgery; holds for 0506 (which holds for 0505).
