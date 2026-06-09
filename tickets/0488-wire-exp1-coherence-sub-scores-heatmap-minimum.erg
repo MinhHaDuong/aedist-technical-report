@@ -2,10 +2,13 @@
 Title: Wire Exp1 mechanical coherence sub-scores into exp1_cross_eval.csv (minimum for heatmap)
 Created: 2026-06-09
 Author: HDMX-coding-agent
+Closed: void: coherence columns already exist (commit 5cfe68e7, ticket 0453); heatmap polarity fix moved to 0487
 
 --- log ---
 2026-06-09T00:00Z HDMX-coding-agent created — split from 0201; minimal child needed to unblock 0487 (Haiku heatmap false pass)
+2026-06-09T08:30Z HDMX-coding-agent note VOID — non-finding. The premise is factually wrong: exp1_cross_eval.csv ALREADY contains the full coherence column set (coherence_vocab_adherence, coherence_capacity_nonnegative, coherence_capacity_distinct, coherence_status_distinct, coherence_run_veto), added in commit 5cfe68e7 (ticket 0453) — verified empirically against the CSV header and all Haiku rows during the raid Imagine/Plan phase. There are no columns to wire into score_exp1.py. The actual Haiku false-pass cause is a polarity bug in plot_quality_floor_heatmap_exp1.py (the coherence veto reads green when it should be red); that work moved to the re-scoped 0487. Closing as void; no code change.
 
+2026-06-09T08:17Z HDMX-coding-agent closed — void: coherence columns already exist (commit 5cfe68e7, ticket 0453); heatmap polarity fix moved to 0487
 --- body ---
 ## Context
 

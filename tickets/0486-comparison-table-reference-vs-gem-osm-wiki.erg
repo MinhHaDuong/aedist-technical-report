@@ -5,8 +5,42 @@ Author: HDMX-coding-agent
 
 --- log ---
 2026-06-09T00:00Z HDMX-coding-agent created
+2026-06-09T08:30Z HDMX-coding-agent note DEFERRED by raid Imagine/Plan verification — three exit-criteria decisions are author-only (see ## Decisions needed). User framed this as "a conference remark" (non-blocking for the reviewable PDF). GEM data is already in-repo and ready (data/reference/gem_units.csv, gem_thermal.csv, GEM_aggregate.py), so once the source set is ratified this is a quick execute.
 
 --- body ---
+
+## Decisions needed (raid verification, 2026-06-09)
+
+The Imagine/Plan agents flagged three points where the exit criteria as written
+cannot be safely executed autonomously. Each needs an author call:
+
+1. **Source set: drop OSM and Wikipedia?** Exit criteria #2/#4 name GEM, OSM, and
+   Wikipedia. But:
+   - **Wikipedia is a banned source** — Protocol §3.4 (manuscript line 395) bans
+     Wikipedia/Wikidata/DBpedia as admissible sources, and §5 includes a
+     Wikipedia-contamination audit. A Wikipedia coverage column in a paper that
+     bans and audits Wikipedia is rhetorically incoherent.
+   - **OSM via Overpass is not reproducible** — a live API query violates exit
+     criterion #1 ("from tracked raw inputs").
+   - **GEM is in-repo and reproducible** (`data/reference/gem_units.csv`,
+     `gem_thermal.csv`, `GEM_aggregate.py`).
+   - *Recommendation:* ship **GEM-only**; drop OSM (non-reproducible) and
+     Wikipedia (banned). Re-title the ticket accordingly.
+
+2. **Placement: Related Work vs Annex B.** Related Work has a strict citation
+   budget and per-paragraph structure (writing rules) that does not accommodate a
+   coverage table. The natural home is **Annex B line 203**, which already says
+   "the planned three-way reconciliation with Global Energy Monitor (see §2) … is
+   deferred." *Recommendation:* place the table in Annex B, satisfying that
+   deferred promise.
+
+3. **Reference count: 173 vs 180.** The count is contested across the manuscript.
+   *Recommendation:* pin to the **173-plant v2.1 frozen reference**
+   (`vietnam_thermal_plants_v2_classified.csv`), consistent with all current
+   prose and Exp 1/2 scoring. Revisit only if ticket 0458 lands a new count.
+
+Until these are ratified, the ticket stays open and unexecuted.
+
 ## Context
 
 The Related Work section and §2 quality bar mention Global Energy Monitor (GEM),

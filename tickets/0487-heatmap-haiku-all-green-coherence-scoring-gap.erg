@@ -1,57 +1,99 @@
 %erg 0.1
-Title: Heatmap false pass: Haiku scores all green — fix coherence scoring gap
+Title: Heatmap false pass: surface the coherence veto so weak models show red
 Created: 2026-06-09
 Author: HDMX-coding-agent
 
 --- log ---
 2026-06-09T00:00Z HDMX-coding-agent created
 2026-06-09T00:00Z HDMX-coding-agent note blocker changed from 0201 → 0488 (child split from 0201 for minimum Exp1 coherence column wiring)
+2026-06-09T08:30Z HDMX-coding-agent note re-scoped + UNBLOCKED after raid Imagine/Plan verification. Original premise (missing coherence columns, blocked by 0488) is FACTUALLY WRONG: exp1_cross_eval.csv already carries all coherence columns (added commit 5cfe68e7, ticket 0453). 0488 voided. The real root cause is in plot_quality_floor_heatmap_exp1.py: cell_is_red() fires only on value==0.0 majority, but the coherence veto signal (coherence_run_veto, =1 when cap_distinct<=4 OR status_distinct<=1) has INVERTED polarity (1=bad) and the two *_distinct columns are counts, not 0-1 scores — so a vetoed run reads green. Verified across all 12 rendered models: surfacing the veto turns claude-haiku-4.5 (5/5 vetoed) AND gpt-oss-120b (4/5 vetoed) red; every strong frontier model (opus, sonnet, gpt-5.5, all Mistral, qwen-max) has 0/5 vetoes and stays green. Both flips are consistent with existing §4 prose — line 453 already names gpt-oss-120b among vetoed models (per-model gap +0.078), line 90 calls these the weakest. Figure-vs-prose consistency fix, not a new claim.
 
 --- body ---
 ## Context
 
-The model-grain quality floor heatmap (shipped in 0466, Figure 2b of
-`slides/manuscript/main.md`) currently shows claude-haiku-4.5 as all green
-(no disqualifying cells). This is a false pass: Haiku is the weakest Claude
-model in Exp 1 (lowest mean F1) and should fail at least one free criterion
-per the paper's conjunctive quality bar.
+The model-grain quality floor heatmap (Figure 4, formerly "Figure 2b", in
+`slides/manuscript/main.md`) shows claude-haiku-4.5 as all-green (no
+disqualifying cells). This is a **false pass**: Haiku is the weakest Claude
+model in Exp 1 and its 5 runs are ALL vetoed by the paper's own internal-
+coherence screen (`cap_distinct <= 4`), the very ρ=0.92 screen the abstract
+headlines.
 
-The root cause is a scoring gap: the heatmap is built from
-`experiments/derived/exp1_cross_eval.csv`, which currently contains only the
-accuracy sub-score (row-level F1 components). The four reference-free criteria
-(coherence, provenance, temporality, source quality) have not been wired into
-that CSV yet — that is the work of ticket 0201 (reference-free scorer). Until
-0201 lands, the heatmap is blind to the dimensions on which Haiku most likely
-fails.
+The root cause is NOT a missing column (the original premise, now disproved —
+see log). `experiments/derived/exp1_cross_eval.csv` already carries the full
+coherence column set including `coherence_run_veto`. The bug is in the heatmap's
+disqualification logic:
 
-This ticket captures the gap and keeps it visible as a blocker for tracker 0464.
+- `cell_is_red(runs)` returns red iff a strict majority of runs scored
+  **exactly 0.0**.
+- `coherence_run_veto` has **inverted polarity**: `1` means the run was vetoed
+  (bad). A vetoed run is `1.0`, never `0.0`, so it reads as green.
+- `coherence_capacity_distinct` / `coherence_status_distinct` are **counts**
+  (4, 26, 35…), not 0–1 scores, so the "fraction zero" rule never fires on them.
+
+Haiku's weaknesses are consistently-low-but-nonzero (source_spread ≈ 0.02,
+source_diversity = 0.1) plus a 5/5 coherence veto — none of which the current
+rule catches.
+
+## Cross-model impact (verified before scoping)
+
+Surfacing the veto (majority of runs vetoed → red) flips exactly two of the 12
+rendered models from green to red:
+
+- **claude-haiku-4.5**: 5/5 vetoed (`cap_distinct = 4` every run) — the target.
+- **gpt-oss-120b**: 4/5 vetoed — already named as a vetoed model in §4 (line 453,
+  per-model gap +0.078).
+
+All strong frontier models (claude-opus-4.6, claude-sonnet-4.6, gpt-5.5,
+mistral-large/medium/small, qwen3.7-max) have 0/5 vetoes and stay green. The
+Mistral family is entirely untouched. Both flips are consistent with the
+manuscript's existing §4 coherence-screen narrative — this completes the figure
+to match the prose, it does not introduce a new claim.
 
 ## Actions
 
-1. **Diagnose**: confirm that `exp1_cross_eval.csv` contains only accuracy-side
-   columns; document which free-criterion columns are missing.
-2. **Dependency**: ensure ticket 0201 (coherence/provenance/temporality scorers)
-   adds the missing columns to `exp1_cross_eval.csv` via `records_to_metrics()`
-   before this ticket can close.
-3. **Verify fix**: once 0201 lands, rebuild the heatmap and confirm that
-   claude-haiku-4.5 has at least one red cell (majority-zero on a free criterion).
-4. **Update caption/claims**: if the heatmap previously stated Haiku "passes",
-   update `main.md` to reflect the corrected result.
+1. In `plot_quality_floor_heatmap_exp1.py`, make the coherence veto a properly-
+   polarised disqualifying signal. Recommended: render a single "Coherence veto"
+   column whose cell is red iff a majority of the model's runs are vetoed
+   (`coherence_run_veto == "1"`), and keep the raw count columns
+   (`coherence_capacity_distinct`, `coherence_status_distinct`) and the raw
+   `coherence_run_veto` out of the value-based `cell_is_red` path so they are not
+   silently mis-coloured. Keep the existing `cell_is_red` (==0 majority) rule for
+   the genuine 0–1 sub-scores.
+2. Regenerate the heatmap PDF via the Makefile target.
+3. Confirm claude-haiku-4.5 AND gpt-oss-120b each have ≥1 red cell; confirm no
+   strong frontier model newly flips.
+4. Update the Figure 4 caption in `main.md`: the "red iff majority scored zero"
+   description is now incomplete — add the veto clause. Ensure no main-text claim
+   states Haiku (or gpt-oss-120b) clears the quality bar.
 
 ## Relevant files
 
-- `experiments/derived/exp1_cross_eval.csv` — current heatmap input; check columns
-- `src/aedist/plot_quality_floor_heatmap_exp1.py` — heatmap script
-- `slides/manuscript/main.md` — Figure 2b caption and any text that asserts Haiku's status
-- `src/aedist/measurements.py` — `records_to_metrics()` wiring point for new sub-scores
+- `src/aedist/plot_quality_floor_heatmap_exp1.py` — `cell_is_red`, `_scored_columns`, render path
+- `experiments/derived/exp1_cross_eval.csv` — heatmap input (already has all columns)
+- `src/aedist/score_mechanical.py` — veto definition (`veto = cap_distinct <= 4 or status_distinct <= 1`)
+- `slides/manuscript/main.md` — Figure 4 caption (line ~103) and §4 prose
 
-## Blocked-by: 0488
+## Test
+
+Extend `tests/test_plot_quality_floor_heatmap_exp1.py` (or add one):
+- Construct mock rows for a model with majority `coherence_run_veto == "1"`.
+- Assert the veto cell is classified red.
+- Construct mock rows with 0/5 veto and assert green.
+- Red step: before the polarity fix, the majority-vetoed model reads green.
+
+## Verification
+
+- [ ] Heatmap veto signal rendered with correct polarity (majority vetoed → red)
+- [ ] Raw count columns (`*_distinct`) not silently mis-coloured as scores
+- [ ] Rebuilt heatmap: claude-haiku-4.5 has ≥1 red cell
+- [ ] Rebuilt heatmap: gpt-oss-120b has ≥1 red cell; no strong frontier model newly red
+- [ ] Figure 4 caption updated to describe the veto rule
+- [ ] No main-text claim in `main.md` that Haiku passes the quality bar
+- [ ] `make check` passes
 
 ## Exit criteria
 
-- [ ] `exp1_cross_eval.csv` contains coherence, provenance, and temporality sub-score columns
-- [ ] Heatmap rebuilt; claude-haiku-4.5 has ≥1 red cell
-- [ ] No main-text claim in `slides/manuscript/main.md` that Haiku "passes" the quality bar
-- [ ] `make check` passes
+- All verification checkboxes ticked
+- Cross-model impact (the gpt-oss-120b flip) documented in the PR body for author visibility
 
 Part of: 0464 — role A7 (coherence scoring gap / Haiku false pass)
