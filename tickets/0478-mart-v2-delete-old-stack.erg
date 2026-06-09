@@ -1,11 +1,14 @@
 %erg 0.1
-Title: Delete old stack: measurements.jsonl, evaluate.py assemble, RunRecord (tracker: 0297)
+Title: Delete old read stack: measurements.jsonl + read interface (tracker: 0297)
 Created: 2026-06-08
 Author: HDMX-coding-agent
 Blocked-by: 0477
+Blocked-by: 0490
 
 --- log ---
 2026-06-08T12:00Z HDMX-coding-agent created
+2026-06-09T08:12Z HDMX-coding-agent note Added Blocked-by 0490. Deletion target (measurements.jsonl, the exp1 benchmark, 669 rows) contains record-only legacy rows whose raw was archived (0422, score.mk:75-85) and that a raw-reading adapter cannot rebuild. 0490 must resolve the legacy ingest source before this deletion is safe.
+2026-06-09T08:30Z HDMX-coding-agent note 0490 resolved as Option B (forensic snapshot). This PR deletes the LIVE measurements.jsonl + read interface but must RETAIN 0490's datestamped snapshot, and may only proceed once 0490's no-published-dep guard test is green (nothing published reads the snapshot). Re-scope reminder: delete the read stack (measurements.py loader, records_to_metrics, evaluate.py assemble, live measurements.jsonl) — NOT RunRecord, which the live collection path still emits.
 --- body ---
 ## Context
 
@@ -15,34 +18,37 @@ Run `make check` and a full grep audit before committing.
 
 ## Relevant files
 
-To delete:
-- `measurements.jsonl` (top-level, 669 records — data already in mart)
+To delete (the READ stack only):
+- `measurements.jsonl` (top-level, 669 exp1-benchmark records — migrated to the mart via 0476/0477)
+- `src/aedist/measurements.py` (`load`, `load_metrics`, `records_to_metrics` — replaced by the 0489 mart reader)
 - `src/aedist/evaluate.py` `assemble` subcommand (the only path that writes measurements.jsonl)
-- `src/aedist/schema.py` `RunRecord` class and associated infrastructure
-- `src/aedist/measurements.py` (entire module — replaced by mart reader)
 - `experiments/derived/score.mk` targets that build measurements.jsonl
 
+NOT deleted here (write-path — separate epic):
+- `src/aedist/schema.py` `RunRecord` / `MethodParams` / `ResourceUse` / `ResultSummary` — still
+  constructed by the live collection path (adapters, `query_*`, `worker`). Deleting them now
+  breaks collection at import time. Retiring the write path is its own tracked epic.
+
 Tests to delete/replace:
-- `tests/test_measurements.py`
-- `tests/test_measurements_agent_fields.py`
-- Any test that imports from `aedist.measurements` or `aedist.schema.RunRecord`
+- `tests/test_measurements.py`, `tests/test_measurements_agent_fields.py` (read-interface tests)
+- Any test importing from `aedist.measurements` (the deleted read module).
+  Tests importing `aedist.schema.RunRecord` STAY — RunRecord is not deleted here.
 
 ## Actions
 
-1. Grep audit: `grep -rn "measurements.jsonl\|RunRecord\|records_to_metrics" --include="*.py" --include="*.mk" --include="Makefile" .`
-   Confirm zero hits (excluding archive/ and worktrees/).
-2. Delete `measurements.jsonl` from git.
-3. Delete `src/aedist/measurements.py`.
-4. Remove `RunRecord`, `Method`, `MethodParams`, `ResourceUse`, `ResultSummary` from `schema.py`
-   (or delete `schema.py` if nothing else uses it).
-5. Remove `assemble` subcommand from `evaluate.py`.
-6. Remove `measurements.jsonl` target from `score.mk`.
-7. Delete or rewrite `tests/test_measurements.py` and `tests/test_measurements_agent_fields.py`.
-8. Run `make check` — must pass clean.
+1. Grep audit: `grep -rn "measurements\.jsonl\|records_to_metrics\|from aedist.measurements\|import measurements" --include="*.py" --include="*.mk" --include="Makefile" .`
+   Confirm zero hits (excluding archive/, worktrees/, and 0490's forensic snapshot).
+   NOTE: do NOT grep for `RunRecord` here — it stays (write-path epic).
+2. Delete `measurements.jsonl` from git — only AFTER 0490's snapshot is committed and its guard test is green.
+3. Delete `src/aedist/measurements.py` (read module).
+4. Remove the `assemble` subcommand from `evaluate.py` (leave other verbs intact).
+5. Remove the `measurements.jsonl` target from `score.mk`.
+6. Delete or rewrite the read-interface tests (`test_measurements.py`, `test_measurements_agent_fields.py`).
+7. Run `make check` — must pass clean. `schema.py`/`RunRecord` are untouched.
 
 ## Verification
 
-- [ ] `grep -rn "measurements.jsonl\|RunRecord\|records_to_metrics" src/ tests/ experiments/` → zero hits.
+- [ ] `grep -rn "measurements\.jsonl\|records_to_metrics\|aedist.measurements" src/ tests/ experiments/` → zero hits (RunRecord intentionally still present).
 - [ ] `make check` passes.
 - [ ] No report figure or table value changed (verify against golden outputs from 0477).
 - [ ] Tracking ticket 0297 closes after this PR merges.
@@ -51,7 +57,8 @@ Tests to delete/replace:
 
 - Deletion is LAST — only after all consumers are ported and green (0477 done).
 - Do not delete `evaluate.py` subcommands other than `assemble` — other verbs remain.
-- `schema.py` may retain non-RunRecord classes (Plant, FuelType, PlantStatus, etc.).
+- `schema.py` is NOT touched: `RunRecord` and all classes stay. Their retirement belongs to
+  the write-path epic, gated on porting the adapters / `query_*` / `worker` off RunRecord.
 
 ## Exit criteria
 

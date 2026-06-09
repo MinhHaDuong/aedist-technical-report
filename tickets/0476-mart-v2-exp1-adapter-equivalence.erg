@@ -2,10 +2,11 @@
 Title: Exp1 adapter + mart equivalence test (tracker: 0297)
 Created: 2026-06-08
 Author: HDMX-coding-agent
-Blocked-by: 0475
+Blocked-by: 0489
 
 --- log ---
 2026-06-08T12:00Z HDMX-coding-agent created
+2026-06-09T08:12Z HDMX-coding-agent note Re-pointed Blocked-by 0475 -> 0489. The exp1 equivalence test IS an instance of 0489's golden test (mart_to_metrics(exp1) == records_to_metrics(exp1)); reuse the shim rather than hand-rolling a second comparator. 0489 is itself blocked-by 0475, so the schema dependency is preserved transitively.
 --- body ---
 ## Context
 

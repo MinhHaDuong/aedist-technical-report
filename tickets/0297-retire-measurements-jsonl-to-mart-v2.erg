@@ -10,6 +10,7 @@ Label: deferred
 
 2026-05-25T12:22Z HDMX-coding-agent tag deferred
 2026-06-08T12:00Z HDMX-coding-agent note Converted to tracking ticket. Child tickets created: 0475 (architect question + schema), 0476 (exp1 adapter + equivalence), 0477 (port consumers), 0478 (delete old stack). This tracker stays open until all children merge and make check passes.
+2026-06-09T08:14Z HDMX-coding-agent note Derisk pass: created children 0489 (mart_to_metrics shim + golden test) and 0490 (exp3/legacy ingest source); re-pointed 0476 Blocked-by 0475->0489; added 0490 as second blocker on 0478; added field-audit step to 0475.
 --- body ---
 ## Context
 
@@ -34,21 +35,39 @@ single source of truth for all experiments (exp1 through exp3+), and the old sta
 - [ ] Mart schema absorbs all RunRecord fields listed above
 - [ ] Exp1 adapter: reads `exp1_batch2/*.json` → mart records (no arm, single turn, method=direct)
 - [ ] All figures/tables that currently read `measurements.jsonl` ported to read the mart
-- [ ] `measurements.jsonl`, `evaluate.py assemble`, `schema.RunRecord` deleted
+- [ ] `measurements.jsonl`, `measurements.py`, `evaluate.py assemble` deleted (read stack); `RunRecord` write-path retirement tracked as a separate epic
 - [ ] `make check` passes with no reference to the old stack
 
 ## Tracking: child tickets
 
 This is a tracking ticket. Children must land in dependency order:
 
+DAG (fork-join at the tail): `0475 → 0489 → 0476 → 0477 → 0490 → 0478`, where 0478 also
+gates directly on 0477 — i.e. `0477 → {0490, 0478}` and `0490 → 0478`.
+
 | ID | Title | Status |
 |----|-------|--------|
-| 0475 | Architect question: generalize vs shoehorn + schema design | open |
-| 0476 | Exp1 adapter + mart equivalence test | blocked on 0475 |
+| 0475 | Architect question: generalize vs shoehorn + schema design + field audit | open |
+| 0489 | Read-path shim: `mart_to_metrics()` flattener + golden equivalence test | blocked on 0475 |
+| 0476 | Exp1 adapter + mart equivalence test | blocked on 0489 |
 | 0477 | Port reporting consumers from measurements.jsonl to mart | blocked on 0476 |
-| 0478 | Delete old stack (measurements.jsonl, evaluate.py assemble, RunRecord) | blocked on 0477 |
+| 0490 | Legacy rows: forensic snapshot (Option B) + no-published-dep guard | blocked on 0477 |
+| 0478 | Delete old stack (read interface; RunRecord write-path is a separate epic) | blocked on 0477, 0490 |
 
 Tracker closes only after 0478 merges and a final `make check` confirms no old-stack references remain.
+
+Derisk note (2026-06-09): the migration is a **shape change** (flat dict per run → 3 nested
+mart records joined by `parent_record_id`), not a rename. Two children were inserted: **0489**
+(the `mart_to_metrics()` shim that turns 0477's irreversible consumer rewrite into a one-line
+loader swap, and is the real cutover gate the exp2-only parity check is not) and **0490** (the
+record-only legacy gap — `measurements.jsonl` is the exp1 benchmark, 669 rows; some are
+record-only with raw archived per 0422, so a raw-reading adapter cannot rebuild them). The
+author chose **Option B** for 0490: retain a forensic snapshot rather than ingest record-only
+rows, under the hard constraint that **nothing published may depend on the snapshot** —
+enforced by a guard test, so it cannot decay into a second live source of truth. The audit
+only means anything after consumers point at the mart, so 0490 gates on 0477. 0478 is also
+re-scoped to delete the **read** stack only; deleting `RunRecord` is blocked by the live
+collection path (the adapters + `query_*` + `worker`) and is its own epic.
 
 ## Architectural question (must resolve before 0475)
 
@@ -75,7 +94,7 @@ The raw counts must be added to ScoreSummary before an exp1 adapter is possible.
 - `src/aedist/evaluate.py` — `assemble` subcommand writes measurements.jsonl (to be deleted)
 - `experiments/derived/score.mk` — builds measurements.jsonl and exp2_mart.jsonl
 - `experiments/derived/exp2_mart.jsonl` — 80 run + 80 score records (exp2 only)
-- `measurements.jsonl` — 669 records (exp1 + exp2 + exp3, live as of 2026-06-08)
+- `measurements.jsonl` — 669 exp1-benchmark records (methods direct/rag/frontier/multiturn/verification; exp2 is mart-only, SOTA exp3 is raw-only)
 
 ## Consumer inventory (things that read measurements.jsonl / RunRecord)
 
