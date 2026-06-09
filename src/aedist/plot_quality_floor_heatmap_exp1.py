@@ -8,11 +8,13 @@ Layout (transposed for readability):
       parameter size descending, then name.  DeepSeek IS included (it is one of
       the fourteen census models); the old four-panel spider excluded it, this
       figure does not.
-    * Rows = the genuine 0–1 sub-scores across all five criteria (accuracy,
+    * Rows = the genuine 0–1 sub-scores across the five criteria (accuracy,
       coherence, field_completeness, provenance, temporality), derived
       programmatically from the CSV header — never hardcoded.  The raw *_distinct
       COUNT columns and the composite accuracy_f1 are diagnostic intermediates
-      and excluded.
+      and excluded.  Sub-scores that do not separate the models (across-model
+      spread of means below _MIN_DISCRIMINATING_SPREAD — the all-green rows)
+      are dropped: a criterion no model fails carries no quality-floor signal.
 
 A cell shows the **mean** of that model's per-run sub-score — a continuous 0–1
 quality value rendered on a sequential red→green colour scale (0 = the whole
@@ -265,11 +267,26 @@ def _collect_runs(
 
 
 def _fmt_score(value: float) -> str:
-    """Compact cell annotation: '1', '0', or a leading-dot two-decimal ('.52')."""
-    if value >= 0.995:
+    """Compact cell annotation: '1'/'0' only for exact values, else two decimals.
+
+    The §2 quality bar is a conjunction, so the printed extremes carry claims:
+    '1' must mean every run cleared the criterion and '0' must mean every run
+    failed it.  Values that merely round to the extremes display as '>.99' /
+    '<.01' instead (e.g. vocab adherence 0.998 is not "all clear").
+
+    >>> _fmt_score(1.0), _fmt_score(0.0), _fmt_score(0.52)
+    ('1', '0', '.52')
+    >>> _fmt_score(0.998), _fmt_score(0.003)
+    ('>.99', '<.01')
+    """
+    if value == 1.0:
         return "1"
-    if value < 0.005:
+    if value == 0.0:
         return "0"
+    if value >= 0.995:
+        return ">.99"
+    if value < 0.005:
+        return "<.01"
     return f"{value:.2f}"[1:]
 
 
@@ -390,12 +407,13 @@ def make_figure(rows: list[dict[str, str]], input_path: Path, output: Path) -> N
         ScalarMappable(norm=norm, cmap=cmap),
         ax=ax, fraction=0.025, pad=0.02,
     )
-    cbar.set_label("Mean sub-score across 5 runs  (0 = all runs fail · 1 = all clear)", fontsize=8)
+    cbar.set_label("Mean sub-score across runs  (0 = all runs fail · 1 = all clear)", fontsize=8)
     cbar.ax.tick_params(labelsize=7)
 
+    # NB: not "reference-free" — the Accuracy rows are the reference-full axis.
     ax.set_title(
         "Quality-floor heatmap — Experiment 1 (parametric arm)\n"
-        "Per-model mean of each reference-free sub-score; dark red ⇒ the §2 quality bar is not cleared",
+        "Per-model mean of each quality sub-score; dark red ⇒ the §2 quality bar is not cleared",
         fontsize=10, pad=28,
     )
 

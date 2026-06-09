@@ -140,6 +140,35 @@ def test_model_order_matches_figure2_ordering():
     assert heatmap_models(rows) == _figure2_order_ref(rows)
 
 
+def test_model_order_literal_matches_figure2_render():
+    """Independent literal guard: the exact column order, verified visually
+    against the committed fig_direct_p1_base.pdf (PR #914, 2026-06-09).
+
+    _figure2_order_ref shares its sort key with heatmap_models, so it cannot
+    catch the name-rank heuristic diverging from Figure 2's size-registry sort
+    (e.g. '20b' substring-matching inside 'gpt-oss-120b'). This literal can:
+    if the model set changes, update it by re-reading Figure 2 — not by
+    copying heatmap_models output.
+    """
+    rows = _load_rows(_CSV_PATH)
+    assert heatmap_models(rows) == [
+        "claude-opus-4.6",
+        "claude-sonnet-4.6",
+        "claude-haiku-4.5",
+        "deepseek-v4-pro",
+        "deepseek-v4-flash",
+        "gpt-5.5",
+        "gpt-oss-120b",
+        "gpt-oss-20b",
+        "mistral-large-2512",
+        "mistral-medium-3-5",
+        "mistral-small-2603",
+        "qwen3.7-max",
+        "qwen3.6-35b-a3b",
+        "qwen3.6-flash",
+    ]
+
+
 def test_deepseek_included_in_columns():
     """DeepSeek is part of the fourteen census models and must appear as columns."""
     rows = _load_rows(_CSV_PATH)
@@ -167,12 +196,11 @@ def test_discriminating_drops_constant_subscore():
     """A sub-score every model clears uniformly is dropped (spread below floor)."""
     models = ["a", "b", "c"]
     run_values = {m: {"x": [1.0, 1.0], "y": [0.0, 0.2]} for m in models}
-    # x is constant 1.0 across models (no spread); y varies enough between models?
     run_values["a"]["y"] = [1.0, 1.0]
     run_values["c"]["y"] = [0.0, 0.0]
     kept = discriminating_columns(["x", "y"], run_values, models, min_spread=0.10)
-    assert "x" not in kept  # constant → dropped
-    assert "y" in kept  # spans 0..1 across models → kept
+    assert "x" not in kept  # constant 1.0 across models → dropped
+    assert "y" in kept  # model means span 0..1 → kept
 
 
 def test_real_data_drops_uniform_field_completeness():
@@ -198,6 +226,22 @@ def test_real_data_drops_uniform_field_completeness():
     # Discriminating criteria survive, including the merged internal-coherence.
     for survives in ("accuracy_coverage", "coherence_vocab_adherence", _VETO_COL):
         assert survives in kept, survives
+
+
+# ── Cell annotation formatting ────────────────────────────────────────────────
+
+
+def test_fmt_score_extremes_are_exact_only():
+    """'1' and '0' are claims (every run cleared / every run failed) — values
+    that merely round to the extremes must not print them."""
+    from aedist.plot_quality_floor_heatmap_exp1 import _fmt_score
+
+    assert _fmt_score(1.0) == "1"
+    assert _fmt_score(0.0) == "0"
+    # Real cells from the current CSV: province 0.99534, vocab 0.9981.
+    assert _fmt_score(0.9981) == ">.99"
+    assert _fmt_score(0.003) == "<.01"
+    assert _fmt_score(0.52) == ".52"
 
 
 # ── Rendering smoke test ──────────────────────────────────────────────────────
