@@ -1,0 +1,70 @@
+%erg 0.1
+Title: Audit: matcher's missing diacritic-folding may undercount Exp1/2/3 TP (confound risk)
+Created: 2026-06-09
+Author: HDMX-coding-agent
+Label: needs-human
+
+--- log ---
+2026-06-09T13:00Z HDMX-coding-agent created — roar sweep from the 0486 GEM-coverage review.
+
+--- body ---
+
+## Context (observation, cause not yet established)
+
+The 0486 source-coverage review surfaced that the project's LP matcher
+(`reconcile()` / `name_clean`) does **not fold Vietnamese diacritics**. Empirics:
+GEM coverage of the reference scored **67%** with the matcher as-is, and
+**88%** after ASCII-folding both sides — **39 GEM matches recovered**, all
+clean diacritic/aggregation variants ("Cà Mau I" ↔ "Ca Mau", "Bà Rịa GT" ↔
+"Ba Ria", "Duyên Hải 2" ↔ "Duyen Hai"). Diacritic-folding utilities already
+exist in the codebase (`src/aedist/util.py`, `src/aedist/cleaner/cleaner.py`,
+`self_consistency.py`) — but the matching pipeline's `name_clean` does not use
+them.
+
+The same `reconcile()` matcher scores Exp1/2/3 (model output vs reference). So
+**if any model outputs ASCII-transliterated plant names** ("Ca Mau" rather than
+"Cà Mau"), its true positives would be **undercounted** the same way GEM's were —
+which would *inflate* the paper's headline "models fall short of research-grade
+recall" finding. This is a **confound to rule in or out**, not yet a confirmed
+defect.
+
+## Audit (do this before any fix)
+
+1. **Measure model-output naming.** Across Exp1/2/3 outputs, sample how models
+   render plant names — diacritic'd (matches the reference, no impact) vs ASCII
+   (at risk). Likely varies by model family (Vietnamese-aware vs not).
+2. **Re-score with ASCII-folding** as an A/B: run the existing scoring with the
+   matcher's `name_clean` ASCII-folded (wire in `util`/`cleaner` folding), compare
+   per-model TP / F1 against the current numbers. Quantify the delta.
+3. **Decide:** if the delta is immaterial (models output diacritics), document the
+   non-finding and close — no code change. If material, it is a real confound:
+   wire diacritic-folding into `name_clean` for ALL matching (Exp1/2/3 + coverage +
+   recognition matrix), re-score, and update the manuscript numbers + a caveat.
+
+## Relevant files
+
+- `src/aedist/reconcile.py`, `src/aedist/matching/lp.py` — the matcher (`name_clean`)
+- `src/aedist/util.py`, `src/aedist/cleaner/cleaner.py` — existing folding utilities to reuse
+- `src/aedist/score_exp1.py` / `score_mechanical.py` — Exp scoring consumers
+- `experiments/derived/exp1_cross_eval.csv` etc. — outputs that would change if material
+
+## Test
+
+If the audit confirms a material undercount and a fix lands: a regression test
+that a known diacritic-variant pair ("Cà Mau I" vs "Ca Mau 1") matches under the
+scoring matcher. (Do not write the test until the audit decides a fix is warranted.)
+
+## Why needs-human
+
+Touches the paper's central numbers; the re-score + manuscript update is an
+author-supervised change, not an autonomous one. The audit (steps 1–2) is safe to
+run; the decision (step 3) is the author's.
+
+## Exit criteria
+
+- [ ] Model-output naming characterised (diacritic vs ASCII, by model)
+- [ ] A/B re-score delta (folded vs current) quantified per model
+- [ ] Decision recorded: immaterial (close, non-finding) OR material (fix + re-score + caveat)
+- [ ] `make check` passes
+
+Related: 0486 (where this surfaced), 0498 (complex-grain reconciliation — same matcher-floor family), recognition matrix / FP audit (partial existing mitigation)
