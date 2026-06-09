@@ -1,0 +1,75 @@
+%erg 0.1
+Title: test_variability_screen_regression double-counts: regex matches colocated reconciliation_*.csv
+Created: 2026-06-09
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-09T09:45Z HDMX-coding-agent created — surfaced during the 483/486/487/488 raid wrap-up `make check` on padme primary working tree.
+
+--- body ---
+## Context
+
+`tests/test_score_mechanical.py::test_variability_screen_regression_exp1_batch2`
+globs `experiments/outputs/exp1_batch2/*.csv` and matches each filename with:
+
+```python
+run_re = re.compile(r"^(?P<model>.+)-run(?P<run>\d+)\.csv$")
+```
+
+The greedy `(?P<model>.+)` also matches the colocated reconciliation outputs
+`reconciliation_<model>-run<N>.csv` (capturing `model = "reconciliation_<model>"`).
+When those (untracked, gitignored) files are present in the working tree, the
+test counts 140 instead of 70 and fails:
+
+```
+AssertionError: Expected 70 exp1_batch2 runs, got 140
+```
+
+## Why this is latent, not a regression
+
+- The `reconciliation_*.csv` files were generated ~2026-05-26 and **deliberately
+  untracked** in commit `c14136ff` ("stop tracking generated reconciliation CSV
+  artifacts"). They linger in working trees that retained them.
+- Fresh checkouts and CI have only the 70 tracked `<model>-run<N>.csv` files, so
+  `make check` is green on `origin/main` (verified: a fresh worktree off
+  origin/main globs exactly 70). The failure reproduces only on a working tree
+  that still holds the 2026-05-26 reconciliation outputs (e.g. padme primary).
+- Independent of those specific files, the test is **fragile to any colocated
+  output** whose name ends in `-run<N>.csv`.
+
+## Relevant files
+
+- `tests/test_score_mechanical.py` — `run_re` (line ~632) and the glob loop (~645)
+- `experiments/outputs/exp1_batch2/` — holds both the 70 tracked run CSVs and (locally) the untracked `reconciliation_*` outputs
+
+## Actions
+
+1. Make the test robust to colocated outputs. Pick one:
+   - **Skip the prefix:** `if fpath.name.startswith("reconciliation_"): continue`
+     before the regex (cheap, explicit).
+   - **Anchor the model group** to the known exp1_batch2 model set (stronger:
+     also catches future stray prefixes), e.g. validate `model` against the
+     modelset roster used elsewhere in the suite.
+2. Keep the `== 70` assertion (it is the right invariant) and the ρ ≥ 0.85 check.
+
+## Test
+
+The fix IS to the test. Red→green proof: with `reconciliation_*.csv` present in
+`experiments/outputs/exp1_batch2/`, the current test fails (140); after the
+prefix skip / model-roster anchor it passes (70). A reviewer can reproduce by
+touching a dummy `reconciliation_x-run1.csv` in that dir.
+
+## Verification
+
+- [ ] Test passes whether or not `reconciliation_*.csv` files are present locally
+- [ ] Count assertion still pins exactly 70 genuine run files
+- [ ] `make check` passes on a working tree that retains the reconciliation outputs
+
+## Invariants
+
+- Do not delete the user's local `reconciliation_*` experiment data (untracked, 0374-era)
+- Do not weaken the ρ ≥ 0.85 variability-screen regression assertion
+
+## Exit criteria
+
+- Test is robust to colocated `-run<N>.csv` outputs; all verification boxes ticked
