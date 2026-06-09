@@ -1,0 +1,120 @@
+%erg 0.1
+Title: Shared census model-ordering function (heatmap vs Figure 2 drift)
+Created: 2026-06-09
+Author: claude
+
+--- log ---
+2026-06-09T20:29Z claude created
+
+--- body ---
+## Context
+
+Two Exp1 figures order the same 14-model census but compute the order with
+two different rules, so they can silently disagree:
+
+- **Figure 2** (`fig_direct_p1_base`, `plot_method_convergence.write_pdf`)
+  sorts by `(model_family, -_model_size_b(model, size_class), model)`.
+  `_model_size_b` resolves the confirmed parameter-count registry
+  `_KNOWN_SIZE_B` (→ regex on the name → `size_class` fallback). It reads
+  `size_class` from the measurement records.
+- **Figure 4** (`fig_quality_floor_heatmap_exp1`,
+  `plot_quality_floor_heatmap_exp1.heatmap_models`) sorts by
+  `(model_family, -_model_size_rank(model), model)`. `_model_size_rank`
+  (from `plot_quality_spider_exp1`) is a coarse name-substring tier
+  (haiku/small/20b/flash→1, sonnet/medium/35b/120b/plus→2,
+  opus/large/max/pro/5.5→3). It reads only the model name, because the
+  heatmap's input (`experiments/derived/exp1_cross_eval.csv`) has no
+  `size_class` column.
+
+For the current cohort the two orders agree — but only via the alphabetical
+final tiebreak, and the tier heuristic is brittle: a future model whose name
+dodges every tier keyword lands in the default tier (2) and the figures
+diverge. PR #914 added `test_model_order_literal_matches_figure2_render` as a
+tripwire (a hardcoded 14-name list verified against the committed Figure 2
+PDF), which catches a regression but does **not** give the two figures a
+single source of truth to fix it in one place.
+
+This was raised in the #914 Copilot review (the docstrings/caption were
+softened from "effective parameter size descending / identical to Figure 2"
+to "approximation, verified for this cohort"). The honest wording is shipped;
+this ticket removes the underlying duplication.
+
+## Goal
+
+One canonical ordering function both figures call, name-resolvable (works
+without `size_class`), with the parameter registry as the single source of
+truth.
+
+## Approach (guidance, not binding)
+
+- Extract `census_model_order(models: Iterable[str]) -> list[str]` — likely
+  next to `_model_size_b` in `plot_method_convergence`, or in `util` if that
+  pulls in no heavy deps. Key: `(model_family(m), -size_b(m), m)`.
+- Make size resolution work from the **name alone** so the heatmap can use it:
+  `_model_size_b(model, size_class=None)` already falls back to the regex and
+  then the `size_class` default (500). Add the 6 exp1 models missing confirmed
+  sizes to `_KNOWN_SIZE_B` (claude-haiku-4.5 / -sonnet-4.6 / -opus-4.6,
+  gpt-5.5, deepseek-v4-pro / -flash, qwen3.7-max, qwen3.6-flash) so the
+  name-only path orders them correctly instead of colliding at 500.
+  **Caution:** `_KNOWN_SIZE_B` is checked *before* `size_class` in
+  `_model_size_b`, so any value added here also changes Figure 2's order if it
+  disagrees with the current `size_class`-derived size. Pin the added values to
+  reproduce today's Figure 2 order (regression-guard below).
+- Repoint `heatmap_models` and `plot_method_convergence`'s inline sort at the
+  shared function. Delete `_model_size_rank` if nothing else uses it
+  (`plot_quality_spider_exp1` still does for its 2x2 panels — check before
+  removing; it may stay for the spider only).
+
+## First test (write before code)
+
+```python
+# tests/test_census_model_order.py
+def test_heatmap_and_figure2_share_one_order():
+    """The heatmap and Figure 2 produce identical column/row order via the
+    shared census_model_order — not two heuristics that happen to agree."""
+    from aedist.plot_method_convergence import census_model_order
+    from aedist.plot_quality_floor_heatmap_exp1 import heatmap_models
+    from aedist.plot_quality_spider_exp1 import _load_rows
+
+    rows = _load_rows("experiments/derived/exp1_cross_eval.csv")
+    models = sorted({r["model"].strip() for r in rows if r["model"].strip()})
+    assert heatmap_models(rows) == census_model_order(models)
+    # And it still matches the visually-verified literal from PR #914.
+    assert census_model_order(models) == [
+        "claude-opus-4.6", "claude-sonnet-4.6", "claude-haiku-4.5",
+        "deepseek-v4-pro", "deepseek-v4-flash", "gpt-5.5",
+        "gpt-oss-120b", "gpt-oss-20b", "mistral-large-2512",
+        "mistral-medium-3-5", "mistral-small-2603", "qwen3.7-max",
+        "qwen3.6-35b-a3b", "qwen3.6-flash",
+    ]
+```
+
+## Definition of done
+
+- [ ] `census_model_order` exists in one module; `heatmap_models` and
+      `plot_method_convergence` both call it (no second size heuristic for
+      census ordering).
+- [ ] Size resolution works from the model name alone (heatmap path needs no
+      `size_class`); the 6 missing exp1 models are in `_KNOWN_SIZE_B` with
+      values pinned to preserve today's Figure 2 order.
+- [ ] `test_census_model_order.py` (the first test above) passes; the PR #914
+      literal-order test is folded into / superseded by it (no orphaned
+      duplicate).
+- [ ] Both `fig_direct_p1_base.pdf` and `fig_quality_floor_heatmap_exp1.pdf`
+      rebuild byte-for-deterministically with unchanged model order (visual
+      diff = none).
+- [ ] `_model_size_rank` either deleted (if unused) or documented as
+      spider-only; no dead import.
+- [ ] `make check` passes.
+
+## Relevant files
+
+- `src/aedist/plot_method_convergence.py` — `_model_size_b`, `_KNOWN_SIZE_B`, inline census sort
+- `src/aedist/plot_quality_floor_heatmap_exp1.py` — `heatmap_models`
+- `src/aedist/plot_quality_spider_exp1.py` — `_model_size_rank` (other consumer)
+- `tests/test_plot_quality_floor_heatmap_exp1.py` — `test_model_order_literal_matches_figure2_render` (to fold in)
+
+## Priority
+
+Low — maintainability cleanup, not a correctness bug. Current behaviour is
+correct and tripwire-guarded by #914. Pick up post-arXiv.
