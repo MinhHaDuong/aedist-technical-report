@@ -2,11 +2,13 @@
 Title: test_variability_screen_regression double-counts: regex matches colocated reconciliation_*.csv
 Created: 2026-06-09
 Author: HDMX-coding-agent
+Closed: Fixed in PR #888 (merged): prefix-skip reconciliation_*.csv in variability regression test; red->green proven; all exit criteria met.
 
 --- log ---
 2026-06-09T09:45Z HDMX-coding-agent created — surfaced during the 483/486/487/488 raid wrap-up `make check` on padme primary working tree.
 
 2026-06-09T10:23Z fixed: prefix-skip reconciliation_*.csv before run_re; red(71)->green(70) proven with dummy; 50/50 test_score_mechanical pass; ruff clean
+2026-06-09T10:29Z HDMX-coding-agent closed — Fixed in PR #888 (merged): prefix-skip reconciliation_*.csv in variability regression test; red->green proven; all exit criteria met.
 --- body ---
 ## Context
 
