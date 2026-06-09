@@ -6,6 +6,7 @@ Author: claude
 --- log ---
 2026-05-21T12:30Z claude created — follow-up from ticket 0196 (Pareto figure)
 2026-06-08T11:00Z claude note linked to tracker 0464
+2026-06-08T19:15Z HDMX-coding-agent note scope conflict — cannot implement safely without author guidance. Three-way conflict: (1) original exit criteria specify per-run scalars in records_to_metrics() — but 0396 precedent explicitly says coherence metrics do NOT go in measurements.jsonl; (2) 0453 body item #4 says 0201 should consume 0453's variability scorers and own the composite aggregation — but 0464 tracker assigns aggregation to 0453 (run-grain veto + model-grain floor); (3) 0454 (status-vocabulary alignment, open/imagine) is an unresolved dependency for the status-correct sub-score. Safe partial: score_exp1.py is missing coherence_status_vocab_adherence + coherence_row_atomicity columns (already in score_mechanical.py / sota_cross_eval.csv); adding parity does not touch contested aggregation. Question for author: (a) does 0201 own the composite/floor aggregation (per 0453 body #4), or only the scorer components with floor logic living in 0453 (per 0464 tracker)? (b) is the status-correct sub-score deferred until 0454 resolves status vocabulary?
 
 --- body ---
 
