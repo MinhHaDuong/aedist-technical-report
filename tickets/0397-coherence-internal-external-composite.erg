@@ -7,6 +7,7 @@ Author: claude
 2026-06-03T00:00Z claude created — Imagine-phase design with the author. Sits ABOVE the per-field coherence indicators (0396 row_atomicity, plus the existing vocab/status/capacity adherence): aggregates them into two reference-free composites, internal (response-only) and external (world-knowledge, not gold), with per-row pass/fail aggregation. Blocked-by 0396 because the internal composite ANDs the per-row atomicity predicate that 0396 introduces.
 2026-06-03T10:00Z claude — Imagine-session verification killed the external [30,1600] band: operating centrales max ≈1500 MW but reference power-centers legitimately reach 6000 MW, so a flat ceiling mislabels ~25% of the gold. Capacity plausibility is level-conditional → spun out the `level` schema (0401) and the level-conditioned capacity coherence check (0402). 0397's external check now keeps only province + capacity≥30-numeric; the upper-plausibility signal lives in 0402.
 
+2026-06-09T06:03Z HDMX-coding-agent note Blocked-by 0396 cleared in commit 4fcc0328 (0396 closed).
 --- body ---
 ## Context
 
