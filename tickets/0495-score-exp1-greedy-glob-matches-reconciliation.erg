@@ -1,0 +1,81 @@
+%erg 0.1
+Title: score_exp1.py greedy run-file regex matches colocated reconciliation_*.csv (scores 140 not 70)
+Created: 2026-06-09
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-09T11:00Z HDMX-coding-agent created — surfaced by the 0492 roar sweep for the greedy-glob anti-pattern class.
+
+--- body ---
+## Context
+
+`src/aedist/score_exp1.py` is the production exp1 scoring entry point. It globs
+the run directory and parses each filename with the same greedy regex that
+ticket 0492 just fixed in the test:
+
+```python
+_FILENAME_RE = re.compile(r"^(?P<model>.+)-run(?P<run>\d+)\.csv$")   # line 27
+...
+files = sorted(args.input_dir.glob("*.csv"))                        # line 288, default exp1_batch2
+for csv_path in files:
+    model, run = _parse_model_run(csv_path)                         # no reconciliation_ skip
+    row = score_file(csv_path, args.reference, args.prompt_version)
+```
+
+When the untracked 0374-era `reconciliation_<model>-run<N>.csv` outputs are
+present in `experiments/outputs/exp1_batch2/`, the greedy `(?P<model>.+)` also
+matches them (capturing `model = "reconciliation_<model>"`). They are then
+scored and appended as spurious runs — 140 rows instead of 70, polluting the
+scoring output with garbage "models".
+
+This is the **same anti-pattern as 0492**, but in production code, not a test.
+Sibling consumers `screen_validation_within_model.py` (line 116) and
+`tabulate_coherence.py` (`_SKIP_PREFIXES`) already guard against this; this
+entry point and the 0492 test were the unguarded instances. 0492 fixed the
+test; this fixes the remaining production instance.
+
+## Why latent, not a live regression
+
+Fresh checkouts and CI hold only the 70 tracked run CSVs, so `score_exp1`
+produces 70 rows there. The pollution reproduces only in a working tree that
+retained the reconciliation outputs (e.g. padme primary before 2026-06-09).
+The reconciliation artifacts have since been deleted from padme, but the code
+remains fragile to any future colocated `reconciliation_*` / `filtered_*` output.
+
+## Relevant files
+
+- `src/aedist/score_exp1.py` — `_FILENAME_RE` (line 27), `_parse_model_run` (line 97), glob loop (line 288)
+- `src/aedist/screen_validation_within_model.py` — the established skip-guard pattern to copy (lines 116-117)
+- `src/aedist/tabulate_coherence.py` — `_SKIP_PREFIXES = ("reconciliation_", "filtered_")` (line 32) — alternative pattern
+
+## Actions
+
+1. Add a skip for colocated non-run outputs in the `score_exp1.py` glob loop,
+   matching the established pattern. Prefer the `tabulate_coherence` form
+   (`_SKIP_PREFIXES = ("reconciliation_", "filtered_")`) for consistency and to
+   also cover `filtered_*`.
+2. Keep `_parse_model_run` raising on genuinely unparseable names (the skip
+   happens before the call, so a truly malformed run file still surfaces loudly).
+
+## Test
+
+Red→green: in `tests/test_score_exp1.py` (create if absent), point `score_exp1`
+at a tmp dir holding two genuine `<model>-run<N>.csv` plus one
+`reconciliation_<model>-run<N>.csv`; assert exactly 2 rows scored and no row has
+a model starting with `reconciliation_`. Without the skip the test sees 3 rows.
+
+## Verification
+
+- [ ] `score_exp1` ignores colocated `reconciliation_*` / `filtered_*` files
+- [ ] Genuine run files still all scored; count matches the run-file count
+- [ ] A malformed non-prefixed filename still raises (skip did not swallow it)
+- [ ] `make check` passes with a dummy `reconciliation_*-run1.csv` in the input dir
+
+## Invariants
+
+- Do not weaken `_parse_model_run`'s raise on unparseable genuine filenames
+- Do not delete local `reconciliation_*` data (it is regenerable but not ours to purge here)
+
+## Exit criteria
+
+- score_exp1 robust to colocated outputs; all verification boxes ticked; blocked-by class test 0496 is a SEPARATE follow-up, not bundled here

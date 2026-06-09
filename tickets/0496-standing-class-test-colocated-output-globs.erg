@@ -1,0 +1,65 @@
+%erg 0.1
+Title: Standing class regression test: every exp1_batch2 consumer ignores colocated non-run outputs
+Created: 2026-06-09
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-09T11:02Z HDMX-coding-agent created — class-level follow-up to the 0492/0495 greedy-glob instances (roar step 4).
+
+--- body ---
+## Context
+
+Two instances of one anti-pattern were found within days: a directory is
+globbed for `*.csv` (or `*-run*.csv`) and filenames are parsed with the greedy
+`^(?P<model>.+)-run(?P<run>\d+)\.csv$`, which silently captures colocated
+`reconciliation_<model>-run<N>.csv` (and potentially `filtered_*`) outputs.
+
+- 0492: the variability-screen regression test (fixed).
+- 0495: `score_exp1.py` production scoring (fix in flight).
+
+Guards already exist in `screen_validation_within_model.py` (line 116) and
+`tabulate_coherence.py` (`_SKIP_PREFIXES`), but they were added ad hoc per
+site. The class has a shape and will recur in the next consumer someone writes
+against `experiments/outputs/exp1_batch2/` — a per-PR review gate won't catch a
+brand-new unguarded glob in an unrelated future PR. A standing test will.
+
+## Relevant files
+
+- `src/aedist/score_exp1.py`, `src/aedist/screen_validation_within_model.py`,
+  `src/aedist/tabulate_coherence.py` — current consumers of the run dir
+- `tests/test_score_mechanical.py::test_variability_screen_regression_exp1_batch2` — the 0492 instance
+- New: `tests/test_no_colocated_output_leak.py` (or similar)
+
+## Actions
+
+1. Write one parametric adherence/regression test that, for each known
+   exp1_batch2 consumer entry point, runs it against a tmp dir seeded with N
+   genuine run CSVs plus a `reconciliation_*-run1.csv` and a `filtered_*-run1.csv`,
+   and asserts the consumer's row/run count equals N (the decoys are ignored).
+2. Drive the consumer list from a small registry in the test so adding a new
+   consumer without the guard fails the test until registered + guarded.
+3. Consider extracting the skip into a shared helper
+   (e.g. `is_genuine_run_csv(path)` in a scoring util) so consumers opt in by
+   calling it rather than re-implementing the prefix check — reduces the
+   chance the next author forgets.
+
+## Test
+
+This ticket IS the test. It must go RED if any registered consumer is reverted
+to glob+parse without the skip, and GREEN once all consumers use the guard.
+
+## Verification
+
+- [ ] Test seeds genuine + `reconciliation_*` + `filtered_*` decoys and asserts decoys ignored
+- [ ] Covers score_exp1, screen_validation_within_model, tabulate_coherence, and the 0492 test path
+- [ ] Reverting any single consumer's guard turns the test RED (proven by mutation)
+- [ ] `make check` green
+
+## Invariants
+
+- Do not bundle this into the 0495 fix PR — it is a separate standing guard
+- Test must not depend on the user's local reconciliation data; it seeds its own tmp fixtures
+
+## Exit criteria
+
+- A standing test catches the greedy-glob class for any current and future exp1_batch2 consumer
