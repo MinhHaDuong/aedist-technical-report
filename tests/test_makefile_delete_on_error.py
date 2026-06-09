@@ -79,8 +79,17 @@ def _has_recipes(makefile: Path) -> bool:
     return False
 
 
+# The directive as an actual special-target declaration: `.DELETE_ON_ERROR`
+# at the start of a line (optional leading whitespace) followed by its colon.
+# A line that merely MENTIONS the string in a comment (`# .DELETE_ON_ERROR …`)
+# does not match — otherwise a makefile documenting the directive would be
+# scored as setting it, and a real regression (the line deleted but a comment
+# left behind) would slip through.
+_DIRECTIVE_RE = re.compile(r"^[ \t]*\.DELETE_ON_ERROR[ \t]*:", re.MULTILINE)
+
+
 def _sets_directive(makefile: Path) -> bool:
-    return ".DELETE_ON_ERROR" in makefile.read_text(encoding="utf-8")
+    return _DIRECTIVE_RE.search(makefile.read_text(encoding="utf-8")) is not None
 
 
 def _reachable(makefile: Path, seen: set[Path] | None = None) -> bool:
