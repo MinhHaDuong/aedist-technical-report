@@ -2,10 +2,12 @@
 Title: Standing class regression test: every exp1_batch2 consumer ignores colocated non-run outputs
 Created: 2026-06-09
 Author: HDMX-coding-agent
+Closed: implemented in PR #895
 
 --- log ---
 2026-06-09T11:02Z HDMX-coding-agent created — class-level follow-up to the 0492/0495 greedy-glob instances (roar step 4).
 
+2026-06-09T11:30Z HDMX-coding-agent closed — implemented in PR #895
 --- body ---
 ## Context
 
