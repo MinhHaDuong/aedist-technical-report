@@ -6,6 +6,7 @@ Author: HDMX-coding-agent
 --- log ---
 2026-06-08T12:00Z HDMX-coding-agent created
 2026-06-08T23:00Z haduong decided Generalize: rename exp2_mart.py → mart.py, schema name "mart"; no shoehorn; raw counts (tp/fp/fn) as int|None on ScoreSummary directly
+2026-06-09T08:12Z HDMX-coding-agent note Derisk pass on 0297: added a field-audit step (§Field audit) — 0297's "fields to absorb" list is incomplete vs what records_to_metrics() actually projects. The whole controlled-condition vector (temperature, seed, num_ctx, provider_order, max_tokens, no_think, system_instruction, reasoning_effort), plus validation and the justification scalars, has no mart home today. Read by no current consumer (so not a blast-radius risk) but required for ADR-7 completeness if the mart is to be the single scientific record.
 --- body ---
 ## Context
 
@@ -40,6 +41,33 @@ Two architectural questions are resolved:
 3. Add raw count fields to `ScoreSummary` (tp, fp, fn as `int | None`).
 4. Bump `_MART_SCHEMA_VERSION` to 4 with changelog comment.
 5. Update `build_exp2_mart.py` to populate raw counts from scorer output.
+6. **Field audit** (see §Field audit): diff the full key set of `records_to_metrics()`
+   output against the mart field tree; for each missing key, decide absorb-now /
+   defer-with-ticket / drop-as-bookkeeping, and record the disposition in this ticket.
+
+## Field audit
+
+0297's "fields to absorb" list (method, tp/fp/fn, web_search_calls, agent_mode, validation)
+is **incomplete** against what `records_to_metrics()` (`measurements.py:130-247`) actually
+projects. The mart must not silently drop the experimental axes.
+
+Has no mart home today and must be triaged here:
+
+- **Controlled-condition vector** (the experimental variables exp1 pivots on): `temperature`,
+  `seed`, `num_ctx`, `provider_order`, `max_tokens`, `no_think`, `system_instruction`,
+  `reasoning_effort`. None are read by current consumers (verified 2026-06-09), so deferring
+  them does not break a figure — but they are part of the "complete scientific record"
+  ADR-7 requires, so the mart should carry them (likely a typed `conditions` sub-model).
+- `validation` dict (run-quality flag from `validate_run()`) — listed by 0297, no mart field.
+- Justification scalars (source-grounding): `verification_mode`, `mean_evidence_score`,
+  `verification_cost_usd`, `faithfulness_score`.
+- Partial run-level: `thinking_tokens`, `tool_calls_cost_usd`, `cost_breakdown`,
+  `reasoning_summary`, `retry_count`, `error`, `finish_reason` (RunSummary has cost/tokens
+  but not these).
+
+Disposition for each: **absorb now** (wire into the schema this PR), **defer** (own ticket,
+named here), or **drop** (bookkeeping only — `run_id`, `timestamp`, `result_file`,
+`validation`-as-bookkeeping per ADR-7's exclusion list). Write the table into the log.
 
 ## Test
 
@@ -56,6 +84,8 @@ def test_score_summary_has_raw_counts():
 
 - [ ] Author has confirmed generalize vs shoehorn decision (written in ticket log).
 - [ ] `ScoreSummary` carries `tp`, `fp`, `fn` as `int | None` fields.
+- [ ] Field audit complete: every `records_to_metrics()` key has a disposition
+      (absorb / defer-with-ticket / drop) recorded in the log.
 - [ ] Schema version bumped, changelog comment updated.
 - [ ] `build_exp2_mart.py` populates raw counts.
 - [ ] `make check` passes.

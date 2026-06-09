@@ -3,9 +3,11 @@ Title: Delete old stack: measurements.jsonl, evaluate.py assemble, RunRecord (tr
 Created: 2026-06-08
 Author: HDMX-coding-agent
 Blocked-by: 0477
+Blocked-by: 0490
 
 --- log ---
 2026-06-08T12:00Z HDMX-coding-agent created
+2026-06-09T08:12Z HDMX-coding-agent note Added Blocked-by 0490. Deletion target (measurements.jsonl) holds exp1+exp2+exp3, but exp3 is record-only (raw deleted post-edda724b) and no adapter can rebuild it from raw. 0490 must resolve the exp3/legacy ingest source (record.json ingest or retained snapshot) before this deletion is safe.
 --- body ---
 ## Context
 

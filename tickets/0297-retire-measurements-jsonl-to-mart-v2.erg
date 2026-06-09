@@ -10,6 +10,7 @@ Label: deferred
 
 2026-05-25T12:22Z HDMX-coding-agent tag deferred
 2026-06-08T12:00Z HDMX-coding-agent note Converted to tracking ticket. Child tickets created: 0475 (architect question + schema), 0476 (exp1 adapter + equivalence), 0477 (port consumers), 0478 (delete old stack). This tracker stays open until all children merge and make check passes.
+2026-06-09T08:14Z note Derisk pass: created children 0489 (mart_to_metrics shim + golden test) and 0490 (exp3/legacy ingest source); re-pointed 0476 Blocked-by 0475->0489; added 0490 as second blocker on 0478; added field-audit step to 0475.
 --- body ---
 ## Context
 
@@ -41,14 +42,27 @@ single source of truth for all experiments (exp1 through exp3+), and the old sta
 
 This is a tracking ticket. Children must land in dependency order:
 
+DAG: `0475 → 0489 → {0476 → 0477 → 0478, 0490 → 0478}`
+
 | ID | Title | Status |
 |----|-------|--------|
-| 0475 | Architect question: generalize vs shoehorn + schema design | open |
-| 0476 | Exp1 adapter + mart equivalence test | blocked on 0475 |
+| 0475 | Architect question: generalize vs shoehorn + schema design + field audit | open |
+| 0489 | Read-path shim: `mart_to_metrics()` flattener + golden equivalence test | blocked on 0475 |
+| 0476 | Exp1 adapter + mart equivalence test | blocked on 0489 |
+| 0490 | Exp3/legacy ingest source: `.record.json` vs frozen snapshot | blocked on 0489 |
 | 0477 | Port reporting consumers from measurements.jsonl to mart | blocked on 0476 |
-| 0478 | Delete old stack (measurements.jsonl, evaluate.py assemble, RunRecord) | blocked on 0477 |
+| 0478 | Delete old stack (read interface; RunRecord write-path is a separate epic) | blocked on 0477, 0490 |
 
 Tracker closes only after 0478 merges and a final `make check` confirms no old-stack references remain.
+
+Derisk note (2026-06-09): the migration is a **shape change** (flat dict per run → 3 nested
+mart records joined by `parent_record_id`), not a rename. Two children were inserted: **0489**
+(the `mart_to_metrics()` shim that turns 0477's irreversible 27-script rewrite into a one-line
+loader swap, and is the real cutover gate the exp2-only parity check is not) and **0490** (the
+exp3/legacy ingest gap — `measurements.jsonl` holds exp1+exp2+exp3, but exp3 is record-only
+with no recoverable raw, so no raw-reading adapter can rebuild it). 0478 is also re-scoped to
+delete the **read** stack only; deleting `RunRecord` is blocked by the live collection path
+(5 adapters + `query_*` + `worker`) and belongs to its own epic.
 
 ## Architectural question (must resolve before 0475)
 

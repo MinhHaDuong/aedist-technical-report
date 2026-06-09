@@ -1,0 +1,110 @@
+%erg 0.1
+Title: Mart read-path shim: mart_to_metrics() flattener + golden equivalence test (tracker: 0297)
+Created: 2026-06-09
+Author: HDMX-coding-agent
+Blocked-by: 0475
+
+--- log ---
+2026-06-09T08:12Z HDMX-coding-agent created
+2026-06-09T08:12Z HDMX-coding-agent note Derisk pass on 0297: the migration is a shape change (flat dict per run -> 3 nested mart records joined by parent_record_id), not a rename. This ticket builds the one shim that turns the irreversible 17/27-script rewrite (0477) into a one-line loader swap, and is the real cutover gate the exp2-only parity check (check_exp2_mart_parity.py) only pretends to be.
+
+--- body ---
+## Context
+
+`records_to_metrics()` (`measurements.py:75-248`) emits **one flat dict per run** — the
+metrics dict that ADR-7 calls "the complete scientific record." Every reporting consumer
+(27 scripts via `load_metrics()`) reads from this flat shape. The mart stores the same
+information as **three nested records** (`run` / `probe` / `score`) joined by
+`parent_record_id`, with metrics split across typed sub-models.
+
+If 0477 ports consumers by making each script walk nested mart records and join
+run⋈score itself, that is 27 new join sites and 27 new failure modes — for an
+**irreversible** cutover. This ticket eliminates that risk with a single shim.
+
+The actual read surface is small (verified by consumer audit, 2026-06-09): the 27 scripts
+collectively read only ~11 metrics-dict keys — `label`, `f1`, `coverage`, `precision`,
+`n_matched`, `n_missed`, `n_hallucinated`, `cost_usd`, `method`, `prompt_version`, `model`.
+So the shim only has to reproduce those exactly; the rest of the metrics dict is projected
+for ADR-7 completeness but read by nobody.
+
+## Deliverable
+
+`mart_to_metrics(records: list[MartRecord]) -> list[dict]` — re-flattens the mart's
+run⋈score graph back into the **identical** dict shape `records_to_metrics()` emits,
+so 0477 becomes a loader-import swap (`from aedist.measurements import load_metrics`
+→ a mart-backed `load_metrics`) rather than a rewrite.
+
+This is the keystone: with the shim + its golden test, the cutover is reversible
+(revert one import) and gated (row-for-row field equality), where today the exp2-only
+parity check covers ~20% of the rows being deleted and says nothing about exp1/exp3.
+
+## The join is the hazard
+
+The flat dict has cost/tokens (run-level) and f1 (score-level) on ONE row. In the mart
+they live on a `record_kind="run"` record and a separate `record_kind="score"` record.
+Cost-vs-quality consumers (`exp1_cost_quality.py`, `tabulate_cost_quality.py`) need both.
+The shim must define the join semantics explicitly:
+
+- **left join on the run record** by `parent_record_id`;
+- **null/None metrics when a run has no score row** (unscored generations, refusals) —
+  never drop the run;
+- output **row count == run-record count** (no fan-out, no drop).
+
+## Relevant files
+
+- `src/aedist/measurements.py` — `records_to_metrics()` is the reference shape to match.
+- `src/aedist/exp2_mart.py` (or `mart.py` post-0475) — mart record types.
+- `experiments/derived/exp2_mart.jsonl` — current exp2 mart (80 run + 80 score).
+
+## Actions
+
+1. Add `mart_to_metrics()` next to the mart schema (`mart.py` post-0475), mirroring the
+   key set and omit-when-None discipline of `records_to_metrics()`.
+2. Implement the documented left-join + null-on-unscored + no-fan-out contract.
+3. Write the golden equivalence test (below).
+
+## Test (write first — TDD red step)
+
+```python
+# tests/test_mart_to_metrics_equivalence.py
+import pytest
+
+@pytest.mark.adherence
+def test_mart_to_metrics_field_equals_records_to_metrics_on_shared_raw():
+    """Same raw inputs -> records_to_metrics() == mart_to_metrics(), field by field,
+    on the ~11 keys consumers actually read. The cutover gate for 0477."""
+    # Build both from the SAME raw artifacts (exp2 to start; exp1 lands with 0476,
+    # exp3/legacy with 0490). For each run, assert the read-surface keys are equal:
+    #   label, f1, coverage, precision, n_matched, n_missed, n_hallucinated,
+    #   cost_usd, method, prompt_version, model
+    # Numeric tol < 1e-4; identity fields exact.
+    pass
+
+@pytest.mark.adherence
+def test_mart_to_metrics_row_count_equals_run_count():
+    """Left join must not fan out or drop: one output row per run record,
+    None metrics on unscored runs."""
+    pass
+```
+
+## Verification
+
+- [ ] `mart_to_metrics()` exists and returns the same dict shape as `records_to_metrics()`
+      for the ~11 consumer-read keys.
+- [ ] Golden equivalence test passes on the exp2 mart (the only experiment in the mart today).
+- [ ] Row-count test passes (output rows == run records; unscored runs kept with None metrics).
+- [ ] `make check` passes.
+- [ ] `measurements.jsonl`, `RunRecord`, `records_to_metrics()` are NOT modified or deleted.
+
+## Invariants
+
+- This PR adds the shim + tests only; it ports no consumer and deletes nothing.
+- The shim's key set tracks `records_to_metrics()`; if 0475's field audit adds keys to
+  the mart, surface them here too (ADR-7).
+
+## Exit criteria
+
+- `mart_to_metrics()` lands with a passing golden equivalence test against
+  `records_to_metrics()` on shared raw inputs.
+- 0476 (exp1) and 0490 (exp3/legacy) instantiate this golden test for their subsets.
+- 0477 can cut over by swapping the loader import, with the golden test as the gate.
