@@ -464,5 +464,5 @@ We thank Econom'IA 2026 participants for their comments, in particular those tha
 
 ## Bibliography
 
-*[PLACEHOLDER. Cite keys throughout this document follow the pandoc-citeproc `[@key]` convention and resolve against `report/refs.bib`. To render with citations: `pandoc slides/manuscript/main.md -o slides/manuscript/main.pdf --pdf-engine=tectonic --resource-path=slides --citeproc --bibliography=report/refs.bib`. A Makefile target for the manuscript with citeproc wired in is not yet in place; the current pandoc invocation in this worktree omits citeproc, so `[@key]` markers render verbatim. Until the build is wired, the full bibliographic entries live in `docs/related-work/*.md` (per-paragraph notes) and in `report/refs.bib`.]*
+Generated from `report/refs.bib` via pandoc-citeproc.
 
