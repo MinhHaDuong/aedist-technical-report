@@ -2,12 +2,14 @@
 Title: Heatmap false pass: surface the coherence veto so weak models show red
 Created: 2026-06-09
 Author: HDMX-coding-agent
+Closed: heatmap veto polarity fixed; Haiku + gpt-oss-120b now correctly disqualified, strong models green
 
 --- log ---
 2026-06-09T00:00Z HDMX-coding-agent created
 2026-06-09T00:00Z HDMX-coding-agent note blocker changed from 0201 → 0488 (child split from 0201 for minimum Exp1 coherence column wiring)
 2026-06-09T08:30Z HDMX-coding-agent note re-scoped + UNBLOCKED after raid Imagine/Plan verification. Original premise (missing coherence columns, blocked by 0488) is FACTUALLY WRONG: exp1_cross_eval.csv already carries all coherence columns (added commit 5cfe68e7, ticket 0453). 0488 voided. The real root cause is in plot_quality_floor_heatmap_exp1.py: cell_is_red() fires only on value==0.0 majority, but the coherence veto signal (coherence_run_veto, =1 when cap_distinct<=4 OR status_distinct<=1) has INVERTED polarity (1=bad) and the two *_distinct columns are counts, not 0-1 scores — so a vetoed run reads green. Verified across all 12 rendered models: surfacing the veto turns claude-haiku-4.5 (5/5 vetoed) AND gpt-oss-120b (4/5 vetoed) red; every strong frontier model (opus, sonnet, gpt-5.5, all Mistral, qwen-max) has 0/5 vetoes and stays green. Both flips are consistent with existing §4 prose — line 453 already names gpt-oss-120b among vetoed models (per-model gap +0.078), line 90 calls these the weakest. Figure-vs-prose consistency fix, not a new claim.
 
+2026-06-09T09:00Z HDMX-coding-agent closed — heatmap veto polarity fixed; Haiku + gpt-oss-120b now correctly disqualified, strong models green
 --- body ---
 ## Context
 

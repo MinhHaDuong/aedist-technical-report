@@ -3,13 +3,17 @@
 Pipeline phase: P3 (analyze & render) — invoked by experiments/render.mk.
 
 Rows = the exact model set the spider renders (families claude / gpt / mistral / qwen;
-deepseek excluded — it has no spider panel).  Columns = all five scored criteria
-(accuracy, coherence, field_completeness, provenance, temporality) and their
-sub-scores, derived programmatically from the CSV header — never hardcoded.
+deepseek excluded — it has no spider panel).  Columns = the genuine 0–1 sub-scores
+across all five criteria (accuracy, coherence, field_completeness, provenance,
+temporality), derived programmatically from the CSV header — never hardcoded — plus
+the single coherence-veto flag rendered as a disqualifying column.  The raw
+*_distinct COUNT columns are diagnostic intermediates and are excluded.
 
-A cell is RED iff a majority (≥ ceil(n/2)+1 of n) of that model's runs score zero —
-indicating the model systematically fails on that criterion. A row with any red cell
-marks the model as failing to clear the §2 quality bar.
+A cell is RED iff a majority of that model's runs FAIL the column's criterion.
+Polarity is column-specific: for a genuine 0–1 sub-score a run fails when it scores
+zero; for the coherence-veto flag a run fails when it is vetoed (coherence_run_veto
+== 1, the inverted-polarity screen of §4).  A row with any red cell marks the model
+as failing to clear the §2 quality bar.
 
 Usage:
     python -m aedist.plot_quality_floor_heatmap_exp1 \
@@ -44,6 +48,20 @@ _CRITERION_ORDER = ("accuracy", "coherence", "field_completeness", "provenance",
 # other sub-scores already present, so including them would double-count).
 _COMPOSITE_COLS = frozenset({"accuracy_f1"})
 
+# Diagnostic intermediates in the Coherence group that are NOT 0–1 sub-scores:
+# raw COUNTs of distinct capacities/statuses per run (values like 4, 26, 35…).
+# They feed the veto rule (cap_distinct <= 4 OR status_distinct <= 1) but are not
+# themselves quality scores, and being never-zero they would always read green
+# under the value==0 majority rule — so they are excluded from the rendered grid.
+_NON_SUBSCORE_COLS = frozenset({"coherence_capacity_distinct", "coherence_status_distinct"})
+
+# The internal-coherence veto flag (score_mechanical.py): "1" = run was vetoed
+# (degenerate/repeated rows → bad), "0" = run passed the screen.  This is the
+# paper's ρ=0.92 zero-reference screen (§4).  Its polarity is INVERTED relative
+# to a sub-score, so it gets a dedicated red rule (majority vetoed → red) rather
+# than the value==0 path used for genuine 0–1 sub-scores.
+_VETO_COL = "coherence_run_veto"
+
 # Human-readable column labels for display.
 COLUMN_LABELS: dict[str, str] = {
     "accuracy_coverage": "Coverage",
@@ -53,6 +71,7 @@ COLUMN_LABELS: dict[str, str] = {
     "accuracy_province": "Province",
     "coherence_vocab_adherence": "Vocabulary",
     "coherence_capacity_nonnegative": "Capacity≥0",
+    "coherence_run_veto": "Coherence veto",
     "field_completeness_core": "Core fields",
     "field_completeness_capacity": "Capacity",
     "provenance_source_presence": "Src presence",
@@ -87,11 +106,14 @@ def _col_criterion(col: str) -> str:
 
 
 def _scored_columns(csv_path: Path) -> list[str]:
-    """Return the ordered list of scored sub-score columns from the CSV header.
+    """Return the ordered list of rendered columns from the CSV header.
 
-    Excludes bookkeeping columns, annotation columns, and composite aggregates
-    (accuracy_f1).  Orders by criterion prefix according to _CRITERION_ORDER,
-    preserving original column order within each criterion group.
+    Excludes bookkeeping columns, annotation columns, composite aggregates
+    (accuracy_f1), and non-sub-score diagnostic intermediates (the raw
+    *_distinct COUNT columns).  The coherence veto flag IS retained — it is
+    rendered as a single disqualifying column with an inverted-polarity red
+    rule (see _cell_is_red_for_column).  Orders by criterion prefix according
+    to _CRITERION_ORDER, preserving original column order within each group.
     """
     with csv_path.open(newline="", encoding="utf-8") as fh:
         header = next(csv.reader(fh))
@@ -103,6 +125,8 @@ def _scored_columns(csv_path: Path) -> list[str]:
         if col.endswith("_annotation"):
             continue
         if col in _COMPOSITE_COLS:
+            continue
+        if col in _NON_SUBSCORE_COLS:
             continue
         by_criterion[_col_criterion(col)].append(col)
 
@@ -150,6 +174,49 @@ def cell_is_red(runs: list[float]) -> bool:
         return False
     n_zero = sum(1 for v in runs if v == 0.0)
     return n_zero > len(runs) / 2
+
+
+def _fail_fraction(col: str, runs: list[float]) -> float:
+    """Return the fraction of runs that FAIL the column's quality predicate.
+
+    Polarity is column-specific so the printed percentage and the red colour
+    stay consistent ("high % = bad = red") across every column:
+
+    - Genuine 0–1 sub-scores: a run fails when its value is exactly 0.0.
+    - The coherence veto flag (_VETO_COL): a run fails when its value is 1.0
+      (the flag is inverted — 1 means the run was vetoed / degenerate).
+
+    Empty input → 0.0 (no failing runs to report).
+
+    >>> _fail_fraction("accuracy_coverage", [0.0, 0.0, 0.4])  # 2/3 zero
+    0.6666666666666666
+    >>> _fail_fraction("coherence_run_veto", [1.0, 1.0, 0.0])  # 2/3 vetoed
+    0.6666666666666666
+    """
+    if not runs:
+        return 0.0
+    target = 1.0 if col == _VETO_COL else 0.0
+    n_fail = sum(1 for v in runs if v == target)
+    return n_fail / len(runs)
+
+
+def _cell_is_red_for_column(col: str, runs: list[float]) -> bool:
+    """Return True iff a majority of runs FAIL the column's quality predicate.
+
+    Dispatches on column polarity (see _fail_fraction): genuine sub-scores are
+    red on a majority of zeros (delegating to cell_is_red, the unchanged 0–1
+    rule); the veto column is red on a majority of vetoes (value == 1.0).
+
+    >>> _cell_is_red_for_column("accuracy_coverage", [0.0, 0.0, 0.0, 0.4, 0.6])
+    True
+    >>> _cell_is_red_for_column("coherence_run_veto", [1.0, 1.0, 1.0, 0.0, 0.0])
+    True
+    >>> _cell_is_red_for_column("coherence_run_veto", [0.0, 0.0, 0.0, 1.0, 1.0])
+    False
+    """
+    if col != _VETO_COL:
+        return cell_is_red(runs)
+    return _fail_fraction(col, runs) > 0.5
 
 
 def _spider_panel_models(rows: list[dict[str, str]]) -> list[str]:
@@ -217,16 +284,18 @@ def make_figure(rows: list[dict[str, str]], input_path: Path, output: Path) -> N
     n_rows = len(models)
     n_cols = len(columns)
 
-    # Build the boolean red-cell matrix and zero-fraction matrix (for annotation).
+    # Build the boolean red-cell matrix and fail-fraction matrix (for annotation).
+    # fail_frac is the fraction of runs failing each column's quality predicate
+    # (value == 0.0 for sub-scores; value == 1.0 for the inverted veto flag), so
+    # the printed percentage and the red colour stay consistent: high % = red.
     is_red = np.zeros((n_rows, n_cols), dtype=bool)
-    zero_frac = np.full((n_rows, n_cols), np.nan)
+    fail_frac = np.full((n_rows, n_cols), np.nan)
     for i, model in enumerate(models):
         for j, col in enumerate(columns):
             runs = run_values.get(model, {}).get(col, [])
             if runs:
-                n_z = sum(1 for v in runs if v == 0.0)
-                zero_frac[i, j] = n_z / len(runs)
-                is_red[i, j] = cell_is_red(runs)
+                fail_frac[i, j] = _fail_fraction(col, runs)
+                is_red[i, j] = _cell_is_red_for_column(col, runs)
 
     # Disqualified rows = any red cell.
     disqualified = np.any(is_red, axis=1)
@@ -240,16 +309,17 @@ def make_figure(rows: list[dict[str, str]], input_path: Path, output: Path) -> N
     rgb = np.full((n_rows, n_cols, 3), CELL_COLOR_GREY)
     for i in range(n_rows):
         for j in range(n_cols):
-            if not np.isnan(zero_frac[i, j]):
+            if not np.isnan(fail_frac[i, j]):
                 rgb[i, j] = CELL_COLOR_RED if is_red[i, j] else CELL_COLOR_GREEN
 
     ax.imshow(rgb, aspect="auto", origin="upper", interpolation="nearest")
 
-    # Cell annotations: zero-fraction as percentage.
+    # Cell annotations: fail-fraction as percentage (zeros for sub-scores,
+    # vetoes for the veto column — high % is bad and reads on a red cell).
     for i in range(n_rows):
         for j in range(n_cols):
-            if not np.isnan(zero_frac[i, j]):
-                pct = zero_frac[i, j]
+            if not np.isnan(fail_frac[i, j]):
+                pct = fail_frac[i, j]
                 label = f"{pct:.0%}" if pct > 0 else "0%"
                 text_color = "white" if is_red[i, j] or pct > 0.5 else "black"
                 ax.text(j, i, label, ha="center", va="center", fontsize=7.0, color=text_color)
@@ -305,8 +375,11 @@ def make_figure(rows: list[dict[str, str]], input_path: Path, output: Path) -> N
         prev_family = fam
 
     # Legend.
-    red_patch = mpatches.Patch(color=CELL_COLOR_RED, label="Red: ≥3/5 runs score zero (disqualifying)")
-    green_patch = mpatches.Patch(color=CELL_COLOR_GREEN, label="Green: passes (< majority zeros)")
+    red_patch = mpatches.Patch(
+        color=CELL_COLOR_RED,
+        label="Red: majority of runs fail the criterion (disqualifying; veto = majority vetoed)",
+    )
+    green_patch = mpatches.Patch(color=CELL_COLOR_GREEN, label="Green: passes (minority fail)")
     ax.legend(
         handles=[green_patch, red_patch],
         loc="lower center",
