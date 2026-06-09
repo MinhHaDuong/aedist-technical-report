@@ -36,19 +36,19 @@ VN_THERMAL_UNITS_RELEASE_CSV = (
 # from the author's "Market report on Gas to Power" master spreadsheet.
 # Datestamped immutable; extraction reads this to produce v2 releases.
 #
-# 0445/0472/0395/0497 EXCEPTION: the pinned snapshot carries un-replayed local
-# edits that are not yet in the master (which lives on another machine):
-#   1. the author's 8-cell standalone-extensions edit (4 rows, ticket 0445;
-#      replay pending, ticket 0458);
+# Reverse-sync COMPLETE (ticket 0458, 2026-06-09): the four formerly un-replayed
+# local edit-sets are now in the master, so the pinned snapshot and the master are
+# back in lockstep (a fresh import.sh would reproduce this snapshot). The edits:
+#   1. the author's 8-cell standalone-extensions edit (4 rows, ticket 0445);
 #   2. the 4-row Kiên Lương complex insertion (ticket 0472, add_kien_luong.py);
 #   3. the 4-row potential-coal-sites addition (ticket 0395, add_plants_0395.py),
-#      THREE of which were then removed as out-of-scope potential sites
+#      THREE of which were then removed as out-of-scope potential sites;
 #   4. the 3-row potential-site removal (ticket 0497, remove_plants_0497.py):
 #      Kim Sơn, Rạng Đông, Phú Thọ dropped (E542 PL9.2 candidate locations, not
-#      projects); Yên Hưng retained (PDP7 planned project). Net of 3+4: the
-#      pinned snapshot now yields 177 plants (180 − 3).
-# Do NOT re-pin to a fresh master import until ALL these edits are replayed,
-# or the adoption silently reverts 177 → 170 (PROVENANCE.md § v2.4 / § v2.3).
+#      projects), retained as aliases on NĐ Miền Bắc 1/2/3 (add_aliases_0458.py);
+#      Yên Hưng retained (PDP7 planned project). Net: 177 plants (180 − 3).
+# The aliases live in the non-extracted Project alias column, so the regenerated
+# reference stays byte-identical at 177 (verify_master_convergence.py).
 VN_THERMAL_MASTER_SNAPSHOT_ODS = (
-    _REPO_ROOT / "data" / "reference" / "raw" / "pipeline+0497-2026-06-09.ods"
+    _REPO_ROOT / "data" / "reference" / "raw" / "pipeline+0458-2026-06-09.ods"
 )
