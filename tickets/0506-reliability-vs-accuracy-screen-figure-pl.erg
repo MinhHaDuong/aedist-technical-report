@@ -43,13 +43,24 @@ uniform-as-of scoring fix lands. Do not build on the current CSV.
   sit to the **right** of each dot, stacked vertically within a column with a
   short leader to de-collide.
 
-## Title / labels (author-set)
+## Title / labels (author-set, luggage-trimmed 2026-06-09)
 
-- Title: "Inaccurate models (low F1) are also unreliable (few good runs). They
-  can be screened out."
-- Subtitle: "good run = no zero score on 12 dimensions"
-- X: "Reliability (good runs out of 5 reps) — the label-free screen", ticks 0..5.
-- Y: "Accuracy (average F1 over good runs)".
+- Title: "Inaccurate models are also unreliable — and can be screened out"
+- Subtitle: "good run = no zero on any of 12 quality dimensions"
+- X: "Reliability — good runs out of 5 (no reference needed)", ticks 0..5.
+- Y: "Accuracy — F1 against the 177-plant reference".
+  (The two axis glosses carry the label-free-vs-ground-truth contrast — keep them.)
+
+## Label placement (settled)
+
+- Labels sit either side, aimed at the open centre: low-reliability columns label
+  right, the saturated high-reliability column splits left/right so neither side
+  stacks more than ~4; within a side, stack vertically with a short leader.
+- The saturated column piles many models at 5/5; near-coincident F1 pairs there
+  get a horizontal jitter of <= one dot-radius (one left, one right, label on the
+  matching side) — the ONLY jitter allowed, and only in that column. Everywhere
+  else markers sit exactly on (integer count, F1). Author-tuned pairs: GPT-5.5(L)/
+  Sonnet(R), DS-Pro(L)/M-Medium(R), Qwen-Max(L)/M-Large(R); Qwen-35B labels left.
 
 ## Expected result (post-0505, for the adherence test to pin)
 
