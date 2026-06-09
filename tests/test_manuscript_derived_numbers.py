@@ -97,3 +97,28 @@ def test_fusion_single_run_baseline_matches_xeval():
     assert f"{mean_recall:.3f}" in _md(), (
         f"§6 single-run mean recall should be {mean_recall:.3f}"
     )
+
+
+def test_attribute_accuracies_match_xeval():
+    """§4 fuel/status/province matched-row accuracies match the cross-eval artifact.
+
+    Ticket 0502: these three literals were frozen at the 16-model/80-run vintage
+    and drifted (province 0.61 vs artifact 0.89) until this guard. Each mean is
+    re-derived from exp1_cross_eval.csv and asserted present in the manuscript.
+    """
+    if not XEVAL_CSV.exists():
+        pytest.skip(f"{XEVAL_CSV} not generated")
+    rows = list(csv.DictReader(XEVAL_CSV.open(encoding="utf-8")))
+    md = _md()
+    for col, label in (
+        ("accuracy_fuel", "fuel"),
+        ("accuracy_status", "status"),
+        ("accuracy_province", "province"),
+    ):
+        vals = [
+            float(r[col]) for r in rows if r.get(col) not in (None, "", "nan")
+        ]
+        mean = statistics.mean(vals)
+        assert f"{mean:.2f}" in md, (
+            f"§4 mean {label} accuracy should be {mean:.2f} (from {XEVAL_CSV.name})"
+        )
