@@ -38,7 +38,8 @@ MANUSCRIPT_ASSETS := \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_capability_timeline.pdf \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_capability_dag.pdf \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_exp2_arms_comparison.pdf \
-	$(LOCAL_ROOT_REPORT_GEN)/fig_exp2_coverage_certainty.pdf
+	$(LOCAL_ROOT_REPORT_GEN)/fig_exp2_coverage_certainty.pdf \
+	$(LOCAL_ROOT_REPORT_GEN)/fig_exp1_recognition_matrix_portrait.pdf
 
 .PHONY: all clean manuscript translate-slides
 
