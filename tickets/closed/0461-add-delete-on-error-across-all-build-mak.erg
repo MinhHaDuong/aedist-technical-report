@@ -2,11 +2,13 @@
 Title: Add .DELETE_ON_ERROR across all build makefiles + adherence guard
 Created: 2026-06-08
 Author: HDMX-coding-agent
+Closed: opened PR 879 — .DELETE_ON_ERROR build-wide + class guard; experiment1/2.mk folded in beyond the original 6/7 sweep
 
 --- log ---
 2026-06-08T09:41Z HDMX-coding-agent created
 2026-06-09T00:00Z claude note delivered. Placement uses two shared-include single sources + three standalone roots: .DELETE_ON_ERROR set in paths.mk (covers score.mk + render.mk, both include it) and in common.mk (covers acquire.mk + experiment1.mk + experiment2.mk, all include it); plus root Makefile, report/Makefile, slides/Makefile (independent invocation roots, no relevant include). score.mk's local 0460 directive dropped — now inherited from paths.mk (single source). SCOPE FINDING: the original "6 of 7" sweep missed experiment1.mk and experiment2.mk (both carry recipes, both include common.mk) — same class defect, folded in. 0460's test (test_score_mk_exp1_cross_eval.py::test_delete_on_error_is_set) updated to assert the guarantee in force via score.mk OR the included paths.mk, per Actions step 3. New class guard tests/test_makefile_delete_on_error.py: source-inspection, follows includes transitively, negative-control verified (removing the directive from common.mk turns acquire/experiment1/experiment2 red). make check-fast green; pre-existing unrelated failure test_agents_md_skills::test_agents_md_skill_refs_resolve (fails on parent commit too, IDH skills absent in checkout).
 
+2026-06-09T08:14Z Claude closed — opened PR 879 — .DELETE_ON_ERROR build-wide + class guard; experiment1/2.mk folded in beyond the original 6/7 sweep
 --- body ---
 ## Context
 
