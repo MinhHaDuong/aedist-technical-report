@@ -7,13 +7,14 @@ runs as columns with a 3-level hierarchical header (family / version / run).
 
 Legibility rationale (ticket 0451): the landscape variant (plot_exp1_matrix.py)
 accepts texture-level plant labels (4pt at print scale, 0446). Portrait puts
-the 176 reference plants on rows so their names read left-to-right, which is
-the only orientation where they can be genuinely legible. Physics: 176 rows on
+the reference plants on rows so their names read left-to-right, which is the
+only orientation where they can be genuinely legible. Physics: ~180 rows on
 a single A4 portrait page gives ~4pt labels — below the ~5-6pt readability
-floor. The solution is a two-page split by lifecycle stage:
+floor. The solution is a two-page split by lifecycle stage (row counts are
+derived from the reference at build time):
 
-  Page 1 — terminal/active assets: operational (56) + retired (2) + cancelled (20) = 78 rows
-  Page 2 — pipeline assets: proposed (67) + planned (21) + constructing (10) = 98 rows
+  Page 1 — terminal and active assets: operational + retired + cancelled
+  Page 2 — pre-operational assets: proposed + planned + constructing
 
 Both pages give ≥7pt per row at usable A4 portrait height (~9.7in), verified
 empirically at build time (logged as INFO). Page 3 shows the top-N false
@@ -57,12 +58,13 @@ _A4_USABLE_H = 9.7   # in  (full height: ~11.7in, minus margins)
 _A4_FIG_W = 8.5      # figure canvas width (includes left-margin plant labels)
 _A4_FIG_H = 12.0     # figure canvas height (includes header band)
 
-# Status groups split into two pages:
-#   Page 1 — terminal+active: operational, retired, cancelled
-#   Page 2 — pipeline: proposed, planned, constructing
+# Status groups split into two pages; the first element is the rendered
+# page title (after "Recognized reference plants — ").
+#   Page 1 — terminal and active assets: operational, retired, cancelled
+#   Page 2 — pre-operational assets: proposed, planned, constructing
 _PAGE_GROUPS = [
-    ("terminal_active", ["operational", "retired", "cancelled"]),
-    ("pipeline", ["proposed", "planned", "constructing"]),
+    ("Terminal and active assets", ["operational", "retired", "cancelled"]),
+    ("Pre-operational assets", ["proposed", "planned", "constructing"]),
 ]
 
 # Header band height per level, in axes-fraction units (relative to n_rows).
@@ -306,7 +308,7 @@ def _draw_page(
     ax.set_ylim(n_plants - 0.5, -header_rows)
 
     ax.set_title(
-        f"Recognized reference plants — {page_label.replace('_', ' ').title()}",
+        f"Recognized reference plants — {page_label}",
         fontsize=10 * ui_scale,
         color=COLOR_MATCHED,
         pad=4,

@@ -6,6 +6,7 @@ Author: HDMX-coding-agent
 --- log ---
 2026-06-09T10:30Z HDMX-coding-agent created — from the 0486 design dialogue. Author confirmed he populated the Wikipedia coal list from the MOIT/PDP8 reference data; idea is to use Wikipedia coverage of the reference as an explicit recall bar, shown early, that the §4 parametric results visibly fail.
 
+2026-06-09T19:57Z executed at 177 (coal+gas, reviewed): built-fleet mean 92% (operating 95/construction 80/permitted 100), pipeline 55%, aggregate 73% — two regimes hold; artifact tab_wikipedia_recall_bar.csv, seeded-bar paragraph before §4 Results, §8 loop-close, guards in test_wikipedia_recall_bar.py
 --- body ---
 
 ## Context
@@ -27,7 +28,7 @@ training corpus. Scoring below it is not "missing obscure facts" — it is
 failing to retrieve knowledge the models demonstrably have.
 
 The bar has **two regimes** (measured 2026-06-09, coal subset, against the
-180-plant v2.3 reference; see `data/reference/raw/wikipedia_coal_vietnam.wikitext`):
+180-plant v2.3 reference; see `data/reference/raw/wikipedia_coal_vietnam-2026-06-09.wikitext`):
 
 - **Built fleet** (operating 92%, construction/permitted 100%): high bar.
   Models recalling fewer than ~92% of operating plants underperform an
@@ -53,10 +54,10 @@ lets the reader carry it through §4–§7.
 ## Relevant files
 
 - `slides/manuscript/main.md` — §2 quality bar / §4 setup (where the bar is introduced); §7 conclusion (where it is revisited)
-- `data/reference/raw/wikipedia_coal_vietnam.wikitext` — cached coal list (raw, reproducible)
-- `data/reference/raw/wikipedia_power_vietnam.wikitext` — cached general list (has the gas/CCGT plants needed to complete the thermal bar)
+- `data/reference/raw/wikipedia_coal_vietnam-2026-06-09.wikitext` — cached coal list (raw, reproducible)
+- `data/reference/raw/wikipedia_power_vietnam-2026-06-09.wikitext` — cached general list (has the gas/CCGT plants needed to complete the thermal bar)
 - `src/aedist/reconcile.py`, `src/aedist/evaluate.py` (`load_plants_csv`, `reference_plant_count`) — matcher + reference loader
-- prototype: `/tmp/wt-0486/explore_wiki.py` (throwaway — coal-only; productionise + add gas)
+- prototype: `experiments/exploration/0486/explore_bars.py` (committed; already coal+gas — parses the general page `==Gas turbines==` section)
 
 ## Actions
 
