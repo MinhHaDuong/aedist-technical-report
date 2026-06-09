@@ -35,6 +35,14 @@ _REPO = Path(__file__).parent.parent
 _EXP1_DIR = _REPO / "experiments" / "outputs" / "exp1_batch2"
 _DEFAULT_OUT = _REPO / "experiments" / "derived" / "exp1_mismatched_audit.csv"
 
+# Colocated non-run outputs that the greedy *-run*.csv glob would otherwise
+# capture as spurious models (ticket 0499; matches the established pattern in
+# tabulate_coherence). reconciliation_* is the real decoy in exp1_batch2;
+# *_filtered.csv (query_verification, retains plant schema) is the decoy in a
+# verification dir if --exp1-dir is pointed there.
+_SKIP_PREFIXES = ("reconciliation_", "filtered_")
+_SKIP_SUFFIXES = ("_filtered.csv",)
+
 _OUTPUT_COLS = [
     "model",
     "run",
@@ -77,6 +85,10 @@ def sweep(ref_csv: Path, exp1_dir: Path) -> list[dict]:
         return rows
 
     for csv_path in csv_files:
+        if any(csv_path.name.startswith(p) for p in _SKIP_PREFIXES) or any(
+            csv_path.name.endswith(s) for s in _SKIP_SUFFIXES
+        ):
+            continue
         model, run = _run_label(csv_path)
         sys_plants = load_plants_csv(csv_path)
         if not sys_plants:
