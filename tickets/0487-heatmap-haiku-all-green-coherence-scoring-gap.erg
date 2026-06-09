@@ -5,6 +5,7 @@ Author: HDMX-coding-agent
 
 --- log ---
 2026-06-09T00:00Z HDMX-coding-agent created
+2026-06-09T00:00Z HDMX-coding-agent note blocker changed from 0201 → 0488 (child split from 0201 for minimum Exp1 coherence column wiring)
 
 --- body ---
 ## Context
@@ -44,7 +45,7 @@ This ticket captures the gap and keeps it visible as a blocker for tracker 0464.
 - `slides/manuscript/main.md` — Figure 2b caption and any text that asserts Haiku's status
 - `src/aedist/measurements.py` — `records_to_metrics()` wiring point for new sub-scores
 
-## Blocked-by: 0201
+## Blocked-by: 0488
 
 ## Exit criteria
 
