@@ -1,0 +1,55 @@
+%erg 0.1
+Title: Author decision: §4 attribute accuracy drift (province 0.61 to 0.89, status 0.53 to 0.57) vs abstract 'mediocre' claim
+Created: 2026-06-09
+Author: claude
+
+--- log ---
+2026-06-09T14:48Z claude created
+
+--- body ---
+
+## Context (discovered during 0501 manuscript→177 reconciliation)
+
+`main.md` §4 line 90 states the matched-row attribute accuracies as:
+"mean fuel accuracy 0.53, mean status accuracy 0.53, mean province accuracy 0.61".
+The abstract frames this as "attribute classification ... is mediocre even for
+correctly identified plants."
+
+The current committed artifact `experiments/derived/exp1_cross_eval.csv` (70 runs)
+re-derives:
+
+| attribute | prose | artifact | Δ |
+|---|---|---|---|
+| fuel     | 0.53 | 0.540 | +0.01 (count effect, fine) |
+| status   | 0.53 | 0.574 | +0.04 |
+| province | 0.61 | **0.889** | **+0.28** |
+
+A +0.28 jump in province cannot come from removing 3 plants (180→177). It
+indicates an **upstream scoring change** (likely province normalisation /
+matching) that was never propagated to the prose. 0501 deliberately left
+line 90 untouched: writing "province 0.89" would silently flip the abstract's
+"mediocre" claim — 0.89 province accuracy is not mediocre.
+
+## Why this is an author decision, not a mechanical sync
+
+The headline narrative ("frontier models are mediocre even on matched rows")
+rests on these numbers. If province is genuinely 0.89, the §4 results prose
+and the abstract sentence must be re-argued, not just re-typed. This is a
+scientific-claim change, so the author rules on it.
+
+## Definition of done
+
+1. Confirm what changed province 0.61→0.89 (git-blame the province scorer /
+   `evaluate.py` province path; identify the ticket that moved it).
+2. Author ratifies the corrected line-90 numbers (fuel/status/province) and
+   the abstract "mediocre" wording given province ≈ 0.89.
+3. Update `main.md` line 90 + abstract accordingly.
+4. Add an adherence guard (like 0501's) re-deriving the three attribute means
+   from `exp1_cross_eval.csv` so they cannot drift unguarded again.
+5. `make check` green.
+
+## Out of scope
+
+- 0501 (count/fuel/difficulty/§6 reconciliation — merged separately).
+
+Label: needs-human

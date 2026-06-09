@@ -1,0 +1,73 @@
+%erg 0.1
+Title: Reconcile manuscript main.md to v2.4 (177) reference: prose counts, fuel split, difficulty table, fusion numbers + guard test
+Created: 2026-06-09
+Author: claude
+
+--- log ---
+2026-06-09T14:38Z claude created
+
+2026-06-09T14:49Z line 90 attribute accuracies (province 0.61->0.89) deferred to 0502 — scoring change, not a 177 effect; would flip the 'mediocre' claim
+--- body ---
+
+## Context
+
+#906 (ticket 0497) moved the reference data to **v2.4 = 177 plants** and
+regenerated the §4 headline F1 macros, but **explicitly deferred the
+manuscript prose sync**. `slides/manuscript/main.md` is still pinned to the
+old **v2.1 = 173** vintage in 18 places, so the headline count (173) and the
+headline F1 (computed against 177) now come from different reference versions.
+No test guards the plain-prose count literal — `test_no_hardcoded_reference_size.py`
+scans `src/` only, so the drift sailed through green CI.
+
+This is NOT a find-replace: the manuscript skipped v2.2(176)/v2.3(180), so the
+fuel split and status-group breakdowns also moved. Every number must be
+re-derived from the committed artifact (reference CSV / generated tex/csv),
+never hand-counted (project rule: derive prose from generated artifacts).
+
+Author decision (2026-06-09): ship the preprint at **177** (honour the
+0497 "potential site ≠ project" boundary). Not 0494 — 0494 only *depends on*
+this; not 0486 (pinned 173, superseded by 0497).
+
+## Scope (all in `slides/manuscript/main.md`)
+
+1. 18× "173[-plant]" prose/caption mentions → 177 (count from `reference_plant_count()`).
+2. Annex B fuel split `coal (81) and gas/gas-oil (92)` → recompute `fuel` value-counts from `data/reference/vietnam_thermal_plants_v2_classified.csv`.
+3. §7 difficulty table total row (`**173** / 100.0% / 26.2%`) + status-group rows → re-derive from the generating script's committed artifact.
+4. §6 fusion secondary numbers (`166 candidates`, recall 0.633/0.262/0.391/0.671, F1 0.659/0.689, "2.4×") → re-derive from the fusion sweep artifact; #906 updated only the §4 macros, so confirm/refresh each against the committed CSV.
+5. Figure 7 caption ("173 reference plants") — the figure already renders 177 columns.
+
+## First test (write FIRST, must fail on current main.md)
+
+`tests/test_manuscript_reference_count.py` (`@pytest.mark.adherence`):
+
+```python
+from pathlib import Path
+import re, pytest
+from aedist.evaluate import reference_plant_count
+pytestmark = pytest.mark.adherence
+MAIN_MD = Path(__file__).resolve().parent.parent / "slides" / "manuscript" / "main.md"
+
+def test_manuscript_count_matches_reference():
+    """Every reference-count mention in main.md equals reference_plant_count()."""
+    n = reference_plant_count()              # 177, derived not hardcoded
+    md = MAIN_MD.read_text(encoding="utf-8")
+    # the stale vintages must be gone as a reference-count literal
+    for stale in ("173-plant", "173 plant", "173 reference", "173 thermal", "at 173"):
+        assert stale not in md, f"stale reference count '{stale}' still in main.md"
+    assert f"{n}-plant" in md or f"{n} thermal plants" in md
+```
+
+## Definition of done (literal)
+
+- New adherence test above exists and PASSES; it FAILED before the prose edits (TDD).
+- `grep -c '\b173\b' slides/manuscript/main.md` returns 0 for reference-count usages (any surviving 173 is a non-count literal, justified in the PR).
+- Fuel split, difficulty-table rows, and §6 fusion numbers each match their committed generated artifact (cite the artifact + value in the PR).
+- `make check` green.
+
+## Out of scope
+
+- 0494 Wikipedia recall bar (separate feature, now unblocked by this).
+- 0458 data-side master reverse-sync on doudou.
+- 0486 GEM concordance table (author still owes the 3-choice ratification).
+
+Blocked-by: none (0497 merged as #906).
