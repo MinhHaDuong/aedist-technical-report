@@ -1,5 +1,5 @@
 %erg 0.1
-Title: Replay the 8-cell standalone-extensions edit on the master pipeline.ods
+Title: Master reverse-sync handover (doudou): replay validated edits + apply the project-vs-potential-site boundary
 Created: 2026-06-06
 Author: HDMX-coding-agent
 Label: needs-human
@@ -8,6 +8,7 @@ Label: deferred
 --- log ---
 2026-06-06T13:56Z HDMX-coding-agent created
 2026-06-06T13:57Z claude note protect the 0445 standalone adoption: the pinned snapshot carries an edit the master does not
+2026-06-09T11:00Z HDMX-coding-agent note SCOPE EXPANDED to the full master reverse-sync. The pinned snapshot now carries THREE un-replayed edit-sets (extensions 0445, Kiên Lương 0472, ticket 0395), not just the extensions. Author ruled a potential site is not a project (boundary in PROVENANCE.md): when replaying 0395, replay ONLY Yên Hưng (PDP7 project); do NOT replay Kim Sơn / Rạng Đông / Phú Thọ (E542 PL9.2 potential sites) — record them as aliases instead. Repo side is ticket 0497.
 
 --- body ---
 ## Context
@@ -39,16 +40,46 @@ clear `Unit` (row-is-the-plant semantics):
 Also log the change in the master's own `Change log` sheet (master
 discipline; the analysis-side edit could not touch it meaningfully).
 
+## Edit-set 2 — Kiên Lương complex (ticket 0472)
+
+Replay the 4-row Kiên Lương insertion (`add_kien_luong.py`): Kiên Lương 1/2/3
+(Kiên Giang, coal, ~4400 MW complex, cancelled) — distinct from the existing
+"TBKHH Kiên Giang I, II" gas entry. These are committed-plan projects; replay
+verbatim.
+
+## Edit-set 3 — ticket 0395 additions, WITH the boundary applied
+
+The 0395 script added four rows. Under the project-vs-potential-site boundary
+(PROVENANCE.md "Scope boundary"), replay only the one that is a project:
+
+- **REPLAY: Yên Hưng** — Quảng Ninh, 1200 MW (2×600), coal, "1 announced".
+  PDP7 Annex 1 + Annex 2 attest it; a planned project, genuinely missing from
+  the gold list (absent in v2.1 and v2.2).
+- **DO NOT REPLAY: Kim Sơn, Rạng Đông, Phú Thọ** — Study E542 PL9.2 draft
+  *potential sites*, not projects. Instead, on the master, record each as an
+  **alias/note** against the corresponding PDP7 `NĐ Miền Bắc` northern entry
+  (boundary §"Traceability without counting"). The repo-side removal is ticket
+  0497; the master must converge to the same 177-plant result.
+
+After all three edit-sets, the master `Power plants` sheet should extract to
+**177 plants** (173 extensions-adopted + 4 Kiên Lương + 1 Yên Hưng − 0 potential
+sites), not 180.
+
 ## Exit criteria
 
-- [ ] Master pipeline.ods carries the 4-row standalone-extensions edit
-- [ ] Fresh `import.sh` snapshot extracts to 173 plants byte-identical to
-      `vietnam_thermal_plants_v2_classified.csv` (modulo later master edits)
+- [ ] Master pipeline.ods carries: the 4-row standalone-extensions edit, the
+      4-row Kiên Lương insertion, and the **Yên Hưng** row only from 0395
+- [ ] Kim Sơn / Rạng Đông / Phú Thọ are NOT replayed as rows; recorded as aliases
+- [ ] Fresh `import.sh` snapshot extracts to **177 plants** byte-identical to the
+      post-0497 `vietnam_thermal_plants_v2_classified.csv`
 - [ ] `config.VN_THERMAL_MASTER_SNAPSHOT_ODS` re-pinned to the new datestamped
       snapshot; the 0445 exception comment removed
-- [ ] PROVENANCE.md "Snapshot provenance exception" paragraph resolved
+- [ ] PROVENANCE.md "Snapshot provenance exception" paragraph resolved (all three
+      edit-sets replayed)
 
 ## Related
 
-- 0445 (the adoption this protects)
+- 0445 (extensions adoption), 0472 (Kiên Lương), 0395 (the four additions)
+- 0497 (repo-side removal of the three potential sites — keep in lockstep)
+- PROVENANCE.md "Scope boundary: a project is not a potential site"
 - `data/reference/extensions_standalone_vs_absorbed.md` (measurement + edit spec)
