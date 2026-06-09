@@ -40,19 +40,28 @@ single source of truth for all experiments (exp1 through exp3+), and the old sta
 
 ## Tracking: child tickets
 
-This is a tracking ticket. Children must land in dependency order:
+This is a tracking ticket. A **discovery phase (0493)** gates execution: it produces the
+provenance map and answers four open questions, and may reshape the children below before any
+irreversible work starts. Children then land in dependency order:
 
-DAG (fork-join at the tail): `0475 → 0489 → 0476 → 0477 → 0490 → 0478`, where 0478 also
-gates directly on 0477 — i.e. `0477 → {0490, 0478}` and `0490 → 0478`.
+DAG (discovery gates the head; fork-join at the tail):
+`0493 → 0475 → 0489 → 0476 → 0477 → 0490 → 0478`, where 0478 also gates directly on 0477 —
+i.e. `0477 → {0490, 0478}` and `0490 → 0478`.
 
 | ID | Title | Status |
 |----|-------|--------|
-| 0475 | Architect question: generalize vs shoehorn + schema design + field audit | open |
+| 0493 | DISCOVERY: provenance map + four open questions (Q1 0476 scope, Q2 record-only set, Q3 exp2 raw survival, Q4 write-path epic) | open (gates 0475) |
+| 0475 | Architect question: generalize vs shoehorn + schema design + field audit | blocked on 0493 |
 | 0489 | Read-path shim: `mart_to_metrics()` flattener + golden equivalence test | blocked on 0475 |
 | 0476 | Exp1 adapter + mart equivalence test | blocked on 0489 |
 | 0477 | Port reporting consumers from measurements.jsonl to mart | blocked on 0476 |
 | 0490 | Legacy rows: forensic snapshot (Option B) + no-published-dep guard | blocked on 0477 |
 | 0478 | Delete old stack (read interface; RunRecord write-path is a separate epic) | blocked on 0477, 0490 |
+
+Discovery note (2026-06-09): inserted after #881 merged ("too many bumps, need more plan
+review"). The derisk pass fixed a wrong premise and a self-contradiction, but the plan still
+assumes a data provenance nobody has enumerated. 0493 produces that artifact first; its Q4
+also creates the missing RunRecord write-path epic that 0478 forward-references.
 
 Tracker closes only after 0478 merges and a final `make check` confirms no old-stack references remain.
 

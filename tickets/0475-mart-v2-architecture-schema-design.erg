@@ -2,11 +2,13 @@
 Title: Mart v2 architecture decision + schema extension (tracker: 0297)
 Created: 2026-06-08
 Author: HDMX-coding-agent
+Blocked-by: 0493
 
 --- log ---
 2026-06-08T12:00Z HDMX-coding-agent created
 2026-06-08T23:00Z haduong decided Generalize: rename exp2_mart.py → mart.py, schema name "mart"; no shoehorn; raw counts (tp/fp/fn) as int|None on ScoreSummary directly
 2026-06-09T08:12Z HDMX-coding-agent note Derisk pass on 0297: added a field-audit step (§Field audit) — 0297's "fields to absorb" list is incomplete vs what records_to_metrics() actually projects. The whole controlled-condition vector (temperature, seed, num_ctx, provider_order, max_tokens, no_think, system_instruction, reasoning_effort), plus validation and the justification scalars, has no mart home today. Read by no current consumer (so not a blast-radius risk) but required for ADR-7 completeness if the mart is to be the single scientific record.
+2026-06-09T09:42Z HDMX-coding-agent note Gated on 0493 (discovery phase). Execution waits until the provenance map answers Q1-Q4; discovery may reshape this ticket (e.g. Q3 affects whether the field audit can be validated against surviving raw).
 --- body ---
 ## Context
 
