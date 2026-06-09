@@ -1,0 +1,37 @@
+%erg 0.1
+Title: Consider alternate anchoring score using reference count
+Created: 2026-05-25
+Author: HDMX-coding-agent
+Closed: 2026-06-09
+
+--- log ---
+2026-05-25T00:00Z HDMX-coding-agent created
+2026-06-08T11:00Z claude note linked to tracker 0465
+2026-06-09T06:44Z HDMX-coding-agent close WON'T-DO — reference count analysis script never integrated; signal not pursued (0465 tracker covers broader anchoring work; ref count adds noise without grounding signal). Script deleted in PR #877.
+
+--- body ---
+## Context
+
+Current anchoring/provenance checks focus on presence/quality of sources, but an
+additional lightweight signal may be informative: number of references cited.
+
+## Question
+
+Evaluate whether "reference count" should be added as a complementary anchoring
+indicator (not a standalone quality score).
+
+## Scope
+
+- [ ] Define candidate metrics:
+      total references, unique references, references per table row,
+      references per 1k output tokens.
+- [ ] Test sensitivity to citation inflation (spam references without grounding).
+- [ ] Evaluate relationship with existing provenance pass/fail outcomes.
+- [ ] Recommend whether/how to integrate in reporting.
+
+## Exit criteria
+
+- [ ] One-page note with recommendation and caveats.
+- [ ] If retained, add explicit formula and anti-gaming guardrails.
+
+Part of: 0465 — alternate anchoring score
