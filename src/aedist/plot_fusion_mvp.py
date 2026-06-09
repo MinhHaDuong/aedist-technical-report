@@ -351,9 +351,18 @@ class RegimeResult:
     r2_fp: int
 
 
-def analyze_regime(regime: str, runs: list[dict]) -> RegimeResult:
-    """Compute fusion metrics for a regime."""
-    n_ref = reference_plant_count()
+def analyze_regime(regime: str, runs: list[dict], reference_path: Path | None = None) -> RegimeResult:
+    """Compute fusion metrics for a regime.
+
+    Args:
+        regime: Regime name (e.g. "E1" or "E2-1D").
+        runs: List of run dicts (model, run, tp_plants, fp_plants).
+        reference_path: Path to the reference CSV; defaults to
+            VN_THERMAL_PLANTS_RELEASE_CSV when None.  Passed through so
+            recall/F1 denominators are consistent with the reference used
+            for TP/FP reconciliation.
+    """
+    n_ref = reference_plant_count(reference_path) if reference_path else reference_plant_count()
     n_models = len({r["model"] for r in runs})
 
     # Fused sets
@@ -663,8 +672,8 @@ def main(argv: list[str] | None = None) -> None:
     e2_runs = _load_arm3_runs(args.arm3_dir, args.reference)
 
     results = [
-        analyze_regime("E1", e1_runs),
-        analyze_regime("E2-1D", e2_runs),
+        analyze_regime("E1", e1_runs, args.reference),
+        analyze_regime("E2-1D", e2_runs, args.reference),
     ]
 
     for res in results:

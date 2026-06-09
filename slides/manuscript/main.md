@@ -133,7 +133,7 @@ To our knowledge, no published benchmark or system targets open-world enumeratio
 ![](../report/inputs/generated/fig_fusion_mvp.pdf)\
 <!-- raw data: report/inputs/generated/fusion_mvp.csv -->
 
-*Figure 5. Naive presence fusion across the 4-SOTA-model Experiment 1 cohort and Experiment 2 naive arm (N=20 runs each: 4 models × 5 repeats). Top panel (E1 parametric): UNION and ≥2-models fusion rules vs best single model. Bottom panel (E2 naive arm): same rules. TP = plants matched against the reference; FP = unrecognized plants. Under ≥2-models in E1: F1=0.747, TP=105, FP=0. Under ≥2-models in E2-1D: F1=0.805, TP=122, FP=5.*
+*Figure 5. Naive presence fusion across the 4-SOTA-model Experiment 1 cohort and Experiment 2 naive arm (N=20 runs each: 4 models × 5 repeats). Top panel (E1 parametric): UNION and ≥2-models fusion rules vs best single model. Bottom panel (E2 naive arm): same rules. TP = plants matched against the reference; FP = unrecognized plants. Under ≥2-models in E1: F1=0.750, TP=105, FP=2. Under ≥2-models in E2-1D: F1=0.813, TP=122, FP=5.*
 
 ---
 

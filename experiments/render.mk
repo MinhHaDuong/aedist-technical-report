@@ -105,6 +105,11 @@ ANALYSIS_DECOMP_AFTER  :=
 ANALYSIS_RAG_CSVS      := $(wildcard $(ANALYSIS_EXPERIMENTS_DIR)/archive/outputs/rag_extract/*.csv)
 ANALYSIS_EXPERT_REF    := $(ANALYSIS_REPO_ROOT)/data/reference/vietnam_thermal_plants_v2_classified.csv
 ANALYSIS_GEM_REF       := $(ANALYSIS_REPO_ROOT)/data/reference/gem_thermal.csv
+# Fusion MVP uses the v2.1 locked reference (173 plants, ticket 0485) so that
+# Fig 5 is consistent with all other Exp1/2 manuscript sections.  The live
+# ANALYSIS_EXPERT_REF has grown to v2.3 (180 plants) which post-dates the
+# Exp1/2 cohort; using it would inflate n_reference and deflate recall/F1.
+ANALYSIS_FUSION_MVP_REF := $(ANALYSIS_REPO_ROOT)/data/reference/vietnam_thermal_plants_v2_1_locked.csv
 
 ANALYSIS_CONVERTER_TEST := $(ANALYSIS_EXPERIMENTS_DIR)/data/converter_test
 ANALYSIS_CONVERTER_META := $(ANALYSIS_CONVERTER_TEST)/benchmark_meta.yaml
@@ -274,12 +279,13 @@ $(ANALYSIS_FUSION_MVP_CSV) $(ANALYSIS_FUSION_MVP_MACROS) $(ANALYSIS_FUSION_MVP_F
 		$(ANALYSIS_EXP1_BATCH2_RECORDS) \
 		$(wildcard $(ANALYSIS_DERIVED_DIR)/arm3_flat/*.md) \
 		$(ANALYSIS_REPO_ROOT)/src/aedist/plot_fusion_mvp.py \
-		$(ANALYSIS_REPO_ROOT)/src/aedist/exp1_recognition.py
+		$(ANALYSIS_REPO_ROOT)/src/aedist/exp1_recognition.py \
+		$(ANALYSIS_FUSION_MVP_REF)
 	@mkdir -p $(dir $(ANALYSIS_FUSION_MVP_CSV))
 	uv run python -m aedist.plot_fusion_mvp \
 	    --records-glob "$(ANALYSIS_EXPERIMENTS_DIR)/outputs/exp1_batch2/*.record.json" \
 	    --arm3-dir $(ANALYSIS_DERIVED_DIR)/arm3_flat \
-	    --reference $(ANALYSIS_EXPERT_REF) \
+	    --reference $(ANALYSIS_FUSION_MVP_REF) \
 	    --output-csv $(ANALYSIS_FUSION_MVP_CSV) \
 	    --output-macros $(ANALYSIS_FUSION_MVP_MACROS) \
 	    --output-figure $(ANALYSIS_FUSION_MVP_FIG)
