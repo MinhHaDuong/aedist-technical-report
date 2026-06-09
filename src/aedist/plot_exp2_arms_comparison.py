@@ -183,6 +183,20 @@ def _draw_whiskers(ax, x_center: float, values: list[float]) -> None:
     )
 
 
+def _gem_coverage() -> tuple[int, int]:
+    """GEM reviewed coverage of the reference (count, pct) from the 0486 artifact.
+
+    Reads the committed concordance CSV so the Exp2 GEM ceiling line tracks the
+    same number as the §5/Annex-B prose (single source of truth).
+    """
+    from aedist.config import SOURCE_CONCORDANCE_CSV
+
+    with open(SOURCE_CONCORDANCE_CSV, newline="", encoding="utf-8") as fh:
+        total = next(r for r in csv.DictReader(fh) if r["status"] == "All")
+    count = int(total["gem_matched"])
+    return count, round(count / int(total["n_reference"]) * 100)
+
+
 def _draw_coverage_panel(ax, rows: list[dict], exp1_summary: dict[str, dict]) -> None:
     """Diverging bars: matched assets (model colour, above 0), hallucinations /
     false positives (red, below 0). E1 baseline bars are hatched. 1D/5D (no
@@ -235,6 +249,13 @@ def _draw_coverage_panel(ax, rows: list[dict], exp1_summary: dict[str, dict]) ->
 
     ax.axhline(0, color=COLOR_REFERENCE, linewidth=1.4, zorder=2)
     ax.axhline(N_REFERENCE_PLANTS, color=COLOR_REFERENCE, linestyle="--", linewidth=1.0, zorder=1)
+    # GEM external-DB coverage ceiling (ticket 0486): light-grey background line
+    # at the best independent tracker's reviewed coverage of the reference.
+    _gem_n, _gem_pct = _gem_coverage()
+    ax.axhline(_gem_n, color="0.6", linestyle=":", linewidth=1.0, zorder=1)
+    ax.text(
+        len(_AGENT_ORDER) - 0.5, _gem_n, f"GEM {_gem_pct}%", ha="right", va="bottom", fontsize=8, color="0.45"
+    )
     ax.yaxis.set_major_formatter(lambda val, pos: str(abs(int(val))))
     # Top of the axis tracks the reference size so the dashed line stays visible.
     ax.set_ylim(-50, N_REFERENCE_PLANTS + 15)
