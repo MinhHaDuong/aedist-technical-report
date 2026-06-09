@@ -42,15 +42,15 @@ single source of truth for all experiments (exp1 through exp3+), and the old sta
 
 This is a tracking ticket. Children must land in dependency order:
 
-DAG: `0475 → 0489 → {0476 → 0477 → 0478, 0490 → 0478}`
+DAG: `0475 → 0489 → 0476 → 0477 → 0490 → 0478`
 
 | ID | Title | Status |
 |----|-------|--------|
 | 0475 | Architect question: generalize vs shoehorn + schema design + field audit | open |
 | 0489 | Read-path shim: `mart_to_metrics()` flattener + golden equivalence test | blocked on 0475 |
 | 0476 | Exp1 adapter + mart equivalence test | blocked on 0489 |
-| 0490 | Exp3/legacy ingest source: `.record.json` vs frozen snapshot | blocked on 0489 |
 | 0477 | Port reporting consumers from measurements.jsonl to mart | blocked on 0476 |
+| 0490 | Exp3/legacy: forensic snapshot (Option B) + no-published-dep guard | blocked on 0477 |
 | 0478 | Delete old stack (read interface; RunRecord write-path is a separate epic) | blocked on 0477, 0490 |
 
 Tracker closes only after 0478 merges and a final `make check` confirms no old-stack references remain.
@@ -59,10 +59,13 @@ Derisk note (2026-06-09): the migration is a **shape change** (flat dict per run
 mart records joined by `parent_record_id`), not a rename. Two children were inserted: **0489**
 (the `mart_to_metrics()` shim that turns 0477's irreversible 27-script rewrite into a one-line
 loader swap, and is the real cutover gate the exp2-only parity check is not) and **0490** (the
-exp3/legacy ingest gap — `measurements.jsonl` holds exp1+exp2+exp3, but exp3 is record-only
-with no recoverable raw, so no raw-reading adapter can rebuild it). 0478 is also re-scoped to
-delete the **read** stack only; deleting `RunRecord` is blocked by the live collection path
-(5 adapters + `query_*` + `worker`) and belongs to its own epic.
+exp3/legacy gap — `measurements.jsonl` holds exp1+exp2+exp3, but exp3 legacy is record-only
+with no recoverable raw). The author chose **Option B** for 0490: retain a forensic snapshot
+rather than ingest record-only rows, under the hard constraint that **nothing published may
+depend on the snapshot** — enforced by a guard test, so it cannot decay into a second live
+source of truth. The audit only means anything after consumers point at the mart, so 0490
+gates on 0477. 0478 is also re-scoped to delete the **read** stack only; deleting `RunRecord`
+is blocked by the live collection path (5 adapters + `query_*` + `worker`) and is its own epic.
 
 ## Architectural question (must resolve before 0475)
 

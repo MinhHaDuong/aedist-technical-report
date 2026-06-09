@@ -1,100 +1,89 @@
 %erg 0.1
-Title: Mart exp3/legacy ingest source: .record.json vs frozen snapshot (tracker: 0297)
+Title: Mart exp3/legacy: forensic snapshot of measurements.jsonl, Option B (tracker: 0297)
 Created: 2026-06-09
 Author: HDMX-coding-agent
-Blocked-by: 0489
+Blocked-by: 0477
 
 --- log ---
 2026-06-09T08:12Z HDMX-coding-agent created
-2026-06-09T08:12Z HDMX-coding-agent note Derisk pass on 0297: the child chain (0475-0478) builds an exp1 adapter only, but measurements.jsonl = exp1 + exp2 + exp3 (669 rows). exp3 = experiments/archive/outputs, record-only, raw replies deleted post-edda724b. An adapter that reads raw JSON (0476's design) physically cannot reconstruct exp3. 0478's "delete measurements.jsonl" is unsafe until this is resolved. Reverses the earlier "fold into 0476" recommendation per author steer (discrete ticket, distinct blocker on 0478).
+2026-06-09T08:12Z HDMX-coding-agent note Derisk pass on 0297: the child chain (0475-0478) builds an exp1 adapter only, but measurements.jsonl = exp1 + exp2 + exp3 (669 rows). exp3 legacy = experiments/archive/outputs, record-only. A raw-reading adapter cannot rebuild record-only rows. 0478's "delete measurements.jsonl" is unsafe until this is resolved.
+2026-06-09T08:30Z haduong decided Option B: snapshot measurements.jsonl as a single-phase deliverable rather than ingesting record-only rows into the mart. HARD CONSTRAINT: nothing in the published report/manuscript may depend on the snapshot — it is forensic retention only. The standing liability is lingering consumers of old results; the deliverable must forbid new ones, not merely document the rule.
+2026-06-09T08:30Z HDMX-coding-agent note Re-pointed Blocked-by 0489 -> 0477. Under Option B there is no mart ingest of exp3, so 0489's golden test is not reused; the binding work is the post-port audit, which only means anything once consumers point at the mart (0477).
 
 --- body ---
-## Context
+## Decision: Option B — forensic snapshot, no published dependency
 
-The 0297 retirement deletes `measurements.jsonl`. That file holds **exp1 + exp2 + exp3**
-(669 rows). The mart is exp2-only; the child chain builds an **exp1** adapter (0476) and
-ports consumers (0477). **exp3 has no adapter and no home in the plan.**
+Author chose Option B (2026-06-09): retain a datestamped, immutable snapshot of
+`measurements.jsonl` as a single-phase deliverable, instead of ingesting record-only
+legacy rows into the mart. The snapshot is **forensic only**.
 
-Consumer audit (2026-06-09) confirmed exp3 = `experiments/archive/outputs/` — **record-only**:
-the raw model replies were archived/removed post-`edda724b` (ticket 0421/0422). Only the
-baked `*.record.json` score pointers survive. `evaluate.py assemble` rebuilds
-`measurements.jsonl` from these surviving `.record.json` files (`score.mk:112-115`), but an
-adapter that reads **raw** JSON (the 0476 design, `exp1_batch2/*.json`) **cannot reconstruct
-exp3** — there is no raw to read. These rows back published numbers.
+The binding acceptance criterion is therefore not "the snapshot exists" (trivial) but
+**"the published surface is provably independent of the snapshot."** Option B only stays
+clean if that independence is enforced by a test — otherwise it degrades into a second
+live source of truth, which is exactly the liability the author flagged ("eventually
+having consumers for old results is the problem").
 
-This is the single sharpest risk in the retirement: 0478 would orphan exp3 (and any other
-record-only legacy row) the moment `measurements.jsonl` is deleted.
+## Preliminary evidence (hypothesis to confirm, not assert)
 
-## Decision required
+A first-pass check (2026-06-09) supports the no-published-dep claim:
 
-Pick the ingest source for record-only experiments (exp3 + any pre-0122/archived legacy):
+- `report/` contains no `exp3` / `cross_eval` / `sota_cross` references — published
+  tables/figures enter as generated includes, not by data name.
+- `tabulate_exp3_fn_triage.py` does not read `measurements.jsonl` (`load`/`load_metrics`).
+- The published render DAG (`experiments/render.mk`) sources exp1/exp2/exp3 tables from
+  `sota_cross_eval.csv`, `*_view.csv` (mart-derived), and `exp1_cross_eval.csv` — not the
+  legacy rows.
+- Live exp3 (`experiments/outputs/sota_exp3_arm*_batch1`) carries raw `*.raw.json`, so its
+  published numbers are reproducible without the record-only rows.
 
-- **Option A — adapter ingests `.record.json`.** Extend the mart builder to read scored
-  `*.record.json` pointers (not just raw), so legacy/exp3 scores flow into the mart like
-  every other row. Cleanest end state (mart is genuinely the single source of truth), more
-  builder work, must preserve the exact baked scores.
-- **Option B — frozen snapshot.** Datestamp an immutable `measurements.jsonl` snapshot
-  (per the raw-snapshot policy, 0430) that 0478 must **not** delete; exp3/legacy reporting
-  reads the snapshot, fresh experiments read the mart. Less builder work, but leaves a
-  second source of truth alive — partial retirement, not full.
+This is a hypothesis to verify mechanically below, per the project rule: agent-surveyed
+counts are hypotheses, not facts.
 
-Author chooses A or B in the ticket log before work starts. Default recommendation: **A**,
-because 0297's stated goal is "single source of truth for all experiments"; B contradicts it.
+## Actions
 
-## Relevant files
-
-- `experiments/archive/outputs/` — record-only exp3/legacy `*.record.json`.
-- `experiments/derived/score.mk:112-115` — `assemble` rebuilds measurements.jsonl from
-  all surviving `*.record.json`; the dropped-entries note (`score.mk:75-85`, ticket 0422)
-  enumerates the record-only dirs.
-- `src/aedist/build_exp1_mart.py` (from 0476) — the adapter to extend (Option A).
-- `mart_to_metrics()` (from 0489) — the equivalence harness this ticket reuses.
-
-## Actions (Option A path)
-
-1. Identify every record-only row in `measurements.jsonl` (no recoverable raw): grep
-   `result_file` against surviving raw; cross-check the 0422 dropped-entries list.
-2. Extend the mart builder to ingest `.record.json` for those rows (map score payload →
-   `ScoreSummary`, including `tp/fp/fn` from 0475).
-3. Reuse 0489's golden test for the exp3/legacy subset:
-   `mart_to_metrics(exp3) == records_to_metrics(exp3)` run-for-run.
-
-## Actions (Option B path)
-
-1. Write a datestamped immutable snapshot of `measurements.jsonl` under the 0430 policy.
-2. Document in 0478 that the snapshot is retained, not deleted; route exp3/legacy consumers
-   to it; record that retirement is partial.
+1. **Snapshot.** Write a datestamped, immutable `measurements.jsonl` snapshot under the
+   raw-snapshot policy (0430) — e.g. `experiments/snapshots/measurements-YYYY-MM-DD.jsonl`
+   with a recorded SHA-256. It is an archival artifact, never a build prerequisite.
+2. **No-published-dep audit.** After 0477 ports consumers to the mart, enumerate every
+   record-only row in the snapshot (no recoverable raw; cross-check the 0422 dropped-entries
+   list) and prove no published artifact (`report/`, `publications/`, any `report/inputs/
+   generated/*` macro/table/figure) traces its provenance to one.
+3. **Guard test (the deliverable that makes B safe).** Add a CI test asserting the snapshot
+   path is referenced by nothing in the render DAG, the `load_metrics` consumer set, or the
+   report build — so no new consumer of old results can creep in.
 
 ## Test (write first — TDD red step)
 
 ```python
-# tests/test_mart_exp3_legacy_ingest.py
+# tests/test_snapshot_is_forensic_only.py
 import pytest
 
-@pytest.mark.slow
-def test_every_measurements_row_has_a_mart_home_or_documented_snapshot():
-    """No row in measurements.jsonl may be orphaned by 0478: each exp3/legacy
-    row is either reproduced in the mart (Option A) or covered by the retained
-    snapshot (Option B). Enumerate record-only rows and assert coverage."""
+@pytest.mark.adherence
+def test_no_published_artifact_depends_on_the_snapshot():
+    """The retained measurements.jsonl snapshot is forensic-only: nothing in the
+    render DAG, the load_metrics consumer set, or the report/publications build may
+    reference its path. Grep src/, experiments/*.mk, report/ for the snapshot path
+    and assert zero hits outside the archival writer itself."""
     pass
 ```
 
 ## Verification
 
-- [ ] Author has chosen Option A or B (written in ticket log).
-- [ ] Every record-only `measurements.jsonl` row is accounted for (mart record or snapshot).
-- [ ] Option A: exp3/legacy golden equivalence (`mart_to_metrics == records_to_metrics`) passes.
-- [ ] Option B: immutable snapshot committed; 0478 body amended to retain it.
+- [ ] Immutable datestamped snapshot committed with a recorded SHA-256.
+- [ ] Record-only rows enumerated; none is the provenance of a published number.
+- [ ] Guard test passes: no render/consumer/report reference to the snapshot path.
 - [ ] `make check` passes.
-- [ ] `measurements.jsonl` is NOT deleted by this PR (that is 0478).
+- [ ] `measurements.jsonl` (live) is NOT deleted by this PR — that is 0478.
 
 ## Invariants
 
-- No published number loses its source. Record-only rows are first-class, not collateral.
-- This PR does not delete the old stack; it closes the exp3/legacy gap that makes 0478 safe.
+- The snapshot is read by nothing in the build; it exists for forensics only.
+- No published number loses its source: any that would have depended on a record-only
+  row is a blocking finding (re-source from live raw, or drop from the publication)
+  before 0478 deletes the live file.
 
 ## Exit criteria
 
-- The exp3/legacy ingest question is resolved and tested.
-- 0478 can delete `measurements.jsonl` (Option A) or knowingly retain a snapshot (Option B)
-  with zero orphaned rows.
+- Forensic snapshot exists and is provably inert (guard test green).
+- 0478 can delete the live `measurements.jsonl` knowing the published surface is
+  snapshot-independent and zero rows are orphaned in a way that matters.
