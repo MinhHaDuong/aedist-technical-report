@@ -203,6 +203,18 @@ def test_real_data_drops_uniform_field_completeness():
 # ── Rendering smoke test ──────────────────────────────────────────────────────
 
 
+def test_make_figure_refuses_empty_grid(tmp_path):
+    """A single-model input zeroes every across-model spread, filtering all
+    rows — make_figure must refuse rather than silently emit an empty figure."""
+    import pytest
+
+    rows = [r for r in _load_rows(_CSV_PATH) if r["model"] == "gpt-5.5"]
+    out = tmp_path / "degenerate.pdf"
+    with pytest.raises(ValueError, match="no discriminating sub-scores"):
+        make_figure(rows, _CSV_PATH, out)
+    assert not out.exists()
+
+
 def test_make_figure_writes_pdf(tmp_path):
     """make_figure produces a non-empty PDF."""
     rows = _load_rows(_CSV_PATH)

@@ -297,6 +297,13 @@ def make_figure(rows: list[dict[str, str]], input_path: Path, output: Path) -> N
     # Keep only sub-scores that actually separate the models; the all-green
     # criteria (uniformly cleared) are not interesting on a quality-floor figure.
     subscores = discriminating_columns(candidate_cols, run_values, models)
+    if not subscores:
+        msg = (
+            "quality floor heatmap: no discriminating sub-scores survive the "
+            f"spread filter (>= {_MIN_DISCRIMINATING_SPREAD}) across "
+            f"{len(models)} model(s) — refusing to emit an empty figure"
+        )
+        raise ValueError(msg)
     dim_groups = _dimension_groups(subscores)
 
     n_rows = len(subscores)  # sub-scores
