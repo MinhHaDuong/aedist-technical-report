@@ -108,6 +108,7 @@ ANALYSIS_GEM_REF       := $(ANALYSIS_REPO_ROOT)/data/reference/gem_thermal.csv
 ANALYSIS_WIKI_COAL     := $(ANALYSIS_REPO_ROOT)/data/reference/raw/wikipedia_coal_vietnam-2026-06-09.wikitext
 ANALYSIS_WIKI_POWER    := $(ANALYSIS_REPO_ROOT)/data/reference/raw/wikipedia_power_vietnam-2026-06-09.wikitext
 ANALYSIS_CONCORDANCE_CSV := $(ANALYSIS_REPO_ROOT)/data/reference/tab_source_concordance.csv
+ANALYSIS_WIKI_BAR_CSV  := $(ANALYSIS_REPO_ROOT)/data/reference/tab_wikipedia_recall_bar.csv
 # Fusion MVP uses the v2.1 locked reference (173 plants, ticket 0485) so that
 # Fig 5 is consistent with all other Exp1/2 manuscript sections.  The live
 # ANALYSIS_EXPERT_REF has grown to v2.3 (180 plants) which post-dates the
@@ -649,6 +650,7 @@ RENDER_REPORT_TABLES := \
 	$(ANALYSIS_GEN)/tab_source_grounding.tex \
 	$(ANALYSIS_GEN)/tab_status_difficulty.tex \
 	$(ANALYSIS_GEN)/macros_source_concordance.tex \
+	$(ANALYSIS_WIKI_BAR_CSV) \
 	$(ANALYSIS_EXP2_WIKI_CSV) \
 	$(ANALYSIS_AGG_SWEEP_TEX)
 
@@ -835,6 +837,17 @@ $(ANALYSIS_GEN)/macros_source_concordance.tex $(ANALYSIS_CONCORDANCE_CSV) &: \
 	uv run python -m aedist.tabulate_source_concordance \
 	    --csv $(ANALYSIS_CONCORDANCE_CSV) \
 	    --macros $(ANALYSIS_GEN)/macros_source_concordance.tex
+
+# Wikipedia recall bar (ticket 0494): per-raw-status seeded-ceiling coverage.
+# Shares the matcher/fold machinery with the concordance script (imported), so
+# both scripts are honest prerequisites. Distinct artifact from the 0486
+# concordance by design: seeded derivative (contamination-aware recall bar),
+# not independent reproduction.
+$(ANALYSIS_WIKI_BAR_CSV): $(ANALYSIS_EXPERT_REF) $(ANALYSIS_WIKI_COAL) $(ANALYSIS_WIKI_POWER) \
+		$(ANALYSIS_REPO_ROOT)/src/aedist/tabulate_wikipedia_recall_bar.py \
+		$(ANALYSIS_REPO_ROOT)/src/aedist/tabulate_source_concordance.py \
+		$(ANALYSIS_REPO_ROOT)/src/aedist/reconcile.py
+	uv run python -m aedist.tabulate_wikipedia_recall_bar --output $@
 
 # Interactive recognition matrix (ticket 0450): dev-tool HTML for LP matcher
 # QA — hover any cell to see the reference-vs-reply comparison table.  Output
