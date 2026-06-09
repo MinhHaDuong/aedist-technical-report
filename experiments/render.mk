@@ -105,6 +105,9 @@ ANALYSIS_DECOMP_AFTER  :=
 ANALYSIS_RAG_CSVS      := $(wildcard $(ANALYSIS_EXPERIMENTS_DIR)/archive/outputs/rag_extract/*.csv)
 ANALYSIS_EXPERT_REF    := $(ANALYSIS_REPO_ROOT)/data/reference/vietnam_thermal_plants_v2_classified.csv
 ANALYSIS_GEM_REF       := $(ANALYSIS_REPO_ROOT)/data/reference/gem_thermal.csv
+ANALYSIS_WIKI_COAL     := $(ANALYSIS_REPO_ROOT)/data/reference/raw/wikipedia_coal_vietnam-2026-06-09.wikitext
+ANALYSIS_WIKI_POWER    := $(ANALYSIS_REPO_ROOT)/data/reference/raw/wikipedia_power_vietnam-2026-06-09.wikitext
+ANALYSIS_CONCORDANCE_CSV := $(ANALYSIS_REPO_ROOT)/data/reference/tab_source_concordance.csv
 # Fusion MVP uses the v2.1 locked reference (173 plants, ticket 0485) so that
 # Fig 5 is consistent with all other Exp1/2 manuscript sections.  The live
 # ANALYSIS_EXPERT_REF has grown to v2.3 (180 plants) which post-dates the
@@ -645,6 +648,7 @@ RENDER_REPORT_TABLES := \
 	$(ANALYSIS_GEN)/tab_converter_benchmark.tex \
 	$(ANALYSIS_GEN)/tab_source_grounding.tex \
 	$(ANALYSIS_GEN)/tab_status_difficulty.tex \
+	$(ANALYSIS_GEN)/macros_source_concordance.tex \
 	$(ANALYSIS_EXP2_WIKI_CSV) \
 	$(ANALYSIS_AGG_SWEEP_TEX)
 
@@ -815,6 +819,21 @@ $(ANALYSIS_GEN)/tab_status_difficulty.tex: $(ANALYSIS_EXP1_BATCH2_RECORDS) $(ANA
 	    --records-glob "$(ANALYSIS_EXPERIMENTS_DIR)/outputs/exp1_batch2/*.record.json" \
 	    --reference $(ANALYSIS_EXPERT_REF) \
 	    --output $(ANALYSIS_GEN)/tab_status_difficulty.tex
+
+# Source concordance (ticket 0486): reference vs GEM + Wikipedia, bidirectional
+# by status. One invocation co-produces the headline macros (this target) and
+# the per-status CSV ($(ANALYSIS_CONCORDANCE_CSV)); both are committed. Reads the
+# reference, GEM, and the two cached Wikipedia wikitext snapshots; denominator
+# via reference_plant_count() (no hardcoded count).
+$(ANALYSIS_GEN)/macros_source_concordance.tex $(ANALYSIS_CONCORDANCE_CSV) &: \
+		$(ANALYSIS_EXPERT_REF) $(ANALYSIS_GEM_REF) $(ANALYSIS_WIKI_COAL) $(ANALYSIS_WIKI_POWER) \
+		$(ANALYSIS_REPO_ROOT)/src/aedist/tabulate_source_concordance.py \
+		$(ANALYSIS_REPO_ROOT)/src/aedist/exp1_recognition.py \
+		$(ANALYSIS_REPO_ROOT)/src/aedist/reconcile.py
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.tabulate_source_concordance \
+	    --csv $(ANALYSIS_CONCORDANCE_CSV) \
+	    --macros $(ANALYSIS_GEN)/macros_source_concordance.tex
 
 # Interactive recognition matrix (ticket 0450): dev-tool HTML for LP matcher
 # QA — hover any cell to see the reference-vs-reply comparison table.  Output
