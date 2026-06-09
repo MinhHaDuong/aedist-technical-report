@@ -11,8 +11,8 @@ Label: deferred
 --- body ---
 ## Context
 
-Branch `claude/busy-cori-82nu5p` portraited Figure 7 in the EN preprint
-(`slides/manuscript/main.md`, Annex E): the landscape
+Branch `claude/busy-cori-82nu5p` converted Figure 7 of the EN preprint to
+portrait orientation (`slides/manuscript/main.md`, Annex E): the landscape
 `fig_exp1_recognition_matrix.pdf` was swapped for the transposed 3-page
 portrait (`fig_exp1_recognition_matrix_portrait.pdf`, from ticket 0451's
 `plot_exp1_matrix_portrait.py`), included via `\includepdf` (pdfpages),
