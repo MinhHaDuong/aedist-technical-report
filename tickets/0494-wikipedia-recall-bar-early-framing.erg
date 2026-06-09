@@ -6,6 +6,7 @@ Author: HDMX-coding-agent
 --- log ---
 2026-06-09T10:30Z HDMX-coding-agent created — from the 0486 design dialogue. Author confirmed he populated the Wikipedia coal list from the MOIT/PDP8 reference data; idea is to use Wikipedia coverage of the reference as an explicit recall bar, shown early, that the §4 parametric results visibly fail.
 
+2026-06-09T19:57Z executed at 177 (coal+gas, reviewed): built-fleet mean 92% (operating 95/construction 80/permitted 100), pipeline 55%, aggregate 73% — two regimes hold; artifact tab_wikipedia_recall_bar.csv, seeded-bar paragraph before §4 Results, §8 loop-close, guards in test_wikipedia_recall_bar.py
 --- body ---
 
 ## Context
