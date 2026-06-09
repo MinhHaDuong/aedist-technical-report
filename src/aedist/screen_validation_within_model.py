@@ -113,7 +113,7 @@ def _load_raw_runs(exp1_dir: Path, f1_map: dict[tuple[str, int], float | None]) 
     runs = []
     for csv_path in sorted(exp1_dir.glob("*-run*.csv")):
         stem = csv_path.stem
-        if stem.startswith("reconciliation_"):
+        if stem.startswith(("reconciliation_", "filtered_")):
             continue
         parts = stem.rsplit("-run", 1)
         if len(parts) != 2:

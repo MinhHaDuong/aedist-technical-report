@@ -25,6 +25,7 @@ from .score_mechanical import (
 log = logging.getLogger(__name__)
 
 _FILENAME_RE = re.compile(r"^(?P<model>.+)-run(?P<run>\d+)\.csv$")
+_SKIP_PREFIXES = ("reconciliation_", "filtered_")
 _CAPACITY_KEYS = ("capacity_mwe", "total_mwe", "total_mw", "capacity")
 _SOURCE_DIVERSITY_CLIP = 20
 _SOURCE_NOT_FOUND = frozenset({"not found", "n/a", "unknown", ""})
@@ -291,6 +292,8 @@ def main(argv: list[str] | None = None) -> None:
 
     out_rows: list[dict[str, str]] = []
     for csv_path in files:
+        if any(csv_path.name.startswith(p) for p in _SKIP_PREFIXES):
+            continue
         model, run = _parse_model_run(csv_path)
         row = score_file(csv_path, args.reference, args.prompt_version)
         out_rows.append(row)

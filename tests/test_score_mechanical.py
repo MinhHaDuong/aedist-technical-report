@@ -649,7 +649,7 @@ def test_variability_screen_regression_exp1_batch2() -> None:
         # These are untracked 0374-era artifacts that linger in some working trees
         # (ticket 0492); the == 70 assertion below still guards against any OTHER
         # unexpected colocated file.
-        if fpath.name.startswith("reconciliation_"):
+        if fpath.name.startswith(("reconciliation_", "filtered_")):
             continue
         m = run_re.match(fpath.name)
         if not m:
