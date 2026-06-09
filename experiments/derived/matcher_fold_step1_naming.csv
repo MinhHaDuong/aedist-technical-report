@@ -1,0 +1,15 @@
+model,n_names,frac_diacritic,frac_ascii
+claude-haiku-4.5,297,1.0,0.0
+claude-opus-4.6,475,1.0,0.0
+claude-sonnet-4.6,560,1.0,0.0
+deepseek-v4-flash,225,0.702,0.298
+deepseek-v4-pro,298,1.0,0.0
+gpt-5.5,427,0.995,0.005
+gpt-oss-120b,288,1.0,0.0
+gpt-oss-20b,349,0.415,0.585
+mistral-large-2512,234,1.0,0.0
+mistral-medium-3-5,315,1.0,0.0
+mistral-small-2603,294,1.0,0.0
+qwen3.6-35b-a3b,200,1.0,0.0
+qwen3.6-flash,703,1.0,0.0
+qwen3.7-max,218,1.0,0.0
