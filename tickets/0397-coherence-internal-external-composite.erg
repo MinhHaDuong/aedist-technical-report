@@ -2,7 +2,6 @@
 Title: Coherence: internal + external per-row pass/fail composites (over the per-field indicators)
 Created: 2026-06-03
 Author: claude
-Blocked-by: 0396
 
 --- log ---
 2026-06-03T00:00Z claude created — Imagine-phase design with the author. Sits ABOVE the per-field coherence indicators (0396 row_atomicity, plus the existing vocab/status/capacity adherence): aggregates them into two reference-free composites, internal (response-only) and external (world-knowledge, not gold), with per-row pass/fail aggregation. Blocked-by 0396 because the internal composite ANDs the per-row atomicity predicate that 0396 introduces.
