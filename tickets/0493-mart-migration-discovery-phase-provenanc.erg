@@ -1,0 +1,92 @@
+%erg 0.1
+Title: Mart migration DISCOVERY phase: provenance map + four open questions (tracker: 0297)
+Created: 2026-06-09
+Author: HDMX-coding-agent
+Label: needs-human
+
+--- log ---
+2026-06-09T09:42Z HDMX-coding-agent created
+2026-06-09T09:42Z HDMX-coding-agent note Gate inserted by author after PR #881 merged ("too many bumps, need more plan review"). The derisk pass corrected a wrong premise (measurements.jsonl was mislabelled exp1+exp2+exp3; it is the exp1 benchmark) and a self-contradiction in 0478. Before any irreversible execution (0475+), four data-provenance questions must be answered from artifacts, not enumerated. Execution chain gated: 0475 Blocked-by 0493.
+
+--- body ---
+## Why this phase exists
+
+PR #881 derisked the `measurements.jsonl` → mart plan (0297 chain) but the review found
+the plan rested on an *unverified* picture of the data: one premise was outright wrong
+(`exp1+exp2+exp3` → actually the exp1 benchmark) and 0478 contradicted itself on whether
+`RunRecord` is deleted. The plan is now internally consistent, but it still assumes a data
+provenance that **nobody has enumerated**. This is a Plan-phase **discovery** ticket: produce
+the provenance artifact and answer four questions *from the artifacts*, then decide whether
+0475–0490 need reshaping. **No production-pipeline code.** A throwaway analysis script is fine.
+
+This ticket follows the project rule: agent-surveyed counts are hypotheses; the deliverable
+is a generated provenance map an independent parse can re-derive — not prose enumeration.
+
+## Deliverable
+
+1. A committed **provenance map** of every row in `measurements.jsonl` (e.g.
+   `docs/mart-migration-provenance.md` plus a CSV/JSONL it is derived from): one entry per
+   row keyed by `result_file`, with — source directory, `method`, raw-present? (does the
+   raw reply still exist under `experiments/outputs|derived|archive`?), rebuildable-from-raw?,
+   and which mart adapter (0476 exp1 / 0490 legacy snapshot) is responsible for it.
+2. Written answers to the four questions below, recorded in this ticket's log.
+3. A go / reshape decision on the 0297 children, with concrete edits named if reshape.
+
+## The four questions
+
+### Q1 — 0476 scope vs reality
+0476 scopes the exp1 adapter to read `exp1_batch2/*.json`. But `measurements.jsonl` is 669
+rows across `direct 380 / rag 143 / frontier 101 / direct+multiturn 41 / rag+verification 4`
+— far more than `exp1_batch2`. **Find:** for each non-`exp1_batch2` cohort (rag, frontier,
+multiturn, verification), which source directory produces it and does the 0476 adapter cover
+it or not? Output: the cohort→source→covered? table. If 0476 covers only a fraction, that is
+a reshape (widen 0476, or add sibling adapters).
+
+### Q2 — record-only / legacy boundary
+0490 (Option B) assumes a clean split between rebuildable rows and record-only legacy rows
+whose raw was archived (0422, `score.mk:75-85`). **Find:** the exact set — for each of the
+669 rows, is the raw reply still present, or only the `*.record.json` score pointer? Output:
+the count and the enumerated list of record-only rows. This is the set Option B's snapshot
+must cover and the no-published-dep guard (0490) must clear.
+
+### Q3 — exp2 mart provenance
+0489's golden test needs to run `mart_to_metrics()` and `records_to_metrics()` on **shared
+raw**. **Find:** is the existing `exp2_mart.jsonl` built from raw that still survives, or is
+it itself partly record-only (raw archived)? If the mart's own inputs are partly gone, the
+golden equivalence test cannot run on those rows and 0489's gate needs a fallback (e.g. pin a
+frozen mart + frozen measurements subset as the test fixture). Output: exp2 raw-survival count.
+
+### Q4 — the write-path epic does not exist
+0478 now defers `RunRecord` retirement to "a separate epic" that has **no ticket**. A dangling
+forward reference is a plan hole. **Find:** enumerate the live `RunRecord` constructors
+(adapters, `query_*`, `worker`) and what each would need to emit instead (mart records direct,
+or raw-only + adapter). Output: **create the write-path epic ticket** (tracker or first child)
+and point 0478's "separate epic" at its real ID.
+
+## Method (read-only / throwaway)
+
+- Parse `measurements.jsonl` for `result_file` per row; classify by source dir + `method`.
+- For each `result_file`, test raw presence under `experiments/{outputs,derived,archive}`.
+- Cross-check the 0422 dropped-entries note (`experiments/derived/score.mk:75-85`).
+- Grep `from aedist.schema import RunRecord` / `RunRecord(` for Q4's constructor list.
+
+## Verification
+
+- [ ] Provenance map committed; its row count equals `measurements.jsonl`'s (669).
+- [ ] Q1 cohort→source→covered table recorded; 0476 coverage gap (if any) named.
+- [ ] Q2 record-only set enumerated with a count.
+- [ ] Q3 exp2 raw-survival recorded; 0489 fixture strategy stated if any inputs are gone.
+- [ ] Q4 write-path epic ticket created; 0478's "separate epic" updated to its ID.
+- [ ] Go / reshape decision recorded for 0475–0490 (named edits if reshape).
+
+## Exit criteria
+
+- The four questions are answered from the committed provenance artifact, not enumeration.
+- Any required reshape of 0475–0490 is ticketed or applied; the write-path epic exists.
+- Execution (0475) is unblocked only once this ticket closes.
+
+## Invariants
+
+- No production-pipeline code, no schema change, no `measurements.jsonl` mutation — this is
+  measurement and decision only. A throwaway analysis script may live under `experiments/`
+  or be deleted after the map is generated.
