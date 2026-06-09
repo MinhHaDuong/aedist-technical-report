@@ -4,10 +4,14 @@ Pipeline phase: P3 (analyze & render) — invoked by experiments/render.mk.
 
 Layout (transposed for readability):
     * Columns = the exact model set the direct-query census renders (Figure 2),
-      ordered identically — architectural family alphabetical, then effective
-      parameter size descending, then name.  DeepSeek IS included (it is one of
-      the fourteen census models); the old four-panel spider excluded it, this
-      figure does not.
+      laid out to match its family-then-size ordering: architectural family
+      alphabetical, then a coarse name-based size tier descending (larger
+      first), then name.  This name-tier rank approximates — and, for the
+      fourteen-model cohort here, reproduces (verified against the committed
+      fig_direct_p1_base.pdf) — Figure 2's parameter-count ordering without
+      needing the per-record size_class the census reads.  DeepSeek IS included
+      (it is one of the fourteen census models); the old four-panel spider
+      excluded it, this figure does not.
     * Rows = the genuine 0–1 sub-scores across the five criteria (accuracy,
       coherence, field_completeness, provenance, temporality), derived
       programmatically from the CSV header — never hardcoded.  The raw *_distinct
@@ -236,12 +240,16 @@ def discriminating_columns(
 
 
 def heatmap_models(rows: list[dict[str, str]]) -> list[str]:
-    """Return the model column order, identical to the Figure 2 direct census.
+    """Return the model column order, laid out to match the Figure 2 census.
 
-    Architectural family alphabetical, then effective parameter size descending
-    (larger first), then name.  Mirrors plot_method_convergence's ordering
-    intent using the name-based size rank so the heatmap reads against the same
-    self-contained CSV — and, unlike the four-panel spider, includes DeepSeek.
+    Sort key: architectural family alphabetical, then a coarse name-based size
+    tier (``_model_size_rank``) descending, then name.  This approximates
+    plot_method_convergence's parameter-count ordering using only the model
+    name, so the heatmap reads against the same self-contained CSV without the
+    per-record size_class the census consumes; for the fourteen-model cohort the
+    two orders agree (guarded by test_model_order_literal_matches_figure2_render,
+    verified against the committed figure).  Unlike the four-panel spider, this
+    includes DeepSeek.
     """
     models = sorted({str(r.get("model", "")).strip() for r in rows if str(r.get("model", "")).strip()})
     models.sort(key=lambda m: (model_family(m), -_model_size_rank(m), m))
