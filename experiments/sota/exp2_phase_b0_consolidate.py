@@ -313,29 +313,78 @@ def consolidate(phase_b0_dir: Path, run_number: int = 1) -> None:
     log.info("Consolidation complete. Output: %s", phase_b0_dir)
 
 
+_RUN_DIR_RE = re.compile(r"^run(\d+)$")
+
+
+def consolidate_batch(batch_dir: Path) -> None:
+    """Walk all run{N}/ subdirs under *batch_dir* and consolidate each one.
+
+    This is the multi-rep variant of :func:`consolidate`.  Given a top-level
+    batch directory such as ``sota_exp3_arm2_batch1/``, it discovers every
+    ``run01/``, ``run02/``, … sub-directory and calls :func:`consolidate`
+    with the appropriate *run_number* for each.
+
+    Directories that do not match the ``run{N}`` pattern are silently skipped.
+    """
+    run_dirs = sorted(
+        (d, int(m.group(1)))
+        for d in batch_dir.iterdir()
+        if d.is_dir() and (m := _RUN_DIR_RE.match(d.name))
+    )
+    if not run_dirs:
+        log.warning("No run{N}/ subdirectories found in %s", batch_dir)
+        return
+    for run_dir, run_number in run_dirs:
+        log.info("Consolidating run%02d from %s ...", run_number, run_dir)
+        consolidate(run_dir, run_number=run_number)
+
+
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    p.add_argument(
+    mode = p.add_mutually_exclusive_group()
+    mode.add_argument(
         "--phase-b0-dir",
         type=Path,
-        default=Path(__file__).resolve().parents[1] / "outputs" / "sota_exp2_phase_b0",
-        help="Path to the Phase B-0 output directory.",
+        default=None,
+        help=(
+            "Path to a single Phase B-0 run directory containing "
+            "{agent}_run{N:02d}/ subdirectories."
+        ),
+    )
+    mode.add_argument(
+        "--batch-dir",
+        type=Path,
+        default=None,
+        help=(
+            "Path to a top-level batch directory containing run01/, run02/, … "
+            "subdirectories.  Consolidates every run in one pass."
+        ),
     )
     p.add_argument(
         "--run-number",
         type=int,
         default=1,
-        help="Rep number to consolidate (1-indexed). Reads <agent>_run{N:02d}/ subdirs.",
+        help="Rep number to consolidate (1-indexed). Only used with --phase-b0-dir.",
     )
     args = p.parse_args(argv)
 
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 
-    if not args.phase_b0_dir.is_dir():
-        log.error("Directory not found: %s", args.phase_b0_dir)
+    if args.batch_dir is not None:
+        if not args.batch_dir.is_dir():
+            log.error("Directory not found: %s", args.batch_dir)
+            return 1
+        consolidate_batch(args.batch_dir)
+        return 0
+
+    phase_b0_dir = args.phase_b0_dir or (
+        Path(__file__).resolve().parents[1] / "outputs" / "sota_exp2_phase_b0"
+    )
+    if not phase_b0_dir.is_dir():
+        log.error("Directory not found: %s", phase_b0_dir)
         return 1
 
-    consolidate(args.phase_b0_dir, run_number=args.run_number)
+    consolidate(phase_b0_dir, run_number=args.run_number)
     return 0
 
 
