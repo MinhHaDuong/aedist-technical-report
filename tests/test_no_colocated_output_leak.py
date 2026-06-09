@@ -86,3 +86,16 @@ class TestNoColocatedOutputLeak:
         for model_slug in groups:
             assert not model_slug.startswith("reconciliation_")
             assert not model_slug.startswith("filtered_")
+
+    def test_variability_screen_regression_guard(self):
+        """The 0492 test glob also skips colocated outputs (source inspection)."""
+        from pathlib import Path
+
+        src = Path(__file__).parent / "test_score_mechanical.py"
+        text = src.read_text(encoding="utf-8")
+        assert '"reconciliation_"' in text or "'reconciliation_'" in text, (
+            "test_score_mechanical.py lost its reconciliation_ skip guard"
+        )
+        assert '"filtered_"' in text or "'filtered_'" in text, (
+            "test_score_mechanical.py lost its filtered_ skip guard"
+        )
