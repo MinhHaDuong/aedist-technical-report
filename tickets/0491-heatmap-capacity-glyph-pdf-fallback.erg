@@ -1,0 +1,60 @@
+%erg 0.1
+Title: Heatmap PDF: "Capacity≥0" column label renders as "Capacityz0" (≥ glyph fallback)
+Created: 2026-06-09
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-09T09:30Z HDMX-coding-agent created — surfaced during 0487 (heatmap veto fix). Pre-existing, cosmetic, label string unchanged by 0487.
+
+--- body ---
+## Context
+
+In `report/inputs/generated/fig_quality_floor_heatmap_exp1.pdf` (Figure 4 of
+`slides/manuscript/main.md`), the Coherence-group column labelled "Capacity≥0"
+renders as **"Capacityz0"** — the `≥` glyph falls back in matplotlib's PDF
+backend (the default font lacks U+2265). The PNG backend renders it correctly,
+so it only shows in the committed PDF that the manuscript includes.
+
+This is pre-existing (the label string `COLUMN_LABELS["coherence_capacity_nonnegative"]
+= "Capacity≥0"` predates ticket 0487 and was left untouched there per scope) and
+purely cosmetic, but it is review-visible in a manuscript figure on the path to
+the reviewable arXiv PDF.
+
+## Relevant files
+
+- `src/aedist/plot_quality_floor_heatmap_exp1.py` — `COLUMN_LABELS` dict (the `"Capacity≥0"` entry) and the matplotlib setup in `make_figure()`
+- `report/inputs/generated/fig_quality_floor_heatmap_exp1.pdf` — regenerated artifact
+
+## Actions
+
+1. Pick the lightest robust fix:
+   - **Option A (recommended):** change the label to `"Capacity ≥0"` rendered via
+     mathtext (`r"Capacity $\geq$0"`) so matplotlib typesets the relation with its
+     math font (no system-font dependency).
+   - **Option B:** ASCII fallback `"Capacity≥0"` → `"Capacity≥0"`/`"Cap. nonneg."`
+     (avoids the glyph entirely; less precise).
+   - Avoid font-substitution config (fragile across CI/local matplotlib installs).
+2. Regenerate the PDF via the `render.mk` heatmap target.
+3. Visually confirm the label reads "Capacity ≥0" (or chosen text) in the PDF.
+
+## Test
+
+Extend `tests/test_plot_quality_floor_heatmap_exp1.py`: assert the rendered
+column label for `coherence_capacity_nonnegative` contains a `≥`/`\geq`
+construct, OR (backend-agnostic) assert `COLUMN_LABELS["coherence_capacity_nonnegative"]`
+uses the mathtext form. Prefer a source-level assertion over PDF byte inspection.
+
+## Verification
+
+- [ ] Heatmap PDF column label no longer reads "Capacityz0"
+- [ ] PDF regenerated via the DAG target
+- [ ] `make check` passes
+
+## Invariants
+
+- Do not change the veto-column handling or any genuine sub-score coloring (0487 scope)
+- Do not alter the data or the disqualification logic — label-only change
+
+## Exit criteria
+
+- Label renders correctly in the committed PDF; all verification boxes ticked
