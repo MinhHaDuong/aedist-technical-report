@@ -9,9 +9,11 @@ violate the scope boundary. Yên Hưng (PDP7 Annex 1+2, a specific planned
 project) is **retained**. Reference goes 180 → 177.
 
 Replayability: this script does NOT modify ``add_plants_0395.py``; it operates on
-the post-0395 snapshot the config currently pins
-(``raw/pipeline+0395-2026-06-09.ods``) and produces a NEW dated snapshot. The
-0395 → 0497 edit chain stays intact and replayable.
+the post-0395 snapshot (``raw/pipeline+0395-2026-06-09.ods``, passed explicitly
+via ``--src``) and produces a NEW dated snapshot
+(``raw/pipeline+0497-2026-06-09.ods``), which this ticket repins as
+``config.VN_THERMAL_MASTER_SNAPSHOT_ODS``. The 0395 → 0497 edit chain stays
+intact and replayable.
 
 Byte-exact removal: the three rows to drop were inserted by ``add_plants_0395``
 using ``_build_row`` over ``_ROWS``. We import those and regenerate the exact

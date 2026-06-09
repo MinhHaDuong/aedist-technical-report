@@ -95,7 +95,10 @@ def test_abstract_numbers_in_body():
     """
     md = _text()
     if not MACROS_FILE.exists():
-        pytest.skip(f"{MACROS_FILE.name} not yet generated")
+        pytest.skip(
+            f"{MACROS_FILE} not yet generated — "
+            "run: make -f experiments/render.mk report-figures"
+        )
     macros = MACROS_FILE.read_text(encoding="utf-8")
     # These F1 stats appear in the Exp1 §4 results paragraph and the abstract.
     for macro in ("ExpOneFOneMin", "ExpOneFOneMean", "ExpOneFOneMax"):
