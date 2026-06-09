@@ -196,6 +196,7 @@ CORPUS_REF     ?= ../report/inputs/README.md
 
 .PHONY: pdf2md build-corpus preflight help extract-reference-ods \
         aggregate-reference-plants classify-reference-plants reference-pipeline \
+        verify-master-convergence \
         aggregate-gem-plants classify-gem-plants gem-pipeline
 
 pdf2md:
@@ -294,6 +295,14 @@ classify-reference-plants:
 # snapshot is absent from CI by design).
 reference-pipeline: extract-reference-ods aggregate-reference-plants classify-reference-plants
 
+# Convergence gate (ticket 0458): re-run the reference pipeline on the pinned
+# (or a candidate --snapshot) master ODS and byte-compare against the committed
+# classified CSV. The master-reverse-sync handover gate — run before re-pinning
+# config.VN_THERMAL_MASTER_SNAPSHOT_ODS to a fresh import. A .PHONY verb (reads a
+# snapshot, writes nothing tracked); also wrapped by tests/test_master_convergence_0458.py.
+verify-master-convergence:
+	$(UV_RUN) python ../data/reference/verify_master_convergence.py
+
 # Aggregate the GEM unit-grain CSV up to plant grain (ticket 0429). A utility
 # verb (.PHONY): Phase-aware groupby on GEM's data model, with output uniqueness
 # guard (no duplicate plant Name). Replaces the lost GEM.csv -> GEM_aggregate.py
@@ -342,6 +351,7 @@ help:
 	@echo "  make aggregate-reference-plants  Roll units up to plants (validated)"
 	@echo "  make classify-reference-plants   Add IRES/ISIC/PyPSA columns (in->out)"
 	@echo "  make reference-pipeline    extract -> aggregate -> classify (full regen)"
+	@echo "  make verify-master-convergence  Gate: pinned snapshot regenerates the 177-plant CSV byte-identically (0458)"
 	@echo "  make aggregate-gem-plants  Aggregate GEM units to plants (uniqueness guard)"
 	@echo "  make classify-gem-plants   Add IRES/ISIC/PyPSA columns to GEM plants"
 	@echo "  make gem-pipeline          aggregate -> classify GEM cross-check data"
