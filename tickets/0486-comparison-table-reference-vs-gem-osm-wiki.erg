@@ -1,0 +1,68 @@
+%erg 0.1
+Title: Comparison table: reference database vs GEM, OSM, Wikipedia — by asset status
+Created: 2026-06-09
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-09T00:00Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+The Related Work section and §2 quality bar mention Global Energy Monitor (GEM),
+OpenStreetMap (OSM), and Wikipedia as alternative sources for Vietnam's thermal
+fleet. The paper claims they do not fully substitute for a curated reference
+database. A direct comparison table — coverage by asset status — would make that
+claim empirical rather than asserted.
+
+Key expected asymmetry: our reference includes "Proposed" and "Planned" plants
+(67 + 21 rows) sourced from PDP8 annexes; GEM and Wikipedia typically cover
+only operational and under-construction assets; OSM covers only geolocated
+physical infrastructure.
+
+## Actions
+
+1. Download/query each source for Vietnam thermal plants (>30 MWe coal/gas):
+   - **GEM**: Global Energy Monitor's Global Coal Plant Tracker + Global Gas
+     Plant Tracker (CSV exports). Filter to Vietnam, merge by plant.
+   - **OSM**: Overpass API query for `power=plant` + fuel tags in Vietnam bounding
+     box. Save raw response under `data/reference/raw/osm_vietnam_power.json`.
+   - **Wikipedia**: The Vietnam thermal power plants article(s); mechanically
+     parse the infobox tables or section tables.
+2. Match each source against the 173-plant locked reference
+   (`data/reference/vietnam_thermal_plants_v2_classified.csv`) using the LP
+   matcher (`src/aedist/matching/lp.py`, `similarity_threshold=90`).
+3. Build a comparison table: rows = asset status (Operational, Under construction,
+   Planned, Proposed, Cancelled, Retired, All); columns = reference count, GEM
+   coverage %, OSM coverage %, Wikipedia coverage %.
+4. Save as `data/reference/tab_source_coverage_by_status.csv`; include a script
+   `src/aedist/build_source_coverage_table.py` with `--reference`, `--gem-coal`,
+   `--gem-gas`, `--osm-json`, `--wiki-csv` inputs.
+5. Wire in Makefile (one output per rule); include as a table in the Related Work
+   section of `slides/manuscript/main.md`.
+
+## Relevant files
+
+- `data/reference/vietnam_thermal_plants_v2_classified.csv` — the locked 173-plant reference
+- `src/aedist/matching/lp.py` — LP matcher for alignment
+- `slides/manuscript/main.md` — Related Work section (target for the table)
+
+## Test
+
+```python
+def test_table_has_all_status_rows():
+    df = pd.read_csv("data/reference/tab_source_coverage_by_status.csv")
+    assert set(df["status"]) >= {"Operational", "Under construction", "Proposed", "Planned", "All"}
+
+def test_reference_count_matches_reference_file():
+    df = pd.read_csv("data/reference/tab_source_coverage_by_status.csv")
+    assert df.loc[df["status"] == "All", "n_reference"].iloc[0] == 173
+```
+
+## Exit criteria
+
+- [ ] `tab_source_coverage_by_status.csv` generated reproducibly from tracked raw inputs
+- [ ] Coverage rates computed per status for GEM, OSM, Wikipedia
+- [ ] Table included in Related Work section of `slides/manuscript/main.md`
+- [ ] Raw source snapshots committed under `data/reference/raw/` with provenance notes
+- [ ] `make check` passes
