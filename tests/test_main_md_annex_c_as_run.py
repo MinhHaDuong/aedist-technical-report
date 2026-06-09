@@ -1,15 +1,21 @@
-"""Ticket 0433 — main.md Annex B (formerly Annex C) rewritten to the as-run Exp2 story.
+"""Ticket 0433 — main.md Annex C (Exp2 tech spec) rewritten to the as-run story.
 
-Annex B of the preprint (slides/manuscript/main.md, renamed from Annex C in
-ticket 0469 restructure) was a PRE-RUN spec snapshot: it claimed Phase B at
-N=3, a $10/call dollar cap, and carried a "not yet executed" bracketed status
-note. That contradicted the as-run body (§5 "Experiment 2 — SOTA frontier",
-which states two arms, N=5, a 2×2 factorial) and the committed artifacts
+Annex C of the preprint (slides/manuscript/main.md) holds the Experiment 2
+technical specification. Naming history:
+- Originally Annex C (Exp2 tech spec).
+- Renamed to Annex B in ticket 0469 restructure (Annex A moved to Related Work).
+- Renamed back to Annex C in ticket 0482 section reorder (Temporality became
+  Annex A, Exp1-tech became Annex B, Exp2-tech became Annex C).
+
+The annex was a PRE-RUN spec snapshot: it claimed Phase B at N=3, a $10/call
+dollar cap, and carried a "not yet executed" bracketed status note. That
+contradicted the as-run body (§5 "Experiment 2 — SOTA frontier", which states
+two arms, N=5, a 2×2 factorial) and the committed artifacts
 (tab_exp2_2x2.csv, tab_exp2_bib_quality).
 
 This adherence test pins the rewrite's load-bearing invariants:
 
-1. No stale pre-run marker survives in Annex B: "N=3", the "not yet executed"
+1. No stale pre-run marker survives in Annex C: "N=3", the "not yet executed"
    note, the "$10.00" status cap, "≤$10" / "≤$31" budget figures.
 2. The as-run facts are present: two named arms (naive/optimised), N=5, the
    dual-axis cap (50K tokens + $3 guard), and the 2×2 / four-arm framing the
@@ -33,15 +39,15 @@ MAIN_MD = REPO_ROOT / "slides" / "manuscript" / "main.md"
 
 
 def _annex_c() -> str:
-    """The text of Annex B (Experiment 2) — from its heading up to the next top-level heading.
+    """The text of Annex C (Experiment 2) — from its heading up to the next top-level heading.
 
-    Formerly Annex C; renamed to Annex B in ticket 0469 restructure (Annex A
-    was moved to §9 Related Work in the body).
+    Named Annex C after ticket 0482 section reorder (Temporality→A, Exp1-tech→B,
+    Exp2-tech→C, Supplementary→D, Recognition→E, Screen→F).
     """
     text = MAIN_MD.read_text(encoding="utf-8")
-    start = text.index("## Annex B — Experiment 2: Technical specification")
+    start = text.index("## Annex C — Experiment 2: Technical specification")
     rest = text[start:]
-    nxt = rest.index("\n## Annex C", 1)
+    nxt = rest.index("\n## Annex D", 1)
     return rest[:nxt]
 
 

@@ -98,6 +98,24 @@ def _load_rows(path: Path) -> list[dict[str, str]]:
         return list(csv.DictReader(fh))
 
 
+def _filter_exp2_rows(rows: list[dict[str, str]], prompt_prefix: str) -> list[dict[str, str]]:
+    filtered = [
+        row for row in rows if str(row.get("prompt_version", "")).strip().startswith(prompt_prefix)
+    ]
+    dropped = len(rows) - len(filtered)
+    if dropped > 0:
+        log.warning(
+            "quality spider: dropped %d non-%s rows from input", dropped, prompt_prefix
+        )
+    if not filtered:
+        msg = (
+            f"quality spider: input has no rows with prompt_version prefix '{prompt_prefix}' "
+            "(this figure is currently Exp2-only)"
+        )
+        raise ValueError(msg)
+    return filtered
+
+
 def _load_config(path: Path) -> dict:
     with path.open(encoding="utf-8") as fh:
         data = yaml.safe_load(fh) or {}
@@ -304,8 +322,14 @@ def main(argv: list[str] | None = None) -> None:
         default=Path("report/inputs/generated/fig_quality_spider.pdf"),
         help="Path to write PDF figure",
     )
+    parser.add_argument(
+        "--prompt-prefix",
+        default="exp2",
+        help="Only rows whose prompt_version starts with this prefix are plotted",
+    )
     args = parser.parse_args(argv)
-    make_figure(_load_rows(args.input), _load_config(args.config), args.output)
+    rows = _filter_exp2_rows(_load_rows(args.input), args.prompt_prefix)
+    make_figure(rows, _load_config(args.config), args.output)
 
 
 if __name__ == "__main__":
