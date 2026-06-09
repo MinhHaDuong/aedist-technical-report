@@ -1,0 +1,123 @@
+%erg 0.1
+Title: Reliability-vs-accuracy screen figure plus sensitivity annex
+Created: 2026-06-09
+Author: claude
+Blocked-by: 0505
+
+--- log ---
+2026-06-09T21:29Z claude created
+
+--- body ---
+## Context
+
+New main-text figure for section 4: a label-free *source-reliability* screen
+plotted against reference-based accuracy, showing that the inaccurate models are
+also the unreliable ones and can be screened out without ground truth.
+
+Pipeline: read `experiments/derived/exp1_cross_eval.csv` (parametric arm) ->
+`src/aedist/plot_exp1_reliability.py` -> PDF + macros, wired in
+`experiments/render.mk`. Figures-are-artifacts rule applies (no inline plots).
+
+**Blocked-by 0505:** the y-axis is run-grain reliability; it is wrong until the
+uniform-as-of scoring fix lands. Do not build on the current CSV.
+
+## Definitions (ratified across the 2026-06-09 Imagine session)
+
+- **good run** = a run with no zero on any of the 12 reference-free dimensions
+  (coherence x3 incl. 1-veto, provenance x4, temporality x3, completeness x2).
+  Missing score = not a doubt (skip; only `high_conf_dual_source` is ever
+  missing, 4/70). One doubt taints the whole run — the gate is a minimum, not an
+  average (no laundering).
+- **Reliability** (X = the control / label-free screen) = count of good runs out
+  of 5 reps. Report the **count 0..5**, not a percentage. It is the expected
+  number of good runs. Orientation ratified transposed (control on X, effect on
+  Y): unreliable models fall **left**, reliable **right** ("sinners left, good
+  ones right"), and the empty 2-3 columns are the screening cut.
+- **Accuracy** (Y = the effect) = **average** (not median) F1 over the good runs
+  — the expectation of one good run. Median was rejected: it presupposes multiple
+  runs, and multi-run usage should be fusion (tracker 0465), not middle-picking.
+  For a model with zero good runs, Y = average F1 over all runs (no good run
+  exists; caption must say so).
+- Markers sit exactly on (integer count, F1) — data integrity is paramount, no
+  jitter (the continuous F1 on Y separates the crowded reliable column). Labels
+  sit to the **right** of each dot, stacked vertically within a column with a
+  short leader to de-collide.
+
+## Title / labels (author-set, luggage-trimmed 2026-06-09)
+
+- Title: "Inaccurate models are also unreliable — and can be screened out"
+- Subtitle: "good run = no zero on any of 12 quality dimensions"
+- X: "Reliability — good runs out of 5 (no reference needed)", ticks 0..5.
+- Y: "Accuracy — F1 against the 177-plant reference".
+  (The two axis glosses carry the label-free-vs-ground-truth contrast — keep them.)
+
+## Label placement (settled)
+
+- Labels sit either side, aimed at the open centre: low-reliability columns label
+  right, the saturated high-reliability column splits left/right so neither side
+  stacks more than ~4; within a side, stack vertically with a short leader.
+- The saturated column piles many models at 5/5; near-coincident F1 pairs there
+  get a horizontal jitter of <= one dot-radius (one left, one right, label on the
+  matching side) — the ONLY jitter allowed, and only in that column. Everywhere
+  else markers sit exactly on (integer count, F1). Author-tuned pairs: GPT-5.5(L)/
+  Sonnet(R), DS-Pro(L)/M-Medium(R), Qwen-Max(L)/M-Large(R); Qwen-35B labels left.
+
+## Expected result (post-0505, for the adherence test to pin)
+
+Bimodal after the scoring fix: floor at <=1/5 = {gpt-oss-20b, qwen3.6-35b-a3b,
+claude-haiku-4.5, qwen3.6-flash, gpt-oss-120b}; the rest at >=4/5. The
+"accurate-but-unreliable" quadrant is EMPTY post-fix (it was the as-of artifact).
+Re-derive these literals from the regenerated CSV (writing rule: prose/numbers
+come from the artifact, guarded by a test) — do NOT copy them from this ticket.
+
+## Sensitivity study (keeper, ships in the annex)
+
+The gate has free parameters; the section-4 claim must be shown robust. Commit a
+small companion artifact (CSV + an annex table, or a second small figure) that
+sweeps:
+- gate threshold tau in {0.0, 0.1, 0.2, 0.3} (discard run if min dimension <= tau),
+- indicator set {3 coherence-only, 7 discriminating, 12 all reference-free}.
+Reporting per cell: # disqualified, whether it equals the trash floor, and
+Spearman(accuracy, reliability). Headline finding to preserve: the floor and the
+ordering are stable for the 12-dim gate at low tau; **coherence-only is
+insufficient** (it misses one floor model and, pre-0505, mis-rated the as-of
+cases) — i.e. the full reference-free conjunction is what does the work. Annex,
+not main text.
+
+## Definition of done
+
+- [ ] `plot_exp1_reliability.py` renders the figure to
+      `report/inputs/generated/fig_exp1_reliability.pdf`, wired in render.mk as a
+      first-class artifact; no inline plot.
+- [ ] Gate threshold + indicator set are documented module constants; the gate
+      function is unit-tested (good/bad run classification, missing-skip).
+- [ ] Sensitivity sweep committed as a regenerated artifact + annex table; an
+      adherence test re-derives the floor set and one Spearman value from it.
+- [ ] An adherence test re-derives the floor membership and the empty
+      accurate-but-unreliable quadrant from the regenerated CSV.
+- [ ] `make check` passes.
+
+## First test (write before code)
+
+```python
+def test_floor_is_the_inaccurate_models(tmp_path):
+    """Models with <=1 good run are exactly the low-F1 models; the
+    accurate-but-unreliable quadrant is empty (post-0505)."""
+    rel = reliability_by_model("experiments/derived/exp1_cross_eval.csv")
+    f1  = mean_f1_good_by_model("experiments/derived/exp1_cross_eval.csv")
+    floor = {m for m, n in rel.items() if n <= 1}
+    assert all(f1[m] < 0.30 for m in floor)          # floor == inaccurate
+    assert not any(rel[m] <= 1 and f1[m] > 0.45 for m in rel)  # no accurate-unreliable
+```
+
+## Relevant files
+
+- `src/aedist/plot_exp1_reliability.py` (new)
+- `experiments/render.mk` — new artifact target
+- `slides/manuscript/main.md` — section 4 (figure inserted by 0507)
+- `experiments/derived/exp1_cross_eval.csv` — input (post-0505)
+
+## Priority
+
+Medium. Imagine-validated; the headline survived the gate sensitivity check.
+Holds for 0505.

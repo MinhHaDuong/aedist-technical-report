@@ -1,0 +1,96 @@
+%erg 0.1
+Title: Accept uniform-but-plausible as-of date, stop failing it
+Created: 2026-06-09
+Author: claude
+
+--- log ---
+2026-06-09T21:29Z claude created
+
+--- body ---
+## Context
+
+`score_temporality` in `src/aedist/score_mechanical.py` (~L505-508) scores the
+as-of-date dimension (`temporality_plausible_range`) **0.0** with annotation
+`all_identical` whenever every row carries the same year:
+
+```python
+elif len(years_found) >= 2 and len(set(years_found)) == 1:
+    # All cells carry the same year — likely the run date stamped on every row.
+    plausible_rate = 0.0
+    plausible_annotation = "all_identical"
+```
+
+The rule was meant to catch a degeneracy ("today's date stamped on every row").
+But for the **parametric** arm it mis-fires on an honest answer: a model that
+reports "all this inventory is as-of 2023" is making a coherent freshness claim,
+not stamping the run date. Verified on `claude-sonnet-4.6`:
+
+- run1: as-of column = **"2023" on all 87 rows** -> scored 0.0 `all_identical`.
+- run3: as-of column = 2023x46 / 2024x43 -> scored 1.0.
+
+2023 is plausible (< the 2026 run date) and uniform-by-honesty. The genuine
+template degeneracy this heuristic fears (uniform capacity / status) is already
+caught by the coherence veto (`cap_distinct`, `status_distinct`) — the as-of
+column should not be a second, mis-calibrated degeneracy detector.
+
+## Why it matters (load-bearing)
+
+Under the section-2 conjunctive screen ("a zero on any reference-free dimension
+taints the whole run"), this single rule flips **17 of 70 Exp1 parametric runs**
+from bad -> good once uniform-but-plausible as-of is accepted. It manufactures a
+false "accurate-but-unreliable" signal: `claude-sonnet-4.6` reads 1/5 reliable
+under current scoring vs 5/5 once corrected; deepseek-v4-pro 3/5->5/5; the three
+Mistrals and qwen3.7-max 3-4/5 -> 5/5. The genuinely-unusable floor
+(gpt-oss-20b, claude-haiku-4.5, qwen3.6-35b-a3b) is unchanged. Any figure or
+claim built on run-grain reliability (ticket 0506) is wrong until this lands.
+
+Scope: **as-of only.** The COD `all_identical` rule (`score_mechanical.py` ~L285,
+`score_exp1.py` ~L194) is a separate question — a uniform commercial-operation
+date across distinct plants is genuinely suspect — and is OUT of scope here.
+
+## Definition of done
+
+- [ ] A uniform as-of year that is itself plausible (in the existing
+      `1980 <= year <= 2100` band) no longer scores 0: it scores the normal
+      plausible fraction (1.0 when all in-band). The `all_identical`
+      special-case for the as-of column is removed or narrowed so it can only
+      fire on an *implausible* uniform year (if retained at all).
+- [ ] COD plausibility scoring is untouched (no diff to L285 / score_exp1.py).
+- [ ] `tests/test_score_mechanical.py::test_temporality_all_identical_years_scores_zero`
+      is replaced by a test asserting the corrected policy (uniform plausible
+      year -> 1.0; uniform *implausible* year -> still 0 if that branch is kept).
+- [ ] `experiments/derived/exp1_cross_eval.csv` regenerated; the 17 affected
+      runs verified to flip; the trash floor (gpt-oss-20b, haiku, qwen3.6-35b)
+      verified unchanged.
+- [ ] `make check` passes; downstream artifacts (heatmap PDF, any spider) rebuilt
+      clean.
+
+## First test (write before code)
+
+```python
+def test_uniform_plausible_asof_is_not_failed():
+    """A uniform but plausible as-of year is an honest freshness claim for a
+    parametric dump, not a degeneracy — it must not score 0 (ticket 0505)."""
+    rows = [{"status_as_of": "2023"} for _ in range(80)]
+    result = score_temporality(rows)
+    assert result.plausible_range == 1.0          # was 0.0 under all_identical
+    assert result.plausible_range_annotation != "all_identical"
+
+def test_uniform_implausible_asof_still_flagged():
+    """Uniform year outside the plausible band stays a doubt."""
+    rows = [{"status_as_of": "1850"} for _ in range(80)]
+    result = score_temporality(rows)
+    assert result.plausible_range == 0.0
+```
+
+## Relevant files
+
+- `src/aedist/score_mechanical.py` — `score_temporality` (~L477-518), the rule
+- `tests/test_score_mechanical.py` — `test_temporality_all_identical_years_scores_zero` (L314)
+- `experiments/derived/exp1_cross_eval.csv` — regenerated output
+- `experiments/outputs/exp1_batch2/claude-sonnet-4.6-run{1,3}.json` — evidence
+
+## Priority
+
+High — blocks 0506 (the reliability figure) and any reliability claim. The
+result it corrects is currently wrong in a way that would ship a false finding.
