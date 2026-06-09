@@ -6,8 +6,22 @@ Label: deferred
 
 --- log ---
 2026-06-09T11:30Z HDMX-coding-agent created — spun out of 0486. The arXiv coverage table uses light-reviewed (ASCII-fold) numbers; this is the rigorous per-plant HITL concordance for the journal version.
+2026-06-09T12:00Z HDMX-coding-agent note author HITL on the 11 GEM-only: Ka Ga = transcription of Kê Gà + grain (GEM's 3600 MW = ref's 3×1200 Mũi Kê Gà) → matcher miss, NOT a gap; Embark-Quantum = an old project renamed several times → unverifiable because the GEM import dropped aliases; Phu Yen = real GEM-only (cancelled, author confused it with Yên Hưng). Added the alias-preservation prerequisite and the "superset modulo the boundary" goal below. Author agreed to defer all of this post-arXiv.
 
 --- body ---
+
+## Goal (author decision): superset of GEM's *committed* projects
+
+The author wants the reference to be a **superset of GEM modulo the
+project-vs-potential-site boundary**: contain every GEM **committed** plant
+(operating / construction / permitted / committed-announced) and extend it with
+the PDP8 pipeline GEM lacks, while **legitimately excluding GEM's own speculative
+tier** (`pre-permit` / `shelved` / speculative-cancelled). A *literal* strict
+superset is rejected: it would force GEM's speculative megaprojects (Embark-
+Quantum 6000 MW cancelled, Millenium 9600 MW announced) into the reference,
+re-admitting exactly the "potential sites" the boundary excludes. The claim to
+earn: *"the reference reproduces GEM's committed fleet and extends it; GEM-only
+residue is GEM's speculative tail, excluded by documented policy."*
 
 ## Context
 
@@ -24,18 +38,37 @@ not for the journal:
    - **21 reference-only** plants (in ref, not GEM): 3 captive/legacy operating
      (Dong Nai Formosa, NĐ Cần Thơ, NĐ Thủ Đức — confirm GEM truly lacks),
      1 extension-grain artifact (Vinh Tan 4 extension), ~16 LNG pipeline.
-   - **11 GEM-only** plants (in GEM, not ref): ~8 cancelled tail; **2 announced
-     gas megaprojects — Millenium (9600 MW), Ka Ga (3600 MW)** — the real
-     "should the reference carry these?" cases. Adjudicate vs PDP8 under the
-     project-vs-potential-site boundary (PROVENANCE.md): a committed project is
-     added; a GEM speculative/"pre-permit"/"shelved" entry is not.
+   - **11 GEM-only** plants (in GEM, not ref) — already shrinking under author
+     HITL, which proves the residue is still matcher-floored one rung below
+     ASCII-fold:
+     - **Ka Ga** (3600 MW announced) = **matcher miss** — transcription of Kê Gà
+       + grain (GEM aggregates 3600 MW; ref splits 3×1200 "Mũi Kê Gà"). NOT a gap.
+     - **Embark-Quantum** (6000 MW cancelled) = an old project **renamed several
+       times**; unverifiable from the repo because the GEM import carries no
+       aliases (see prerequisite). Likely a rename miss; if so, GEM's speculative
+       tail anyway → boundary-excluded.
+     - **Phu Yen** (2400 MW cancelled) = **real GEM-only**, confirmed absent under
+       any name/province/capacity. GEM's cancelled tail → boundary-excluded.
+     - **Millenium** (9600 MW announced) and the remaining cancelled rows
+       (Cai Trap Island, Ganh Dau, Than An Giang, Can Duoc, Hon Chong, Nhon Hoi):
+       adjudicate each vs PDP8 — committed project → add; GEM speculative /
+       `pre-permit` / `shelved` / cancelled → document the boundary exclusion.
 
 ## Actions
 
+0. **Prerequisite — preserve GEM's alias/other-names column on import.** The
+   current GEM data (`gem_thermal.csv`, `gem_units.csv`) has no alias field;
+   `GEM_aggregate.py` only renames `Plant name`→`Name` and `Unit name`→
+   `Aggregated Units`. The aliases were dropped upstream, so the matcher cannot
+   follow renames (Embark-Quantum) and phantom "GEM-only" rows persist. Re-export
+   GEM with its "Other names"/Wiki field and carry it through the aggregator;
+   feed it to the matcher as an alias source. Without this, the residue stays
+   matcher-floored and the superset claim is unverifiable.
 1. Productionise `tabulate_reconciliation.py` (ticket 0082 already does the
    GEM↔reference LP match + agreement metrics + Cohen's kappa) with **status
-   stratification** and an explicit **grain-resolution** pass (collapse reference
-   phases to the source's plant grain before scoring coverage).
+   stratification**, the **alias source** from step 0, and an explicit
+   **grain-resolution** pass (collapse reference phases to the source's plant
+   grain before scoring coverage — e.g. Ka Ga ↔ 3× Mũi Kê Gà).
 2. HITL-adjudicate every residual on both sides (the 21 + 11): real gap, naming
    variant, grain artifact, or deliberate scope exclusion — record the verdict.
 3. Decide Millenium / Ka Ga (and any other committed GEM-only) → add to the
@@ -50,9 +83,11 @@ under reference vs GEM (already in `tabulate_reconciliation.py`) is reported.
 
 ## Exit criteria
 
+- [ ] GEM re-exported with its alias/other-names column; aliases reach the matcher
 - [ ] Per-plant adjudicated GEM↔reference concordance at resolved grain
 - [ ] All 21 reference-only + 11 GEM-only residuals carry a recorded verdict
-- [ ] Millenium / Ka Ga (committed GEM-only) resolved: added or documented-excluded
+- [ ] Every GEM **committed** plant is in the reference (committed-superset achieved); GEM-only residue is documented speculative-tail exclusions
+- [ ] Millenium + the cancelled tail adjudicated (added or boundary-excluded); Ka Ga folded into Mũi Kê Gà
 - [ ] Journal-version numbers supersede 0486's light-reviewed figures
 - [ ] `make check` passes
 
