@@ -6,6 +6,7 @@ import pytest
 from aedist.build_exp2_mart import build_exp2_mart
 from aedist.extract_arm_single_turn import (
     _extract_bibliography_entries,
+    _extract_markdown_from_payload,
     flatten_single_turn_arm,
 )
 
@@ -280,3 +281,142 @@ def test_flatten_single_turn_arm_falls_back_to_agent_markdown(tmp_path):
     meta = json.loads((output_dir / "anthropic_run01.json").read_text(encoding="utf-8"))
     assert meta["evidence_pack_manifest"] == "experiments/evidence_packs/all18tables.yaml"
     assert (output_dir / "anthropic_run01.md").exists()
+
+
+def test_extract_markdown_mistral_tool_references_become_inline_links():
+    """Mistral tool_reference blocks interleaved with text are converted to inline links.
+
+    The Mistral Agents API returns content as alternating text and tool_reference
+    blocks.  In table rows the text block contains the row up to Source 1/Source 2
+    cells, and the following tool_reference blocks supply the actual citation URLs.
+    The extractor must interleave them as markdown links so Source columns are
+    populated rather than empty.
+    """
+    payload = {
+        "outputs": [
+            {
+                "role": "assistant",
+                "type": "message.output",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": (
+                            "| Plant | Fuel | Capacity | Status | Source 1 | Source 2 |\n"
+                            "|-------|------|----------|--------|"
+                        ),
+                    },
+                    {
+                        "type": "tool_reference",
+                        "url": "https://www.gem.wiki/Example_Plant",
+                        "title": "GEM Example Plant",
+                    },
+                    {
+                        "type": "tool_reference",
+                        "url": "https://power-tech.example/plant",
+                        "title": "Power Tech Plant",
+                    },
+                    {
+                        "type": "text",
+                        "text": (
+                            "\n| Pha Lai | Coal | 440 | Operating "
+                            "|"
+                        ),
+                    },
+                    {
+                        "type": "tool_reference",
+                        "url": "https://wiki.example/Pha_Lai",
+                        "title": "Pha Lai Wiki",
+                    },
+                    {"type": "text", "text": "|\n"},
+                ],
+            }
+        ]
+    }
+
+    result = _extract_markdown_from_payload(payload)
+
+    assert "[GEM Example Plant](https://www.gem.wiki/Example_Plant)" in result
+    assert "[Power Tech Plant](https://power-tech.example/plant)" in result
+    assert "[Pha Lai Wiki](https://wiki.example/Pha_Lai)" in result
+    assert "Pha Lai" in result
+
+
+def test_flatten_single_turn_arm_mistral_tool_references_in_output(tmp_path):
+    """Integration: flatten_single_turn_arm maps Mistral tool_reference to inline links.
+
+    Covers split-table consolidation + citation mapping exit criterion:
+    when Mistral arm raw output has tool_reference blocks interleaved
+    with table rows, the extracted .md file must contain markdown hyperlinks
+    in the Source columns.
+    """
+    input_dir = tmp_path / "arm1"
+    output_dir = tmp_path / "arm1_flat"
+    run_dir = input_dir / "run01"
+    run_dir.mkdir(parents=True)
+
+    _write_json(
+        run_dir / "mistral.json",
+        {
+            "agent": "mistral",
+            "run": 1,
+            "model": "mistral-large-2512",
+            "classification": "report",
+            "tokens_out": 50,
+            "wall_s": 2.0,
+            "cost_usd": 0.01,
+            "classifier_cost_usd": 0.001,
+            "narrative_chars": 200,
+        },
+    )
+    # Simulate the Mistral Agents API output where tool_reference blocks follow
+    # each text block containing a partial table row.
+    _write_json(
+        run_dir / "mistral_probe.raw.json",
+        {
+            "outputs": [
+                {
+                    "role": "assistant",
+                    "type": "message.output",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": (
+                                "| Plant | Fuel | Capacity | Status | Source 1 | Source 2 |\n"
+                                "|-------|------|----------|--------|-----------|-----------|\n"
+                                "| Vung Ang 1 | Coal | 1200 | Operating | "
+                            ),
+                        },
+                        {
+                            "type": "tool_reference",
+                            "url": "https://www.gem.wiki/Vung_Ang_power_station",
+                            "title": "GEM Vung Ang",
+                        },
+                        {
+                            "type": "tool_reference",
+                            "url": "https://power-tech.example/vung-ang",
+                            "title": "",
+                        },
+                        {
+                            "type": "text",
+                            "text": " |\n| Pha Lai | Coal | 440 | Operating | ",
+                        },
+                        {
+                            "type": "tool_reference",
+                            "url": "https://www.gem.wiki/Pha_Lai",
+                            "title": "GEM Pha Lai",
+                        },
+                        {"type": "text", "text": " |\n"},
+                    ],
+                }
+            ]
+        },
+    )
+
+    flatten_single_turn_arm(input_dir, output_dir)
+
+    md_content = (output_dir / "mistral_run01.md").read_text(encoding="utf-8")
+    assert "[GEM Vung Ang](https://www.gem.wiki/Vung_Ang_power_station)" in md_content
+    assert "[https://power-tech.example/vung-ang](https://power-tech.example/vung-ang)" in md_content
+    assert "[GEM Pha Lai](https://www.gem.wiki/Pha_Lai)" in md_content
+    assert "Vung Ang 1" in md_content
+    assert "Pha Lai" in md_content
