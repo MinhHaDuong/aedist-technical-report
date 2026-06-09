@@ -1,0 +1,99 @@
+%erg 0.1
+Title: Wikipedia recall bar: establish the parametric ceiling early to frame the §4 disappointment
+Created: 2026-06-09
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-09T10:30Z HDMX-coding-agent created — from the 0486 design dialogue. Author confirmed he populated the Wikipedia coal list from the MOIT/PDP8 reference data; idea is to use Wikipedia coverage of the reference as an explicit recall bar, shown early, that the §4 parametric results visibly fail.
+
+--- body ---
+
+## Context
+
+Exp1 (parametric, no web) measures what frontier models recall about the
+Vietnam thermal fleet from memory. We currently report the F1 ceiling but
+have **no explicit upper bound the reader can judge it against**. The author
+deliberately published a derivative of the reference (the MOIT/PDP8 plant
+list) on Wikipedia *before* the experiment — which is why Protocol §3.4 bans
+Wikipedia as a **justification/citation** source.
+
+The key distinction that makes this a fair bar: the protocol bans Wikipedia
+**as justification**, but **allows any source for lead generation** (and
+encourages uncertainty expression). A model is therefore fully permitted to
+*recall* a Wikipedia-seeded plant — it just may not *cite* Wikipedia for it.
+So Wikipedia coverage of the reference is the **recall bar a competent
+parametric model ought to clear**: the answer key was placed directly into the
+training corpus. Scoring below it is not "missing obscure facts" — it is
+failing to retrieve knowledge the models demonstrably have.
+
+The bar has **two regimes** (measured 2026-06-09, coal subset, against the
+180-plant v2.3 reference; see `data/reference/raw/wikipedia_coal_vietnam.wikitext`):
+
+- **Built fleet** (operating 92%, construction/permitted 100%): high bar.
+  Models recalling fewer than ~92% of operating plants underperform an
+  available ceiling — this is the quantified "disappointing."
+- **Forward-looking pipeline** (proposed/announced ≈ 33%): low bar. Even
+  Wikipedia barely carries these, so models *structurally cannot* recall them.
+  This is not model failure — it is the **reference's unique contribution**
+  (the PDP8 pipeline no parametric source holds).
+
+Showing the bar early (not just asserting "disappointing" in the conclusion)
+lets the reader carry it through §4–§7.
+
+## Relationship to other tickets
+
+- **0486** (GEM coverage) is the *independent reproduction* concordance — GEM
+  is a genuinely external tracker. THIS ticket is the *parametric recall bar* —
+  Wikipedia is the author's own seeded derivative. Different purpose, different
+  source epistemics; do not merge the two into one "coverage by source" table
+  (it would conflate reproduction with contamination).
+- Depends on resolving the **173-vs-180** manuscript/data count first (the
+  reference is canonically 180 = v2.3; the manuscript still says 173).
+
+## Relevant files
+
+- `slides/manuscript/main.md` — §2 quality bar / §4 setup (where the bar is introduced); §7 conclusion (where it is revisited)
+- `data/reference/raw/wikipedia_coal_vietnam.wikitext` — cached coal list (raw, reproducible)
+- `data/reference/raw/wikipedia_power_vietnam.wikitext` — cached general list (has the gas/CCGT plants needed to complete the thermal bar)
+- `src/aedist/reconcile.py`, `src/aedist/evaluate.py` (`load_plants_csv`, `reference_plant_count`) — matcher + reference loader
+- prototype: `/tmp/wt-0486/explore_wiki.py` (throwaway — coal-only; productionise + add gas)
+
+## Actions
+
+1. Complete the bar: parse the gas/CCGT plants from the general power-stations
+   wikitext too, so the bar covers all 180 reference plants, not just the 88 coal.
+2. Build a reproducible script (cached wikitext in → coverage-by-status table out),
+   wired in the Makefile (one output per rule). HITL-triage residual non-matches
+   (real absence vs matcher naming-variant), reusing the recognised/unrecognised
+   machinery — do not report raw matcher coverage as "Wikipedia coverage."
+3. Introduce the bar early in `main.md` and add one sentence in §7 closing the loop.
+4. Frame explicitly with the justification-vs-lead-generation distinction so a
+   reviewer cannot call it circular.
+
+## Test
+
+```python
+def test_wikipedia_bar_table_has_two_regimes():
+    df = pd.read_csv("data/reference/tab_wikipedia_recall_bar.csv")
+    built = df[df.status.isin(["operating", "construction", "permitted"])].coverage.mean()
+    pipeline = df[df.status.isin(["proposed", "announced"])].coverage.mean()
+    assert built > 0.85 and pipeline < 0.6  # the two-regime claim must hold on real data
+```
+
+## Verification
+
+- [ ] Bar covers all 180 reference plants (coal + gas), not coal-only
+- [ ] Residual non-matches HITL-triaged (gap vs matcher miss)
+- [ ] Bar introduced early in `main.md` and revisited in §7
+- [ ] Justification-vs-lead-generation framing stated where the bar is introduced
+- [ ] Raw wikitext snapshots committed under `data/reference/raw/` with provenance
+- [ ] `make check` passes
+
+## Invariants
+
+- Do not weaken Protocol §3.4 (Wikipedia banned as justification) — this ticket uses it, does not relax it
+- Denominator = `reference_plant_count()` (currently 180), never a hardcoded literal
+
+## Exit criteria
+
+- The Wikipedia recall bar is a generated artifact, shown early, framed correctly, and the §4 underperformance reads as "below an available ceiling"
