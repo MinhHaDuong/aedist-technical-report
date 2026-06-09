@@ -6,6 +6,7 @@ Author: HDMX-coding-agent
 --- log ---
 2026-06-09T09:45Z HDMX-coding-agent created — surfaced during the 483/486/487/488 raid wrap-up `make check` on padme primary working tree.
 
+2026-06-09T10:23Z fixed: prefix-skip reconciliation_*.csv before run_re; red(71)->green(70) proven with dummy; 50/50 test_score_mechanical pass; ruff clean
 --- body ---
 ## Context
 
@@ -61,9 +62,9 @@ touching a dummy `reconciliation_x-run1.csv` in that dir.
 
 ## Verification
 
-- [ ] Test passes whether or not `reconciliation_*.csv` files are present locally
-- [ ] Count assertion still pins exactly 70 genuine run files
-- [ ] `make check` passes on a working tree that retains the reconciliation outputs
+- [x] Test passes whether or not `reconciliation_*.csv` files are present locally
+- [x] Count assertion still pins exactly 70 genuine run files
+- [x] `make check` passes on a working tree that retains the reconciliation outputs
 
 ## Invariants
 
