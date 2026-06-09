@@ -3,6 +3,7 @@ Title: Internal-coherence run-screen → manuscript MVP (Paper A)
 Created: 2026-06-08
 Author: claude
 Blocked-by: 0201
+Blocked-by: 0487
 
 --- log ---
 2026-06-08T14:39Z claude created
@@ -12,6 +13,7 @@ Blocked-by: 0201
 2026-06-08T18:58Z HDMX-coding-agent note blocker 0467 closed — Blocked-by removed.
 2026-06-08T18:29Z HDMX-coding-agent note blocker 0469 closed — Blocked-by removed.
 2026-06-08T21:36Z HDMX-coding-agent note blocker 0453 closed — Blocked-by removed.
+2026-06-09T00:00Z HDMX-coding-agent note added child A7=0487 (Haiku false pass — coherence scoring gap); also Blocked-by 0487.
 --- body ---
 ## Context
 
@@ -56,6 +58,9 @@ It holds no production code of its own; each child lands its own merge request.
 - **A6 = 0473** (NEW): §5 naive presence-fusion MVP — union vs ≥2-models,
   discovery gain vs best single model in E1 & E2-1D (no copulas; full
   treatment in 0465).
+- **A7 = 0487** (NEW): Haiku false pass — heatmap shows all-green for the
+  weakest Claude model; root cause is missing free-criterion columns in
+  `exp1_cross_eval.csv`; fix after 0201 lands.
 - **screen-design = 0453** (re-scoped): two-level screen — run-grain veto
   (zero-is-trash on the four free criteria) + model-grain majority-red floor.
 
@@ -67,7 +72,7 @@ It holds no production code of its own; each child lands its own merge request.
 
 ## Exit criteria (IDH tracking-ticket convention)
 
-- [ ] All children merged: 0201, 0453, 0466, 0467, 0468, 0469, 0473.
+- [ ] All children merged: 0201, 0453, 0466, 0467, 0468, 0469, 0473, 0487.
 - [ ] Manuscript presents the internal-coherence run-screen as a present
       contribution (not future work) with the model-grain floor heatmap as
       the canonical quality figure.

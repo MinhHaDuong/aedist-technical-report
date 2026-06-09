@@ -1,0 +1,56 @@
+%erg 0.1
+Title: Heatmap false pass: Haiku scores all green — fix coherence scoring gap
+Created: 2026-06-09
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-09T00:00Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+The model-grain quality floor heatmap (shipped in 0466, Figure 2b of
+`slides/manuscript/main.md`) currently shows claude-haiku-4.5 as all green
+(no disqualifying cells). This is a false pass: Haiku is the weakest Claude
+model in Exp 1 (lowest mean F1) and should fail at least one free criterion
+per the paper's conjunctive quality bar.
+
+The root cause is a scoring gap: the heatmap is built from
+`experiments/derived/exp1_cross_eval.csv`, which currently contains only the
+accuracy sub-score (row-level F1 components). The four reference-free criteria
+(coherence, provenance, temporality, source quality) have not been wired into
+that CSV yet — that is the work of ticket 0201 (reference-free scorer). Until
+0201 lands, the heatmap is blind to the dimensions on which Haiku most likely
+fails.
+
+This ticket captures the gap and keeps it visible as a blocker for tracker 0464.
+
+## Actions
+
+1. **Diagnose**: confirm that `exp1_cross_eval.csv` contains only accuracy-side
+   columns; document which free-criterion columns are missing.
+2. **Dependency**: ensure ticket 0201 (coherence/provenance/temporality scorers)
+   adds the missing columns to `exp1_cross_eval.csv` via `records_to_metrics()`
+   before this ticket can close.
+3. **Verify fix**: once 0201 lands, rebuild the heatmap and confirm that
+   claude-haiku-4.5 has at least one red cell (majority-zero on a free criterion).
+4. **Update caption/claims**: if the heatmap previously stated Haiku "passes",
+   update `main.md` to reflect the corrected result.
+
+## Relevant files
+
+- `experiments/derived/exp1_cross_eval.csv` — current heatmap input; check columns
+- `src/aedist/plot_quality_floor_heatmap_exp1.py` — heatmap script
+- `slides/manuscript/main.md` — Figure 2b caption and any text that asserts Haiku's status
+- `src/aedist/measurements.py` — `records_to_metrics()` wiring point for new sub-scores
+
+## Blocked-by: 0201
+
+## Exit criteria
+
+- [ ] `exp1_cross_eval.csv` contains coherence, provenance, and temporality sub-score columns
+- [ ] Heatmap rebuilt; claude-haiku-4.5 has ≥1 red cell
+- [ ] No main-text claim in `slides/manuscript/main.md` that Haiku "passes" the quality bar
+- [ ] `make check` passes
+
+Part of: 0464 — role A7 (coherence scoring gap / Haiku false pass)
