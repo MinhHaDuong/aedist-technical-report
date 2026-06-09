@@ -1,0 +1,81 @@
+%erg 0.1
+Title: Greedy-glob class: audit_lp_mismatched + score_provenance filtered_ gap (0495/0496 sweep)
+Created: 2026-06-09
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-09T11:32Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+The /roar sweep after closing 0495/0496 (PR #895) found two more instances of
+the colocated-output greedy-glob class beyond the four already guarded
+(`score_exp1`, `screen_validation_within_model`, `tabulate_coherence`, and the
+0492 `test_score_mechanical` test path, all covered by the standing test
+`tests/test_no_colocated_output_leak.py`).
+
+1. **`scripts/audit_lp_mismatched.py:74`** — `sweep()` globs
+   `exp1_dir.glob("*-run*.csv")` and parses `(model, run)` via `_run_label`'s
+   `rsplit("-run", 1)` with NO skip for `reconciliation_*` / `filtered_*`.
+   A colocated `reconciliation_<model>-run<N>.csv` is picked up and labelled
+   `model = "reconciliation_<model>"`, producing spurious Mismatched-LP rows.
+   Same anti-pattern as 0495, in an audit script.
+
+2. **`src/aedist/score_provenance.py:166`** — `score_directory()` filters by
+   *content* (`_has_provenance_columns`, i.e. presence of a `source_1` header)
+   rather than by filename prefix. The docstring claims this "Skips CSVs that
+   lack provenance columns (e.g. reconciliation files)". That holds only if
+   reconciliation/filtered outputs lack `source_1`. `filtered_*` files retain
+   the full per-run schema (including `source_1`) and would therefore NOT be
+   skipped — they would be scored as extra runs, inflating the aggregate.
+   The content-filter is a reasonable guard but has this gap.
+
+## Relevant files
+
+- `scripts/audit_lp_mismatched.py` — `_run_label` (line 59), `sweep` glob (line 74)
+- `src/aedist/score_provenance.py` — `score_directory` glob+filter (line 166), `_has_provenance_columns` (line 155)
+- `tests/test_no_colocated_output_leak.py` — the 0496 standing class test (registry to extend)
+- `src/aedist/tabulate_coherence.py` — `_SKIP_PREFIXES` reference pattern
+
+## Actions
+
+1. In `audit_lp_mismatched.py`, skip `reconciliation_*` / `filtered_*` in the
+   glob loop, matching the `_SKIP_PREFIXES` pattern used elsewhere.
+2. In `score_provenance.py`, ADD a filename-prefix skip alongside the content
+   filter (defense in depth) so `filtered_*` (which retains `source_1`) is
+   excluded. Verify the actual `filtered_*` schema first against in-repo data
+   before deciding whether content-filter alone is insufficient.
+3. Register both consumers into the 0496 standing test where importable.
+   `score_provenance.score_directory` is importable; `audit_lp_mismatched` is a
+   script — if not cleanly importable, cover it with a source-inspection guard
+   like the one added for the 0492 test path.
+
+## Test
+
+Red→green: extend `tests/test_no_colocated_output_leak.py` to seed genuine +
+`reconciliation_*` + `filtered_*` decoys against `score_provenance.score_directory`
+(filtered_ MUST carry a `source_1` column so the content-filter alone would let
+it through) and assert the decoy is excluded. For `audit_lp_mismatched`, add a
+case (or source-inspection guard) proving the skip is present.
+
+## Verification
+
+- [ ] `audit_lp_mismatched.sweep` ignores colocated `reconciliation_*`/`filtered_*`
+- [ ] `score_provenance.score_directory` excludes a `filtered_*` file that has `source_1`
+- [ ] Both registered in the 0496 standing test (or source-guarded if not importable)
+- [ ] Reverting either guard turns the standing test RED (mutation-proven)
+- [ ] `make check` green
+
+## Invariants
+
+- Do not break the existing content-filter in score_provenance; add the prefix
+  skip as an additional guard, not a replacement, unless the audit shows the
+  content-filter is fully redundant.
+- Do not alter the intentional `reconciliation_*` globs in
+  `tabulate_decomposition_fix.py` / `sweep_matching_threshold.py` (those WANT them).
+
+## Exit criteria
+
+- Both remaining greedy-glob-class instances guarded and covered by the standing
+  test; all verification boxes ticked.
