@@ -18,35 +18,56 @@ correctly identified plants."
 The current committed artifact `experiments/derived/exp1_cross_eval.csv` (70 runs)
 re-derives:
 
-| attribute | prose | artifact | Δ |
+| attribute | prose | artifact (HEAD, 177) | artifact (pre-#906, 180) |
 |---|---|---|---|
-| fuel     | 0.53 | 0.540 | +0.01 (count effect, fine) |
-| status   | 0.53 | 0.574 | +0.04 |
-| province | 0.61 | **0.889** | **+0.28** |
+| fuel     | 0.53 | 0.540 | 0.535 |
+| status   | 0.53 | 0.574 | 0.569 |
+| province | 0.61 | **0.889** | **0.892** |
 
-A +0.28 jump in province cannot come from removing 3 plants (180→177). It
-indicates an **upstream scoring change** (likely province normalisation /
-matching) that was never propagated to the prose. 0501 deliberately left
-line 90 untouched: writing "province 0.89" would silently flip the abstract's
-"mediocre" claim — 0.89 province accuracy is not mediocre.
+## Investigation — root cause is prose staleness, NOT a scoring change (settled)
 
-## Why this is an author decision, not a mechanical sync
+Initial hypothesis was an upstream province-scoring change. **Disproven.**
 
-The headline narrative ("frontier models are mediocre even on matched rows")
-rests on these numbers. If province is genuinely 0.89, the §4 results prose
-and the abstract sentence must be re-argued, not just re-typed. This is a
-scientific-claim change, so the author rules on it.
+- Province was already **0.892 at the 180-plant reference** (commit `ce4fa14~1`,
+  before #906) and 0.889 after the 177 re-score. So the 177 re-score moved it
+  by −0.003, not +0.28. #906 is not the cause.
+- The province-cleaning path (`reconcile.py` `_lookup_attrs` →
+  `province_clean` via `PowerPlantDataframeCleaner`) has been **stable since
+  #840** (`763b1c8`, ticket 0395). No scoring bug.
+- `province_match` is only set when BOTH ref and sys carry a province
+  (`reconcile.py:214-215`); empty/None pairs are excluded, so 0.89 is a sound
+  metric over matched-and-attributed rows.
+- The prose "0.61 / 0.53 / 0.53" was hand-typed at the **16-model / 80-run**
+  vintage (`763b1c8`, Jun 8). On the migration to **14 models / 70 runs**
+  (`9bc7e91`, which dropped two unreliable models), the author refreshed F1,
+  the within-model range, and per-model means — but **froze the three
+  attribute accuracies**. Dropping the two worst models lifted province
+  recovery sharply (fuel/status barely moved; province moved most), and the
+  prose never caught up. `git log -G "province accuracy 0\."` confirms the
+  "0.61" string is byte-identical across every commit from `763b1c8` to #906.
+
+## The actual finding (and why it needs the author)
+
+At 0.89, **province is well-recovered, not mediocre.** The blanket claim
+"attribute classification (fuel, status, province) is mediocre even for
+correctly identified plants" (abstract + §4 line 90) is **false for province**.
+The honest read: *fuel (0.54) and status (0.57) classification stay mediocre;
+province (0.89) is recovered well* — plausibly because Vietnamese provinces are
+a small, famous controlled vocabulary a model that recalls a plant usually
+places correctly, whereas fuel and status carry finer distinctions models
+conflate. This is a genuine sub-finding, not a disappointment — so the author
+rewrites the claim rather than a script re-typing a number.
 
 ## Definition of done
 
-1. Confirm what changed province 0.61→0.89 (git-blame the province scorer /
-   `evaluate.py` province path; identify the ticket that moved it).
-2. Author ratifies the corrected line-90 numbers (fuel/status/province) and
-   the abstract "mediocre" wording given province ≈ 0.89.
-3. Update `main.md` line 90 + abstract accordingly.
-4. Add an adherence guard (like 0501's) re-deriving the three attribute means
-   from `exp1_cross_eval.csv` so they cannot drift unguarded again.
-5. `make check` green.
+1. Author ratifies the corrected line-90 numbers (fuel 0.54 / status 0.57 /
+   province 0.89) and the reworded §4 + abstract framing that carves province
+   out of the "mediocre" claim.
+2. Update `main.md` line 90 + abstract accordingly.
+3. Add an adherence guard (like 0501's `test_manuscript_derived_numbers.py`)
+   re-deriving the three attribute means from `exp1_cross_eval.csv` so they
+   cannot drift unguarded again — this is the gap that froze 0.61 for a month.
+4. `make check` green.
 
 ## Out of scope
 
