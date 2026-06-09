@@ -10,6 +10,8 @@ Closed: REJECT: reference count does not add reliable anchoring signal; analysis
 2026-06-08T12:00Z HDMX-coding-agent close REJECT — analysis complete, reference count not a useful anchoring signal
 
 2026-06-08T19:45Z HDMX-coding-agent closed — REJECT: reference count does not add reliable anchoring signal; analysis in src/aedist/analyze_ref_count_anchoring.py
+2026-06-09T06:44Z HDMX-coding-agent note analysis script deleted in PR #877 — no callers, task complete.
+
 --- body ---
 ## Context
 
