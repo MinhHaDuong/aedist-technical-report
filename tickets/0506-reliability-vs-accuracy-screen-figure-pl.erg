@@ -28,24 +28,28 @@ uniform-as-of scoring fix lands. Do not build on the current CSV.
   Missing score = not a doubt (skip; only `high_conf_dual_source` is ever
   missing, 4/70). One doubt taints the whole run — the gate is a minimum, not an
   average (no laundering).
-- **Reliability** (y) = count of good runs out of 5 reps. Report the **count
-  0..5**, not a percentage. It is the expected number of good runs.
-- **Accuracy** (x) = **average** (not median) F1 over the good runs — the
-  expectation of one good run. Median was rejected: it presupposes multiple runs,
-  and multi-run usage should be fusion (tracker 0465), not middle-picking. For a
-  model with zero good runs, x = average F1 over all runs (no good run exists;
-  caption must say so).
-- Markers sit exactly on (F1, integer count) — data integrity is paramount,
-  no jitter except <= one dot-radius nudge on exact collisions (none occur on
-  the F1 axis). Labels centred above, flipped below to de-collide, short leader.
+- **Reliability** (X = the control / label-free screen) = count of good runs out
+  of 5 reps. Report the **count 0..5**, not a percentage. It is the expected
+  number of good runs. Orientation ratified transposed (control on X, effect on
+  Y): unreliable models fall **left**, reliable **right** ("sinners left, good
+  ones right"), and the empty 2-3 columns are the screening cut.
+- **Accuracy** (Y = the effect) = **average** (not median) F1 over the good runs
+  — the expectation of one good run. Median was rejected: it presupposes multiple
+  runs, and multi-run usage should be fusion (tracker 0465), not middle-picking.
+  For a model with zero good runs, Y = average F1 over all runs (no good run
+  exists; caption must say so).
+- Markers sit exactly on (integer count, F1) — data integrity is paramount, no
+  jitter (the continuous F1 on Y separates the crowded reliable column). Labels
+  sit to the **right** of each dot, stacked vertically within a column with a
+  short leader to de-collide.
 
 ## Title / labels (author-set)
 
 - Title: "Inaccurate models (low F1) are also unreliable (few good runs). They
   can be screened out."
 - Subtitle: "good run = no zero score on 12 dimensions"
-- Y: "Reliability (good runs out of 5 reps)", ticks 0..5.
-- X: "Accuracy (average F1 over good runs)".
+- X: "Reliability (good runs out of 5 reps) — the label-free screen", ticks 0..5.
+- Y: "Accuracy (average F1 over good runs)".
 
 ## Expected result (post-0505, for the adherence test to pin)
 
