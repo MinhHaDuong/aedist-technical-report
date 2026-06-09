@@ -1,0 +1,88 @@
+%erg 0.1
+Title: Remove the 3 E542 potential sites from the reference (apply the project-vs-potential-site boundary)
+Created: 2026-06-09
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-09T11:00Z HDMX-coding-agent created — from the 0486 reference-audit dialogue. Author ruled: a potential site is not a project (boundary now in PROVENANCE.md "Scope boundary"). Three v2.3 additions (Kim Sơn, Rạng Đông, Phú Thọ) are E542 PL9.2 draft potential sites and must be removed; Yên Hưng is retained (PDP7-planned project, genuine gap).
+
+--- body ---
+
+## Context
+
+The new scope boundary (PROVENANCE.md "Scope boundary: a project is not a
+potential site") excludes draft candidate *locations* from the reference. The
+v2.3 release (ticket 0395) added four rows; three of them violate the boundary:
+
+| Plant | Capacity | Source | Verdict |
+|---|---|---|---|
+| Kim Sơn (Ninh Bình) | 3000 MW | Study E542 PL9.2 (draft, "potential coal sites") | **remove** |
+| Rạng Đông (Nam Định) | 2400 MW | Study E542 PL9.2 (draft) | **remove** |
+| Phú Thọ (Phú Thọ) | 600 MW | Study E542 PL9.2 (draft; was not even FP-flagged) | **remove** |
+| Yên Hưng (Quảng Ninh) | 1200 MW | PDP7 Annex 1+2 (planned project, 2029 tranche) | **keep** |
+
+Removing the three brings the reference **180 → 177**.
+
+## Why a re-score is required
+
+Exp1–3 were re-scored **against the 180-plant reference** (`exp1_cross_eval.csv`
+last scored at `4f8c0bc4`, after the CSV hit 180 at `47a91957`). Dropping three
+reference rows changes the recall/precision denominators, so the experiment
+scoring must be regenerated. (No new API calls — re-score from existing outputs.)
+Effect is small and favourable: three obscure "announced" plants leave the
+false-negative pool, nudging recall up slightly.
+
+## Actions
+
+1. **Reverse the ODS surgery** for the three rows in
+   `data/reference/raw/pipeline+0395-2026-06-09.ods` (the inverse of
+   `add_plants_0395.py`; stdlib ET on content.xml + byte-identical rezip per the
+   ODS-surgery pattern). Keep Yên Hưng. Produce a new dated snapshot.
+2. **Aliases (boundary §"Traceability without counting").** Record the three
+   PL9.2 candidate names as aliases/notes against the existing PDP7
+   `NĐ Miền Bắc 1/2/3` northern entries (or a dedicated PL9.2 note), so the
+   cross-reference stays findable without a counted row. (Mechanism: a note/alias
+   column or PROVENANCE note — pick the lightest that survives extraction.)
+3. **Regenerate** `vietnam_thermal_plants_v2_classified.csv` through the standard
+   pipeline; confirm 177 rows; Yên Hưng present, the three absent.
+4. **Re-score Exp1–3** against the 177 reference; regenerate `exp1_cross_eval.csv`
+   and the Exp2/3 scored artifacts.
+5. **Cascade the count:** `tests/test_reference_count.py` (180 → 177),
+   `N_REFERENCE_PLANTS` in every figure module, regenerate affected figures.
+6. **PROVENANCE.md:** add a v2.4 adoption record; resolve the boundary-correction note.
+7. Coordinate with **0458** (master reverse-sync must also exclude the three) and
+   note the interaction with the manuscript count (currently a stale "173";
+   tracked separately).
+
+## Test
+
+First (red): extend `tests/test_reference_count.py` —
+```python
+def test_potential_sites_absent():
+    names = {p.name for p in load_plants_csv(VN_THERMAL_PLANTS_RELEASE_CSV)}
+    assert {"Kim Sơn", "Rạng Đông", "Phú Thọ"}.isdisjoint(names)
+    assert "Yên Hưng" in names            # the PDP7 project stays
+    assert reference_plant_count() == 177
+```
+Red now (the three are present, count is 180); green after removal.
+
+## Verification
+
+- [ ] Reference is 177 plants; Kim Sơn/Rạng Đông/Phú Thọ absent, Yên Hưng present
+- [ ] PL9.2 names preserved as aliases/notes (not counted rows)
+- [ ] Exp1–3 re-scored against 177; `exp1_cross_eval.csv` regenerated
+- [ ] `test_reference_count.py` asserts 177; all `N_REFERENCE_PLANTS` = 177; figures regenerated
+- [ ] PROVENANCE.md v2.4 record added; boundary-correction note resolved
+- [ ] `make check` passes
+
+## Invariants
+
+- Do NOT remove Yên Hưng (PDP7-attested project)
+- Denominator stays derived via `reference_plant_count()` — never hardcode 177
+- The ODS edit chain stays replayable; coordinate the master side via 0458
+
+## Exit criteria
+
+- The reference counts only projects (177); the three potential sites survive as aliases; experiments and figures are consistent at 177
+
+Related: 0395 (the additions), 0458 (master reverse-sync), 0486 (GEM concordance), 0494 (Wikipedia bar)

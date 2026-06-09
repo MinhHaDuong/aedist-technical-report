@@ -4,6 +4,8 @@
 
 **The frozen reference is `vietnam_thermal_plants_v2_classified.csv` at 180 plants**: v2.2 (176) plus four potential coal sites from PDP planning documents — Kim Sơn (Ninh Bình, 3000 MW), Rạng Đông (Nam Định, 2400 MW, distinct from the existing Rang Dong cogeneration entry), Yên Hưng (Quảng Ninh, 1200 MW, PDP7 planned), and Phú Thọ (Phú Thọ, 600 MW). All four are status "1 announced". Primary sources: Study E542 Table PL9.2 (PDP8 draft 3, Institute of Energy, 2020-11) for Kim Sơn, Rạng Đông, and Phú Thọ; PDP7 Annex 1 + Annex 2 for Yên Hưng. Added via XML surgery on the ODS snapshot (`add_plants_0395.py`), re-extracted through the standard pipeline. The Exp2 FP audit `reference_hole` bucket drops from 95 occurrences (v1 baseline) to 8 occurrences (91.6% reduction).
 
+**Boundary correction (ticket 0497, 2026-06-09).** Three of these four — Kim Sơn, Rạng Đông, Phú Thọ — are **potential sites** from a draft planning study (Study E542 Table PL9.2, *"tổng hợp các vị trí tiềm năng"* / summary of *potential* coal-power locations, PDP8 draft 3), not projects, and violate the scope boundary below. They are scheduled for removal (180 → 177) and re-aliasing onto the corresponding PDP7 northern entries. Yên Hưng is **retained**: PDP7 Annex 1 + Annex 2 attest it as a planned 1200 MW (2×600) coal project genuinely missing from the gold list (absent in both v2.1/173 and v2.2/176) — a project, not a potential site.
+
 Not added (needs-human, no primary source in RAG corpus): Hòa Phát Dung Quất captive power (operating BFG/coal ~240 MW); the RAG corpus only documents "NĐ khí dư Hòa Phát II" (300 MW, announced, PDP8 Table 4) which is already in the reference.
 
 Status distribution (v1-compat projection): operational 56, proposed 71, planned 21, constructing 10, cancelled 20, retired 2. (Note: 0 exploring = 4, 1 announced = 24, 2 proposed = 43, 3 added to PDP = 16, 4 permitted = 5, 5 construction = 10, 6 operating = 56, 9 cancelled = 20, 10 retired = 2.)
@@ -164,6 +166,38 @@ Where sources disagreed during compilation, the following priority applied:
 - **Status reclassifications between cycles:** the latest PDP wins
   (PDP8 > PDP7A > PDP7), even when EVN annual reports list an interim
   status that has since been superseded.
+
+## Scope boundary: a project is not a potential site
+
+**A reference plant is a project.** It has a committed entry in an approved
+power development plan (PDP7 / PDP7A / PDP8 project annexes) — a named asset with
+a developer, a location, and a planned or actual commissioning — at any lifecycle
+status from `proposed` through `operating` to `retired` or `cancelled`. The
+status records *where in its lifecycle a project sits*, including projects that
+were planned and then cancelled.
+
+**A potential site is not a project and is not counted.** Potential sites are
+candidate *locations* identified in planning **studies** (e.g. Study E542 Table
+PL9.2, *"tổng hợp các vị trí tiềm năng"* — summary of potential coal-power
+locations, PDP8 draft 3) that carry no committed plan entry, no developer, and no
+schedule — often at feasibility-study stage, sometimes flagged for fuel
+conversion. Counting them would inflate the forward-looking pipeline with
+speculative capacity and conflate *"where a plant might one day go"* with
+*"a planned plant."* This matters doubly because the pipeline bucket is exactly
+where the reference claims coverage that external sources (GEM, Wikipedia) lack;
+that claim must rest on planned projects, not draft candidate sites.
+
+**Traceability without counting (aliases).** When a planning study names a
+candidate location that corresponds to an existing planned or anonymous reference
+entry — e.g. the PDP7 *"NĐ Miền Bắc 1/2/3"* northern slots already in the gold
+list — record the study reference as an **alias or note on that entry**, not as a
+new row. This keeps the PL9.2 cross-reference findable without double-counting a
+candidate as a project.
+
+**Enforcement.** Repo-side removal of the three v2.3 potential sites (Kim Sơn,
+Rạng Đông, Phú Thọ) is ticket 0497; the master-side rule (do not replay them onto
+the authoritative master; record them as aliases) is folded into the reverse-sync
+handover, ticket 0458.
 
 ## Residual uncertainty (top-3 disputed cases)
 
