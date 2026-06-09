@@ -22,6 +22,22 @@ from .verify import classify_source_by_text, score_evidence
 
 log = logging.getLogger(__name__)
 
+# Colocated non-run outputs to skip by filename (ticket 0499).
+#
+# The content filter alone (_has_provenance_columns) excludes reconciliation_*
+# files because their match_type schema has no source_1 column. The real leak it
+# misses is *_filtered.csv: query_verification writes both {stem}.csv and
+# {stem}_filtered.csv into the same output dir, and the filtered copy RETAINS
+# source_1, so the content filter passes it and it would be scored as a spurious
+# second run alongside its base run. The suffix skip closes that.
+#
+# _SKIP_PREFIXES mirrors the sibling consumers for class-consistency. The
+# reconciliation_ prefix is redundant with the content filter here; "filtered_"
+# is a defensive prefix that matches no current artifact (the real filtered files
+# use the _filtered.csv suffix above), kept only to match the shared pattern.
+_SKIP_PREFIXES = ("reconciliation_", "filtered_")
+_SKIP_SUFFIXES = ("_filtered.csv",)
+
 # Epistemic markers that signal intellectual honesty in notes
 _EPISTEMIC_PATTERNS = [
     r"uncertain",
@@ -161,9 +177,19 @@ def _has_provenance_columns(csv_path: Path) -> bool:
 def score_directory(input_dir: Path) -> dict:
     """Score all CSVs in a directory and produce aggregate summary.
 
-    Skips CSVs that lack provenance columns (e.g. reconciliation files).
+    Skips CSVs that lack provenance columns, plus colocated non-run outputs by
+    filename: *_filtered.csv (which retains source_1 and would otherwise be scored
+    as a spurious run alongside its base {stem}.csv — query_verification emits
+    both into the same dir) and reconciliation_*/filtered_* prefixes for
+    class-consistency with the sibling consumers (ticket 0499).
     """
-    csv_files = sorted(f for f in input_dir.glob("*.csv") if _has_provenance_columns(f))
+    csv_files = sorted(
+        f
+        for f in input_dir.glob("*.csv")
+        if not any(f.name.startswith(p) for p in _SKIP_PREFIXES)
+        and not any(f.name.endswith(s) for s in _SKIP_SUFFIXES)
+        and _has_provenance_columns(f)
+    )
     if not csv_files:
         raise SystemExit(f"No sourced CSV files (with source_1 column) in: {input_dir}")
 

@@ -2,10 +2,14 @@
 Title: Greedy-glob class: audit_lp_mismatched + score_provenance filtered_ gap (0495/0496 sweep)
 Created: 2026-06-09
 Author: HDMX-coding-agent
+Closed: implemented: prefix skips in audit_lp_mismatched + score_provenance, registered in standing test
 
 --- log ---
 2026-06-09T11:32Z HDMX-coding-agent created
+2026-06-09T11:50Z claude note premise refined empirically: reconciliation_* files have a match_type schema (no source_1) so score_provenance's content-filter already excludes them; real "filtered" outputs use a _filtered.csv SUFFIX (query_verification), not a filtered_ prefix.
+2026-06-09T12:05Z claude note advisor caught a real gap: a prefix-only skip protects nothing new for score_provenance — query_verification writes BOTH {stem}.csv and {stem}_filtered.csv into the same dir, the _filtered copy RETAINS source_1, so the content-filter passes it and it is scored as a spurious second run. Added _SKIP_SUFFIXES=("_filtered.csv",) to score_provenance AND audit_lp_mismatched, seeded the real _filtered.csv suffix decoy (with source_1) in the standing test, and made the audit assertion check (model,run) pairs (the suffix decoy parses to model="model-a",run="run1_filtered" so a model-only check missed it). Prefix and suffix mutations both proven RED independently for both consumers. Honest docstrings: the filtered_ PREFIX is defensive-only (matches no current artifact).
 
+2026-06-09T11:42Z HDMX-coding-agent closed — implemented: prefix+suffix skips in audit_lp_mismatched + score_provenance, registered in standing test
 --- body ---
 ## Context
 
@@ -61,11 +65,11 @@ case (or source-inspection guard) proving the skip is present.
 
 ## Verification
 
-- [ ] `audit_lp_mismatched.sweep` ignores colocated `reconciliation_*`/`filtered_*`
-- [ ] `score_provenance.score_directory` excludes a `filtered_*` file that has `source_1`
-- [ ] Both registered in the 0496 standing test (or source-guarded if not importable)
-- [ ] Reverting either guard turns the standing test RED (mutation-proven)
-- [ ] `make check` green
+- [x] `audit_lp_mismatched.sweep` ignores colocated `reconciliation_*`/`filtered_*`
+- [x] `score_provenance.score_directory` excludes a `filtered_*` file that has `source_1`
+- [x] Both registered in the 0496 standing test (both importable: `scripts` is a package)
+- [x] Reverting either guard turns the standing test RED (mutation-proven, both consumers)
+- [x] `make check` green
 
 ## Invariants
 
