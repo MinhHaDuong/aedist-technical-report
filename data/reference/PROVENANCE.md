@@ -169,23 +169,26 @@ Where sources disagreed during compilation, the following priority applied:
 
 ## Scope boundary: a project is not a potential site
 
-**A reference plant is a project.** It has a committed entry in an approved
-power development plan (PDP7 / PDP7A / PDP8 project annexes) — a named asset with
-a developer, a location, and a planned or actual commissioning — at any lifecycle
-status from `proposed` through `operating` to `retired` or `cancelled`. The
-status records *where in its lifecycle a project sits*, including projects that
-were planned and then cancelled.
+**A reference plant is a project.** A project is a *specific named development*
+with a developer/proponent and a location — whether it appears in a PDP annex or
+is tracked by a project tracker (GEM) — at **any** lifecycle status from
+`proposed` / `announced` through `operating` to `retired` or `cancelled`.
 
-**A potential site is not a project and is not counted.** Potential sites are
-candidate *locations* identified in planning **studies** (e.g. Study E542 Table
-PL9.2, *"tổng hợp các vị trí tiềm năng"* — summary of potential coal-power
-locations, PDP8 draft 3) that carry no committed plan entry, no developer, and no
-schedule — often at feasibility-study stage, sometimes flagged for fuel
-conversion. Counting them would inflate the forward-looking pipeline with
-speculative capacity and conflate *"where a plant might one day go"* with
-*"a planned plant."* This matters doubly because the pipeline bucket is exactly
-where the reference claims coverage that external sources (GEM, Wikipedia) lack;
-that claim must rest on planned projects, not draft candidate sites.
+**Lifecycle status is not the discriminator.** A cancelled, shelved, or merely
+announced *developer-led project* is still a project and **is counted** — the
+speculative and cancelled tail is part of the inventory's value (the full
+lifecycle, including the dead and the not-yet-built). Comprehensiveness across
+status is a feature, not a leak.
+
+**A potential site is not a project and is not counted.** The test is the absence
+of project identity — **no developer/proponent**, no specific named development.
+Potential sites are candidate *locations* a planning **study** lists as
+capacity placeholders (e.g. Study E542 Table PL9.2, *"tổng hợp các vị trí tiềm
+năng"* — summary of potential coal-power *locations*, PDP8 draft 3): a region is
+allotted X MW and a few candidate places are named, with no developer attached.
+Counting them conflates *"where capacity could one day be sited"* with *"a project
+someone is developing."* (This is orthogonal to status: a cancelled developer-led
+project is counted; a developer-less study location is not, even if "announced".)
 
 **Traceability without counting (aliases).** When a planning study names a
 candidate location that corresponds to an existing planned or anonymous reference
