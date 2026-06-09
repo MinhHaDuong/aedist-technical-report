@@ -169,26 +169,41 @@ Where sources disagreed during compilation, the following priority applied:
 
 ## Scope boundary: a project is not a potential site
 
-**A reference plant is a project.** A project is a *specific named development*
-with a developer/proponent and a location — whether it appears in a PDP annex or
-is tracked by a project tracker (GEM) — at **any** lifecycle status from
-`proposed` / `announced` through `operating` to `retired` or `cancelled`.
+**This is the compiler's curatorial policy — the inclusion decision is ours to
+make.** The reference is a single-author curated inventory (see *Compilation
+method*); the sources below inform that judgment, they do not automate it. The
+working principles:
 
-**Lifecycle status is not the discriminator.** A cancelled, shelved, or merely
-announced *developer-led project* is still a project and **is counted** — the
-speculative and cancelled tail is part of the inventory's value (the full
-lifecycle, including the dead and the not-yet-built). Comprehensiveness across
-status is a feature, not a leak.
+The line is **a specific proposed development vs a candidate location** — not
+which document records it. These are working patterns the compiler applies with
+judgment, not a rule engine; edge cases are decided case by case.
 
-**A potential site is not a project and is not counted.** The test is the absence
-of project identity — **no developer/proponent**, no specific named development.
-Potential sites are candidate *locations* a planning **study** lists as
-capacity placeholders (e.g. Study E542 Table PL9.2, *"tổng hợp các vị trí tiềm
-năng"* — summary of potential coal-power *locations*, PDP8 draft 3): a region is
-allotted X MW and a few candidate places are named, with no developer attached.
-Counting them conflates *"where capacity could one day be sited"* with *"a project
-someone is developing."* (This is orthogonal to status: a cancelled developer-led
-project is counted; a developer-less study location is not, even if "announced".)
+- **Include — a *project*.** A specific development that someone has proposed,
+  planned, built, retired, or cancelled — with a name and a site, and **typically
+  a power *complex*** (multi-unit, multi-phase: Mũi Kê Gà 1/2/3, Hai Ha CHP 1–4,
+  the Cà Mau pair), occasionally a single plant. Projects enter the pipeline
+  through many channels — local & foreign developers, provinces, MOIT, the
+  planning agency, high-level diplomacy — and **exist from the moment they are
+  proposed, not from the moment a plan records them**: developer proposals,
+  feasibility studies, project trackers,
+  and PDP annexes merely *attest* projects that already exist; the PDP is one
+  venue among several, never the origin. Every lifecycle status counts
+  (`proposed` / `announced` / `operating` / `cancelled` / `retired`); a
+  developer-less government *wishlist* plant counts; a cancelled project counts.
+  The full lifecycle — the dead and the not-yet-built — is the inventory's value.
+- **Exclude — a *potential site*.** A candidate *location* a siting study flags as
+  suitable for possible future capacity, with **no specific plant proposed there**
+  — e.g. Study E542 Table PL9.2, *"tổng hợp các vị trí tiềm năng"* (a regional
+  capacity-siting exercise: a region is allotted X MW and a few candidate places
+  are named). It is a *place*, not a *plant*. Counting it conflates *"where
+  capacity could one day be sited"* with *"a plant someone is building."*
+  (Kim Sơn, Rạng Đông, Phú Thọ are such study-only locations; Yên Hưng, by
+  contrast, is a specific proposed plant and counts.)
+- **External sources (GEM, Wikipedia, OSM) are comparators, not authorities.** A
+  GEM-only entry is a *lead* (like the Exp2 FP audit): the compiler checks whether
+  it names a specific proposed plant and decides. Being tracked never qualifies it.
+
+The boundary is applied case by case; edge cases are the compiler's call.
 
 **Traceability without counting (aliases).** When a planning study names a
 candidate location that corresponds to an existing planned or anonymous reference

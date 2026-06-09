@@ -11,25 +11,24 @@ Label: deferred
 
 --- body ---
 
-## Goal (author decision): superset of GEM's *projects* (any lifecycle status)
+## Goal (author decision): aim for a superset of GEM's *projects*
 
-The author wants the reference to be a **superset of GEM's projects** —
-**including** GEM's speculative/cancelled tier (`announced` / `pre-permit` /
-`shelved` / cancelled). **Speculative status is NOT a ground for dismissal**:
-a cancelled or proposed *developer-led project* is exactly what the reference
-should carry — comprehensiveness across the full lifecycle is its value, and the
-speculative LNG/gas tail is real (it tracks the US LNG-supply-chain push into
-Vietnam — context, not a paper claim). So the GEM-only tail (Embark-Quantum,
-Millenium, Phu Yen, and the cancelled coal projects) is to be **added**, not
-excluded, once matcher misses are stripped (Ka Ga was one).
+The author wants the reference to **aim to contain every GEM entry that is a
+project** by the compiler's own definition (PROVENANCE.md "Scope boundary": a
+named plant in a primary planning source — PDP annex — at any lifecycle status,
+developer or not; **the inclusion decision is the compiler's, not GEM's**).
+Speculative and cancelled status are **not** grounds for dismissal — the full
+lifecycle is the value, and the speculative LNG/gas tail is real (it tracks the
+US LNG-supply-chain push into Vietnam — context, not a paper claim).
 
-**The discriminator is project identity, not lifecycle status.** A *project* has
-a specific named development and a developer/proposal (which GEM tracks at any
-status). A *potential site* is a planning study's capacity-placeholder **location
-with no developer** (E542 PL9.2 "vị trí tiềm năng"). Only the latter is excluded
-(per PROVENANCE.md, already enforced by 0497). The claim to earn:
-*"the reference is a superset of every project GEM tracks — built, planned, and
-cancelled — and extends it with the PDP8 pipeline GEM lacks."*
+So the GEM-only tail (Embark-Quantum, Millenium, Phu Yen, the cancelled coal
+rows) is **leads to verify**, not auto-adds and not auto-dismissals: strip matcher
+misses (Ka Ga was one), then for each remaining lead the compiler checks it
+against a primary source — if it is a project, **add** it; GEM tracking alone
+does not qualify it, and a study-only candidate location does not (none seen in
+the GEM tail so far). The claim to earn: *"the reference contains every GEM entry
+we judge a project — built, planned, and cancelled — and extends it with the PDP8
+pipeline GEM lacks."*
 
 ## Context
 
@@ -54,17 +53,19 @@ not for the journal:
      - **Embark-Quantum** (6000 MW cancelled) = an old project **renamed several
        times**; unverifiable from the repo because the GEM import carries no
        aliases (see prerequisite). Resolve via aliases: if it folds into an
-       existing reference row → matcher miss; if it is a distinct project → **add**
-       (it is a developer-led project, cancelled status notwithstanding).
-     - **Phu Yen** (2400 MW cancelled) = **real GEM-only**, confirmed absent. A
-       cancelled developer-led project → **add** (cancelled is a lifecycle status,
-       not a dismissal ground).
+       existing reference row → matcher miss; else **verify against a primary
+       source** and, if it is a project, **add** (cancelled status is no bar).
+     - **Phu Yen** (2400 MW cancelled) = **real GEM-only**, confirmed absent.
+       Verify against a primary source; if a project, **add** (cancelled is a
+       lifecycle status, not a dismissal ground).
      - **Millenium** (9600 MW announced) and the remaining cancelled rows
        (Cai Trap Island, Ganh Dau, Than An Giang, Can Duoc, Hon Chong, Nhon Hoi):
-       each is a GEM-tracked project → **add**, recording source + status. The
-       only rows NOT added are confirmed matcher misses (Ka Ga) and any genuine
-       capacity-placeholder location with no developer (none seen so far in the
-       GEM tail — that pattern is the E542 study, not GEM).
+       each is a **lead** — verify against a primary planning source, then **add**
+       the ones that are projects (recording source + status). The only rows NOT
+       added are confirmed matcher misses (Ka Ga), study-only candidate locations
+       (the E542 pattern, none seen in the GEM tail), or leads the compiler judges
+       not a project. **GEM tracking alone does not qualify an entry** — the
+       inclusion decision is ours.
 
 ## Actions
 
@@ -83,10 +84,10 @@ not for the journal:
    grain before scoring coverage — e.g. Ka Ga ↔ 3× Mũi Kê Gà).
 2. HITL-adjudicate every residual on both sides (the 21 + 11): real gap, naming
    variant, grain artifact, or deliberate scope exclusion — record the verdict.
-3. **Add** every genuine GEM-only project (Millenium, Phu Yen, Embark-Quantum if
-   distinct, the cancelled coal rows) to the reference via the master ODS + 0458
-   discipline, recording source + status. Exclude only confirmed matcher misses
-   and (if any) capacity-placeholder locations with no developer.
+3. For each GEM-only lead the compiler **verifies as a project against a primary
+   source**, **add** it to the reference via the master ODS + 0458 discipline
+   (recording source + status). Leave out confirmed matcher misses, study-only
+   candidate locations, and leads judged not a project — the call is the compiler's.
 4. Replace 0486's light-reviewed numbers with the adjudicated ones for the journal.
 
 ## Test
