@@ -24,6 +24,10 @@ pytestmark = pytest.mark.adherence
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 SCORE_MK = REPO_ROOT / "experiments" / "derived" / "score.mk"
+# score.mk includes ../paths.mk, where the directive now lives as the single
+# source for both phases that read it (ticket 0461). A special target set in an
+# included file is honoured for the whole invocation.
+PATHS_MK = REPO_ROOT / "experiments" / "paths.mk"
 
 
 def _score_mk_text() -> str:
@@ -31,11 +35,22 @@ def _score_mk_text() -> str:
 
 
 def test_delete_on_error_is_set():
-    """Atomicity: a crashed recipe must not leave a stale-but-fresh artifact."""
-    assert ".DELETE_ON_ERROR:" in _score_mk_text(), (
-        "score.mk must set .DELETE_ON_ERROR so a recipe that crashes mid-write "
-        "(e.g. score_exp1 appending to exp1_cross_eval.csv) does not leave a "
-        "partial output with a current mtime"
+    """Atomicity: a crashed recipe must not leave a stale-but-fresh artifact.
+
+    Since ticket 0461 the directive lives in the included ../paths.mk (single
+    source for score.mk + render.mk), not literally in score.mk. We assert the
+    guarantee is in force for the score phase regardless of which of the two
+    files carries it. The whole-class guard is test_makefile_delete_on_error.py.
+    """
+    in_force = (
+        ".DELETE_ON_ERROR:" in _score_mk_text()
+        or ".DELETE_ON_ERROR:" in PATHS_MK.read_text(encoding="utf-8")
+    )
+    assert in_force, (
+        "the score phase must have .DELETE_ON_ERROR in force (in score.mk or in "
+        "the ../paths.mk it includes) so a recipe that crashes mid-write (e.g. "
+        "score_exp1 appending to exp1_cross_eval.csv) does not leave a partial "
+        "output with a current mtime"
     )
 
 

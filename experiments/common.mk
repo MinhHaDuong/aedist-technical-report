@@ -11,6 +11,13 @@
 SHELL := /bin/bash
 .SHELLFLAGS := -o pipefail -c
 
+# Atomicity: delete a target whose recipe crashes mid-write so Make never sees a
+# partial file with a fresh mtime as up-to-date. Set here as the single source
+# for the three invocation roots that include this file (acquire.mk +
+# experiment1.mk + experiment2.mk); a special target in an included file is
+# honoured for the whole invocation (ticket 0461).
+.DELETE_ON_ERROR:
+
 # Canonical uv invocation: project venv + project .env.
 UV_RUN := uv run --project .. --env-file ../.env
 

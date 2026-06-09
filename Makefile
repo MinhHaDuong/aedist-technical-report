@@ -36,6 +36,13 @@
 # full re-run must never trigger a money-costing re-acquisition. Re-acquire raw
 # replies only by explicitly invoking experiments/acquire.mk.
 
+# Atomicity: delete a target whose recipe crashes mid-write so Make never treats
+# a partial file as up-to-date. The recursive $(MAKE) delegations run as their
+# own invocations and get this from their own makefiles (paths.mk / common.mk /
+# the phase root); this line covers any direct-write recipe in THIS root
+# invocation (ticket 0461, generalising 0460).
+.DELETE_ON_ERROR:
+
 .PHONY: test test-fast test-slow coverage lint check-fast check show-prompts \
 	report slides staleness world cleaner
 

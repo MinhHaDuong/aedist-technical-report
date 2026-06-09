@@ -4,6 +4,11 @@
 # no data access. To regenerate figures/tables, run the render (P3) workpackage:
 #   make -f experiments/render.mk exp2-analysis-report
 
+# Atomicity: delete a target whose recipe crashes mid-write — a tectonic run
+# killed partway leaves a truncated slides/manuscript PDF with a fresh mtime
+# that Make would treat as up-to-date (ticket 0461, generalising 0460).
+.DELETE_ON_ERROR:
+
 ROOT_REPORT_GEN := report/inputs/generated
 LOCAL_ROOT_REPORT_GEN := ../report/inputs/generated
 

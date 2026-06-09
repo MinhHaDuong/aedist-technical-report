@@ -1,6 +1,7 @@
 # Shared path/variable definitions for the AEDIST analysis + render phases.
 #
-# VARIABLES ONLY — this file declares zero rules. It is included by both
+# VARIABLES ONLY — this file declares zero rules (the lone `.DELETE_ON_ERROR:`
+# special target below is a directive, not a rule). It is included by both
 # experiments/derived/score.mk (P2 score & consolidate) and
 # experiments/render.mk (P3 analyze & render) so the two phases agree on where
 # the repository tree, the derived data, and the P2 outcomes they share live.
@@ -19,6 +20,17 @@
 # purpose — ticket 0409 / tracker 0406 S2).
 
 SHELL := /bin/bash
+
+# Atomicity: delete a target whose recipe fails mid-write. Without this, a crash
+# partway through an append/stream write (e.g. score_exp1 appending to
+# exp1_cross_eval.csv, or any --output / tectonic writer in a phase that reads
+# this file) leaves a PARTIAL file with a fresh mtime that Make treats as
+# up-to-date — a silent stale-artifact hazard. Set here as the single source for
+# both including phases (P2 score.mk + P3 render.mk); a special target set in an
+# included file is honoured for the whole invocation (ticket 0461, generalising
+# 0460 which first added this to score.mk). This is also the guarantee that lets
+# single-known-output recipes drop their .done sentinels and be plain-file rules.
+.DELETE_ON_ERROR:
 
 ANALYSIS_REPO_ROOT ?= .
 ANALYSIS_EXPERIMENTS_DIR ?= $(ANALYSIS_REPO_ROOT)/experiments
