@@ -37,14 +37,23 @@ def _extract_markdown_from_payload(payload: dict) -> str:
             if isinstance(content, str) and content.strip():
                 return content
             parts = content
-            texts = [
-                part.get("text", "")
-                for part in parts
-                if isinstance(part, dict)
-                and part.get("type") == "text"
-                and isinstance(part.get("text"), str)
-            ]
-            markdown = "".join(texts).strip()
+            chunks: list[str] = []
+            tool_refs: list[str] = []
+            for part in parts:
+                if not isinstance(part, dict):
+                    continue
+                ptype = part.get("type")
+                if ptype == "text" and isinstance(part.get("text"), str):
+                    chunks.append(part["text"])
+                elif ptype == "tool_reference":
+                    url = str(part.get("url", "")).strip()
+                    title = str(part.get("title", "")).strip()
+                    if url:
+                        label = title if title else url
+                        tool_refs.append(f"- [{label}]({url})")
+            if tool_refs:
+                chunks.append("\n\n## Tool References\n\n" + "\n".join(tool_refs))
+            markdown = "".join(chunks).strip()
             if markdown:
                 return markdown
 
