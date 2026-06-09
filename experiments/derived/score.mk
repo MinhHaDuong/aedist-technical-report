@@ -49,13 +49,11 @@ SCORE_MK_SELF := $(abspath $(lastword $(MAKEFILE_LIST)))
 
 include $(dir $(lastword $(MAKEFILE_LIST)))../paths.mk
 
-# Atomicity: delete a target whose recipe fails mid-write. Without this, a
-# crash partway through an append/stream write (e.g. score_exp1 appending to
-# exp1_cross_eval.csv, or any --output writer here) leaves a PARTIAL file with
-# a fresh mtime that Make treats as up-to-date — a silent stale-artifact
-# hazard. This is the correctness guarantee that lets single-known-output
-# recipes drop their .done sentinels and be plain-file rules (ticket 0460).
-.DELETE_ON_ERROR:
+# Atomicity (.DELETE_ON_ERROR) is set in the included paths.mk as the single
+# source for both phases that read it (P2 here + P3 render.mk) — ticket 0461,
+# generalising 0460 which first added it locally here. A special target set in
+# an included file is honoured for the whole invocation, so this phase still
+# self-cleans crashed writes without a duplicate directive.
 
 # --- P2-local tooling -------------------------------------------------------
 # Bare `uv run` (no --env-file): P2 scoring makes no API calls, so it needs no
@@ -236,8 +234,9 @@ $(ANALYSIS_DERIVED_DIR)/arm2_flat/.done: $(ANALYSIS_EXPERIMENTS_DIR)/outputs/sot
 
 # exp1_cross_eval.csv is a single known output (score_exp1 writes exactly one
 # file and mkdirs its own parent), so it is a plain-file rule — no .done stamp,
-# no dedicated holding directory. score_exp1 appends, hence the rm -f; the
-# .DELETE_ON_ERROR above makes a crashed write self-clean (ticket 0460).
+# no dedicated holding directory. score_exp1 appends, hence the rm -f;
+# .DELETE_ON_ERROR (set via the included paths.mk) makes a crashed write
+# self-clean (tickets 0460, 0461).
 $(ANALYSIS_EXP1_CROSS_EVAL_CSV): $(ANALYSIS_EXP1_INPUT_CSVS) $(ANALYSIS_EXPERIMENTS_DIR)/../src/aedist/score_exp1.py
 	rm -f $@
 	uv run python -m aedist.score_exp1 \

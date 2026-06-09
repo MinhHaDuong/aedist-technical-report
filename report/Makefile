@@ -6,6 +6,11 @@
 
 GENERATED := inputs/generated
 
+# Atomicity: delete a target whose recipe crashes mid-write — a tectonic run
+# killed partway leaves a truncated report.pdf with a fresh mtime that Make
+# would treat as up-to-date (ticket 0461, generalising 0460).
+.DELETE_ON_ERROR:
+
 .PHONY: all clean cleaner
 
 all: report.pdf
