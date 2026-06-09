@@ -1,0 +1,98 @@
+%erg 0.1
+Title: Revise manuscript after author consultation on 2026-06-09 editorial review
+Created: 2026-06-09
+Author: minhhaduong
+
+--- log ---
+2026-06-09T20:25Z minhhaduong created
+2026-06-09T20:30Z claude note Review committed at docs/2026-06-09-review.md; author concurs with all points; Imagine session to precede execution
+
+--- body ---
+## Context
+
+A full editorial review of `slides/manuscript/main.md` (the Econom'IA 2026
+technical report, destined for arXiv + HAL) is at
+`docs/2026-06-09-review.md`. The author concurs with all points.
+
+This is a tracking ticket. **Do not start execution directly from this
+ticket**: the workflow begins with one short Imagine session with the author
+to settle the open editorial choices, then this ticket is split into scoped
+sub-tickets (`Blocked-by:` sequenced) per the divide-and-conquer rule.
+
+## Phase 0 — Short Imagine session (with author, required first)
+
+Open choices to settle before any edit:
+
+- [ ] New title (re-title is ratified; pick the wording — review §3.8 offers
+      a candidate; original talk title goes in the Econom'IA 2026 footnote)
+- [ ] Annex strategy: reorganize annexes in place vs. park contents (Annex A
+      philosophy genealogy, §3 lab-by-lab shipping-order analysis, Figure 3
+      caption methods) in the project-scale multi-chapter `report.md`
+- [ ] Repo visibility decision (drives review §3.3: keep file paths + add
+      Data & Code Availability, or strip all internal references)
+- [ ] Which two novelty claims survive (review §2.8 recommends: benchmark gap
+      + per-row provenance analysis)
+- [ ] Related-work placement: number as §2 vs. move before Conclusion
+- [ ] Peer-review target to optimize the condensed version for: Energy and AI
+      vs. Statistical Journal of the IAOS (review §1)
+
+## Ratified by the author (2026-06-09, no further discussion needed)
+
+- Re-title; footnote states this is the Econom'IA 2026 report and gives the
+  original talk title.
+- Consider annex reorganization / parking content in the general
+  project-scale multi-chapter `report.md` (exact split decided in Phase 0).
+- All review points accepted on the merits.
+
+## Work plan after Imagine (split into sub-tickets)
+
+Scientific integrity (review §2 — before arXiv):
+
+- [ ] 2.1 Reconcile 16/14/12 cohort counts: one cohort paragraph in §4,
+      re-derived from `measurements.jsonl`, captions name their cohort
+- [ ] 2.2 Fix Annex B parameter contradictions (max_tokens 32768 vs 8192,
+      budget $15 vs $10) — regenerate from `experiments.toml`
+- [ ] 2.3 Pin Wikipedia-seeding date vs model training cutoffs; state
+      seeding intent
+- [ ] 2.4 Temper ρ = 0.92 in abstract + conclusion with Annex F
+      within-model caveat (τ = +0.215)
+- [ ] 2.5 §5: state which quality dimensions were measured vs deferred
+      (Phase C) in the section body
+- [ ] 2.6 Add sentence on prompt-vs-reference status-vocabulary mismatch
+      ("Proposed" absent from prompt vocabulary; cf.
+      docs/status-vocabulary-map.md)
+- [ ] 2.7 Substantiate or cut the manual-compilation cost-savings claim in
+      the Conclusion
+- [ ] 2.8 Reduce seven novelty claims to the two keepers
+
+Structure (review §3):
+
+- [ ] 3.1 Number Related Work, fix intro roadmap (§3 missing; §6 wording)
+- [ ] 3.2 Halve §3, add glossary box, promote articulation/Type-III idea
+- [ ] 3.3 Strip ticket/PR numbers; resolve internal-path policy per repo
+      visibility; move 2x2 factorial table into the report (no "see the
+      slides")
+- [ ] 3.4 Unify annex figure numbering (S-scheme)
+- [ ] 3.5 Split §6 run-aggregation paragraph from Figure 6 analysis
+- [ ] 3.6 Add Data & Code Availability, funding, author-role/conflict note
+      (Wikipedia dual role), ORCID/email
+- [ ] 3.7 Fix dangling refs: "Experiments 1-3", "Paper B", "Protocol §3.4",
+      Annex F "§4"→§7, Annex C self-reference→Annex B
+- [ ] 3.8 Apply new title + talk-title footnote (ratified)
+
+Framing and language (review §4-5):
+
+- [ ] Contributions list at end of §1 (seeded bar, two-grain
+      credibility/reliability scoring, articulation)
+- [ ] Surface GPT-5.5 principled refusals in §4 results + Discussion
+- [ ] Language pass: "unmatched" FP terminology, em-dash reduction,
+      §1/§5 fixes, Mitroff citation to [@...] form, caption diets
+
+## Exit criteria
+
+- [ ] Phase 0 Imagine session held; decisions logged in this ticket
+- [ ] Sub-tickets created and sequenced with Blocked-by:
+- [ ] All review §2 scientific items resolved in `slides/manuscript/main.md`
+- [ ] Adherence tests still pass; numbers in prose re-derived from committed
+      artifacts (not from the review text)
+- [ ] `make check` passes
