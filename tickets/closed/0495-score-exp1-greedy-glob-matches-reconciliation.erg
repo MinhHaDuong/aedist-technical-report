@@ -2,10 +2,12 @@
 Title: score_exp1.py greedy run-file regex matches colocated reconciliation_*.csv (scores 140 not 70)
 Created: 2026-06-09
 Author: HDMX-coding-agent
+Closed: fixed in PR #895
 
 --- log ---
 2026-06-09T11:00Z HDMX-coding-agent created — surfaced by the 0492 roar sweep for the greedy-glob anti-pattern class.
 
+2026-06-09T11:30Z HDMX-coding-agent closed — fixed in PR #895
 --- body ---
 ## Context
 
