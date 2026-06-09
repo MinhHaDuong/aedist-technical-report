@@ -284,13 +284,12 @@ def test_flatten_single_turn_arm_falls_back_to_agent_markdown(tmp_path):
 
 
 def test_extract_markdown_mistral_tool_references_become_inline_links():
-    """Mistral tool_reference blocks interleaved with text are converted to inline links.
+    """Mistral tool_reference blocks are collected into a ## Tool References section.
 
     The Mistral Agents API returns content as alternating text and tool_reference
-    blocks.  In table rows the text block contains the row up to Source 1/Source 2
-    cells, and the following tool_reference blocks supply the actual citation URLs.
-    The extractor must interleave them as markdown links so Source columns are
-    populated rather than empty.
+    blocks.  Citation URLs are appended as a dedicted section so they do not fuse
+    onto bibliography entries while remaining present in the extracted markdown.
+    tool_reference blocks with empty url are silently skipped.
     """
     payload = {
         "outputs": [
@@ -339,6 +338,30 @@ def test_extract_markdown_mistral_tool_references_become_inline_links():
     assert "[Power Tech Plant](https://power-tech.example/plant)" in result
     assert "[Pha Lai Wiki](https://wiki.example/Pha_Lai)" in result
     assert "Pha Lai" in result
+    assert "## Tool References" in result
+
+
+def test_extract_markdown_mistral_tool_reference_empty_url_skipped():
+    """tool_reference blocks with empty or missing url produce no output."""
+    payload = {
+        "outputs": [
+            {
+                "role": "assistant",
+                "type": "message.output",
+                "content": [
+                    {"type": "text", "text": "some text"},
+                    {"type": "tool_reference", "url": "", "title": "should be skipped"},
+                    {"type": "tool_reference", "title": "no url key at all"},
+                ],
+            }
+        ]
+    }
+
+    result = _extract_markdown_from_payload(payload)
+
+    assert "Tool References" not in result
+    assert "[](" not in result
+    assert result.strip() == "some text"
 
 
 def test_flatten_single_turn_arm_mistral_tool_references_in_output(tmp_path):

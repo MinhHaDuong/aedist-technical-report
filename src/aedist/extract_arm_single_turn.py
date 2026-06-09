@@ -38,6 +38,7 @@ def _extract_markdown_from_payload(payload: dict) -> str:
                 return content
             parts = content
             chunks: list[str] = []
+            tool_refs: list[str] = []
             for part in parts:
                 if not isinstance(part, dict):
                     continue
@@ -49,7 +50,9 @@ def _extract_markdown_from_payload(payload: dict) -> str:
                     title = str(part.get("title", "")).strip()
                     if url:
                         label = title if title else url
-                        chunks.append(f"[{label}]({url})")
+                        tool_refs.append(f"- [{label}]({url})")
+            if tool_refs:
+                chunks.append("\n\n## Tool References\n\n" + "\n".join(tool_refs))
             markdown = "".join(chunks).strip()
             if markdown:
                 return markdown
