@@ -45,9 +45,10 @@ VN_THERMAL_UNITS_RELEASE_CSV = (
 #      THREE of which were then removed as out-of-scope potential sites;
 #   4. the 3-row potential-site removal (ticket 0497, remove_plants_0497.py):
 #      Kim Sơn, Rạng Đông, Phú Thọ dropped (E542 PL9.2 candidate locations, not
-#      projects), retained as aliases on NĐ Miền Bắc 1/2/3 (add_aliases_0458.py);
+#      projects), noted on NĐ Miền Bắc 1/2/3 with an explicit no-specific-
+#      correspondence annotation (note_potential_sites_0458.py — NOT aliased);
 #      Yên Hưng retained (PDP7 planned project). Net: 177 plants (180 − 3).
-# The aliases live in the non-extracted Project alias column, so the regenerated
+# The notes live in the non-extracted Note column, so the regenerated
 # reference stays byte-identical at 177 (verify_master_convergence.py).
 VN_THERMAL_MASTER_SNAPSHOT_ODS = (
     _REPO_ROOT / "data" / "reference" / "raw" / "pipeline+0458-2026-06-09.ods"

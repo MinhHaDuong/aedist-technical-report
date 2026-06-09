@@ -4,14 +4,14 @@ Created: 2026-06-06
 Author: HDMX-coding-agent
 Label: needs-human
 Label: deferred
-Closed: Reverse-sync complete (2026-06-09): the four edit-sets are replayed on the master and the three E542 PL9.2 potential sites are recorded as aliases on NĐ Miền Bắc 1/2/3 (add_aliases_0458.py); snapshot re-pinned to pipeline+0458-2026-06-09.ods; convergence gate green at 177.
+Closed: Reverse-sync complete (2026-06-09): the four edit-sets are replayed on the master and the three E542 PL9.2 potential sites are noted on NĐ Miền Bắc 1/2/3 with a no-specific-correspondence annotation (note_potential_sites_0458.py — not aliased); snapshot re-pinned to pipeline+0458-2026-06-09.ods; convergence gate green at 177.
 
 --- log ---
 2026-06-06T13:56Z HDMX-coding-agent created
 2026-06-06T13:57Z claude note protect the 0445 standalone adoption: the pinned snapshot carries an edit the master does not
 2026-06-09T11:00Z HDMX-coding-agent note SCOPE EXPANDED to the full master reverse-sync. The pinned snapshot now carries THREE un-replayed edit-sets (extensions 0445, Kiên Lương 0472, ticket 0395), not just the extensions. Author ruled a potential site is not a project (boundary in PROVENANCE.md): when replaying 0395, replay ONLY Yên Hưng (PDP7 project); do NOT replay Kim Sơn / Rạng Đông / Phú Thọ (E542 PL9.2 potential sites) — record them as aliases instead. Repo side is ticket 0497.
 
-2026-06-09T15:13Z Claude closed — Reverse-sync complete (2026-06-09): the four edit-sets are replayed on the master and the three E542 PL9.2 potential sites are recorded as aliases on NĐ Miền Bắc 1/2/3 (add_aliases_0458.py); snapshot re-pinned to pipeline+0458-2026-06-09.ods; convergence gate green at 177.
+2026-06-09T15:13Z Claude closed — Reverse-sync complete (2026-06-09): the four edit-sets are replayed on the master and the three E542 PL9.2 potential sites are noted on NĐ Miền Bắc 1/2/3 with a no-specific-correspondence annotation (note_potential_sites_0458.py — not aliased); snapshot re-pinned to pipeline+0458-2026-06-09.ods; convergence gate green at 177.
 --- body ---
 ## Context
 

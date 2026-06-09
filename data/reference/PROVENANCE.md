@@ -12,9 +12,9 @@
 | Rạng Đông (Nam Định) | 2400 MW | Study E542 PL9.2 ("Không xác định") | Candidate location; distinct from the existing "Rang Dong cogeneration" (100 MW captive cogen) reference entry, which stays. |
 | Phú Thọ (Phú Thọ) | 600 MW | Study E542 PL9.2 (potential coal sites) | Candidate location; was not even FP-flagged in the Exp2 audit. |
 
-The reverse-sync (ticket 0458) must also exclude these three from the master replay and record them as aliases there.
+The reverse-sync (ticket 0458) must also exclude these three from the master replay and record them as notes there (no specific correspondence to the NĐ Miền Bắc slots).
 
-**Snapshot provenance.** The pinned snapshot is now `raw/pipeline+0458-2026-06-09.ods` (config.`VN_THERMAL_MASTER_SNAPSHOT_ODS`) and yields 177 plants. **Reverse-sync complete (ticket 0458, 2026-06-09):** the formerly un-replayed local edits (0445 extensions, 0472 Kiên Lương, 0395 Yên Hưng, 0497 removal) are now in the master, and the three removed PL9.2 potential sites are recorded as aliases on `NĐ Miền Bắc 1/2/3` (`add_aliases_0458.py`). The master and this snapshot are back in lockstep, so a fresh `import.sh` reproduces it — the earlier "do not re-pin" guard no longer applies. The aliases sit in the non-extracted `Project alias` column, so the regenerated reference is byte-identical at 177.
+**Snapshot provenance.** The pinned snapshot is now `raw/pipeline+0458-2026-06-09.ods` (config.`VN_THERMAL_MASTER_SNAPSHOT_ODS`) and yields 177 plants. **Reverse-sync complete (ticket 0458, 2026-06-09):** the formerly un-replayed local edits (0445 extensions, 0472 Kiên Lương, 0395 Yên Hưng, 0497 removal) are now in the master, and the three removed PL9.2 potential sites are recorded as **notes** on `NĐ Miền Bắc 1/2/3` stating there is **no specific correspondence** between a PL9.2 candidate location and any one slot (`note_potential_sites_0458.py` — deliberately not aliased, which would imply a false 1:1 match). The master and this snapshot are back in lockstep, so a fresh `import.sh` reproduces it — the earlier "do not re-pin" guard no longer applies. The notes sit in the non-extracted `Note` column, so the regenerated reference is byte-identical at 177.
 
 ## Adopted release (v2.3, ticket 0395, 2026-06-09)
 
