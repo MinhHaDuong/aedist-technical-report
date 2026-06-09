@@ -27,7 +27,7 @@ training corpus. Scoring below it is not "missing obscure facts" — it is
 failing to retrieve knowledge the models demonstrably have.
 
 The bar has **two regimes** (measured 2026-06-09, coal subset, against the
-180-plant v2.3 reference; see `data/reference/raw/wikipedia_coal_vietnam.wikitext`):
+180-plant v2.3 reference; see `data/reference/raw/wikipedia_coal_vietnam-2026-06-09.wikitext`):
 
 - **Built fleet** (operating 92%, construction/permitted 100%): high bar.
   Models recalling fewer than ~92% of operating plants underperform an
@@ -53,10 +53,10 @@ lets the reader carry it through §4–§7.
 ## Relevant files
 
 - `slides/manuscript/main.md` — §2 quality bar / §4 setup (where the bar is introduced); §7 conclusion (where it is revisited)
-- `data/reference/raw/wikipedia_coal_vietnam.wikitext` — cached coal list (raw, reproducible)
-- `data/reference/raw/wikipedia_power_vietnam.wikitext` — cached general list (has the gas/CCGT plants needed to complete the thermal bar)
+- `data/reference/raw/wikipedia_coal_vietnam-2026-06-09.wikitext` — cached coal list (raw, reproducible)
+- `data/reference/raw/wikipedia_power_vietnam-2026-06-09.wikitext` — cached general list (has the gas/CCGT plants needed to complete the thermal bar)
 - `src/aedist/reconcile.py`, `src/aedist/evaluate.py` (`load_plants_csv`, `reference_plant_count`) — matcher + reference loader
-- prototype: `/tmp/wt-0486/explore_wiki.py` (throwaway — coal-only; productionise + add gas)
+- prototype: `experiments/exploration/0486/explore_bars.py` (committed; already coal+gas — parses the general page `==Gas turbines==` section)
 
 ## Actions
 

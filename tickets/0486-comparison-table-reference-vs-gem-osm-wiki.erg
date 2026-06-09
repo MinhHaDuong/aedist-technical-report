@@ -6,7 +6,7 @@ Author: HDMX-coding-agent
 --- log ---
 2026-06-09T00:00Z HDMX-coding-agent created
 2026-06-09T08:30Z HDMX-coding-agent note DEFERRED by raid Imagine/Plan verification — three exit-criteria decisions were author-only.
-2026-06-09T11:30Z HDMX-coding-agent note SCOPE LOCKED after the 0486 design dialogue + grounding computation. The three deferred decisions are resolved (see below). Numbers below are measured (light-reviewed); the executor consumes them, does not re-derive the design. Prototype scripts live in /tmp throwaway (explore_review.py, explore_superset.py) — productionise.
+2026-06-09T11:30Z HDMX-coding-agent note SCOPE LOCKED after the 0486 design dialogue + grounding computation. The three deferred decisions are resolved (see below). Numbers below are measured (light-reviewed); the executor consumes them, does not re-derive the design. Prototype scripts committed at `experiments/exploration/0486/` (reproduce the numbers from tracked inputs); productionise.
 
 --- body ---
 
@@ -67,9 +67,9 @@ upper-ish — label as light-reviewed, full per-plant HITL is post-arXiv (ticket
 
 - `data/reference/vietnam_thermal_plants_v2_classified.csv` — reference (177 post-0497)
 - `data/reference/gem_thermal.csv` — GEM (153 rows / 119 plants)
-- `data/reference/raw/wikipedia_coal_vietnam.wikitext`, `wikipedia_power_vietnam.wikitext` — cached Wikipedia (raw, reproducible); gas plants are in the general page "==Gas turbines==" section
+- `data/reference/raw/wikipedia_coal_vietnam-2026-06-09.wikitext`, `wikipedia_power_vietnam-2026-06-09.wikitext` — cached Wikipedia (raw, reproducible); gas plants are in the general page "==Gas turbines==" section
 - `src/aedist/reconcile.py`, `src/aedist/evaluate.py` — matcher + reference loader
-- prototypes: `/tmp/wt-0486/explore_review.py`, `explore_superset.py`, `explore_bars.py`
+- prototypes: `experiments/exploration/0486/{explore_review,explore_superset,explore_bars}.py` (committed; run from repo root)
 - `src/aedist/plot_*exp1*`, `plot_*exp2*` — figure scripts (add the bar lines)
 - `slides/manuscript/main.md` — annex (table) + §4/§5 (quoted numbers, bars referenced)
 
