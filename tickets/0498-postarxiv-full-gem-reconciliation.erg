@@ -1,0 +1,59 @@
+%erg 0.1
+Title: Post-arXiv: full per-plant GEM↔reference reconciliation (HITL, resolve the tails)
+Created: 2026-06-09
+Author: HDMX-coding-agent
+Label: deferred
+
+--- log ---
+2026-06-09T11:30Z HDMX-coding-agent created — spun out of 0486. The arXiv coverage table uses light-reviewed (ASCII-fold) numbers; this is the rigorous per-plant HITL concordance for the journal version.
+
+--- body ---
+
+## Context
+
+0486 ships a **light-reviewed** source concordance for arXiv (matcher + ASCII-fold
+variant recovery). Two known imprecisions remain, acceptable for the preprint but
+not for the journal:
+
+1. **Grain mismatch over-counts coverage.** The ASCII-fold recovery matches one
+   source row to several reference phases ("Hai Ha CHP 1–4" ↔ 4 reference rows;
+   "Ca Mau" ↔ Cà Mau I + II), so the 88% (GEM) / 73% (Wikipedia) reviewed
+   coverages are upper-ish. Truth needs per-plant adjudication of the
+   unit/plant/phase grain.
+2. **Unresolved tails** (measured 2026-06-09, light review):
+   - **21 reference-only** plants (in ref, not GEM): 3 captive/legacy operating
+     (Dong Nai Formosa, NĐ Cần Thơ, NĐ Thủ Đức — confirm GEM truly lacks),
+     1 extension-grain artifact (Vinh Tan 4 extension), ~16 LNG pipeline.
+   - **11 GEM-only** plants (in GEM, not ref): ~8 cancelled tail; **2 announced
+     gas megaprojects — Millenium (9600 MW), Ka Ga (3600 MW)** — the real
+     "should the reference carry these?" cases. Adjudicate vs PDP8 under the
+     project-vs-potential-site boundary (PROVENANCE.md): a committed project is
+     added; a GEM speculative/"pre-permit"/"shelved" entry is not.
+
+## Actions
+
+1. Productionise `tabulate_reconciliation.py` (ticket 0082 already does the
+   GEM↔reference LP match + agreement metrics + Cohen's kappa) with **status
+   stratification** and an explicit **grain-resolution** pass (collapse reference
+   phases to the source's plant grain before scoring coverage).
+2. HITL-adjudicate every residual on both sides (the 21 + 11): real gap, naming
+   variant, grain artifact, or deliberate scope exclusion — record the verdict.
+3. Decide Millenium / Ka Ga (and any other committed GEM-only) → add to the
+   reference (via the master ODS + 0458 discipline) or document the exclusion.
+4. Replace 0486's light-reviewed numbers with the adjudicated ones for the journal.
+
+## Test
+
+A regression over the adjudicated concordance: every residual carries a recorded
+verdict; coverage is computed at resolved grain; the Spearman ρ of model rankings
+under reference vs GEM (already in `tabulate_reconciliation.py`) is reported.
+
+## Exit criteria
+
+- [ ] Per-plant adjudicated GEM↔reference concordance at resolved grain
+- [ ] All 21 reference-only + 11 GEM-only residuals carry a recorded verdict
+- [ ] Millenium / Ka Ga (committed GEM-only) resolved: added or documented-excluded
+- [ ] Journal-version numbers supersede 0486's light-reviewed figures
+- [ ] `make check` passes
+
+Related: 0486 (arXiv light version), 0082 (`tabulate_reconciliation.py`), 0458 (master sync), boundary in PROVENANCE.md
