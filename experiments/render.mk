@@ -134,7 +134,7 @@ $(ANALYSIS_EXP2_MART_VIEWS): $(ANALYSIS_EXP2_MART_JSONL)
 
 # The comparison figure now loads Exp1 baseline data from the mart (via
 # exp1_cost_quality), matching the split figure's E1 bar derivation.
-$(ANALYSIS_EXP2_ARM_FIG): $(ANALYSIS_GEN)/tab_exp2_arms_runs_view.csv $(ANALYSIS_MEASUREMENTS)
+$(ANALYSIS_EXP2_ARM_FIG): $(ANALYSIS_GEN)/tab_exp2_arms_runs_view.csv $(ANALYSIS_MEASUREMENTS) $(ANALYSIS_CONCORDANCE_CSV)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_exp2_arms_comparison \
 	    --input $< \
@@ -686,10 +686,11 @@ $(ANALYSIS_GEN)/fig_method_convergence.pdf: $(ANALYSIS_MEASUREMENTS)
 	uv run python -m aedist.plot_method_convergence \
 	    --output $@ --core-only
 
-$(ANALYSIS_GEN)/fig_direct_p1_base.pdf $(ANALYSIS_GEN)/macros_p1_base.tex &: $(ANALYSIS_MEASUREMENTS) $(ANALYSIS_EXP1_BATCH2_RECORDS)
+$(ANALYSIS_GEN)/fig_direct_p1_base.pdf $(ANALYSIS_GEN)/macros_p1_base.tex &: $(ANALYSIS_MEASUREMENTS) $(ANALYSIS_EXP1_BATCH2_RECORDS) $(ANALYSIS_CONCORDANCE_CSV)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_method_convergence \
 	    --output $(ANALYSIS_GEN)/fig_direct_p1_base.pdf --methods direct \
+	    --coverage-source wikipedia \
 	    --label-x 100 --label-ha left \
 	    --xlabel "Assets identified (1 dot = 1 power plant / project)" \
 	    --fp-label "Unrecognized" \

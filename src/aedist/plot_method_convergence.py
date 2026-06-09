@@ -250,6 +250,7 @@ def write_pdf(
     fig_height_per_run: float = 0.08,
     fig_height_per_method: float = 0.5,
     ui_scale: float = 1.0,
+    coverage_line: tuple[float, str] | None = None,
 ) -> None:
     """Generate the method convergence strip plot as PDF.
 
@@ -394,6 +395,22 @@ def write_pdf(
         x=_N_REFERENCE_PLANTS, color=COLOR_REFERENCE, linewidth=1, linestyle="--", alpha=0.7, zorder=2
     )
 
+    # Optional external-source coverage bar (ticket 0486): a light-grey
+    # background reference line at the source's reviewed coverage of the
+    # reference — a recall ceiling the runs can be read against.
+    if coverage_line is not None:
+        cov_x, cov_label = coverage_line
+        ax.axvline(x=cov_x, color="0.6", linewidth=1, linestyle=":", alpha=0.8, zorder=1)
+        ax.text(
+            cov_x,
+            -spacing * 0.5,
+            cov_label,
+            color="0.45",
+            fontsize=11 * ui_scale,
+            va="bottom",
+            ha="center",
+        )
+
     # Zero line
     ax.axvline(x=0, color="black", linewidth=0.5, alpha=0.4, zorder=1)
 
@@ -495,6 +512,23 @@ def _build_macros(
     return "\n".join(lines) + "\n"
 
 
+def _coverage_line(source: str) -> tuple[float, str]:
+    """Reviewed coverage of the reference by an external source (ticket 0486).
+
+    Reads the committed concordance artifact so the figure's recall-ceiling line
+    tracks the same number as the §4/§5/Annex-B prose (single source of truth).
+    """
+    from aedist.config import SOURCE_CONCORDANCE_CSV
+
+    col = {"wikipedia": "wiki_matched", "gem": "gem_matched"}[source]
+    label = {"wikipedia": "Wikipedia", "gem": "GEM"}[source]
+    with open(SOURCE_CONCORDANCE_CSV, newline="", encoding="utf-8") as fh:
+        total = next(r for r in csv.DictReader(fh) if r["status"] == "All")
+    count = int(total[col])
+    pct = round(count / int(total["n_reference"]) * 100)
+    return float(count), f"{label}\n{pct}%"
+
+
 def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(message)s")
     parser = argparse.ArgumentParser(
@@ -591,6 +625,12 @@ def main() -> None:
         default=1.0,
         help="Global visual scale factor for marker/text sizes.",
     )
+    parser.add_argument(
+        "--coverage-source",
+        choices=["wikipedia", "gem"],
+        default=None,
+        help="Draw an external-source recall-ceiling line from the 0486 concordance artifact.",
+    )
     args = parser.parse_args()
 
     excluded_models = None
@@ -627,6 +667,7 @@ def main() -> None:
             fig_height_per_run=args.fig_height_per_run,
             fig_height_per_method=args.fig_height_per_method,
             ui_scale=args.ui_scale,
+            coverage_line=_coverage_line(args.coverage_source) if args.coverage_source else None,
         )
     else:
         write_csv(rows, output)
