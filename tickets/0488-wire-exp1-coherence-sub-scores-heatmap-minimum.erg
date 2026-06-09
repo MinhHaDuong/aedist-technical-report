@@ -1,0 +1,69 @@
+%erg 0.1
+Title: Wire Exp1 mechanical coherence sub-scores into exp1_cross_eval.csv (minimum for heatmap)
+Created: 2026-06-09
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-09T00:00Z HDMX-coding-agent created — split from 0201; minimal child needed to unblock 0487 (Haiku heatmap false pass)
+
+--- body ---
+## Context
+
+The quality floor heatmap (Figure 2b, ticket 0466) shows claude-haiku-4.5
+as all-green because `exp1_cross_eval.csv` only contains accuracy columns.
+The mechanical coherence scorers already exist in `score_mechanical.py`:
+`coherence_vocab_adherence`, `coherence_status_vocab_adherence`,
+`coherence_row_atomicity` — and in `sota_cross_eval.csv` for Exp2.
+They are simply not wired into the Exp1 scoring path (`score_exp1.py`).
+
+This ticket is the minimum viable split from 0201: add column parity to
+Exp1, rebuild the heatmap, confirm Haiku turns red. No contested composite
+aggregation (that stays in 0201), no provenance or temporality scorers.
+
+## Relevant files
+
+- `src/aedist/score_exp1.py` — add coherence column outputs here
+- `src/aedist/score_mechanical.py` — source scorers; already tested
+- `experiments/derived/exp1_cross_eval.csv` — heatmap input CSV
+- `src/aedist/plot_quality_floor_heatmap_exp1.py` — rebuild after CSV update
+- `slides/manuscript/main.md` — Figure 2b caption; check for any Haiku "passes" claim
+
+## Actions
+
+1. In `score_exp1.py`, emit `coherence_vocab_adherence`,
+   `coherence_status_vocab_adherence`, and `coherence_row_atomicity`
+   for each run row — call the same scorers used in `score_mechanical.py`.
+2. Regenerate `exp1_cross_eval.csv` and verify columns appear.
+3. Rebuild heatmap; inspect claude-haiku-4.5 row.
+4. Update Figure 2b caption and any prose that asserts Haiku's status.
+5. No changes to composite aggregation logic or `records_to_metrics()`.
+
+## Test
+
+Write (or extend) a test in `tests/test_score_exp1.py` that:
+- Constructs a minimal mock run record for a weak model
+- Calls the scorer
+- Asserts `coherence_vocab_adherence` etc. are present in the output row
+
+Red step: run test before adding the columns → KeyError or missing field.
+
+## Verification
+
+- [ ] `score_exp1.py` emits coherence_vocab_adherence, coherence_status_vocab_adherence, coherence_row_atomicity
+- [ ] `exp1_cross_eval.csv` contains those three columns
+- [ ] Heatmap rebuilt; claude-haiku-4.5 has ≥1 red cell
+- [ ] No claim in `main.md` that Haiku "passes" the quality bar
+- [ ] `make check` passes
+
+## Invariants
+
+- Do not touch `records_to_metrics()` or the composite aggregation path
+- Do not add provenance or temporality scorers (that is 0201 scope)
+- `sota_cross_eval.csv` (Exp2) must remain unchanged
+
+## Exit criteria
+
+- All verification checkboxes above ticked
+- 0487 can close
+
+Part of: 0201 (child), 0464 — role A7
