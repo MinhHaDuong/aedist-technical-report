@@ -70,7 +70,7 @@ COLUMN_LABELS: dict[str, str] = {
     "accuracy_status": "Status",
     "accuracy_province": "Province",
     "coherence_vocab_adherence": "Vocabulary",
-    "coherence_capacity_nonnegative": "Capacity≥0",
+    "coherence_capacity_nonnegative": r"Capacity $\geq$0",
     "coherence_run_veto": "Coherence veto",
     "field_completeness_core": "Core fields",
     "field_completeness_capacity": "Capacity",

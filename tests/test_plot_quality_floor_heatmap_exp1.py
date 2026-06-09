@@ -5,6 +5,7 @@ from pathlib import Path
 from aedist.plot_quality_floor_heatmap_exp1 import (
     _NON_SUBSCORE_COLS,
     _VETO_COL,
+    COLUMN_LABELS,
     _cell_is_red_for_column,
     _scored_columns,
     cell_is_red,
@@ -29,6 +30,14 @@ def _spider_panel_models_ref(rows):
         panel_models.sort(key=lambda m: (_model_size_rank(m), m))
         result.extend(panel_models)
     return result
+
+
+def test_capacity_label_uses_mathtext_geq():
+    """The Capacity>=0 column label must use matplotlib mathtext (\\geq), not the
+    bare U+2265 glyph, which the PDF backend's default font cannot render."""
+    label = COLUMN_LABELS["coherence_capacity_nonnegative"]
+    assert r"\geq" in label, label
+    assert "≥" not in label, label
 
 
 def test_majority_zero_marks_red():
