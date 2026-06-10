@@ -19,26 +19,32 @@ The reverse-sync (ticket 0458) must also exclude these three from the master rep
 ## Wikipedia seeding (recall-bar provenance, ticket 0511)
 
 The recall-bar argument in §4 ("A seeded recall bar") rests on a derivative of
-this reference having been published on Wikipedia *before* the model cohort's
-training cutoffs. The seeding provenance, per author disclosure (the dates are a
-provenance fact, not a re-derived statistic):
+this reference having been on Wikipedia *before* the model cohort's training
+cutoffs. The seeding provenance (a provenance fact, not a re-derived statistic);
+the 2019-06-19 content injection is independently verifiable via the
+page-history diff below — the author's group **did not create** the all-fuels
+page (it dates to 2010), it **added** reference-derived content to a pre-existing
+page:
 
-| Seeded page | First published | Origin |
+| Event | Date | Note |
 |---|---|---|
-| List of power stations in Vietnam (all fuels) | July 2019 | Created by an intern in the author's group from the author's reference list at the time |
-| List of coal power stations in Vietnam | 2019-07-05 (August 2019 informed) | Split from the all-fuels list above, from the same reference |
+| *List of power stations in Vietnam* (all fuels) page exists | Feb 2010 | Community-created; not by the author's group |
+| Author's group injects reference-derived content | **2019-06-19** (10:03 UTC) | Editor Tống Minh Quân (intern in the author's group), source note citing Coal Plant Tracker + ERAV (Mar 2019); significantly increased coverage. Diff (revision `902510278`, before-state `oldid=900785679`): <https://en.wikipedia.org/w/index.php?title=List_of_power_stations_in_Vietnam&diff=902510278&oldid=900785679> |
+| *List of coal power stations in Vietnam* split off | 2019-07-05 | Split from the all-fuels list above, same reference |
 
-Both pages therefore predate the entire 2026-era Experiment 1 model cohort by
-roughly six and a half years — comfortably before any plausible training cutoff.
-**Scope of the guarantee:** the *built-fleet* coverage (operating/retired) has
-existed on these pages since 2019 and is firmly inside every model's cutoff. The
-*pipeline tail* (proposed/announced) is weaker: many of those rows are PDP8-era
-(post-2019) additions that grew the page over time and may postdate some
-cutoffs. The recall bar is thus solidly substantiated for the built fleet and an
-upper-bound heuristic for the forward-looking pipeline — consistent with §4's
-statement that "the pipeline tail, which even Wikipedia barely carries, is the
-reference's unique contribution." The seeding was a deliberate group activity
-(intern-authored from the reference), not a benchmark instrument designed to
+The 2019-06-19 injection (the event that put this reference's content on
+Wikipedia) and the 2019-07-05 coal-list split both predate the 2026-era
+Experiment 1 model cohort by roughly six and a half years — comfortably before
+any plausible training cutoff. **Scope of the guarantee:** the *built-fleet*
+coverage (operating/retired) has been on the pages since mid-2019 and is firmly
+inside every model's cutoff. The *pipeline tail* (proposed/announced) is weaker:
+a June-2019 injection definitionally excludes the PDP8-era (post-2019) plants
+that later grew the pages, so those rows may postdate some cutoffs. The recall
+bar is thus solidly substantiated for the built fleet and an upper-bound
+heuristic for the forward-looking pipeline — consistent with §4's statement that
+"the pipeline tail, which even Wikipedia barely carries, is the reference's
+unique contribution." The seeding was a deliberate group activity (intern
+content injection from the reference), not a benchmark instrument designed to
 plant the answer key.
 
 ## Adopted release (v2.3, ticket 0395, 2026-06-09)

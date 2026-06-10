@@ -146,12 +146,18 @@ def test_wikipedia_seeding_date_matches_provenance():
     if not PROVENANCE_MD.exists():
         pytest.skip("PROVENANCE.md not found")
     prov = PROVENANCE_MD.read_text(encoding="utf-8")
+    # The load-bearing, independently-verifiable event is the 2019-06-19
+    # content injection (Wikipedia revision 902510278); the coal-list split is
+    # 2019-07-05.
+    assert "2019-06-19" in prov, "PROVENANCE.md must record the content-injection date"
+    assert "902510278" in prov, "PROVENANCE.md must cite the verifiable page-history revision"
     assert "2019-07-05" in prov, "PROVENANCE.md must record the coal-list split date"
     md = _md()
-    # The manuscript must cite the same 2019 split date and keep the
+    # The manuscript must cite the same verifiable 2019 dates and keep the
     # built-vs-pipeline coverage caveat (no over-claim that every plant was
-    # visible to every model).
-    assert "5 July 2019" in md, "manuscript must state the seeded-page split date"
+    # visible to every model). It must NOT claim the group *created* the page.
+    assert "19 June 2019" in md, "manuscript must state the content-injection date"
+    assert "902510278" in md, "manuscript must cite the verifiable revision id"
     assert "built fleet" in md and "pipeline tail" in md, (
         "seeding paragraph must preserve the built-vs-pipeline coverage caveat"
     )
