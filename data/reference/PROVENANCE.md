@@ -292,6 +292,19 @@ audit, ticket 0429). The GEM data is a frozen comparator; the cross-check
 itself (comparing gem_thermal.csv against the master reference) is deferred
 as noted above.
 
+**Licence and attribution (Global Energy Monitor).** `gem_units.csv` and the
+derived `gem_thermal.csv` reproduce data from the **Global Energy Monitor**
+trackers (Global Coal Plant Tracker and Global Gas Plant Tracker, Vietnam),
+published by Global Energy Monitor at <https://globalenergymonitor.org> (wiki:
+<https://gem.wiki>). Global Energy Monitor releases its tracker data under the
+**Creative Commons Attribution 4.0 International (CC BY 4.0)** licence, which
+permits redistribution and adaptation — including in this repository, itself
+released under CC BY 4.0 — provided attribution is given. This note, together
+with the column-level provenance above, constitutes that attribution:
+*Data source: Global Energy Monitor, <https://globalenergymonitor.org>, CC BY
+4.0.* No GEM data is removed; it is redistributed in compliance with the
+licence.
+
 ## Known limitations
 
 Single observer; no independent second reviewer; per-row audit trail
