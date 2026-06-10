@@ -19,9 +19,25 @@ hand). Use symbolic references that resolve to the live number at build time —
 "Figure 2", etc. Each heading, figure, table, and annex carries a stable label;
 prose cites the label, never the number.
 
-*(Transitional note: `slides/manuscript/main.md` still carries hardcoded numbers
-pending the symbolic-reference migration — see `tickets/0518-migrate-manuscript-to-symbolic-cross-ref.erg`.
-New prose must not add more hardcoded numbers.)*
+This is a **hard rule**, enforced by `tests/test_manuscript_crossref.py`
+(`@pytest.mark.adherence`): `slides/manuscript/main.md` must contain no
+hand-typed `§N` / `Figure N` / `Figure SN` / `Annex X` / `Table N` literal in
+prose, and every `@sec:`/`@fig:`/`@tbl:` reference must resolve to a defined
+label.
+
+**House conventions for `main.md` (pandoc-crossref):**
+- Label every section heading `## Title {#sec:id}`, every figure
+  `![caption](path){#fig:id}`, and Table 1 `: caption {#tbl:id}`. Drop any
+  hand-typed "1." / "Figure N." prefix — the build supplies the number.
+- Reference sections as `[@sec:id]` (renders "§N"); annex sections as the
+  prefix-suppressed `[-@sec:annex-…]` (renders "Annex A" via `\appendix`
+  lettering — do **not** prepend the word "Annex").
+- The S-series annex figures and the `\includepdf` recognition matrix rely on
+  raw-LaTeX blocks (`\appendix`, `\renewcommand{\thefigure}{S\arabic{figure}}`,
+  `\refstepcounter{figure}\label{…}`) already in `main.md` — keep them.
+- Mark the title, the methods Related-Work section, Acknowledgements, and
+  Bibliography `{.unnumbered}`; mark annex `###`/`####` subsections
+  `{.unnumbered}` to preserve their unnumbered appearance.
 
 ## Related Work sections
 

@@ -1,0 +1,57 @@
+%erg 0.1
+Title: Fix stale "§2" quality-bar reference baked into the Exp1 quality-floor heatmap figure
+Created: 2026-06-10
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-10T18:00Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+`src/aedist/plot_quality_floor_heatmap_exp1.py` hand-types "§2" in four places
+(lines ~27, ~199, ~280, and the figure annotation at ~424), but the quality bar
+is defined in §3 of `slides/manuscript/main.md` ("Quality dimensions for
+research-grade statistical datasets"). The §2 label is therefore **wrong**, and
+because line 424 is a matplotlib annotation, the stale number is rendered
+*inside* `report/inputs/generated/fig_quality_floor_heatmap_exp1.pdf` — visible
+in the built manuscript PDF as "dark red ⇒ the §2 quality bar is not cleared".
+
+This is the same defect class ticket 0518 removed from the manuscript prose
+(hand-typed cross-reference numbers that drift), but living in a `plot_*.py`
+annotation that the manuscript's pandoc-crossref machinery cannot reach. Found
+during the 0518 migration; pre-existing on origin/main, out of 0518's scope.
+
+## Relevant files
+- `src/aedist/plot_quality_floor_heatmap_exp1.py` — four "§2" occurrences;
+  line ~424 is the figure-internal annotation that renders into the PDF.
+- `report/inputs/generated/fig_quality_floor_heatmap_exp1.pdf` — regenerated
+  artifact carrying the stale label.
+
+## Actions
+1. Decide the policy for section references inside figure annotations: a plot
+   script has no access to pandoc-crossref's numbering. Either (a) drop the
+   "§N" entirely from the annotation (e.g. "the quality bar is not cleared"),
+   or (b) refer to it by name ("the four-dimensional quality bar") so no number
+   is hand-typed. Option (b) is preferred — names don't drift.
+2. Apply the same fix to the three docstring/comment occurrences for accuracy.
+3. Regenerate the figure (`make -f experiments/render.mk …`) and confirm the
+   rendered annotation no longer carries a section number.
+
+## Test
+- An adherence test asserting `plot_quality_floor_heatmap_exp1.py` contains no
+  hand-typed `§\d` literal (the figure-annotation analogue of
+  `tests/test_manuscript_crossref.py`).
+
+## Verification
+- [ ] No `§\d` literal remains in the plot script.
+- [ ] Regenerated heatmap PDF annotation carries no section number.
+- [ ] `make check` green.
+
+## Exit criteria
+- The stale/hardcoded section reference is removed from the plot script and its
+  regenerated figure; a guard prevents regression.
+
+## Related
+Surfaced during the 0518 symbolic-cross-reference migration.

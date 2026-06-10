@@ -90,8 +90,9 @@ DEFAULT_OUTPUT_DIR = REPO_ROOT / "experiments" / "outputs" / "sota_exp2_phase_b0
 # Ticket 0512 renumbered the manuscript sections: a new §2 empirical Related
 # Work was inserted, shifting Quality dimensions to §3 and the AI capability
 # landscape to §4.
-QUALITY_BAR_START = "## 3. Quality dimensions"
-QUALITY_BAR_END = "## 4. AI capability"
+# Ticket 0518: manuscript headings are label-anchored, not number-prefixed.
+QUALITY_BAR_START = "## Quality dimensions"
+QUALITY_BAR_END = "## AI capability"
 
 FAMILY_BY_AGENT = {
     "mistral": "mistral-direct",

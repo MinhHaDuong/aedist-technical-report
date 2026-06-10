@@ -116,9 +116,15 @@ def test_author_affiliation_present():
 
 
 def test_introduction_section_exists():
+    """Introduction section present and symbolically labelled.
+
+    Ticket 0518 dropped the hand-typed "1." prefix in favour of the
+    pandoc-crossref label `{#sec:intro}` (auto-numbered §1 by LaTeX).
+    """
     md = _text()
-    assert "## 1. Introduction" in md, (
-        "numbered Introduction section §1 missing from main.md"
+    assert "## Introduction {#sec:intro}" in md, (
+        "labelled Introduction section ('## Introduction {#sec:intro}') "
+        "missing from main.md"
     )
 
 
@@ -127,28 +133,25 @@ def test_conclusion_section_exists():
 
     Ticket 0512 inserted a numbered §2 empirical Related Work and relocated the
     methods Related Work to an unnumbered section before the Conclusion, shifting
-    the Conclusion from §8 to §9.
+    the Conclusion from §8 to §9. Ticket 0518 made the number symbolic
+    (`{#sec:conclusion}`).
     """
     md = _text()
-    assert (
-        "## 9. Conclusion" in md or "## 8. Conclusion" in md or "## Conclusion" in md
-    ), "Conclusion section missing from main.md"
+    assert "## Conclusion {#sec:conclusion}" in md, (
+        "labelled Conclusion section ('## Conclusion {#sec:conclusion}') "
+        "missing from main.md"
+    )
 
 
 def test_related_work_in_body():
     """Related Work must appear in the body, not only as an annex.
 
     Ticket 0512 split Related Work into a numbered §2 empirical-landscape
-    section and an unnumbered methods section before the Conclusion. Either the
-    legacy single heading or the split empirical heading satisfies the
-    body-presence invariant this test guards.
+    section and an unnumbered methods section before the Conclusion. Ticket 0518
+    made the section number symbolic (`{#sec:related-empirical}`).
     """
     md = _text()
-    assert (
-        "## 9. Related work" in md
-        or "## Related work" in md
-        or "## 2. Related Work — Empirical landscape" in md
-    ), (
-        "Related Work section missing from the body of main.md — "
-        "it should appear as a numbered section, not only as an annex"
+    assert "## Related Work — Empirical landscape {#sec:related-empirical}" in md, (
+        "Related Work — Empirical landscape section missing from the body of "
+        "main.md — it should appear as a labelled section, not only as an annex"
     )

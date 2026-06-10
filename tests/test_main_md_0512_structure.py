@@ -33,8 +33,9 @@ def _md() -> str:
 
 def test_empirical_related_work_section_exists():
     md = _md()
-    assert "## 2. Related Work — Empirical landscape" in md, (
-        "numbered §2 empirical Related Work heading missing"
+    # Ticket 0518: number is now symbolic ({#sec:related-empirical}, auto §2).
+    assert "## Related Work — Empirical landscape {#sec:related-empirical}" in md, (
+        "labelled §2 empirical Related Work heading missing"
     )
 
 
@@ -42,7 +43,7 @@ def test_methods_related_work_before_conclusion():
     md = _md()
     methods = md.find("## Related Work — Methods")
     assert methods != -1, "unnumbered 'Related Work — Methods' section missing"
-    conclusion = md.find("## 9. Conclusion")
+    conclusion = md.find("## Conclusion {#sec:conclusion}")
     if conclusion == -1:
         conclusion = md.find("## Conclusion")
     assert conclusion != -1, "Conclusion heading missing"

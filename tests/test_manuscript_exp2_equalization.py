@@ -33,8 +33,9 @@ def _md() -> str:
 
 
 def _section6(md: str) -> str:
-    start = md.index("## 6. Experiment 2")
-    end = md.index("## 7.", start)
+    # Ticket 0518: section numbers are symbolic labels, not literal prefixes.
+    start = md.index("## Experiment 2: the commercially available frontier still falls short {#sec:exp2}")
+    end = md.index("## Need and potential for fusion {#sec:fusion}", start)
     return md[start:end]
 
 

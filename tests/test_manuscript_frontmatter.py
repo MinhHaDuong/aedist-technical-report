@@ -44,10 +44,28 @@ def _md() -> str:
 
 
 def _h1_line() -> str:
-    for line in _md().splitlines():
+    """First `# ` heading in the document body, skipping the YAML frontmatter.
+
+    The YAML frontmatter (delimited by `---`) may contain `#`-prefixed comment
+    lines (ticket 0518 added pandoc-crossref config comments); those are not
+    headings.
+    """
+    lines = _md().splitlines()
+    in_frontmatter = False
+    seen_open = False
+    for line in lines:
+        if line.strip() == "---":
+            if not seen_open:
+                seen_open = True
+                in_frontmatter = True
+            else:
+                in_frontmatter = False
+            continue
+        if in_frontmatter:
+            continue
         if line.startswith("# "):
             return line
-    raise AssertionError("no H1 line found in main.md")
+    raise AssertionError("no H1 line found in main.md body")
 
 
 def test_new_title_is_h1():

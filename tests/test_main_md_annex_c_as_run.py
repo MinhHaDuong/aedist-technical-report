@@ -42,12 +42,13 @@ def _annex_c() -> str:
     """The text of Annex C (Experiment 2) — from its heading up to the next top-level heading.
 
     Named Annex C after ticket 0482 section reorder (Temporality→A, Exp1-tech→B,
-    Exp2-tech→C, Supplementary→D, Recognition→E, Screen→F).
+    Exp2-tech→C, Supplementary→D, Recognition→E, Screen→F). Ticket 0518 made the
+    annex lettering symbolic, so anchors are now `{#sec:…}` labels.
     """
     text = MAIN_MD.read_text(encoding="utf-8")
-    start = text.index("## Annex C — Experiment 2: Technical specification")
+    start = text.index("## Experiment 2: Technical specification {#sec:annex-exp2}")
     rest = text[start:]
-    nxt = rest.index("\n## Annex D", 1)
+    nxt = rest.index("\n## Supplementary figures {#sec:annex-suppfigs}", 1)
     return rest[:nxt]
 
 

@@ -33,11 +33,11 @@ def _md() -> str:
 
 
 def _section_1_body() -> str:
-    """Text between the `## 1.` and `## 2.` headings (the whole of §1)."""
+    """Text of §1, the Introduction (ticket 0518: heading is now label-anchored)."""
     md = _md()
-    start = re.search(r"^## 1\. ", md, re.MULTILINE)
-    end = re.search(r"^## 2\. ", md, re.MULTILINE)
-    assert start and end, "could not locate §1 / §2 headings"
+    start = re.search(r"^## Introduction \{#sec:intro\}", md, re.MULTILINE)
+    end = re.search(r"^## Related Work — Empirical landscape \{#sec:related-empirical\}", md, re.MULTILINE)
+    assert start and end, "could not locate Introduction / Related Work headings"
     return md[start.start() : end.start()]
 
 

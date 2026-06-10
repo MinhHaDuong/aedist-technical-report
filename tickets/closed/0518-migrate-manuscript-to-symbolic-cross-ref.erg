@@ -2,11 +2,13 @@
 Title: Migrate manuscript to symbolic cross-references (pandoc-crossref): replace hardcoded §N/Figure N with labels
 Created: 2026-06-10
 Author: HDMX-coding-agent
+Closed: symbolic cross-references wired (pandoc-crossref); manuscript migrated; tests rewritten; PDF builds with correct auto-numbers
 
 --- log ---
 2026-06-10T12:28Z HDMX-coding-agent created
 
 2026-06-10T13:50Z HDMX-coding-agent note blocker 0512 closed — Blocked-by removed.
+2026-06-10T15:56Z HDMX-coding-agent closed — symbolic cross-references wired (pandoc-crossref); manuscript migrated; tests rewritten; PDF builds with correct auto-numbers
 --- body ---
 
 ## Context
