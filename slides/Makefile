@@ -31,6 +31,7 @@ SLIDE_ASSETS := \
 	$(LOCAL_ROOT_REPORT_GEN)/macros_p1_base.tex
 
 MANUSCRIPT_ASSETS := \
+	$(LOCAL_ROOT_REPORT_GEN)/fig_longtail_recognition.pdf \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_direct_p1_base.pdf \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_direct_cost_quality.pdf \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_spider_exp1_families.pdf \

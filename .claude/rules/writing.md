@@ -6,7 +6,22 @@
 
 **Epistemic humility on absence claims.** Use "to our knowledge" or "we did not find" — never "nobody has done" or "no prior work exists."
 
-**Forward-reference, don't link outward.** When a concept is developed later in the same document, point the reader there ("see §3.3") rather than linking to an external working document.
+**Forward-reference, don't link outward.** When a concept is developed later in the same document, point the reader there rather than linking to an external working document.
+
+**Never hardcode cross-reference numbers.** Section, figure, table, and annex
+numbers are *computed by the typesetter*, never typed into prose. A literal
+"§3.3", "Figure 5", "Table 1", or "Annex C" in the source is a defect: it drifts
+silently the moment a section is inserted, a figure is reordered, or an annex is
+renamed (ticket 0512 spent a full session re-numbering ~60 such literals by
+hand). Use symbolic references that resolve to the live number at build time —
+`\ref{sec:quality}` / `\Cref{fig:longtail}` in LaTeX, `@sec:quality` /
+`@fig:longtail` (pandoc-crossref) in Markdown — and let the build emit "§3",
+"Figure 2", etc. Each heading, figure, table, and annex carries a stable label;
+prose cites the label, never the number.
+
+*(Transitional note: `slides/manuscript/main.md` still carries hardcoded numbers
+pending the symbolic-reference migration — see `tickets/0518-migrate-manuscript-to-symbolic-cross-ref.erg`.
+New prose must not add more hardcoded numbers.)*
 
 ## Related Work sections
 

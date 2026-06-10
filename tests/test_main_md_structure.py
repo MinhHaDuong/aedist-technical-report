@@ -123,15 +123,32 @@ def test_introduction_section_exists():
 
 
 def test_conclusion_section_exists():
+    """Conclusion heading present.
+
+    Ticket 0512 inserted a numbered §2 empirical Related Work and relocated the
+    methods Related Work to an unnumbered section before the Conclusion, shifting
+    the Conclusion from §8 to §9.
+    """
     md = _text()
-    assert "## 8. Conclusion" in md or "## Conclusion" in md, (
-        "Conclusion section missing from main.md"
-    )
+    assert (
+        "## 9. Conclusion" in md or "## 8. Conclusion" in md or "## Conclusion" in md
+    ), "Conclusion section missing from main.md"
 
 
 def test_related_work_in_body():
+    """Related Work must appear in the body, not only as an annex.
+
+    Ticket 0512 split Related Work into a numbered §2 empirical-landscape
+    section and an unnumbered methods section before the Conclusion. Either the
+    legacy single heading or the split empirical heading satisfies the
+    body-presence invariant this test guards.
+    """
     md = _text()
-    assert "## 9. Related work" in md or "## Related work" in md, (
+    assert (
+        "## 9. Related work" in md
+        or "## Related work" in md
+        or "## 2. Related Work — Empirical landscape" in md
+    ), (
         "Related Work section missing from the body of main.md — "
-        "it should appear as §9 or a named section, not only as an annex"
+        "it should appear as a numbered section, not only as an annex"
     )

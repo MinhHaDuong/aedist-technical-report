@@ -28,12 +28,19 @@ CAPTION_RE = re.compile(r"^\*Figure (\d+)\.", re.MULTILINE)
 
 
 def test_figure_captions_are_consecutive() -> None:
-    """Caption numbers in document order must be the gapless sequence 1..7."""
+    """Main-body caption numbers in document order must be gapless 1..7.
+
+    Ticket 0512 unified all annex figures onto the S-scheme (S1, S2, …), so the
+    former Annex E "Figure 7" became "Figure S4", and the new §2 long-tail
+    figure entered the main-body series as Figure 1 (document order). The
+    main-body integer series is therefore 1..7; the S-series captions are
+    matched by a separate regex that does not capture the leading "S".
+    """
     text = MANUSCRIPT.read_text(encoding="utf-8")
     numbers = CAPTION_RE.findall(text)
     assert numbers == ["1", "2", "3", "4", "5", "6", "7"], (
-        "Figure caption numbers (document order) must be a gapless 1..7 "
-        f"sequence; got {numbers}"
+        "Main-body figure caption numbers (document order) must be a gapless "
+        f"1..7 sequence; got {numbers}"
     )
 
 
