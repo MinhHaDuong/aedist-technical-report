@@ -87,8 +87,11 @@ METAPROMPT_PATH = REPO_ROOT / "experiments" / "sota" / "protocol_02_metaprompt.m
 MODELS_YAML = REPO_ROOT / "experiments" / "models.yaml"
 DEFAULT_OUTPUT_DIR = REPO_ROOT / "experiments" / "outputs" / "sota_exp2_phase_b0"
 
-QUALITY_BAR_START = "## 2. Quality dimensions"
-QUALITY_BAR_END = "## 3. AI capability"
+# Ticket 0512 renumbered the manuscript sections: a new §2 empirical Related
+# Work was inserted, shifting Quality dimensions to §3 and the AI capability
+# landscape to §4.
+QUALITY_BAR_START = "## 3. Quality dimensions"
+QUALITY_BAR_END = "## 4. AI capability"
 
 FAMILY_BY_AGENT = {
     "mistral": "mistral-direct",

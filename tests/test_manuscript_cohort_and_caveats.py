@@ -87,7 +87,10 @@ def test_rho_caveat_in_abstract_and_conclusion():
     caveat = "within-model signal positive but modest, Annex F"
     # Abstract region: from the **Abstract.** marker to the first horizontal rule.
     abstract = md.split("## 1. Introduction")[0]
-    conclusion = md.split("## 8. Conclusion")[1].split("## Annex A")[0]
+    # Ticket 0512 renumbered the Conclusion from §8 to §9 (new §2 empirical RW
+    # inserted, methods RW relocated before the Conclusion).
+    conclusion_heading = "## 9. Conclusion" if "## 9. Conclusion" in md else "## 8. Conclusion"
+    conclusion = md.split(conclusion_heading)[1].split("## Annex A")[0]
     assert caveat in abstract, "ρ=0.92 caveat missing from abstract"
     assert caveat in conclusion, "ρ=0.92 caveat missing from conclusion"
 
