@@ -1,0 +1,56 @@
+%erg 0.1
+Title: Data paper: 177-plant reference as strict reconciled superset of GEM, WRI, Wikipedia (Scientific Data / Data in Brief)
+Created: 2026-06-10
+Author: claude
+Label: deferred
+Blocked-by: 0498
+
+--- log ---
+2026-06-10T00:00Z claude created — review 2026-06-09 strategy point, author validated 2026-06-10 with the superset condition
+
+--- body ---
+## Context
+
+Author decision (2026-06-10): publish the reference as a standalone data
+paper, but ONLY as a **strict, well-reconciled superset** of GEM, WRI and
+Wikipedia. This is why it is blocked by 0498 (full per-plant GEM↔reference
+HITL reconciliation): the superset claim must be earned per-plant, not
+asserted. 0498 already frames the goal — "the reference contains every GEM
+entry we judge a project — built, planned, and cancelled".
+
+Strategic value (review §1): gives the reference a DOI and citable
+identity independent of the technical report; pre-empts the
+"single-author unaudited compilation" objection; each reuse = citation;
+Paper B uses it as held-out validation object.
+
+## What to do
+
+1. After 0498 lands: extend the reconciliation to **WRI GPPD** and
+   **Wikipedia** layers with the same per-plant HITL discipline
+   (matcher-miss triage first, then compiler judgement per lead).
+2. Produce the superset audit table: for each external-source entry,
+   matched / added / excluded-with-reason. This table IS the data
+   paper's core evidence.
+3. Choose venue: Scientific Data descriptor vs Data in Brief (decide on
+   length/effort budget at writing time).
+4. Write the descriptor: collection method (PROVENANCE.md is the seed),
+   scope boundary, per-cell provenance scheme, status vocabulary,
+   validation (the audit table), reuse notes (PyPSA-VN,
+   powerplantmatching ingestion).
+5. Deposit dataset with DOI (Zenodo or journal-required repository),
+   licence consistent with the repo (CC BY 4.0, per 0510).
+
+## Exit criteria
+
+- [ ] Superset audit table generated from committed artifacts
+- [ ] Every GEM/WRI/Wikipedia project entry accounted for
+      (matched/added/excluded-with-reason)
+- [ ] Descriptor manuscript drafted
+- [ ] Dataset deposited with DOI
+- [ ] Author sign-off on venue and submission
+
+## Related
+
+0498 (GEM reconciliation, blocker), 0514 (long-tail figure — shares the
+layer logic and likely the audit data), 0510 (licence), Paper B (0465,
+0516).

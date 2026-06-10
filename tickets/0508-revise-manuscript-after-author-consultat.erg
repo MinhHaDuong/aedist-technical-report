@@ -18,6 +18,13 @@ Phase 0 decisions (2026-06-10, author-ratified):
 - Three novelty claims: (1) benchmark gap, (2) per-row provenance × temporality, (3) two-grain credibility/reliability scoring; four others demoted
 - Related Work split: §2 empirical (GEM/WRI/powerplantmatching + explicit why-we-redo-GEM paragraph); theoretical RW (LLM recall, RAG, data quality) moved before Conclusion
 - Journal target: Energy and AI (first) or SJIAOS; data paper for 177-plant reference (separate DOI) planned post-arXiV to maximise citations
+- Research-programme additions (author, 2026-06-10 night ideas), triaged:
+  IN arXiV: long-tail figure + use-case perimeters (0514, existing data only);
+  exp2 arm-1D rerun on 4 cheaper models (0515, timeboxed 1 day, detachable);
+  8-step swarm-workflow protocol as §6 prose only (0516 arXiV slice).
+  OUT (post-arXiV): swarm workflow execution (0516, Paper B); incremental
+  workflow (follow-up of 0516); data paper as strict reconciled superset of
+  GEM+WRI+Wikipedia (0517, blocked-by 0498)
 --- body ---
 ## Context
 

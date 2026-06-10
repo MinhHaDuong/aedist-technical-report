@@ -1,0 +1,61 @@
+%erg 0.1
+Title: Deterministic source-controlled swarm workflow (8 steps) — Paper B experiment; §6 prose preview in arXiV
+Created: 2026-06-10
+Author: claude
+Label: deferred
+
+--- log ---
+2026-06-10T00:00Z claude created — author idea 2026-06-10 ("idées cette nuit"); execution is POST-arXiV (Paper B); only the protocol description enters the arXiV §6
+
+--- body ---
+## Context
+
+Author design (2026-06-10): a deterministic, source-controlled workflow
+orchestrated by a frontier model (Fable/Opus) over the 18 RAG documents.
+This is the constructive follow-up the arXiV paper motivates but does not
+build. Executing it inside the arXiV cycle would weaken both papers
+(arXiV becomes half-built, Paper B loses novelty). Decision: describe the
+protocol in §6 as the research programme; execute post-arXiV.
+
+## The 8-step protocol (author, verbatim intent)
+
+1. **Align** (swarm): normalise the 18 RAG documents to a common output
+   format — province name in VN, project name in the right
+   language+grain column, single source = the doc, with line number.
+2. **Verify** step 1 (swarm).
+3. **Concatenate + pivot** by province, fuel, capacity, name, year,
+   source. Deterministic, no LLM.
+4. **Verify** step 3.
+5. **Group** rows referring to the same project (swarm by province).
+   Open design question: JSON output vs group-ID column?
+6. **Verify** step 5.
+7. **Project** the final result: determine attributes for each group.
+8. **Score and compare** against the reference.
+
+Next stage (separate ticket when this lands): rerun the workflow
+INCREMENTALLY, adding sources one at a time — the path to the long tail
+and freshness.
+
+## What to do — arXiV slice (small, goes through 0512/0513)
+
+- [ ] One paragraph in §6 describing the 8-step protocol as the research
+      programme (matches the new title's "Research Programme" claim)
+- [ ] One sentence on the incremental extension as the path to long-tail
+      coverage and freshness
+
+## What to do — Paper B slice (post-arXiV, this ticket's main body)
+
+- [ ] Design doc: orchestration, swarm fan-out/fan-in, verify-step
+      contracts, group-ID representation decision
+- [ ] Implementation + run + scoring vs reference
+- [ ] Comparison against Exp2 arms (same docs, same reference)
+
+## Exit criteria
+
+- [ ] arXiV slice merged via the 0512/0513 pipeline
+- [ ] Paper B slice: design doc reviewed by author before implementation
+
+## Related
+
+0465 (information-fusion follow-up, Paper B), 0508 perimeter, 0517 data
+paper (the reference is the held-out validation object).
