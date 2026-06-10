@@ -71,10 +71,13 @@ manuscript: manuscript/main.pdf
 # --filter ahead of --citeproc, and listing it first makes that order explicit.
 # --number-sections is what makes \ref resolve to a section number.
 #
-# Install: pandoc-crossref is not packaged in apt; the build pins the release
-# compiled against pandoc 3.1.x (binary in PATH, e.g. ~/.local/bin). Override
+# Install: pandoc-crossref is not packaged in apt; pin the release compiled
+# against the host's pandoc — currently pandoc 3.7.0.2, i.e. pandoc-crossref
+# v0.3.20 (binary in PATH, e.g. ~/.local/bin). A crossref built against a
+# different pandoc warns "incompatible API versions" and may drop output
+# silently, so re-pin to a matching release whenever pandoc is bumped. Override
 # the binary with `make PANDOC_CROSSREF=/path/to/pandoc-crossref` if it lives
-# elsewhere. See the PR / ticket 0518 for the exact download.
+# elsewhere. See tickets 0518 (introduction) and 0523 for download details.
 PANDOC_CROSSREF ?= pandoc-crossref
 
 manuscript/main.pdf: manuscript/main.md $(MANUSCRIPT_ASSETS) ../report/refs.bib
