@@ -8,13 +8,15 @@ Author: minhhaduong
 2026-06-09T20:30Z claude note Review committed at docs/2026-06-09-review.md; author concurs with all points; Imagine session to precede execution
 
 2026-06-09T21:49Z claude renumbered 0503->0508 to resolve duplicate id with 0503-portrait (author-directed)
-2026-06-10T00:00Z claude imagine Phase 0 Imagine session held with author. Decisions logged below.
+2026-06-10T00:00Z claude imagine Phase 0 Imagine session held with author; decisions recorded in body section "Phase 0 decisions"; sub-tickets 0509-0513 created
+2026-06-10T00:30Z claude note research-programme additions triaged; tickets 0514-0517 created; see body "Phase 0 decisions"
+--- body ---
+## Phase 0 decisions (2026-06-10, author-ratified)
 
-Phase 0 decisions (2026-06-10, author-ratified):
 - Title: "Can Frontier AI Build a Statistical Register? A Benchmark and Research Programme on Vietnam's Thermal Power Fleet"
 - Original talk title in Econom'IA 2026 footnote (previously ratified)
 - Annex A philosophy genealogy → cut (T1/T2 paragraphs kept); §3 lab-by-lab analysis → cut/archived to report.md (internal)
-- Repo will be made public before arXiV deposit → nettoyage ticket à créer
+- Repo will be made public before arXiV deposit → cleanup ticket 0510
 - Three novelty claims: (1) benchmark gap, (2) per-row provenance × temporality, (3) two-grain credibility/reliability scoring; four others demoted
 - Related Work split: §2 empirical (GEM/WRI/powerplantmatching + explicit why-we-redo-GEM paragraph); theoretical RW (LLM recall, RAG, data quality) moved before Conclusion
 - Journal target: Energy and AI (first) or SJIAOS; data paper for 177-plant reference (separate DOI) planned post-arXiV to maximise citations
@@ -25,7 +27,7 @@ Phase 0 decisions (2026-06-10, author-ratified):
   OUT (post-arXiV): swarm workflow execution (0516, Paper B); incremental
   workflow (follow-up of 0516); data paper as strict reconciled superset of
   GEM+WRI+Wikipedia (0517, blocked-by 0498)
---- body ---
+
 ## Context
 
 A full editorial review of `slides/manuscript/main.md` (the Econom'IA 2026
