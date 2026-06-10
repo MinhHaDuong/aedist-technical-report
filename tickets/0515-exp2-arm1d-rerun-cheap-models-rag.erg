@@ -1,0 +1,48 @@
+%erg 0.1
+Title: Exp2 arm 1D rerun — Sonnet, Mistral Medium, Mistral Small, DeepSeek: RAG rescues cheaper models (cost/perf refresh)
+Created: 2026-06-10
+Author: claude
+
+--- log ---
+2026-06-10T00:00Z claude created — author idea 2026-06-10; IN arXiV but DETACHABLE: timebox 1 day, cut without touching the rest if it slips
+
+--- body ---
+## Context
+
+The paper claims RAG rescues cheaper models on the cost/performance
+frontier. Author idea (2026-06-10): demonstrate it by running Exp2 arm 1D
+(RAG + deterministic doc set) on four cheaper/mid models — Sonnet, Mistral
+Medium, Mistral Small, DeepSeek — and refreshing the cost/performance
+figure with these points.
+
+**Detachability clause**: this ticket is IN the arXiV perimeter only if it
+completes within its timebox (~1 day wall). If runs drift, providers
+misbehave, or scoring needs new code, CUT it: revert the figure, keep the
+prose claim as-is, close the ticket with a non-finding note, move to the
+journal-version backlog.
+
+## What to do
+
+1. Sweep config in `experiments.toml` for arm 1D with the four models.
+   `no_think` and budget per the sweep-property rules. DeepSeek is MoE →
+   `repeat=3` mandatory (experiment-design rule).
+2. **Test one before blasting**: dry-run prompt assembly, then ONE real
+   call per model, inspect tokens/cost/content, then full batch.
+3. Score with the existing arm-1D scoring path (no new scoring code in
+   this ticket — if it's needed, that's the CUT signal).
+4. Refresh the cost/performance figure (plot script + Makefile artifact)
+   adding the four 1D points; caption names the cohort (0511 rule).
+5. One or two sentences in the relevant section: the cheaper-models-
+   rescued-by-RAG observation, numbers from the generated CSV.
+
+## Exit criteria
+
+- [ ] Four models run on arm 1D (DeepSeek repeat=3), within budget
+- [ ] Cost/perf figure refreshed as Makefile artifact
+- [ ] Prose numbers derived from generated CSV, adherence-guarded
+- [ ] `make check` passes
+- [ ] OR: cut cleanly with a documented non-finding, figure untouched
+
+## Related
+
+0508 perimeter; cost/perf figure scripts (plot_cost_quality.py).

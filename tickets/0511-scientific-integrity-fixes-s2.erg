@@ -1,0 +1,62 @@
+%erg 0.1
+Title: Scientific integrity fixes §2 review — cohort counts, Annex B params, seeding timeline, ρ caveat, §5 scope, status-vocab, cost claim, novelty claims
+Created: 2026-06-10
+Author: claude
+Blocked-by: 0501
+
+--- log ---
+2026-06-10T00:00Z claude created — sub-ticket of 0508; blocked by 0501 (numbers must be reconciled first)
+
+--- body ---
+## Context
+
+All eight §2 items from the 2026-06-09 review. Blocked by 0501 because the
+cohort counts and accuracy numbers must be re-derived from committed artifacts
+before the prose can be fixed.
+
+## What to do (in order)
+
+**2.1 Cohort counts 16/14/12.** One "cohorts" paragraph early in §4:
+16 models run → 2 excluded for [X, re-derive from measurements.jsonl] →
+14-model analysis cohort → 12 in Figure 4 (DeepSeek lacks quality-taxonomy
+panel). Every figure caption names its cohort.
+
+**2.2 Annex B parameter contradictions.** Regenerate the Run-parameters
+table from `experiments.toml`. Resolve max_tokens (32768 vs 8192) and
+budget_usd (15 vs 10).
+
+**2.3 Wikipedia seeding timeline.** State Wikipedia publication date(s)
+for the seeded articles. Compare against each model's training cutoff.
+State seeding intent (deliberate instrument or pre-existing outreach).
+
+**2.4 ρ = 0.92 caveat.** In abstract and conclusion add:
+"(ρ = 0.92 pooled; within-model signal positive but modest, Annex F)".
+
+**2.5 §5 scope.** In the §5 body, state which quality dimensions were
+measured (row F1, coverage, provenance counts) and which are deferred
+(Phase C cross-evaluation).
+
+**2.6 Status-vocabulary mismatch.** Add one sentence: "Proposed" (~38%
+of reference) has no equivalent in the prompt's controlled vocabulary;
+this may mechanically depress status accuracy.
+
+**2.7 Cost-savings claim.** Either: substantiate (author's own hours
+compiling the reference is a valid data point) or cut the claim.
+
+**2.8 Novelty claims.** Keep three: benchmark gap, per-row provenance ×
+temporality, two-grain credibility/reliability scoring. Demote the other
+four to plain observations. Drop the cost–F1 non-monotonicity claim entirely.
+
+## Exit criteria
+
+- [ ] Cohort paragraph in §4, all figure captions name their cohort
+- [ ] Annex B parameters match experiments.toml
+- [ ] Wikipedia seeding date stated; model-cutoff comparison present or
+      explicitly scoped
+- [ ] ρ caveat in abstract and conclusion
+- [ ] §5 scope sentence present
+- [ ] Status-vocab mismatch sentence present
+- [ ] Cost claim substantiated or cut
+- [ ] Exactly three novelty claims; others demoted
+- [ ] All numbers re-derived from artifacts (not from review text)
+- [ ] `make check` passes

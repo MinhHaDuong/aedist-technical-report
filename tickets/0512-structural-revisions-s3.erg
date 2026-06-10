@@ -1,0 +1,77 @@
+%erg 0.1
+Title: Structural revisions §3 review — RW split, §3 halved, annex scheme, §6 split, dangling refs, internal scaffolding
+Created: 2026-06-10
+Author: claude
+Blocked-by: 0509
+Blocked-by: 0511
+
+--- log ---
+2026-06-10T00:00Z claude created — sub-ticket of 0508
+
+--- body ---
+## Context
+
+Structural edits to `slides/manuscript/main.md`. Depends on 0509 (title +
+front matter settled) and 0511 (science clean) so numbering is stable.
+
+## What to do
+
+**3.1 Section numbering + Related Work split.**
+- Add §2 "Related Work — Empirical landscape": GEM, WRI,
+  powerplantmatching; explicit why-we-redo-GEM paragraph (per-cell
+  provenance, under-documented sites, reproducible compilation, licence).
+  Ends with motivation, NOT with the gap claim.
+- Move theoretical RW (LLM recall, RAG, data quality, agentic
+  architectures, gap paragraph) to a new unnumbered section "Related
+  Work — Methods" placed before the Conclusion (§7/8).
+- Renumber all subsequent sections. Fix intro roadmap (currently skips
+  §3; §6 wording "show that targeted pipeline design is needed").
+
+**3.2 §3 halved + glossary.**
+- Cut to ~50% of current length. Keep Figure 1 and the
+  envelope/integration framing. Keep "articulation as Type-III error"
+  paragraph — promote it.
+- Move lab-by-lab shipping-order analysis (features 3-and-4 parallelism,
+  DeepSeek case, constraint-axis) to report.md (internal archive) or an
+  internal annex.
+- Add a glossary box: parametric memory, RAG, agent, token, temperature,
+  F1.
+
+**3.3 Internal scaffolding.**
+- Strip all ticket numbers (0167–0173, 0198, 0214, 0453, etc.), PR
+  references (#379), commit hashes, `palette.toml`, internal paths.
+- Add Data & Code Availability URL (from 0509/0510).
+- Keep file paths that point to the public repo once it's public.
+
+**3.4 Annex figure numbering.**
+- Unified S-scheme for all annex figures: S1, S2, … throughout all
+  annexes (currently Annex D uses S1–S3, Annex E uses "Figure 7").
+
+**3.5 §6 split.**
+- Paragraph 1: 4 × 3 × 4 factorial sweep (14-model cohort, recall 0.644,
+  $0.94, etc.) — label clearly.
+- Paragraph 2: ≥2-models rule on 4 SOTA models, E1 vs E2 (Figure 6).
+  Each paragraph points at its own artifact.
+
+**3.7 Dangling references.**
+- "Experiments 1–3" (Annex B) → fix to the experiments actually in this
+  paper.
+- "Paper B" → cite as "in preparation" with working title.
+- "Protocol §3.4" in §4 → redirect to Annex C.
+- Annex F "§4 Discussion" → correct section number.
+- Annex C self-reference "Annex C" → correct to "Annex B".
+- Figure 5 "see the slides" → remove (factorial table now inline, from
+  0509).
+- Mitroff citation → convert to `[@Mitroff1974]` form.
+
+## Exit criteria
+
+- [ ] §2 empirical RW present; why-we-redo-GEM paragraph present
+- [ ] Theoretical RW moved before Conclusion
+- [ ] §3 ≤ half current word count; glossary box present
+- [ ] Lab-by-lab content archived (not in main.md)
+- [ ] No ticket/PR/commit refs in main.md
+- [ ] Annex figures numbered S1, S2, … throughout
+- [ ] §6 split into two labelled paragraphs
+- [ ] All seven dangling refs fixed
+- [ ] `make check` passes

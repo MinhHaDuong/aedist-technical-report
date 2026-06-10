@@ -1,0 +1,50 @@
+%erg 0.1
+Title: Re-title manuscript + add arXiV front/back matter (Data & Code, funding, ORCID, conflict note)
+Created: 2026-06-10
+Author: claude
+
+--- log ---
+2026-06-10T00:00Z claude created — sub-ticket of 0508; Phase 0 decisions
+
+--- body ---
+## Context
+
+First structural edit: smallest blast radius, unblocks everything that
+references the title or front matter.
+
+## What to do
+
+1. Replace title in `slides/manuscript/main.md` YAML/heading:
+   > Can Frontier AI Build a Statistical Register? A Benchmark and
+   > Research Programme on Vietnam's Thermal Power Fleet
+   Footnote on page 1: "Technical report accompanying a talk at
+   Econom'IA 2026, Paris. Original talk title: Beyond RAG: Stateful-Agentic
+   Architectures for Reliable Economic Statistics."
+
+2. Add before References:
+   **Data & Code Availability.** Code and data are available at
+   https://github.com/MinhHaDuong/aedist-technical-report (CC BY 4.0).
+   [Adjust URL once repo is public — see ticket 0510.]
+
+3. Add **Funding**: CNRS/CIRED (or appropriate statement).
+
+4. Add **Author contributions and conflicts of interest**: The author
+   compiled the 177-plant reference list and also authored the Wikipedia
+   pages for several of the plants in the list. This dual role is
+   disclosed; the reference list is provided as a supplementary artifact
+   with per-plant source citations.
+
+5. Add ORCID and institutional email to the author block.
+
+6. Add the 2×2 factorial table currently in "the slides" inline into §6
+   (removes the broken "see the slides" reference — §3.3 of the review).
+
+## Exit criteria
+
+- [ ] Title updated in `slides/manuscript/main.md`
+- [ ] Econom'IA footnote present on page 1
+- [ ] Data & Code Availability section present (URL placeholder acceptable
+      pending 0510 repo-public ticket)
+- [ ] Funding, ORCID/email, conflict note present
+- [ ] 2×2 factorial table inline in §6, "see the slides" removed
+- [ ] `make check` passes

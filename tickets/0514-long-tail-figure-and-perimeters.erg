@@ -1,0 +1,54 @@
+%erg 0.1
+Title: Long-tail figure + statistical perimeters by use case (empirical RW §2)
+Created: 2026-06-10
+Author: claude
+
+--- log ---
+2026-06-10T00:00Z claude created — author idea 2026-06-10; IN arXiV perimeter (uses existing data only)
+
+--- body ---
+## Context
+
+Author idea (2026-06-10): make the "long tail" claim empirical and define
+"complete" operationally per use case. Strengthens the new §2 empirical
+Related Work (why-we-redo-GEM, ticket 0512) and prefigures the data paper
+(0517). Uses ONLY existing committed data — no new API runs.
+
+## What to do
+
+1. **Long-tail figure**: X = 177 reference plants, sorted by visibility;
+   Y = recognition layers — known to Gold (reference, by construction),
+   GEM, Wikipedia, OSM (layer exists in fuse_runs.py — verify coverage),
+   and the model census (recognition matrix). One glance shows the
+   documented head and the under-documented tail. Script in
+   `src/aedist/plot_*.py`, PDF artifact wired in Makefile
+   (figures-are-artifacts rule). Degrade gracefully if an OSM layer is
+   too sparse — drop the row, do not fake it.
+
+2. **Statistical perimeters paragraph** (in §2 empirical RW): which
+   lifecycle perimeter serves which use:
+   - Market dispatch → operational only
+   - Investment analysis → + under construction + planned (with critical
+     reading)
+   - Development planning / modelling → + proposed
+   - Policy analysis, energy-transition studies → + cancelled/abandoned
+   This gives "complete" an operational definition per audience and
+   motivates keeping the speculative tail (consistent with 0498's
+   superset framing).
+
+3. Reference the figure from the why-we-redo-GEM paragraph (0512).
+
+## Exit criteria
+
+- [ ] plot script + Makefile target produce the long-tail PDF from
+      committed artifacts
+- [ ] Layer counts in the caption re-derived from the generated CSV
+      (derive-prose-from-artifacts rule), guarded by an adherence test
+- [ ] Perimeters paragraph in §2 empirical RW
+- [ ] Figure referenced from why-we-redo-GEM paragraph
+- [ ] `make check` passes
+
+## Related
+
+0512 (RW split), 0517 (data paper), 0498 (superset framing), 0494
+(Wikipedia recall bar — shares the layer logic).
