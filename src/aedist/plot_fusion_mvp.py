@@ -1,4 +1,4 @@
-"""Naive presence fusion MVP: UNION vs ≥2-MODELS rules — §5 discovery gain figure.
+"""Naive presence fusion MVP: UNION vs ≥2-MODELS rules — fusion-section discovery gain figure.
 
 Pipeline phase: P3 (analyze & render) — invoked by experiments/render.mk.
 
@@ -18,7 +18,7 @@ Regimes evaluated:
 
 Outputs:
   --output-csv    fusion_mvp.csv   — P/R/F1 for each (regime, rule) combination
-  --output-macros macros_fusion_mvp.tex — LaTeX macro literals for §5 prose
+  --output-macros macros_fusion_mvp.tex — LaTeX macro literals for the fusion section
   --output-figure fig_fusion_mvp.pdf   — bar chart comparing rules × regimes
 
 Usage:
@@ -497,7 +497,7 @@ def write_csv(results: list[RegimeResult], output: Path) -> None:
 
 
 def write_macros(results: list[RegimeResult], output: Path) -> None:
-    """Emit LaTeX macros for §5 prose (generated; guarded by adherence test)."""
+    """Emit LaTeX macros for the fusion section (generated; guarded by adherence test)."""
     output.parent.mkdir(parents=True, exist_ok=True)
 
     def _pct(v: float) -> str:
@@ -626,7 +626,7 @@ def make_figure(results: list[RegimeResult], output: Path) -> None:
 def main(argv: list[str] | None = None) -> None:
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
     parser = argparse.ArgumentParser(
-        description="Naive presence fusion MVP: UNION vs ≥2-MODELS — §5 discovery gain figure"
+        description="Naive presence fusion MVP: UNION vs ≥2-MODELS — fusion-section discovery gain figure"
     )
     parser.add_argument(
         "--records-glob",

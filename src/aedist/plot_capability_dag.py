@@ -1,4 +1,4 @@
-"""Render the empirical capability transition matrix for §3.
+"""Render the empirical capability transition matrix for the capability section.
 
 Pipeline phase: P3 (analyze & render) — invoked by experiments/render.mk.
 
