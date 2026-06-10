@@ -95,7 +95,7 @@ One result is a refusal rather than a score. GPT-5.5 declines the task on 3 of i
 
 ![](../report/inputs/generated/fig_direct_p1_base.pdf)\
 
-*Figure 3. Direct-query performance across 14 models and 70 runs on the 177-plant Vietnam thermal reference. Each bar is one run; family-coloured segments to the right are correctly identified plants (TP), red segments to the left are unmatched plants (FP: extracted but not in the reference). The dashed green line marks the 177-plant reference; the light-grey dotted line marks Wikipedia's light-reviewed coverage of the reference (73%), the seeded recall ceiling introduced above. Models are grouped on the vertical axis.*
+*Figure 3. Direct-query performance across 14 models and 70 runs on the 177-plant Vietnam thermal reference. Each bar is one run; family-coloured segments to the right are correctly identified plants (TP), red segments to the left are unmatched plants (FP: extracted but not in the reference). The dashed green line marks the 177-plant reference; the light-grey dotted line marks Wikipedia's light-reviewed coverage of the reference (73%), the seeded recall ceiling introduced above, with models grouped on the vertical axis.*
 
 ![](../report/inputs/generated/fig_direct_cost_quality.pdf)\
 <!-- raw data: report/inputs/generated/cost_quality.csv -->
