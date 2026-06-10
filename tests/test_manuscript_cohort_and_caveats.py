@@ -84,13 +84,12 @@ def test_cohort_counts_match_artifacts():
 def test_rho_caveat_in_abstract_and_conclusion():
     """The ρ=0.92 caveat appears in both the abstract and the conclusion."""
     md = _md()
-    caveat = "within-model signal positive but modest, Annex F"
-    # Abstract region: from the **Abstract.** marker to the first horizontal rule.
-    abstract = md.split("## 1. Introduction")[0]
-    # Ticket 0512 renumbered the Conclusion from §8 to §9 (new §2 empirical RW
-    # inserted, methods RW relocated before the Conclusion).
-    conclusion_heading = "## 9. Conclusion" if "## 9. Conclusion" in md else "## 8. Conclusion"
-    conclusion = md.split(conclusion_heading)[1].split("## Annex A")[0]
+    # Ticket 0518: the "Annex F" reference is now the symbolic [-@sec:annex-screen].
+    caveat = "within-model signal positive but modest, [-@sec:annex-screen]"
+    # Abstract region: everything before the Introduction section.
+    abstract = md.split("## Introduction {#sec:intro}")[0]
+    conclusion_heading = "## Conclusion {#sec:conclusion}"
+    conclusion = md.split(conclusion_heading)[1].split("\\appendix")[0]
     assert caveat in abstract, "ρ=0.92 caveat missing from abstract"
     assert caveat in conclusion, "ρ=0.92 caveat missing from conclusion"
 

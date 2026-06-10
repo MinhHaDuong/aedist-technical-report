@@ -1,14 +1,20 @@
-"""Enforce consecutive, gapless figure numbering in slides/manuscript/main.md.
+"""Enforce gapless, ordered figure labels in slides/manuscript/main.md.
 
-Main-text and Annex E figure captions must be numbered 1..7 in document order
-with no gaps and no non-standard suffixes (the former "Figure 2b" is banned).
-Annex D supplementary captions ("Figure S1" … "Figure S3") are a separate
-series and are intentionally excluded from this check by the `\\d+` regex,
-which does not match the leading "S".
+Since ticket 0518 the manuscript no longer hand-types figure numbers — the
+auto-numbering is delegated to pandoc-crossref + LaTeX. The numbering invariant
+is therefore expressed over the *order of `{#fig:…}` label definitions* rather
+than over grepped integers:
 
-See ticket 0483 for the renumbering rationale (a uniform permutation that moved
-the §3 capability-timeline figure to Figure 1 and absorbed the quality-floor
-heatmap "Figure 2b" into a consecutive Figure 4).
+  * the seven main-body figures appear, in document order, exactly as the
+    expected id sequence (Figure 1..7 in the PDF);
+  * the four supplementary figures (S1..S4) appear after them, in order; the
+    recognition matrix (S4) is a raw-LaTeX `\\label{fig:recognition-matrix}`.
+
+A reorder, insertion, deletion, or duplicate of a figure changes the rendered
+numbers and breaks this test — the same protection the old literal "Figure N."
+gapless-integer assertion gave, now expressed structurally.
+
+See ticket 0483 (the original renumbering) and 0512 (S-scheme unification).
 """
 
 import re
@@ -22,32 +28,56 @@ MANUSCRIPT = (
     Path(__file__).resolve().parent.parent / "slides" / "manuscript" / "main.md"
 )
 
-# Caption lines look like `*Figure 1. ...*`. The `\d+` (not `\d+\w*`) makes the
-# match SKIP `*Figure S1.*` (Annex D) and would also skip a malformed `*Figure 2b.*`.
-CAPTION_RE = re.compile(r"^\*Figure (\d+)\.", re.MULTILINE)
+# Expected main-body figure labels, in the document order that yields Figure 1..7.
+EXPECTED_MAIN = [
+    "fig:longtail",
+    "fig:capability-timeline",
+    "fig:direct-base",
+    "fig:cost-quality",
+    "fig:quality-floor",
+    "fig:exp2-arms",
+    "fig:fusion-mvp",
+]
+
+# Expected supplementary figure labels, in the order that yields S1..S4. S4 is
+# the raw-LaTeX recognition matrix, defined via \refstepcounter + \label.
+EXPECTED_SUPP = [
+    "fig:spider-families",
+    "fig:capability-dag",
+    "fig:coverage-certainty",
+    "fig:recognition-matrix",
+]
+
+# A figure label is defined either as a pandoc image attribute `{#fig:id}` or a
+# raw-LaTeX `\label{fig:id}` (the S4 includepdf case).
+FIG_LABEL_RE = re.compile(r"\{#(fig:[a-z0-9-]+)\}|\\label\{(fig:[a-z0-9-]+)\}")
 
 
-def test_figure_captions_are_consecutive() -> None:
-    """Main-body caption numbers in document order must be gapless 1..7.
-
-    Ticket 0512 unified all annex figures onto the S-scheme (S1, S2, …), so the
-    former Annex E "Figure 7" became "Figure S4", and the new §2 long-tail
-    figure entered the main-body series as Figure 1 (document order). The
-    main-body integer series is therefore 1..7; the S-series captions are
-    matched by a separate regex that does not capture the leading "S".
-    """
+def _figure_labels_in_order() -> list[str]:
     text = MANUSCRIPT.read_text(encoding="utf-8")
-    numbers = CAPTION_RE.findall(text)
-    assert numbers == ["1", "2", "3", "4", "5", "6", "7"], (
-        "Main-body figure caption numbers (document order) must be a gapless "
-        f"1..7 sequence; got {numbers}"
+    return [m.group(1) or m.group(2) for m in FIG_LABEL_RE.finditer(text)]
+
+
+def test_figure_labels_are_ordered_and_gapless() -> None:
+    """All figure labels appear in exactly the expected main-then-supp order."""
+    labels = _figure_labels_in_order()
+    assert labels == EXPECTED_MAIN + EXPECTED_SUPP, (
+        "Figure label definitions (document order) must be the gapless "
+        f"main-then-supplementary sequence.\n  expected: {EXPECTED_MAIN + EXPECTED_SUPP}\n"
+        f"  got:      {labels}"
     )
 
 
-def test_no_figure_2b() -> None:
-    """The non-standard 'Figure 2b' label must not appear anywhere."""
+def test_no_hand_typed_figure_numbers_in_captions() -> None:
+    """No `*Figure N.*` literal caption paragraph survives the migration.
+
+    The old captions were standalone italic paragraphs; pandoc-crossref now
+    supplies the number, so a surviving literal would double-number.
+    """
     text = MANUSCRIPT.read_text(encoding="utf-8")
-    assert "Figure 2b" not in text, (
-        "'Figure 2b' is a non-standard caption label and must be renumbered "
-        "to a consecutive integer (ticket 0483)"
+    # A markdown italic caption paragraph: a line that is exactly *Figure N. …*
+    literal = re.findall(r"(?m)^\*Figure S?\d+\.", text)
+    assert not literal, (
+        "Hand-typed italic figure caption(s) remain (should be image alt text "
+        f"with a {{#fig:}} label instead): {literal}"
     )
