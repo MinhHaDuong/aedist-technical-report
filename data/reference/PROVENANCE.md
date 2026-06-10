@@ -16,6 +16,31 @@ The reverse-sync (ticket 0458) must also exclude these three from the master rep
 
 **Snapshot provenance.** The pinned snapshot is now `raw/pipeline+0458-2026-06-09.ods` (config.`VN_THERMAL_MASTER_SNAPSHOT_ODS`) and yields 177 plants. **Reverse-sync complete (ticket 0458, 2026-06-09):** the formerly un-replayed local edits (0445 extensions, 0472 Kiên Lương, 0395 Yên Hưng, 0497 removal) are now in the master, and the three removed PL9.2 potential sites are recorded as **notes** on `NĐ Miền Bắc 1/2/3` stating there is **no specific correspondence** between a PL9.2 candidate location and any one slot (`note_potential_sites_0458.py` — deliberately not aliased, which would imply a false 1:1 match). The master and this snapshot are back in lockstep, so a fresh `import.sh` reproduces it — the earlier "do not re-pin" guard no longer applies. The notes sit in the non-extracted `Note` column, so the regenerated reference is byte-identical at 177.
 
+## Wikipedia seeding (recall-bar provenance, ticket 0511)
+
+The recall-bar argument in §4 ("A seeded recall bar") rests on a derivative of
+this reference having been published on Wikipedia *before* the model cohort's
+training cutoffs. The seeding provenance, per author disclosure (the dates are a
+provenance fact, not a re-derived statistic):
+
+| Seeded page | First published | Origin |
+|---|---|---|
+| List of power stations in Vietnam (all fuels) | July 2019 | Created by an intern in the author's group from the author's reference list at the time |
+| List of coal power stations in Vietnam | 2019-07-05 (August 2019 informed) | Split from the all-fuels list above, from the same reference |
+
+Both pages therefore predate the entire 2026-era Experiment 1 model cohort by
+roughly six and a half years — comfortably before any plausible training cutoff.
+**Scope of the guarantee:** the *built-fleet* coverage (operating/retired) has
+existed on these pages since 2019 and is firmly inside every model's cutoff. The
+*pipeline tail* (proposed/announced) is weaker: many of those rows are PDP8-era
+(post-2019) additions that grew the page over time and may postdate some
+cutoffs. The recall bar is thus solidly substantiated for the built fleet and an
+upper-bound heuristic for the forward-looking pipeline — consistent with §4's
+statement that "the pipeline tail, which even Wikipedia barely carries, is the
+reference's unique contribution." The seeding was a deliberate group activity
+(intern-authored from the reference), not a benchmark instrument designed to
+plant the answer key.
+
 ## Adopted release (v2.3, ticket 0395, 2026-06-09)
 
 **The frozen reference is `vietnam_thermal_plants_v2_classified.csv` at 180 plants**: v2.2 (176) plus four potential coal sites from PDP planning documents — Kim Sơn (Ninh Bình, 3000 MW), Rạng Đông (Nam Định, 2400 MW, distinct from the existing Rang Dong cogeneration entry), Yên Hưng (Quảng Ninh, 1200 MW, PDP7 planned), and Phú Thọ (Phú Thọ, 600 MW). All four are status "1 announced". Primary sources: Study E542 Table PL9.2 (PDP8 draft 3, Institute of Energy, 2020-11) for Kim Sơn, Rạng Đông, and Phú Thọ; PDP7 Annex 1 + Annex 2 for Yên Hưng. Added via XML surgery on the ODS snapshot (`add_plants_0395.py`), re-extracted through the standard pipeline. The Exp2 FP audit `reference_hole` bucket drops from 95 occurrences (v1 baseline) to 8 occurrences (91.6% reduction).

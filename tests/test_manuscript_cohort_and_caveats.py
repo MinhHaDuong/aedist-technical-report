@@ -29,6 +29,7 @@ MAIN_MD = REPO_ROOT / "slides" / "manuscript" / "main.md"
 TOML = REPO_ROOT / "experiments" / "experiments.toml"
 XEVAL_CSV = REPO_ROOT / "experiments" / "derived" / "exp1_cross_eval.csv"
 DIFF_TEX = REPO_ROOT / "report" / "inputs" / "generated" / "tab_status_difficulty.tex"
+PROVENANCE_MD = REPO_ROOT / "data" / "reference" / "PROVENANCE.md"
 
 # The spider figure (Annex D / Fig S1) renders one panel per family for these
 # four families; models in any other family (DeepSeek) get no panel. Mirrors
@@ -133,6 +134,27 @@ def test_exactly_three_novelty_claims_survive():
     ]
     for s in survivors:
         assert s in md, f"surviving novelty claim missing: {s!r}"
+
+
+def test_wikipedia_seeding_date_matches_provenance():
+    """The §4 Wikipedia-seeding date in the manuscript matches PROVENANCE.md.
+
+    This is a provenance fact (author disclosure recorded in PROVENANCE.md),
+    not a re-derived statistic — the test enforces that the manuscript's date
+    and the committed provenance record agree, so neither can drift silently.
+    """
+    if not PROVENANCE_MD.exists():
+        pytest.skip("PROVENANCE.md not found")
+    prov = PROVENANCE_MD.read_text(encoding="utf-8")
+    assert "2019-07-05" in prov, "PROVENANCE.md must record the coal-list split date"
+    md = _md()
+    # The manuscript must cite the same 2019 split date and keep the
+    # built-vs-pipeline coverage caveat (no over-claim that every plant was
+    # visible to every model).
+    assert "5 July 2019" in md, "manuscript must state the seeded-page split date"
+    assert "built fleet" in md and "pipeline tail" in md, (
+        "seeding paragraph must preserve the built-vs-pipeline coverage caveat"
+    )
 
 
 def test_status_vocab_mismatch_sentence_present():
