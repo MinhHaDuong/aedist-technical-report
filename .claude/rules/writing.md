@@ -20,8 +20,8 @@ hand). Use symbolic references that resolve to the live number at build time —
 prose cites the label, never the number.
 
 *(Transitional note: `slides/manuscript/main.md` still carries hardcoded numbers
-pending the symbolic-reference migration — see the migration ticket. New prose
-must not add more hardcoded numbers.)*
+pending the symbolic-reference migration — see `tickets/0518-migrate-manuscript-to-symbolic-cross-ref.erg`.
+New prose must not add more hardcoded numbers.)*
 
 ## Related Work sections
 
