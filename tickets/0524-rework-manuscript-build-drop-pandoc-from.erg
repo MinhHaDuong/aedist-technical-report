@@ -1,0 +1,66 @@
+%erg 0.1
+Title: Rework manuscript build: drop pandoc from CI, weigh LaTeX vs local-only
+Created: 2026-06-10
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-10T22:03Z HDMX-coding-agent created
+
+--- body ---
+## Context
+The manuscript build (`slides/manuscript/main.md` → `main.pdf`) depends on
+`pandoc` + `pandoc-crossref` (introduced by ticket 0518 for symbolic
+cross-references). The CI workflow `.github/workflows/docs-build.yml` was never
+updated to install `pandoc-crossref`, so its "Build manuscript" step fails with
+`Could not find executable pandoc-crossref` the moment it actually runs. PR #939
+(a one-line Makefile comment change) was the first PR to trigger it and went red.
+
+Compounding facts found 2026-06-10:
+- CI's pandoc is **3.1.3** (apt on ubuntu-24.04); the author's local pandoc is a
+  static **3.7.0.2** binary. So the two environments already diverge, and a
+  matching `pandoc-crossref` differs by version (v0.3.20 needs pandoc ≥ 3.7.0.2;
+  a 3.1.x-matching crossref would be older).
+- The manuscript has effectively **never built in CI** — the `chore` path-filter
+  also skipped it on every prior manuscript PR (see ticket 0525). #939 only
+  triggered it because its diff was Makefile-only.
+- `report.pdf` and `slides.pdf` are **tectonic-only** — they do not need pandoc
+  at all. Only the manuscript pulls in the pandoc toolchain.
+
+## Design direction (author, 2026-06-10)
+"Use LaTeX instead of pandoc, and as few CI builds as possible." Minimise the CI
+build matrix; do not pin a second pandoc + pandoc-crossref toolchain into CI just
+to mirror the local manuscript build.
+
+## Options to weigh
+1. **Convert manuscript to LaTeX** (tectonic-built like report/slides),
+   eliminating pandoc + pandoc-crossref entirely. NOTE: this reverses ticket 0518
+   and the `main.md` pandoc-crossref house conventions in
+   `.claude/rules/writing.md` (`{#sec:…}`/`[@fig:…]` machinery, the τ fix, the
+   `\appendix` raw-LaTeX blocks). Substantial; touches writing rules + adherence
+   tests (`tests/test_manuscript_crossref.py`).
+2. **Keep `main.md` + pandoc, build manuscript locally only.** Remove the
+   "Build manuscript" AND "Install pandoc" steps from `docs-build.yml` (report +
+   slides stay green, tectonic-only). Optionally add a local pre-push hook that
+   runs `make -C slides manuscript/main.pdf` and degrades gracefully when
+   `pandoc-crossref` is absent. In this world the local env (3.7.0.2 / v0.3.20)
+   is the only build env.
+
+## Folded task
+Fix the `slides/Makefile` pandoc-crossref install comment (lines ~74–77). It
+currently reads "compiled against pandoc 3.1.x" — accurate for CI today, wrong
+once the build is local-only. Supersedes closed PR #939 (which prematurely
+changed it to 3.7.0.2). Make the comment match whichever build env is chosen.
+
+## Relevant files
+- `.github/workflows/docs-build.yml` — manuscript + pandoc install steps
+- `slides/Makefile` — `manuscript/main.pdf` rule + install comment
+- `slides/manuscript/main.md` — the manuscript source
+- `.claude/rules/writing.md` — `main.md` pandoc-crossref house conventions
+- `tests/test_manuscript_crossref.py` — adherence test tied to option 1
+
+## Exit criteria
+- [ ] Approach chosen (LaTeX conversion vs local-only pandoc) and recorded.
+- [ ] CI no longer fails on the manuscript / `pandoc-crossref`.
+- [ ] `slides/Makefile` install comment matches the actual build environment.
+- [ ] If local-only: manuscript steps removed from `docs-build.yml`; report +
+      slides CI still green.
