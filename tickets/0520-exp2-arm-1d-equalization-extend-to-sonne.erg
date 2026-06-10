@@ -1,0 +1,48 @@
+%erg 0.1
+Title: Exp2 arm-1D equalization: extend to Sonnet, Mistral Medium/Small, DeepSeek (new API runs)
+Created: 2026-06-10
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-10T15:08Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+The reopened 0515 (PR #930) confirmed RAG **equalisation** on the four-agent
+Exp 2 cohort (Anthropic/Mistral/OpenAI/Qwen) using existing data — no new API
+runs. The ticket *title* also named four out-of-cohort models — Sonnet, Mistral
+Medium, Mistral Small, DeepSeek — whose arm-1D points would extend the
+equalisation evidence to a wider model set. Those runs were deferred (the prior
+CUT's probe outputs did not survive, and 0515 was scoped to existing data).
+This ticket tracks the deferred extension so it is not silently lost.
+
+## What to do
+
+1. Run Exp2 arm 1D (RAG + deterministic doc set) on the four models. Apply the
+   journal-backlog fixes the prior CUT documented:
+   - **served-DeepSeek selection** (v3.2 retired from OpenRouter; pick a served
+     endpoint, and use OpenRouter's `reasoning:` disable field — the harness
+     `extra_body.think=false` was ignored by the DeepSeek backend).
+   - **canonicalizer support for bilingual / link-formatted source columns**
+     (Mistral Small output was unscoreable).
+   - DeepSeek is MoE → `repeat=3` mandatory.
+2. Test-one-before-blasting (mandatory): dry-run, one real call per model,
+   inspect tokens/cost/content, then batch.
+3. Score via the existing arm-3 path; compute delta arm0→arm1D per model.
+4. If the new points support equalisation, fold them into the §6 observation
+   (numbers from the generated CSV, adherence-guarded) and consider an F1 panel
+   on the Exp 2 figure (it currently plots coverage/cost, not F1).
+
+## Exit criteria
+
+- [ ] Four models run on arm 1D (DeepSeek repeat=3), within budget
+- [ ] Delta arm0→arm1D scored; equalisation evaluated for the extended set
+- [ ] §6 updated if supported (CSV-derived, adherence-guarded), else documented
+- [ ] `make check` passes
+
+## Related
+
+0515 (the four-agent equalisation, closed via PR #930); 0508 perimeter.
+This is journal-version work (new API spend) — not in the arXiv critical path.
