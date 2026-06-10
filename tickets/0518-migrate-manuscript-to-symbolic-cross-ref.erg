@@ -1,0 +1,56 @@
+%erg 0.1
+Title: Migrate manuscript to symbolic cross-references (pandoc-crossref): replace hardcoded §N/Figure N with labels
+Created: 2026-06-10
+Author: HDMX-coding-agent
+Blocked-by: 0512
+
+--- log ---
+2026-06-10T12:28Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+`slides/manuscript/main.md` uses hand-typed cross-references (`§3.3`,
+`Figure 4`, `Annex C`, `Figure S1`). These silently rot under restructuring —
+ticket 0512's section renumbering forced manual §N bookkeeping and the stale-base
+incident (2026-06-10) showed how fragile hand-typed numbers are. The author
+wants symbolic labels + references so numbers are never typed by hand.
+
+## What to do
+
+1. Wire the build: `slides/Makefile` pandoc invocation gains `--number-sections`
+   and the `pandoc-crossref` filter (install it; it is NOT currently installed —
+   add to the toolchain/`uv`/system deps and document). Filter must run before
+   `--citeproc`.
+2. Label headings/figures: add `{#sec:id}` to section headings and `{#fig:id}`
+   to figure blocks throughout main.md and all annexes.
+3. Convert prose: every hand-typed `§N` / `Figure N` / `Annex X` / `Figure SN`
+   reference → `[@sec:id]` / `[@fig:id]` form.
+4. Rewrite the literal-matching adherence tests that pin `## N. Title` / `§N` /
+   `Figure N`: `tests/test_manuscript_figure_numbering.py`,
+   `tests/test_main_md_structure.py`, and any 0512 structure test — they must
+   assert on labels/ids, not literal numbers.
+5. Update `.claude/rules/writing.md` to MANDATE symbolic refs (the interim fix
+   in the 0512/migration PR only stops prescribing hardcoded §N; this ticket
+   makes symbolic the rule once the build supports it).
+
+## First test
+
+An adherence test asserting main.md contains NO hand-typed section/figure
+reference literal (regex for `§\d`, `Figure \d`, `Figure S\d` in prose, modulo
+labelled definitions), and that every `@sec:`/`@fig:` reference resolves to a
+defined `{#sec:}`/`{#fig:}` label.
+
+## Verification
+
+- [ ] `pandoc-crossref` installed + wired in `slides/Makefile`; manuscript PDF
+      builds with auto-numbered sections/figures and resolved refs.
+- [ ] No hand-typed `§N`/`Figure N` reference literals remain in main.md prose.
+- [ ] Adherence tests rewritten to label-based assertions; `make check` green.
+- [ ] `.claude/rules/writing.md` mandates symbolic refs.
+
+## Related
+
+Surfaced by 0512 (structural renumbering); harness-level sibling 0519
+(IDH global rule). Blocked-by: 0512 (run on the final restructured manuscript).
