@@ -1,0 +1,32 @@
+%erg 0.1
+Title: Fix dropped Greek tau glyph in manuscript PDF
+Created: 2026-06-10
+Author: HDMX-coding-agent
+Closed: autoclosed — PR #938
+
+--- log ---
+2026-06-10T21:26Z HDMX-coding-agent created
+
+2026-06-10T21:34Z HDMX-coding-agent closed — autoclosed — PR #938
+--- body ---
+## Context
+`slides/manuscript/main.md` used a literal Greek τ (U+03C4) in prose for the
+"Kendall τ" statistic (4 occurrences: lines ~180, 505, 507×2). Tectonic's text
+font `lmroman10-regular` has no glyph for U+03C4, so on build it emitted
+`Missing character: There is no τ (U+03C4)` and **silently dropped** the symbol —
+the PDF read "Kendall  = +0.215". A content defect, not a typesetting nit.
+
+Found while rebuilding `manuscript/main.pdf` after installing pandoc-crossref.
+Sibling symbols on the same lines (ρ, ≤, ×) rendered fine — only τ was missing
+from the text font — so the fix is scoped to τ alone.
+
+## Actions
+1. Replace each literal `τ` with math-mode `$\tau$` in `main.md` (math font has
+   the glyph; renders as math-italic 𝜏).
+
+## Verification
+- [x] `make manuscript/main.pdf` emits no `U+03C4` / tau missing-character warning
+- [x] `pdftotext main.pdf | grep Kendall` shows `Kendall 𝜏` (glyph present)
+
+## Exit criteria
+- No literal U+03C4 remains in `main.md`; PDF renders the τ symbol.
