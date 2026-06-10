@@ -2,10 +2,12 @@
 Title: Fix dropped Greek tau glyph in manuscript PDF
 Created: 2026-06-10
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #938
 
 --- log ---
 2026-06-10T21:26Z HDMX-coding-agent created
 
+2026-06-10T21:34Z HDMX-coding-agent closed — autoclosed — PR #938
 --- body ---
 ## Context
 `slides/manuscript/main.md` used a literal Greek τ (U+03C4) in prose for the
