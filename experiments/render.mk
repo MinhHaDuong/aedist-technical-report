@@ -109,6 +109,10 @@ ANALYSIS_WIKI_COAL     := $(ANALYSIS_REPO_ROOT)/data/reference/raw/wikipedia_coa
 ANALYSIS_WIKI_POWER    := $(ANALYSIS_REPO_ROOT)/data/reference/raw/wikipedia_power_vietnam-2026-06-09.wikitext
 ANALYSIS_CONCORDANCE_CSV := $(ANALYSIS_REPO_ROOT)/data/reference/tab_source_concordance.csv
 ANALYSIS_WIKI_BAR_CSV  := $(ANALYSIS_REPO_ROOT)/data/reference/tab_wikipedia_recall_bar.csv
+# Long-tail per-plant layer-membership table (ticket 0514): one row per
+# reference plant with Gold/GEM/Wikipedia/model-census documentation flags.
+# The long-tail figure reads THIS CSV; caption counts re-derive from it.
+ANALYSIS_LONGTAIL_CSV  := $(ANALYSIS_REPO_ROOT)/data/reference/tab_longtail_layers.csv
 # Fusion MVP uses the v2.1 locked reference (173 plants, ticket 0485) so that
 # Fig 5 is consistent with all other Exp1/2 manuscript sections.  The live
 # ANALYSIS_EXPERT_REF has grown to v2.3 (180 plants) which post-dates the
@@ -851,6 +855,34 @@ $(ANALYSIS_WIKI_BAR_CSV): $(ANALYSIS_EXPERT_REF) $(ANALYSIS_WIKI_COAL) $(ANALYSI
 		$(ANALYSIS_REPO_ROOT)/src/aedist/reconcile.py
 	uv run python -m aedist.tabulate_wikipedia_recall_bar --output $@
 
+# Long-tail recognition (ticket 0514). Two one-output rules:
+#   (1) the per-plant layer CSV — the slow LP-reconciliation derivation, shared
+#       with the concordance script's fold/reconcile machinery (imported) and
+#       the exp1_recognition census library; reads records + reference + GEM +
+#       Wikipedia snapshots + those scripts.
+#   (2) the PDF — renders FROM the committed CSV (--from-csv), so its only data
+#       prerequisite is the CSV (plus the plot script). Caption counts are
+#       re-derived from the CSV by the plot script (derive-prose rule).
+$(ANALYSIS_LONGTAIL_CSV): $(ANALYSIS_EXP1_BATCH2_RECORDS) $(ANALYSIS_EXPERT_REF) \
+		$(ANALYSIS_GEM_REF) $(ANALYSIS_WIKI_COAL) $(ANALYSIS_WIKI_POWER) \
+		$(ANALYSIS_REPO_ROOT)/src/aedist/plot_longtail_recognition.py \
+		$(ANALYSIS_REPO_ROOT)/src/aedist/tabulate_source_concordance.py \
+		$(ANALYSIS_REPO_ROOT)/src/aedist/exp1_recognition.py \
+		$(ANALYSIS_REPO_ROOT)/src/aedist/reconcile.py
+	uv run python -m aedist.plot_longtail_recognition --csv-only \
+	    --records "$(ANALYSIS_EXPERIMENTS_DIR)/outputs/exp1_batch2/*.record.json" \
+	    --reference $(ANALYSIS_EXPERT_REF) --gem $(ANALYSIS_GEM_REF) \
+	    --csv $@
+
+$(ANALYSIS_GEN)/fig_longtail_recognition.pdf $(ANALYSIS_GEN)/macros_longtail.tex &: \
+		$(ANALYSIS_LONGTAIL_CSV) \
+		$(ANALYSIS_REPO_ROOT)/src/aedist/plot_longtail_recognition.py
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.plot_longtail_recognition --from-csv \
+	    --csv $(ANALYSIS_LONGTAIL_CSV) \
+	    --output $(ANALYSIS_GEN)/fig_longtail_recognition.pdf \
+	    --output-macros $(ANALYSIS_GEN)/macros_longtail.tex
+
 # Interactive recognition matrix (ticket 0450): dev-tool HTML for LP matcher
 # QA — hover any cell to see the reference-vs-reply comparison table.  Output
 # is gitignored (nothing downstream consumes it); not in RENDER_CHART_FIGURES.
@@ -920,7 +952,10 @@ RENDER_CHART_FIGURES := \
 	$(ANALYSIS_GROUNDING_LADDER_FIG) \
 	$(ANALYSIS_FUSION_MVP_CSV) \
 	$(ANALYSIS_FUSION_MVP_MACROS) \
-	$(ANALYSIS_FUSION_MVP_FIG)
+	$(ANALYSIS_FUSION_MVP_FIG) \
+	$(ANALYSIS_LONGTAIL_CSV) \
+	$(ANALYSIS_GEN)/fig_longtail_recognition.pdf \
+	$(ANALYSIS_GEN)/macros_longtail.tex
 
 chart-figures: $(RENDER_CHART_FIGURES)
 
