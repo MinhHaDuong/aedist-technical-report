@@ -2,12 +2,14 @@
 Title: Author decision: §4 attribute accuracy drift (province 0.61 to 0.89, status 0.53 to 0.57) vs abstract 'mediocre' claim
 Created: 2026-06-09
 Author: claude
+Closed: author confirmed: carve-out + causal explanation landed, guard test green
 
 --- log ---
 2026-06-09T14:48Z claude created
 
 2026-06-09T15:09Z author ratified reframing (2026-06-09); executed: line 90 + abstract carve province (0.89) out of the mediocre claim, fuel 0.54 / status 0.57, DeepSeek range 0.51->0.52; attribute-accuracy guard added to test_manuscript_derived_numbers.py
 2026-06-10T00:00Z claude note author causal explanation (2026-06-10): province is a key, structurally easy attribute — plant/complex names are toponyms, so the province is quasi-denormalised into the name itself, up to synonymous toponyms. §4 Results sentence updated to carry this rationale. All DoD items now met; closure recommended pending author confirmation.
+2026-06-10T08:03Z Claude closed — author confirmed: carve-out + causal explanation landed, guard test green
 --- body ---
 
 ## Context (discovered during 0501 manuscript→177 reconciliation)
