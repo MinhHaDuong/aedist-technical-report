@@ -1,0 +1,46 @@
+%erg 0.1
+Title: Harness: add IDH-level writing rule mandating symbolic cross-references (prevent hardcoded §N recurrence)
+Created: 2026-06-10
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-10T12:28Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+The hardcoded-`§N` cross-reference defect (2026-06-10) lived in this project's
+`.claude/rules/writing.md` ("point the reader there ('see §3.3')"), which
+*prescribed* hand-typed section numbers. Those rot under restructuring and
+caused manual bookkeeping + near-miss content loss during the 0509–0515 raid.
+The fix belongs at the **IDH (Imperial Dragon Harness) / user-global** level so
+EVERY project inherits it, not just this one.
+
+This is a cross-repo / harness change (the IDH is user-level, never vendored
+into a project — see harness-architecture memory), so it is tracked here but
+APPLIED in the harness repo / `~/.claude`, not in this project tree.
+
+## What to do (in the harness, not this repo)
+
+1. Add a user-global writing rule (e.g. `~/.claude/rules/writing.md`) with a
+   general, project-agnostic convention:
+   > **Cross-reference symbolically, never by hand-typed number.** In any
+   > document with an auto-numbering system (LaTeX, pandoc-crossref, Quarto,
+   > Sphinx), label targets and reference labels — never write `§3.3` or
+   > `Figure 4` literally. Hand-typed numbers silently rot under restructuring.
+2. Register it in `~/.claude/rules/README.md`'s index table with its scope
+   signal (condition: project builds a labelled document — `.tex`/`.qmd`/pandoc).
+3. Coordinate with the in-flight `dream-consolidate-2026-06-09` branch in
+   `~/.claude` (do not clobber its uncommitted `rules/README.md` edit).
+
+## Exit criteria
+
+- [ ] IDH-level writing rule present + indexed in `~/.claude/rules/README.md`.
+- [ ] Project-level `.claude/rules/writing.md` aligned (no longer prescribes
+      hardcoded `§N`) — done in this repo by ticket 0518's PR.
+
+## Related
+
+Project-level execution: 0518 (manuscript migration + project-rule fix).
+Surfaced during the 0509–0515 arXiv raid.
