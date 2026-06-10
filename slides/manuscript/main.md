@@ -9,9 +9,11 @@ header-includes:
   - \newunicodechar{ρ}{\ensuremath{\rho}}
 ---
 
-# Beyond RAG: Stateful-Agentic Architectures for Reliable Economic Statistics
+# Can Frontier AI Build a Statistical Register? A Benchmark and Research Programme on Vietnam's Thermal Power Fleet[^econom]
 
-Minh Ha-Duong
+[^econom]: Technical report accompanying a talk at Econom'IA 2026, Paris. Original talk title: Beyond RAG: Stateful-Agentic Architectures for Reliable Economic Statistics.
+
+Minh Ha-Duong — [ORCID 0000-0001-9988-2100](https://orcid.org/0000-0001-9988-2100) — <minh.ha-duong@cnrs.fr>
 
 CIRED — Centre International de Recherche sur l'Environnement et le Développement, CNRS, France
 
@@ -108,11 +110,32 @@ Submitting a direct query to a large language model produces an inventory-shaped
 
 How well do the state of the art tools perform when it comes to producing research-quality statistical datasets? The parametric ceiling of §4 is a deliberately handicapped baseline — no web, no tools, no reasoning budget beyond what each model carries internally. The commercially available frontier, by contrast, ships agents that combine extended reasoning, web search, document ingestion, and tool use into a single "deep research" surface. The question is whether removing the §4 handicaps suffices to clear the §2 quality bar. Even the best independent public tracker, Global Energy Monitor, covers only 89% of the reference after light review (Annex B); the frontier agents are therefore measured against an inventory no single open database fully reproduces.
 
-**Experiment 2 — SOTA frontier (Annex C).** We conduct an experiment with four state-of-the-art cloud AI agents that have extended reasoning and web access, queried over direct vendor APIs (no browser automation): Anthropic Claude Opus 4.6 (US, web_search + adaptive thinking), OpenAI GPT-5.5 (US, Responses API + web_search + reasoning), Mistral Large 2512 (FR, Agents API + web_search connector), and Qwen3-Max via DashScope (CN, web_search inside thinking mode). The fourth slot is hypothesis-relevant rather than decorative: Chinese-language investor and trade documents on Vietnamese power assets are under-indexed by Western search. The experiment runs two arms over the same four agents (N=5 each). **Arm 1 (naive)** — a single-shot prompt (Doc-07) with no scaffolding, web on; the null comparator. **Arm 2 (optimised, simple-harness multi-turn)** — a multi-turn protocol in which each agent first designs its own prompt and settings (Phase A), runs once as a smoke gate (Phase B-0), then runs N=5 against a single provider under a per-session cap of 50K tokens / $3 (Phase B); this constitutes a simple harness — an LLM orchestrator (DeepSeek classifier) controlling a loop with the tested LLM as the tool. The naive-vs-optimised contrast isolates the protocol's contribution over raw model capability. Row-level F1 against the 177-plant reference is now scored for all four arms (see the 2×2 factorial table); cross-model judging on the four §2 dimensions remains reserved for post-conference analysis (Phase C, ticket 0171).
+**Experiment 2 — SOTA frontier (Annex C).** We conduct an experiment with four state-of-the-art cloud AI agents that have extended reasoning and web access, queried over direct vendor APIs (no browser automation): Anthropic Claude Opus 4.6 (US, web_search + adaptive thinking), OpenAI GPT-5.5 (US, Responses API + web_search + reasoning), Mistral Large 2512 (FR, Agents API + web_search connector), and Qwen3-Max via DashScope (CN, web_search inside thinking mode). The fourth slot is hypothesis-relevant rather than decorative: Chinese-language investor and trade documents on Vietnamese power assets are under-indexed by Western search. The experiment runs two arms over the same four agents (N=5 each). **Arm 1 (naive)** — a single-shot prompt (Doc-07) with no scaffolding, web on; the null comparator. **Arm 2 (optimised, simple-harness multi-turn)** — a multi-turn protocol in which each agent first designs its own prompt and settings (Phase A), runs once as a smoke gate (Phase B-0), then runs N=5 against a single provider under a per-session cap of 50K tokens / $3 (Phase B); this constitutes a simple harness — an LLM orchestrator (DeepSeek classifier) controlling a loop with the tested LLM as the tool. The naive-vs-optimised contrast isolates the protocol's contribution over raw model capability. Row-level F1 against the 177-plant reference is now scored for all four arms (Table 1); cross-model judging on the four §2 dimensions remains reserved for post-conference analysis (Phase C, ticket 0171).
+
+| Agent | Query mode | Documents | F1 (mean) | Cost (mean, USD) |
+|-------|-----------|-----------|-----------|------------------|
+| Anthropic | naive (single-shot) | no  | 0.60 | 2.02 |
+| Anthropic | optimised (multi-turn) | no  | 0.56 | 1.78 |
+| Anthropic | naive (single-shot) | yes | 0.61 | 2.74 |
+| Anthropic | optimised (multi-turn) | yes | 0.38 | 3.60 |
+| Mistral   | naive (single-shot) | no  | 0.49 | 0.25 |
+| Mistral   | optimised (multi-turn) | no  | 0.39 | 0.23 |
+| Mistral   | naive (single-shot) | yes | 0.59 | 0.06 |
+| Mistral   | optimised (multi-turn) | yes | 0.53 | 0.21 |
+| OpenAI    | naive (single-shot) | no  | 0.63 | 0.27 |
+| OpenAI    | optimised (multi-turn) | no  | 0.65 | 0.68 |
+| OpenAI    | naive (single-shot) | yes | 0.77 | 0.48 |
+| OpenAI    | optimised (multi-turn) | yes | 0.74 | 1.05 |
+| Qwen      | naive (single-shot) | no  | 0.37 | 0.06 |
+| Qwen      | optimised (multi-turn) | no  | 0.27 | 0.21 |
+| Qwen      | naive (single-shot) | yes | 0.62 | 0.30 |
+| Qwen      | optimised (multi-turn) | yes | 0.55 | 0.76 |
+
+**Table 1.** Experiment 2 — row-level F1 and per-run API cost (USD) by agent across the 2×2 factorial (query mode × documents), N=5 per cell. The §5 narrative concerns the two **registered** arms (naive vs optimised, documents = no). The two documents = yes rows per agent are the **unregistered, exploratory** conditions added during execution (Annex C); they are reported here for completeness, not as confirmatory tests. Values re-derived from `experiments/derived/tab_exp2_2x2.csv`.
 
 ![](../report/inputs/generated/fig_exp2_arms_comparison.pdf)\
 
-*Figure 5. Experiment 2 — naive (arm 1, single-shot) vs optimised (arm 2, multi-turn) comparison, N=5 per agent. Panel (a): Plants found — TP bars (blue, upward, matched against the 177-plant reference) and FP bars (red, downward, unrecognized plants), median over runs with scored outputs; left bar = arm 1, right bar = arm 2 per agent group. Grey bars indicate runs with no matched-row scores available. Panel (b): API cost per run (USD), individual runs as scatter points. Dashed green line marks the 177-plant reference count; the light-grey dotted line marks GEM's light-reviewed coverage (89%), the best independent external database (Annex B). Row-level F1 against the 177-plant reference is now scored for all 80 runs; the 2×2 factorial analysis of F1 and cost (query mode × documents) appears in the slides and Annex C. With N=4 agents as the blocking factor, effects are reported as directional consistency (k/n agents agreeing in sign) rather than significance tests, since the minimum attainable p at n=4 is 1/2⁴ = 0.0625.*
+*Figure 5. Experiment 2 — naive (arm 1, single-shot) vs optimised (arm 2, multi-turn) comparison, N=5 per agent. Panel (a): Plants found — TP bars (blue, upward, matched against the 177-plant reference) and FP bars (red, downward, unrecognized plants), median over runs with scored outputs; left bar = arm 1, right bar = arm 2 per agent group. Grey bars indicate runs with no matched-row scores available. Panel (b): API cost per run (USD), individual runs as scatter points. Dashed green line marks the 177-plant reference count; the light-grey dotted line marks GEM's light-reviewed coverage (89%), the best independent external database (Annex B). Row-level F1 against the 177-plant reference is now scored for all 80 runs; the 2×2 factorial analysis of F1 and cost (query mode × documents) is given in Table 1 and detailed in Annex C. With N=4 agents as the blocking factor, effects are reported as directional consistency (k/n agents agreeing in sign) rather than significance tests, since the minimum attainable p at n=4 is 1/2⁴ = 0.0625.*
 
 **Observed results (operational metrics).** For agents in the naive arm (arm 1): Anthropic median 77 rows (4/5 usable, one zero-row run); Mistral median 57 rows (range 48–74); OpenAI median 83 rows (range 76–90); Qwen median 42 rows (range 33–45). For the optimised arm (arm 2): OpenAI median 86 rows versus arm 1 median 83 rows (modest improvement; individual runs 79–96 vs 76–90); Qwen median 25 rows versus arm 1 median 42 rows (regression; Qwen's Phase A self-designed protocol imposed a strict dual-source admissibility filter that constrains coverage from Turn 1). The optimised protocol costs 2–4× more per run than naive across all agents; OpenAI's ratio is most extreme (median \$0.73 optimised vs \$0.27 naive). We did not find published comparisons of frontier deep-research agents on structured-output coverage at this granularity; the contrast is mixed — modest gain for OpenAI, regression for Qwen.
 
@@ -471,6 +494,12 @@ The §4 Discussion paragraph "Internal coherence as a zero-reference screen" rep
 ## Acknowledgements
 
 We thank Econom'IA 2026 participants for their comments, in particular those that led to the updated reference list, the per-plant recognition matrix, and the status-composition analysis of task difficulty in the annex.
+
+**Data & Code Availability.** Code and data are available at https://github.com/MinhHaDuong/aedist-technical-report (CC BY 4.0).
+
+**Funding.** This work was supported by CNRS/CIRED.
+
+**Author contributions and conflicts of interest.** The author compiled the 177-plant reference list and also authored the Wikipedia pages for several of the plants in the list. This dual role is disclosed; the reference list is provided as a supplementary artifact with per-plant source citations.
 
 ## Bibliography
 
