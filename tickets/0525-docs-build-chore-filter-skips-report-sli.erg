@@ -1,0 +1,47 @@
+%erg 0.1
+Title: docs-build chore filter skips report+slides build on mixed ticket diffs
+Created: 2026-06-10
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-10T22:03Z HDMX-coding-agent created
+
+--- body ---
+## Context
+`.github/workflows/docs-build.yml` has a `changes` job (dorny/paths-filter@v3,
+`predicate-quantifier: every`, single brace-glob `chore` filter). Its comment
+claims: "chore is true ONLY when *every* changed file matches the chore filter …
+Fail-safe: ambiguity always builds." The observed behaviour is the opposite.
+
+## Observation (evidence, 2026-06-10)
+- PR #938 — files `slides/manuscript/main.md` + `tickets/closed/0523-….erg` →
+  filter `chore = true` → **all** build steps skipped (report, slides,
+  manuscript, make check). The CI run shows every build step `skipped`.
+- PR #939 — files `slides/Makefile` only → `chore = false` → build ran.
+
+So a **mixed diff containing any** `tickets/`/`.claude/`/`docs/`/STATE/README
+file skips the **entire** docs-build — including `report.pdf` and `slides.pdf`,
+the real deliverables — even when the same diff also changes source or the
+manuscript. This is how #938's `main.md` change merged without CI building
+anything.
+
+## Cause — not yet isolated
+Hypothesis: `predicate-quantifier: every` over a **single** pattern is a no-op,
+so the filter reduces to "true if any changed file matches the chore globs",
+which is the inverse of the intent. VERIFY against dorny/paths-filter semantics
+(docs or a minimal test) before changing the config — do not fix on the
+hypothesis alone.
+
+## Relevant files
+- `.github/workflows/docs-build.yml` — `changes` job, lines ~16–28
+
+## Test (write first)
+Two synthetic diffs exercised against the filter logic:
+- chore-only diff (e.g. a `tickets/**` file alone) → build steps SKIP.
+- mixed diff (a `tickets/**` file + a `slides/**` or `src/**` file) → build
+  steps RUN. (Currently this case wrongly skips.)
+
+## Exit criteria
+- [ ] A diff with at least one non-chore file always runs the full docs-build.
+- [ ] A purely-chore diff still skips (the optimisation is preserved).
+- [ ] The workflow comment matches the actual behaviour.
