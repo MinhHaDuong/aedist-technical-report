@@ -36,21 +36,51 @@ restructuring. Author-articulated intent (2026-06-10):
 - **Tone:** plain-language, **keep structure** (do not move sections — 0512
   settled that). De-jargon ML/CS terms for economists. **Whole manuscript.**
 
-## Author voice — write in Minh Ha-Duong's style (see minh.haduong.com)
+## Author voice — write in Minh Ha-Duong's style
 
-Match the author's own published voice:
-- **Claim-first** topic sentences and headings (cf. his titles: "Zero is the only
-  acceptable leakage rate for geologically stored CO2"; "Uncertainty management
-  in the IPCC: agreeing to disagree"). Lead with the point, then support it.
-- **Varied rhythm** — concise topic statements alternating with longer
-  multi-clause sentences; "neither rushed nor labyrinthine." Accessible but
-  precise.
-- **Hedge only genuine uncertainty** (he is an authority on decision-making under
-  ambiguity) — not as reflexive academic throat-clearing. Cut hedges that are
-  just timidity; keep hedges that mark real epistemic limits.
-- **Minimal first person** in the formal body; economist framing (constraints,
-  incentives, cost, value) over deterministic/benchmark mechanics.
-- Consult minh.haduong.com publication abstracts for further calibration if needed.
+Calibrated from the author's actual work, two registers read directly:
+(a) the **2026 Econom'IA "Beyond RAG" deck** — the author's own framing of THIS
+study (`minh.haduong.com/files/HaDuong-2026-EconomIA-BeyondRAG-EN.pdf`); and
+(b) the **2024 "Vietnam at the dawn of its energy transition" abstract** (Mondes
+en développement) — the formal-prose register, same PDP8/Vietnam-power subject.
+The report sits between them: formal prose, but finding-first topic sentences and
+the author's own spine. Reproduce these concrete patterns, not a vague gloss:
+
+- **Headings and topic sentences state the FINDING, not the topic.** The deck's
+  own slide titles are the model: "RAG rescues Qwen and Mistral. Multi-turn
+  hurts."; "Providing documents ensures sources-citing but are not required."
+  Lead each paragraph with its conclusion; the reader should get the point from
+  the first sentence (and from each figure's caption).
+- **The spine is the author's, verbatim from the deck:** "Models need reliable
+  data" → an ASEAN power-system model needs plant inventories → weak-statistics
+  countries can't supply them → can AI produce research-grade data from open
+  sources? Frame the whole report as that data-infrastructure question.
+- **Telegraphic, declarative, economical**, with the occasional dry aside
+  ("(=effort)", "model's memory (or imagination)") — calibrated UP to report
+  formality, but never padded with research-speak.
+
+- **Subject-first declaratives with strong verbs.** "Vietnam's PDP8 *sets a
+  course* for…", not "This paper examines…". Name the actor and the action.
+- **Concrete and quantified.** Name the number — "an estimated US $13 billion
+  annually" — never "substantial investment". The report already has the numbers;
+  surface them in the topic sentences.
+- **Claim-then-tension ("However" pivot).** State the direction, then turn hard
+  to the binding constraint. This *is* the report's spine: AI produces
+  inventory-shaped output; *however* the constraint is the documents, not the
+  model. Use that structure.
+- **End on the transferable so-what.** The 2024 abstract closes "could provide a
+  model for other middle-income countries…" — zoom from the case to the general
+  lesson. Findings should land on *where effort/money should go*, not on a score.
+- **Parallel lists** (triplets), **plain policy-economist register**, **no first
+  person** in the body, domain terms welcome but ML/CS jargon out.
+- Reference exemplar (verbatim, for the executing agent to match cadence): "The
+  plan targets significant growth in renewable energy, diversification of energy
+  sources, and reduced reliance on imported coal. However, implementing PDP8 poses
+  considerable challenges, including securing an estimated US $13 billion
+  annually… The success of this plan could provide a model for other
+  middle-income countries undergoing similar energy transitions."
+- For wider calibration, read more of the author's HAL/DOI abstracts (energy /
+  Vietnam / PDP8 genre) — note HAL is bot-protected; use the publisher/DOI page.
 
 ## Relevant files
 
@@ -103,6 +133,12 @@ at first use — only if it can be made non-fragile.
 - **Use the best Fable model.** This is high-touch authorial prose; it needs the
   strongest model and a careful, whole-document pass.
 - Single-threaded on `main.md`; branch off a freshly-fetched `origin/main`.
+- **Review protocol (author-chosen): tone anchor first, then one PR.** Before the
+  full pass, rewrite THREE representative paragraphs (suggest: the abstract, one
+  findings paragraph, one figure-framing paragraph) and stop for author proof of
+  the tone. Only after the author signs off on those three does the agent apply
+  the voice across the whole manuscript in a single PR (author reviews the full
+  diff + rebuilt PDF). Do not edit the whole document before the anchor is blessed.
 
 ## Exit criteria
 
