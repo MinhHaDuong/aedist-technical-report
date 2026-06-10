@@ -3,7 +3,7 @@ name = "aedist"
 version = "0.2.0"
 description = "AI-driven Energy Data Integration for Sustainable Transition"
 authors = [{ name = "Minh Ha-Duong", email = "minh.ha-duong@cnrs.fr" }]
-license = { text = "CC-BY-SA-4.0" }
+license = { text = "CC-BY-4.0" }
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [

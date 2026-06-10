@@ -37,11 +37,11 @@ the runner how to reach the model. Available routes:
 |-------------------|-------------------------------------|----------------------------------------------------------------------------------------|
 | `openrouter`      | `OPENROUTER_API_KEY`                | Default; OpenAI-compatible API. Covers most cloud models. Also the dispatch path for local `llama_server` (point `base_url` at the local endpoint). |
 | `ollama`          | none (local)                        | Native `/api/chat` to honour `num_ctx`; serial only (Padme has one GPU). **Deprecated** in favour of `llama_server` via `openrouter` (OpenAI-compatible, no special path needed). |
-| `anthropic`       | `ANTHROPIC_API_KEY`                 | Direct Anthropic Messages API; web-search via official tool. Ticket 0167.             |
-| `openai-responses`| `OPENAI_API_KEY`                    | Direct OpenAI Responses API; web-search + reasoning. Ticket 0168.                     |
-| `mistral-agents`  | `MISTRAL_API_KEY`                   | Direct Mistral Agents API; web-search connector. Ticket 0169.                         |
-| `qwen-dashscope`  | `DASHSCOPE_API_KEY`                 | Direct Alibaba DashScope; thinking + web_search. Ticket 0173.                         |
-| `claude-code-cli` | user's existing Claude Code session | Subprocess wrapper around `claude --print --bare`; no API key in sweep env. Ticket 0160. |
+| `anthropic`       | `ANTHROPIC_API_KEY`                 | Direct Anthropic Messages API; web-search via official tool.                           |
+| `openai-responses`| `OPENAI_API_KEY`                    | Direct OpenAI Responses API; web-search + reasoning.                                   |
+| `mistral-agents`  | `MISTRAL_API_KEY`                   | Direct Mistral Agents API; web-search connector.                                       |
+| `qwen-dashscope`  | `DASHSCOPE_API_KEY`                 | Direct Alibaba DashScope; thinking + web_search.                                       |
+| `claude-code-cli` | user's existing Claude Code session | Subprocess wrapper around `claude --print --bare`; no API key in sweep env.            |
 
 The `claude-code-cli` route is convenient for capability checks that
 should not consume an `ANTHROPIC_API_KEY` budget: bills against the
@@ -66,9 +66,9 @@ entries**:
 make staleness   # Dry-run report: what WOULD rebuild across P2+P3 (+P4).
                  # Touches nothing — always safe to run.
 make world       # Deliberate, full re-run of P2+P3+P4. Runs P2 scoring for
-                 # REAL (rewrites committed scored data, 0383 mart staleness):
+                 # REAL (rewrites committed scored data — mart staleness):
                  # REVIEW the result via `git diff` before committing. Refuses
-                 # to start on a dirty working tree. This is ticket 0360's
+                 # to start on a dirty working tree. This is the project's
                  # reproducibility oracle: `make world && git diff --exit-code`.
 ```
 
@@ -118,4 +118,12 @@ sweeps, so a rule would couple two phases the build split keeps separate
 
 ## License
 
-© 2026 Minh Ha-Duong. All rights reserved, work in progress not for redistribution.
+© 2026 Minh Ha-Duong. Released under the
+[Creative Commons Attribution 4.0 International (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/)
+licence — see the [`LICENCE`](LICENCE) file for the full legal text. You are free
+to share and adapt this material for any purpose, including commercially, provided
+you give appropriate credit (see [`CITATION.cff`](CITATION.cff)).
+
+The Global Energy Monitor comparator data under `data/reference/` is © Global
+Energy Monitor, redistributed under CC BY 4.0; see
+`data/reference/PROVENANCE.md` for attribution details.

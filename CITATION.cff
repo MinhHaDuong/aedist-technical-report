@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "If you use this software or dataset, please cite it as below."
+title: "Can Frontier AI Build a Statistical Register? A Benchmark and Research Programme on Vietnam's Thermal Power Fleet"
+authors:
+  - family-names: Ha-Duong
+    given-names: Minh
+    orcid: "https://orcid.org/0000-0001-9988-2100"
+license: CC-BY-4.0
+repository-code: "https://github.com/MinhHaDuong/aedist-technical-report"
+preferred-citation:
+  type: article
+  title: "Can Frontier AI Build a Statistical Register? A Benchmark and Research Programme on Vietnam's Thermal Power Fleet"
+  authors:
+    - family-names: Ha-Duong
+      given-names: Minh
+      orcid: "https://orcid.org/0000-0001-9988-2100"
+  year: 2026
+  # DOI is a placeholder pending the arXiv deposit (ticket 0509).
+  doi: 10.XXXXX/arXiv.XXXXX
