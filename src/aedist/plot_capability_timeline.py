@@ -1,4 +1,4 @@
-"""Render the capability-rollout swimlane for §3 of the manuscript.
+"""Render the capability-rollout swimlane for the capability section.
 
 Pipeline phase: P3 (analyze & render) — invoked by experiments/render.mk.
 

@@ -516,7 +516,7 @@ def _coverage_line(source: str) -> tuple[float, str]:
     """Reviewed coverage of the reference by an external source (ticket 0486).
 
     Reads the committed concordance artifact so the figure's recall-ceiling line
-    tracks the same number as the §4/§5/Annex-B prose (single source of truth).
+    tracks the same number as the capability / Experiment 1 / Annex B prose (single source of truth).
     """
     from aedist.config import SOURCE_CONCORDANCE_CSV
 

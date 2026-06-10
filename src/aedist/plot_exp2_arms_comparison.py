@@ -187,7 +187,7 @@ def _gem_coverage() -> tuple[int, int]:
     """GEM reviewed coverage of the reference (count, pct) from the 0486 artifact.
 
     Reads the committed concordance CSV so the Exp2 GEM ceiling line tracks the
-    same number as the §5/Annex-B prose (single source of truth).
+    same number as the Experiment 1 / Annex B prose (single source of truth).
     """
     from aedist.config import SOURCE_CONCORDANCE_CSV
 

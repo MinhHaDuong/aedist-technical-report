@@ -24,14 +24,14 @@ A cell shows the **mean** of that model's per-run sub-score — a continuous 0�
 quality value rendered on a sequential red→green colour scale (0 = the whole
 column fails the criterion, 1 = every run clears it).  The simple per-model mean
 is enough: a model whose runs systematically zero a free criterion aggregates to
-~0 and reads dark red, which is exactly the §2 "too weak to clear the bar"
+~0 and reads dark red, which is exactly the quality-bar "too weak to clear"
 signal.
 
 The internal-coherence screen is **merged into the Coherence dimension** rather
 than added as a separate disqualifying column: the inverted veto flag
 (coherence_run_veto, 1 = vetoed/degenerate) is shown as its positive complement
 ``1 − veto`` ("Internal coherence"), so higher is better in lockstep with every
-other sub-score and the ρ=0.92 reference-free screen of §4 sits naturally beside
+other sub-score and the ρ=0.92 reference-free screen sits naturally beside
 vocabulary adherence and capacity sanity.
 
 Usage:
@@ -81,7 +81,7 @@ _MIN_DISCRIMINATING_SPREAD = 0.10
 
 # The internal-coherence veto flag (score_mechanical.py): "1" = run was vetoed
 # (degenerate/repeated rows → bad), "0" = run passed the screen.  This is the
-# paper's ρ=0.92 zero-reference screen (§4).  Its polarity is INVERTED relative
+# paper's ρ=0.92 zero-reference screen.  Its polarity is INVERTED relative
 # to a sub-score, so the rendered value is its positive complement (1 − veto)
 # and it lives inside the Coherence dimension (not as a separate column).
 _VETO_COL = "coherence_run_veto"
@@ -177,8 +177,8 @@ def _subscore_value(col: str, run_value: float) -> float:
 
     Every genuine sub-score is already polarised so that 1.0 is good.  The
     internal-coherence veto flag is inverted (1.0 = vetoed/degenerate), so its
-    rendered value is the positive complement ``1 − veto`` — merging the §4
-    screen into the Coherence dimension on the same "higher is better" scale.
+    rendered value is the positive complement ``1 − veto`` — merging the
+    zero-reference screen into Coherence on the same "higher is better" scale.
 
     >>> _subscore_value("accuracy_coverage", 0.4)
     0.4
@@ -196,7 +196,7 @@ def mean_score(col: str, runs: list[float]) -> float | None:
     Polarity-corrected per :func:`_subscore_value` so higher is always better.
     Empty input → None (rendered as a no-data cell).  The plain mean is the
     deliberate aggregation choice: a model that zeros a free criterion on every
-    run averages to 0 and reads dark red, which is the §2 quality-floor signal.
+    run averages to 0 and reads dark red, which is the quality-floor signal.
 
     >>> mean_score("accuracy_coverage", [0.0, 0.0, 0.0, 0.4, 0.6])
     0.2
@@ -277,7 +277,7 @@ def _collect_runs(
 def _fmt_score(value: float) -> str:
     """Compact cell annotation: '1'/'0' only for exact values, else two decimals.
 
-    The §2 quality bar is a conjunction, so the printed extremes carry claims:
+    The quality bar is a conjunction, so the printed extremes carry claims:
     '1' must mean every run cleared the criterion and '0' must mean every run
     failed it.  Values that merely round to the extremes display as '>.99' /
     '<.01' instead (e.g. vocab adherence 0.998 is not "all clear").
@@ -421,7 +421,7 @@ def make_figure(rows: list[dict[str, str]], input_path: Path, output: Path) -> N
     # NB: not "reference-free" — the Accuracy rows are the reference-full axis.
     ax.set_title(
         "Quality-floor heatmap — Experiment 1 (parametric arm)\n"
-        "Per-model mean of each quality sub-score; dark red ⇒ the §2 quality bar is not cleared",
+        "Per-model mean of each quality sub-score; dark red ⇒ the quality bar is not cleared",
         fontsize=10, pad=28,
     )
 
