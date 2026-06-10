@@ -2,12 +2,14 @@
 Title: Exp2 arm 1D rerun — Sonnet, Mistral Medium, Mistral Small, DeepSeek: RAG equalizes model performance (equalization claim)
 Created: 2026-06-10
 Author: claude
+Closed: equalisation CONFIRMED — §6 carries it via CSV-derived numbers (qwen 0.37→0.62, mistral 0.49→0.59, spread 0.26→0.18); no new figure (author steer); new-model extension deferred; no new API calls
 
 --- log ---
 2026-06-10T00:00Z claude created — author idea 2026-06-10; IN arXiV but DETACHABLE: timebox 1 day, cut without touching the rest if it slips
 2026-06-10T10:52Z HDMX-coding-agent closed — CUT: non-finding documented; 2/4 models unusable, thesis contradicted (Mistral Medium RAG F1=0.318)
 2026-06-10T00:00Z claude reopen — author 2026-06-10: the cut decision was wrong. The agent judged on absolute F1 rather than delta. The existing fig_exp2_arms_comparison.pdf already shows Mistral and Qwen not only recovering with arm 1D but reaching the level of the other models — equalization, not merely rescue. Scope rewritten accordingly.
 
+2026-06-10T14:53Z HDMX-coding-agent closed — equalisation CONFIRMED — §6 carries it via CSV-derived numbers (qwen 0.37→0.62, mistral 0.49→0.59, spread 0.26→0.18); no new figure (author steer); new-model extension deferred; no new API calls
 --- body ---
 ## Context
 
