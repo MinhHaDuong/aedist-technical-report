@@ -1,0 +1,62 @@
+%erg 0.1
+Title: Framing + language pass — contributions list, GPT-5.5 refusals, em-dashes, caption diet, FP terminology
+Created: 2026-06-10
+Author: claude
+Blocked-by: 0512
+
+--- log ---
+2026-06-10T00:00Z claude created — sub-ticket of 0508; last before author sign-off
+
+--- body ---
+## Context
+
+Final prose quality pass on `slides/manuscript/main.md` once structure and
+science are clean. Blocked by 0512 (structural numbering must be stable).
+
+## What to do
+
+**Contributions list (§1 end).**
+Add a short bullet list naming the three contributions:
+1. Benchmark gap — first sourced evaluation of AI agents on national
+   power-plant inventory construction with per-cell provenance.
+2. Per-row provenance × temporality scoring — four-dimension quality bar
+   applied to LLM-generated tables.
+3. Two-grain credibility/reliability scoring (run-level vs model-level,
+   STANAG 2511 Admiralty analogy).
+
+**GPT-5.5 principled refusals.**
+Surface in §4 results and Discussion: GPT-5.5 declining to fabricate
+primary-sourced citations is evidence about the epistemic standard being
+tested. Currently buried in Annex B bold sentence.
+
+**Annex A.**
+Keep T1/T2 paragraphs (snapshot vs flow, as-of date). Cut the
+Parmenides/Heraclitus → IFRS → IAM philosophy genealogy.
+
+**Language fixes (representative list).**
+- "random words generator somewhere in the cloud" → "plausible-text
+  generator"
+- "How well do the state of the art tools perform when it comes to
+  producing research-quality statistical datasets?" → "How well do
+  state-of-the-art tools perform at producing research-grade statistical
+  datasets?"
+- "FP … unrecognized plants" → "unmatched plants (extracted but not in
+  the reference)" everywhere (Figures 2, 5, 7, body text)
+- Em-dash pass: convert ~50% of em-dashes in long sentences to commas,
+  colons, or sentence breaks.
+- Figure 3 caption (~200 words): move methods to Annex B, keep only
+  what the eye needs.
+- British spelling consistent throughout (optimised, colour, Annex not
+  Appendix).
+
+## Exit criteria
+
+- [ ] Contributions list at end of §1
+- [ ] GPT-5.5 refusals paragraph in §4 and/or Discussion
+- [ ] Annex A philosophy genealogy removed; T1/T2 kept
+- [ ] "random words generator" → "plausible-text generator"
+- [ ] "unmatched" terminology consistent across all figures and body
+- [ ] Em-dash density reduced in long sentences
+- [ ] Figure 3 caption ≤ 3 sentences
+- [ ] `make check` passes
+- [ ] Author sign-off for arXiV upload

@@ -1,0 +1,44 @@
+%erg 0.1
+Title: Repo public cleanup — audit secrets, licences GEM, README, CITATION.cff, LICENCE before arXiV
+Created: 2026-06-10
+Author: claude
+
+--- log ---
+2026-06-10T00:00Z claude created — sub-ticket of 0508; author decision 2026-06-10: repo public before arXiV
+
+--- body ---
+## Context
+
+The repo must be clean and public-safe before arXiV deposit. This is a
+pre-condition for ticket 0509's Data & Code Availability URL.
+
+## What to do
+
+1. **Secrets audit**: `git log --all --full-history -- '*.env' '*.key'
+   '*secret*' '*password*' '*token*'`; check `.env*` patterns in
+   `.gitignore`; verify no API keys committed.
+
+2. **GEM data licence**: Global Energy Monitor data has specific terms.
+   Verify any committed GEM-derived files are either (a) within fair-use
+   scope for research, or (b) excluded / documented as not redistributed.
+
+3. **README.md**: Write or update a public-facing README — project
+   description, how to reproduce, licence.
+
+4. **LICENCE**: Add CC BY 4.0 (text + code, consistent with arXiV deposit).
+
+5. **CITATION.cff**: Add a minimal CITATION.cff with the new title, author
+   ORCID, arXiV preprint DOI (placeholder until deposited).
+
+6. **Internal scaffolding in tracked files**: Confirm ticket numbers / PR
+   refs / internal paths have been stripped from `main.md` (handled by
+   sibling tickets 0511+); this ticket only covers repo-level files.
+
+## Exit criteria
+
+- [ ] No secrets in git history (or documented as acceptable)
+- [ ] GEM licence compliance documented
+- [ ] README.md present and public-facing
+- [ ] LICENCE (CC BY 4.0) present
+- [ ] CITATION.cff with correct title and ORCID
+- [ ] `make check` passes
