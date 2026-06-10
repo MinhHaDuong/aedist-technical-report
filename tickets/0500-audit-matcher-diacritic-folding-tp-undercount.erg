@@ -3,13 +3,11 @@ Title: Audit: matcher's missing diacritic-folding may undercount Exp1/2/3 TP (co
 Created: 2026-06-09
 Author: HDMX-coding-agent
 Label: needs-human
-Closed: Non-finding: premise refuted — production reconcile() folds diacritics on both sides via cleaner.clean_text; A/B shows folding is load-bearing (~+0.12 F1/model) AND already applied, so IMMATERIAL to reported Exp1/2/3 numbers. No re-score, no regression guard (fold is not a bug). Audit in experiments/derived/matcher_fold_audit.md (PR #905).
 
 --- log ---
 2026-06-09T13:00Z HDMX-coding-agent created — roar sweep from the 0486 GEM-coverage review.
 
 2026-06-09T12:26Z haduong note AUDIT steps 1-2 done (branch audit/0500-matcher-fold): premise REFUTED — production reconcile() folds diacritics on BOTH sides via cleaner.clean_text (NFD+Mn+d-bar). GEM 67/88 was the throwaway 0486 prototype bypassing the cleaner. A/B fold-vs-folding-disabled on Exp1 (70 runs): folding load-bearing ~+0.12 F1/model AND already applied -> IMMATERIAL to reported numbers, no re-score. Zero folding-induced FP collisions; combined-grain cases are 0498. Recommend close as non-finding + regression guard for the existing fold. Artifacts in experiments/derived/matcher_fold_audit.md. NOT setting Closed — author decision.
-2026-06-09T14:20Z Claude closed — Non-finding: premise refuted — production reconcile() folds diacritics on both sides via cleaner.clean_text; A/B shows folding is load-bearing (~+0.12 F1/model) AND already applied, so IMMATERIAL to reported Exp1/2/3 numbers. No re-score, no regression guard (fold is not a bug). Audit in experiments/derived/matcher_fold_audit.md (PR #905).
 --- body ---
 
 ## Context (observation, cause not yet established)

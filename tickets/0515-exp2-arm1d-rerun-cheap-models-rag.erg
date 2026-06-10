@@ -1,0 +1,63 @@
+%erg 0.1
+Title: Exp2 arm 1D rerun — Sonnet, Mistral Medium, Mistral Small, DeepSeek: RAG equalizes model performance (equalization claim)
+Created: 2026-06-10
+Author: claude
+
+--- log ---
+2026-06-10T00:00Z claude created — author idea 2026-06-10; IN arXiV but DETACHABLE: timebox 1 day, cut without touching the rest if it slips
+2026-06-10T10:52Z HDMX-coding-agent closed — CUT: non-finding documented; 2/4 models unusable, thesis contradicted (Mistral Medium RAG F1=0.318)
+2026-06-10T00:00Z claude reopen — author 2026-06-10: the cut decision was wrong. The agent judged on absolute F1 rather than delta. The existing fig_exp2_arms_comparison.pdf already shows Mistral and Qwen not only recovering with arm 1D but reaching the level of the other models — equalization, not merely rescue. Scope rewritten accordingly.
+
+--- body ---
+## Context
+
+The existing `fig_exp2_arms_comparison.pdf` shows a stronger finding than
+initially framed: with arm 1D (RAG + deterministic doc set), Mistral and
+Qwen not only recover — they reach the level of the other models. The
+ceiling in RAG mode is document-bound, not model-bound. This is the key
+architectural claim that motivates §6 and the stateful pipeline.
+
+The cut was wrong: the agent evaluated Mistral Medium RAG F1=0.318
+in absolute terms and concluded "thesis contradicted". The correct
+evaluation is the delta arm0→arm1D for the same model. F1=0.318 may well
+be at or above the arm-1D level of the Exp2 cohort — which would confirm
+the equalization.
+
+Adding Sonnet, Mistral M/S, DeepSeek on arm 1D extends the equalization
+evidence to models outside the original Exp2 cohort.
+
+## What to do
+
+1. Retrieve the arm-1D run outputs already produced by the previous
+   attempt (check `experiments/outputs/` for the partial runs).
+2. Score them: compute delta arm0→arm1D per model (arm0 = parametric
+   baseline for that model if available, else document as "no baseline").
+3. **The claim to evaluate**: does each new model's arm-1D F1 fall within
+   the arm-1D band of the Exp2 cohort? If yes, equalization is confirmed.
+4. Update `fig_exp2_arms_comparison` OR produce a companion figure adding
+   the new models' arm-1D points to the existing plot. Caption names the
+   cohort. Script in `src/aedist/plot_*.py`, Makefile artifact.
+5. Prose in §6: replace "RAG rescues cheaper models" with the equalization
+   claim: in arm-1D mode, performance converges — the limiting factor
+   shifts from model capability to document quality. One sentence citing
+   the figure, numbers from the generated CSV.
+6. Wire the equalization claim into the §6 architecture motivation: since
+   the model is no longer the bottleneck once good documents are provided,
+   investment must go into corpus quality and the sourcing pipeline —
+   exactly what the stateful workflow (0516) delivers.
+
+## Exit criteria
+
+- [ ] Existing run outputs located and scored (arm0→arm1D delta)
+- [ ] Equalization claim evaluated against the arm-1D band
+- [ ] Figure updated or companion figure produced as Makefile artifact
+- [ ] §6 prose: equalization claim, numbers from CSV, adherence-guarded
+- [ ] §6 architecture motivation updated (document-bound, not model-bound)
+- [ ] `make check` passes
+- [ ] OR: cut again with a documented reason if the delta analysis
+      contradicts equalization
+
+## Related
+
+0508 perimeter, 0512 (§6 split — prose lands there), 0516 (stateful
+workflow motivated by this finding), plot_exp2_arms_comparison.py.
