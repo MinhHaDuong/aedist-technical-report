@@ -1,0 +1,178 @@
+plant_id,plant_name,status,in_gold,in_gem,in_wiki,census_count
+0,An Khánh - Bac Giang,planned,1,1,1,14
+1,An Khánh 1,operational,1,1,1,32
+2,Bà Rịa GT,operational,1,1,1,1
+3,Bạc Liêu 1,cancelled,1,1,1,17
+4,Bảo Đài,cancelled,1,1,0,0
+5,Cam Pha 3,proposed,1,1,1,17
+6,Cao Ngạn,operational,1,1,1,28
+7,Cong Thanh,cancelled,1,1,1,17
+8,Cà Mau I,operational,1,1,1,48
+9,Cà Mau II,operational,1,1,1,50
+10,Cẩm Phả 1,operational,1,1,1,22
+11,Cẩm Phả 2,operational,1,1,1,17
+12,Dong Nai Formosa,operational,1,0,1,7
+13,Duc Giang - Lao Cai Chemical,proposed,1,1,1,1
+14,Dung Quat Special Economic Zone (J-Power) Phase I,proposed,1,1,1,0
+15,Dung Quat Special Economic Zone (J-Power) Phase II,proposed,1,1,1,0
+16,Duyen Hai 1,operational,1,1,1,46
+17,Duyen Hai 3,operational,1,1,1,49
+18,Duyen Hai 3 extension,operational,1,1,1,31
+19,Duyên Hải 2,operational,1,1,1,42
+20,Formosa HT2,proposed,1,0,0,15
+21,Ha Tinh Formosa Plastics Steel Complex,operational,1,1,1,10
+22,Hai Duong,operational,1,1,1,28
+23,Hai Ha CHP Phase 1,proposed,1,1,1,0
+24,Hai Ha CHP Phase 2,proposed,1,1,1,2
+25,Hai Ha CHP Phase 3,proposed,1,1,1,0
+26,Hai Ha CHP Phase 4,proposed,1,1,1,0
+27,Hai Phong 1,operational,1,1,1,37
+28,Hai Phong 2,operational,1,1,1,25
+29,Hai Phong 3,proposed,1,1,1,10
+30,Hải Phòng,proposed,1,1,1,26
+31,Kiên Lương 1,cancelled,1,1,0,13
+32,Kiên Lương 2,cancelled,1,1,0,12
+33,Kiên Lương 3,cancelled,1,1,0,7
+34,LNG Bà Rịa 2,proposed,1,1,1,4
+35,LNG Bình Định,proposed,1,1,0,10
+36,LNG Bạc Liêu,planned,1,1,0,34
+37,LNG Bến Tre,proposed,1,0,0,7
+38,LNG Chân Mây,proposed,1,1,0,6
+39,LNG Cà Mau 1,proposed,1,1,1,12
+40,LNG Cà Mau 2,proposed,1,1,1,15
+41,LNG Cà Mau 3,proposed,1,1,0,11
+42,LNG Cà Ná,planned,1,1,1,21
+43,LNG Cà Ná II,proposed,1,1,0,1
+44,LNG Cà Ná III,proposed,1,1,0,0
+45,LNG Cái Mép Hạ,proposed,1,1,0,0
+46,LNG Hiệp Phước (phase I),constructing,1,1,0,11
+47,LNG Hiệp Phước (phase II),proposed,1,1,0,2
+48,LNG Hà Tĩnh,proposed,1,1,0,12
+49,LNG Hải Lăng (1),constructing,1,1,0,17
+50,LNG Hải Lăng 2,proposed,1,1,0,0
+51,LNG Hải Lăng 3,proposed,1,1,0,0
+52,LNG Hải Phòng 1 (Tiên Lãng),proposed,1,1,1,0
+53,LNG Hải Phòng 2 (Cát Hải),proposed,1,0,0,15
+54,LNG Hải Phòng 3 (Cát Hải),proposed,1,0,0,1
+55,LNG Hải Phòng 4 (Đồ Sơn),proposed,1,0,0,2
+56,LNG Long An I,planned,1,1,0,17
+57,LNG Long An I phase 2,proposed,1,1,0,0
+58,LNG Long An II,planned,1,1,1,13
+59,LNG Long An II phase 2,proposed,1,1,0,1
+60,LNG Long Sơn (I),planned,1,1,1,20
+61,LNG Long Sơn II,proposed,1,1,1,1
+62,LNG Long Sơn III,proposed,1,1,1,0
+63,LNG Long Sơn IV (địa điểm Tây),proposed,1,1,1,0
+64,LNG Mũi Kê Gà 1,proposed,1,0,0,0
+65,LNG Mũi Kê Gà 2,proposed,1,0,0,0
+66,LNG Mũi Kê Gà 3,proposed,1,0,0,0
+67,LNG Mỹ Giang,proposed,1,1,0,5
+68,LNG Nghi Sơn (Thanh Hóa),proposed,1,1,1,29
+69,LNG Nhơn Trạch 3,constructing,1,1,1,45
+70,LNG Nhơn Trạch 4,constructing,1,1,1,43
+71,LNG Núi Thành (Quảng Nam),proposed,1,0,0,0
+72,LNG Phong Điền – Huế,proposed,1,0,0,1
+73,LNG Phú Mỹ 3.1,proposed,1,1,1,12
+74,LNG Quảng Bình,proposed,1,1,0,11
+75,LNG Quảng Nam,proposed,1,0,0,7
+76,LNG Quảng Ninh 1 (Cẩm Phả),constructing,1,1,1,25
+77,LNG Quảng Ninh 2 (Cẩm Phả),proposed,1,1,1,13
+78,LNG Quảng Ninh 3 (Quảng Yên),proposed,1,1,1,0
+79,LNG Quảng Ninh 4 (Hải Hà),proposed,1,1,1,5
+80,LNG Quảng Trạch 2,proposed,1,1,1,11
+81,LNG Quỳnh Lập,proposed,1,1,1,1
+82,LNG Sông Đốc (Cà Mau),proposed,1,1,1,0
+83,LNG Sơn Mỹ I,planned,1,1,1,32
+84,LNG Sơn Mỹ II,planned,1,1,1,30
+85,LNG Thái Bình,proposed,1,1,1,25
+86,LNG Tân Phước,proposed,1,1,1,1
+87,"LNG Tân Thuận – Đầm Dơi, Cà Mau",proposed,1,1,0,0
+88,LNG Vân Phong (J-Power),proposed,1,1,1,9
+89,LNG Vân Phong (Mỹ Giang) phase 1,proposed,1,1,1,0
+90,LNG Vân Phong (Mỹ Giang) phase 2,proposed,1,1,1,7
+91,LNG miền Nam,proposed,1,0,0,0
+92,Lee & Man,operational,1,1,1,0
+93,Long An 2,cancelled,1,1,1,5
+94,Long An 1,proposed,1,1,1,8
+95,Long Phú 1,constructing,1,1,1,43
+96,Long Phú 2,cancelled,1,1,1,36
+97,Long Phú 3,cancelled,1,1,1,27
+98,Long Son Chemical,cancelled,1,1,1,0
+99,Luc Nam,cancelled,1,0,0,7
+100,Mao Khe,operational,1,1,1,17
+101,Mong Duong 1,operational,1,1,1,45
+102,Mong Duong 2,operational,1,1,1,45
+103,Na Dương 1,operational,1,1,1,28
+104,Na Dương 2,operational,1,1,1,24
+105,Nam Dinh 1,planned,1,1,1,39
+106,Nghi Son 1,operational,1,1,1,47
+107,Nghi Son 2,operational,1,1,1,48
+108,Ninh Binh,retired,1,1,1,44
+109,Ninh Thuan Novatek project,proposed,1,0,0,10
+110,Nong Son 1,operational,1,1,1,11
+111,NĐ Cần Thơ,operational,1,0,0,30
+112,NĐ Hiệp Phước,operational,1,1,0,19
+113,NĐ LNG miền Bắc,proposed,1,1,0,0
+114,NĐ Miền Bắc 1,cancelled,1,1,0,0
+115,NĐ Miền Bắc 2,cancelled,1,1,0,0
+116,NĐ Miền Bắc 3,cancelled,1,1,0,0
+117,NĐ Thủ Đức,operational,1,0,0,24
+118,NĐ khí dư Hòa Phát II,proposed,1,0,0,1
+119,NĐ Ô Môn I,operational,1,1,1,28
+120,Phả Lại 1,operational,1,1,1,39
+121,Phả Lại 2,operational,1,1,1,39
+122,Phả Lại 3,cancelled,1,1,1,13
+123,Quang Ninh 1,operational,1,1,1,33
+124,Quang Ninh 2,operational,1,1,1,30
+125,Quang Ninh 3,proposed,1,1,1,33
+126,Quảng Trạch 1,constructing,1,1,1,35
+127,Quảng Trạch 2,cancelled,1,1,1,27
+128,Quảng Trị 1,cancelled,1,1,1,10
+129,Quảng Trị 2,planned,1,1,1,6
+130,Quảng Trị – Huế area,proposed,1,1,1,0
+131,Quỳnh Lập 1,cancelled,1,1,1,15
+132,Quỳnh Lập 2,cancelled,1,1,1,15
+133,Rang Dong cogeneration,proposed,1,1,1,0
+134,Son Dong,operational,1,1,1,20
+135,Sông Hậu 1,operational,1,1,1,42
+136,Sông Hậu 2,planned,1,1,1,34
+137,TBKHH Bà Rịa 1,operational,1,1,1,1
+138,TBKHH Bà Rịa 2,operational,1,1,1,24
+139,TBKHH Dung Quất I,planned,1,1,1,13
+140,TBKHH Dung Quất II,planned,1,1,1,11
+141,TBKHH Dung Quất III,planned,1,1,1,10
+142,"TBKHH Kiên Giang I, II",planned,1,1,0,12
+143,TBKHH Nhơn Trạch I,operational,1,1,1,44
+144,TBKHH Nhơn Trạch II,operational,1,1,1,44
+145,TBKHH Phú Mỹ 1,operational,1,1,1,51
+146,TBKHH Phú Mỹ 2.1,operational,1,1,1,42
+147,TBKHH Phú Mỹ 2.1 MR,operational,1,1,1,16
+148,TBKHH Phú Mỹ 2.2,operational,1,1,1,42
+149,TBKHH Phú Mỹ 3,operational,1,1,1,52
+150,TBKHH Phú Mỹ 4,operational,1,1,1,51
+151,TBKHH Quảng Trị (khí Báo Vàng),planned,1,1,1,17
+152,TBKHH miền Trung I,planned,1,1,1,2
+153,TBKHH miền Trung II,planned,1,1,1,1
+154,TBKHH Ô Môn I,proposed,1,1,1,15
+155,TBKHH Ô Môn II,planned,1,1,1,41
+156,TBKHH Ô Môn III,planned,1,1,1,36
+157,TBKHH Ô Môn IV,constructing,1,1,1,33
+158,Thang Long,operational,1,1,1,20
+159,Thái Bình 1,operational,1,1,1,58
+160,Thái Bình 2,operational,1,1,1,58
+161,Tân Phước 1,proposed,1,1,1,5
+162,Tân Phước 2,proposed,1,1,1,5
+163,Uong Bi I,retired,1,1,1,45
+164,Uong Bi I extension,operational,1,1,1,20
+165,Uong Bi II extension,operational,1,1,1,26
+166,Vedan Vietnam Cogeneration power station,operational,1,1,1,0
+167,Vinh Tan 1,operational,1,1,1,52
+168,Vinh Tan 2,operational,1,1,1,56
+169,Vinh Tan 3,planned,1,1,1,43
+170,Vinh Tan 4,operational,1,1,1,57
+171,Vinh Tan 4 extension,operational,1,0,1,28
+172,Vung Ang 1,operational,1,1,1,44
+173,Vung Ang 2,constructing,1,1,1,41
+174,Vung Ang 3,cancelled,1,1,1,15
+175,Vân Phong 1,constructing,1,1,1,24
+176,Yên Hưng,proposed,1,0,0,0
