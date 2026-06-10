@@ -1,0 +1,150 @@
+%erg 0.1
+Title: Tactical editorial round: reframe findings around 'constraint is data not model', age-proof AI claims, de-jargon for CIRED economists
+Created: 2026-06-10
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-10T18:04Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+The manuscript `slides/manuscript/main.md` is structurally settled (raid 0509–0518:
+retitled, reconciled to 177 plants, Related-Work split, §3 halved, symbolic
+cross-references). This is a TACTICAL editorial round — tone + framing, NOT
+restructuring. Author-articulated intent (2026-06-10):
+
+- **Audience:** arXiv technical report read by CIRED colleagues — economists, not
+  ML/CS researchers. They read for the *constraint, the incentive, the so-what*,
+  and the report is partly a **funding case** for the data-infrastructure approach.
+- **Lead throughline: "the constraint is data, not model."** The binding
+  constraint on building trustworthy statistical registers with AI is the
+  sourcing/documentation pipeline, not model capability. Equalisation (good
+  documents converge weak models), the recall bar (the answer key sits in the
+  training corpus yet goes unretrieved), and fusion (union across models recovers
+  what no single model finds) all cohere into a *where-to-invest* argument:
+  invest in corpus quality and the sourcing pipeline, not a bigger model. Make
+  this the spine.
+- **Age-proof the AI claims.** "Claims about frontier AI age like milk." Present
+  model results as *evidence for the durable structural point*, not as the
+  headline; avoid model-specific superlatives and "current SOTA" framings that
+  date. Where a time-bound claim is necessary, stamp it ("as of mid-2026").
+- **Do not over-sell the method.** Per-cell provenance + the reference-free
+  coherence screen (ρ=0.92) are *supporting*, not the lead — "locatable errors /
+  method is not the paper's strength" (author).
+- **Tone:** plain-language, **keep structure** (do not move sections — 0512
+  settled that). De-jargon ML/CS terms for economists. **Whole manuscript.**
+
+## Author voice — write in Minh Ha-Duong's style
+
+Calibrated from the author's actual work, two registers read directly:
+(a) the **2026 Econom'IA "Beyond RAG" deck** — the author's own framing of THIS
+study (`minh.haduong.com/files/HaDuong-2026-EconomIA-BeyondRAG-EN.pdf`); and
+(b) the **2024 "Vietnam at the dawn of its energy transition" abstract** (Mondes
+en développement) — the formal-prose register, same PDP8/Vietnam-power subject.
+The report sits between them: formal prose, but finding-first topic sentences and
+the author's own spine. Reproduce these concrete patterns, not a vague gloss:
+
+- **Headings and topic sentences state the FINDING, not the topic.** The deck's
+  own slide titles are the model: "RAG rescues Qwen and Mistral. Multi-turn
+  hurts."; "Providing documents ensures sources-citing but are not required."
+  Lead each paragraph with its conclusion; the reader should get the point from
+  the first sentence (and from each figure's caption).
+- **The spine is the author's, verbatim from the deck:** "Models need reliable
+  data" → an ASEAN power-system model needs plant inventories → weak-statistics
+  countries can't supply them → can AI produce research-grade data from open
+  sources? Frame the whole report as that data-infrastructure question.
+- **Telegraphic, declarative, economical**, with the occasional dry aside
+  ("(=effort)", "model's memory (or imagination)") — calibrated UP to report
+  formality, but never padded with research-speak.
+
+- **Subject-first declaratives with strong verbs.** "Vietnam's PDP8 *sets a
+  course* for…", not "This paper examines…". Name the actor and the action.
+- **Concrete and quantified.** Name the number — "an estimated US $13 billion
+  annually" — never "substantial investment". The report already has the numbers;
+  surface them in the topic sentences.
+- **Claim-then-tension ("However" pivot).** State the direction, then turn hard
+  to the binding constraint. This *is* the report's spine: AI produces
+  inventory-shaped output; *however* the constraint is the documents, not the
+  model. Use that structure.
+- **End on the transferable so-what.** The 2024 abstract closes "could provide a
+  model for other middle-income countries…" — zoom from the case to the general
+  lesson. Findings should land on *where effort/money should go*, not on a score.
+- **Parallel lists** (triplets), **plain policy-economist register**, **no first
+  person** in the body, domain terms welcome but ML/CS jargon out.
+- Reference exemplar (verbatim, for the executing agent to match cadence): "The
+  plan targets significant growth in renewable energy, diversification of energy
+  sources, and reduced reliance on imported coal. However, implementing PDP8 poses
+  considerable challenges, including securing an estimated US $13 billion
+  annually… The success of this plan could provide a model for other
+  middle-income countries undergoing similar energy transitions."
+- For wider calibration, read more of the author's HAL/DOI abstracts (energy /
+  Vietnam / PDP8 genre) — note HAL is bot-protected; use the publisher/DOI page.
+
+## Relevant files
+
+- `slides/manuscript/main.md` — the manuscript (whole-document pass).
+- Figures referenced in it (long-tail recognition, capability timeline, Exp1
+  matrix + quality-floor heatmap, cost–quality, Exp2 arms, fusion, spider).
+- The glossary box (added by 0512) — lean on it; gloss ML terms at first use.
+
+## Actions
+
+1. **Sharpen the findings into crisp, claim-first statements**, reframed around
+   the data-not-model spine. The interesting findings to formulate clearly:
+   equalisation (documents converge models); the recall bar (knowledge present in
+   the corpus, unretrieved); fusion as a recall lever (no new calls); the
+   reproducible-compilation gap (why redo GEM). Frame each as *what it means for
+   where effort/money should go*, not as a leaderboard result.
+2. **Make each figure earn its place.** For every figure, ensure the caption +
+   surrounding prose state plainly **what the reader should see** and **what it
+   argues**. An economist should grasp the point of each figure without parsing
+   the mechanics. Do not change the figures or their numbers — only the prose
+   that frames them.
+3. **De-jargon, whole manuscript.** Replace or gloss ML/CS jargon (RAG, agentic,
+   token, temperature, F1, MoE, parametric, etc.) in plain language at first use;
+   keep statistical/economic terms an economist knows. Shorten dense sentences;
+   lead with the point. **Keep section structure intact.**
+4. Age-proof time-bound AI claims; demote model superlatives to supporting
+   evidence for the structural argument.
+
+## Invariants (must not break)
+
+- **Every empirical number stays identical** — this is framing/wording only.
+  Re-derive nothing; do not alter any figure, table, or statistic. The adherence
+  tests that re-derive numbers (cohort counts, equalisation, Table 1, etc.) must
+  stay green.
+- **No structural change** — no section moves/renames (0512 is settled).
+- **Symbolic cross-references only** (`@sec:`/`@fig:`/`@tbl:`) per `.claude/rules/
+  writing.md` — do not reintroduce hand-typed `§N`/`Figure N`.
+- British spelling; `tests/test_manuscript_*` all green; manuscript PDF builds.
+
+## Test
+
+Editorial work is verified by author review, not unit tests. Guard rails:
+`PYTEST_ADDOPTS="" make check` stays green (numbers, refs, figure-numbering,
+jargon/glossary, structure tests all unchanged-passing), and the PDF rebuilds.
+Optionally add a light adherence check that flagged ML-jargon terms are glossed
+at first use — only if it can be made non-fragile.
+
+## Execution
+
+- **Use the best Fable model.** This is high-touch authorial prose; it needs the
+  strongest model and a careful, whole-document pass.
+- Single-threaded on `main.md`; branch off a freshly-fetched `origin/main`.
+- **Review protocol (author-chosen): tone anchor first, then one PR.** Before the
+  full pass, rewrite THREE representative paragraphs (suggest: the abstract, one
+  findings paragraph, one figure-framing paragraph) and stop for author proof of
+  the tone. Only after the author signs off on those three does the agent apply
+  the voice across the whole manuscript in a single PR (author reviews the full
+  diff + rebuilt PDF). Do not edit the whole document before the anchor is blessed.
+
+## Exit criteria
+
+- [ ] Findings reframed claim-first around the data-not-model throughline
+- [ ] Every figure's prose states what to see + what it argues
+- [ ] Whole-manuscript de-jargon pass; plain-language, structure intact
+- [ ] AI claims age-proofed; method kept in a supporting role
+- [ ] All numbers identical; `make check` green; PDF builds; symbolic refs intact
+- [ ] Author sign-off (the final criterion — author's call)
