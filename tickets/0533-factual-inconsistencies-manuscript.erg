@@ -6,30 +6,70 @@ Author: HDMX-coding-agent
 --- log ---
 2026-06-11T08:20Z HDMX-coding-agent created
 2026-06-11T08:45Z HDMX-coding-agent note renumbered from 0528 (ID collision)
+2026-06-11T10:17Z HDMX-coding-agent note reimagined+planned (raid 532-534): refusal claim traces to archived baseline cohort, not exp1_batch2; GEM counts reconcilable (grain difference); line anchors verified
+2026-06-11T10:30Z HDMX-coding-agent note verify-feasibility WARN (raid 532-534): anchors PASS; author confirms seeding facts at PR review; GEM date from git (2026-04-02) or waive gracefully
 
 --- body ---
 ## Context
-Prose review panel 2026-06-11 (pre-arXiv), convergent factual findings that
-block submission. Each needs a fact check against project records, then a
-small prose fix.
+Prose review panel 2026-06-11 (pre-arXiv), three factual inconsistencies that
+block submission. Imagine-phase fact check (2026-06-11) against committed
+artifacts established the ground truth below; the remaining work is small
+prose fixes plus one derivation.
 
-1. **Wikipedia seeding attribution inconsistency.** Line ~97 says an intern
-   injected the content; the COI statement says the author authored several
-   pages. Make consistent — the seeded-recall bar's integrity depends on it.
-   Related: seeded-recall framing is well-supported only for the built fleet;
-   over-extrapolated to all 177 plants in abstract/conclusion.
-2. **GEM "119 distinct plants" vs "157 of 177 matched" irreconcilable as
-   written** (157 > 119). Explain (snapshot difference?) or correct. Also:
-   pin the GEM release version (provenance emphasis demands it).
-3. **"All produced usable tables" is false.** GPT-5.5 declined 3/5 reps,
-   scored F1=0. Reword: "all yielded a scored outcome (including three
-   refusals scored F1=0)"; report GPT-5.5's conditional F1 on its 2 completing
-   runs alongside the refusal rate.
+1. **Wikipedia seeding attribution inconsistency.** Body line ~97 says "an
+   intern in the author's group injected reference-derived content" (19 June
+   2019, revision 902510278); COI line ~547 says "the author ... also authored
+   the Wikipedia pages for several of the plants." Intern vs author — one is
+   wrong. Make the two passages consistent; final factual confirmation rests
+   with the author at PR review. Note: abstract/conclusion do NOT currently
+   over-extrapolate seeded recall to all 177 plants (conclusion correctly says
+   "92% of the built fleet") — any residual claim-strength concern there
+   belongs to ticket 0532, not here.
+2. **GEM "119 distinct plants" vs "157 of 177 matched" — apparent
+   contradiction, actually a grain difference.** Line ~246: gem_thermal.csv
+   has 153 rows, 119 distinct plant names. Line ~248: tab_source_concordance.csv
+   confirms 157 reference plants found a GEM match — many-to-one matching, one
+   GEM plant row can match multiple reference phase rows. Fix: one explanatory
+   clause. Also pin the GEM snapshot date (PROVENANCE.md line ~298 admits "the
+   export date and URL are not stamped" — recover best-known date from git
+   history of gem_units.csv).
+3. **Refusals wording — cohort confusion.** Line ~99 "all produced usable
+   tables" is TRUE for the reported cohort (exp1_batch2: all 70 runs
+   status="ok"; GPT-5.5 all 5 runs F1 0.61–0.65, no refusals). Line ~101
+   "GPT-5.5 declines the task on 3 of its 5 reps" describes the ARCHIVED
+   baseline sweep (experiments/archive/outputs/exp1/baseline/, prompt p1_base),
+   not the current cohort. As written the two lines contradict each other.
+   Fix: attribute the refusal anecdote explicitly to the archived baseline
+   ("In an earlier sweep (archived baseline, prompt p1_base), GPT-5.5 declined
+   3 of 5 reps ..."), note the batch2 re-run resolved compliance, and report
+   refusal rate + conditional F1 on completing runs — all numbers derived by
+   script from the archive record files, never typed from a survey. The author
+   may instead cut the paragraph at PR review; the PR proposes the attribution
+   fix as the default since it preserves the reported-numbers exit criterion.
 
 ## Relevant files
-- `slides/manuscript/main.md` — lines ~97, ~99, GEM coverage paragraph, COI statement
-- `experiments/outputs/` — refusal evidence for GPT-5.5
-- `data/reference/` — GEM snapshot for the count check
+- `slides/manuscript/main.md` — lines ~97, ~99, ~101, ~246–248, ~547 (COI)
+- `experiments/outputs/exp1_batch2/gpt-5.5-run*.record.json` — current cohort, no refusals
+- `experiments/archive/outputs/exp1/baseline/gpt-5.5-run*.json` / `.record.json` — refusal evidence (runs 1,3,5 refused; run 2 F1=0.64; run 4 F1=0.0 n_plants=1)
+- `data/reference/gem_thermal.csv` — 153 rows, 119 distinct plant names
+- `data/reference/tab_source_concordance.csv` — 157 gem_matched
+- `data/reference/gem_units.csv` + `data/reference/PROVENANCE.md` (~lines 294–337) — GEM snapshot, date not stamped
+
+## Actions
+1. Seeding attribution: align line ~97 (body) and line ~547 (COI) on one
+   consistent account. The body's intern account is the more specific
+   (named revision, date); adjust the COI wording to match it unless project
+   records contradict — flag the chosen account prominently in the PR body
+   for author confirmation.
+2. GEM counts: (a) add a clause at line ~248 explaining 157-vs-119 as
+   phase-grain matching (one GEM plant row can match several reference phase
+   rows); (b) pin the GEM snapshot date from
+   `git log --diff-filter=A -- data/reference/gem_units.csv` (or PROVENANCE
+   best-known date) into the prose and/or PROVENANCE.md.
+3. Refusals: rewrite lines ~99–101 so the refusal anecdote is attributed to
+   the archived baseline sweep; derive refusal rate and conditional F1 from
+   the archive files with a small throwaway derivation (committed evidence
+   path quoted in prose or PR body), per the derive-from-artifacts rule.
 
 ## Test
 - Numbers introduced by fix 3 (refusal rate, conditional F1) derive from
