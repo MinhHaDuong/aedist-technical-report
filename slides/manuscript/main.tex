@@ -505,8 +505,9 @@ figure caption below names the cohort it draws on.
 language models from the \emph{modelset\_exp1\_batch2} set, spanning
 three language families (EN/FR/ZH) and five laboratories from mid-range
 through frontier-class systems, with a fixed structured table
-specification prompt (the locked \texttt{2\_goal\ +\ 5\_table}
-composition, reproduced in \ref{sec:annex-exp1}). No documents are
+specification prompt (the full Doc-07 naive prompt,
+\texttt{experiments/sota/protocol\_07\_naive\_prompt.md}, reproduced
+verbatim in \ref{sec:annex-exp1}). No documents are
 provided; models draw exclusively on parametric knowledge and receive a
 system instruction forbidding web search. Each model is queried five
 times at temperature zero, yielding 70 runs against a 177-plant
@@ -571,9 +572,8 @@ lifecycle distinctions the models conflate. The status figure is partly
 an artefact of vocabulary: ``Proposed'' --- the grouped status of
 \textasciitilde38\% of the reference (\ref{sec:annex-recognition}) ---
 has no equivalent in the prompt's controlled status vocabulary (the
-\texttt{Status:} enumeration of
-\texttt{experiments/prompts/modules/5\_table.txt}, reproduced in
-\ref{sec:annex-exp1}, offers
+cohort prompt's status definitions, aligned with Global Energy Monitor
+vocabulary and reproduced in \ref{sec:annex-exp1}, offer
 \texttt{Announced\ /\ Pre-permit\ /\ Permitted\ /\ Construction\ /\ Operating\ /\ Shelved\ /\ Cancelled\ /\ Retired}
 --- no ``Proposed''), so a model that correctly recalls a proposed plant
 has no admissible label to map it onto, which may mechanically depress
@@ -712,6 +712,18 @@ baseline. Row-level F1 against the 177-plant reference is
 now scored for all four arms (Table~\ref{tbl:exp2-2x2}); cross-model
 judging on the four §\ref{sec:quality} dimensions remains reserved for
 post-conference analysis (Phase C).
+
+An anticipated objection: why not simply instruct the agents to merge
+Wikipedia and the Global Energy Monitor tracker? Because the benchmark
+evaluates a generic inventory method --- naming the best public sources
+for this particular country and energy subsector would put the answer in
+the question, and the resulting protocol would not transfer to a setting
+where the strong sources are not known in advance. The agents get a fair
+chance at discovering those sources themselves: the public lists sit in
+their training corpora (§\ref{sec:exp1}), web search is on, and the
+optimised arm's multi-turn protocol explicitly encourages source
+discovery. The one thing the protocol never discloses is where the
+reference inventory itself is published.
 
 \begin{longtable}[]{@{}lllll@{}}
 \caption{\label{tbl:exp2-2x2}Experiment 2 --- row-level F1 and per-run
@@ -1315,10 +1327,12 @@ vs ``Ca Mau 1''), which slightly over-counts via phase/grain mismatch
 upper bounds. Full per-plant human reconciliation is deferred
 (post-arXiv).}
 
-\subsection*{Prompt}
-\addcontentsline{toc}{subsection}{Prompt}
+\subsection*{Prompts}
+\addcontentsline{toc}{subsection}{Prompts}
 
-The baseline prompt is the locked composition of two modules from
+\textbf{Archived baseline prompt (2026-05-20 cohort).} The archived
+baseline sweep --- the earlier cohort in which the GPT-5.5 refusals
+occurred --- used the locked composition of two modules from
 \texttt{experiments/prompts/modules/}: \texttt{2\_goal.txt} (task
 declaration) and \texttt{5\_table.txt} (structured table specification).
 These are the implicit ``always'' pair --- every sweep includes them;
@@ -1352,10 +1366,264 @@ Output format: Markdown.
 \end{quote}
 
 No persona, no narratives, no quality bullets --- those land in ablation
-sweeps, not the baseline. Every API call carries a system instruction
-explicitly forbidding web search: \emph{``You have no web search
-capability. Do not claim to perform searches, do not invoke tools, do
-not fabricate URLs. Answer from parametric knowledge only.''}
+sweeps, not the archived baseline.
+
+\textbf{Analysis-cohort prompt (Doc-07).} The fourteen-model analysis
+cohort (\texttt{modelset\_exp1\_batch2}, the cohort behind every
+per-model number in §\ref{sec:exp1}) received the full Doc-07 naive
+prompt --- \texttt{experiments/sota/protocol\_07\_naive\_prompt.md} ---
+verbatim as the sole user message (trailing newline stripped by the
+worker), at temperature 0, seed 42, \texttt{max\_tokens} 65536, web
+access off; this was verified against the archived per-run records. The
+prompt in full:
+
+\begin{quote}\small
+\textbf{\# GOAL}
+
+Produce a complete, primary-sourced reference inventory of Vietnam's
+past, present and future thermal generation assets (> 30 MWe). Begin the
+document directly with the inventory table — no title, no preamble, no
+overview section. Structure it as follows:
+
+\begin{itemize}
+\tightlist
+\item
+  the plant inventory: \textbf{exactly one pipe table}, never split into
+  sub-tables by status, fuel, province, or any other dimension. Columns
+  in this exact order: Name (Vietnamese), Name (English), Province, Fuel
+  (Coal / Domestic gas / Imported LNG), Technology (Subcritical /
+  Supercritical / USC for coal; CCGT / OCGT for gas), Units × MW, Total
+  MWe, Status, Status as-of-date, COD, Owner/Developer, Confidence,
+  Source 1, Source 2, Notes. Do not add statistical summary,
+  cross-tabulation, or any other pipe tables; fold aggregate statistics
+  into prose.
+\item
+  per-asset or per-project explanatory notes: for each asset that
+  warrants it (major, disputed, ambiguous, or historically important), a
+  concise sourced note covering development history, notable issues, and
+  confidence-qualified attributes. Straightforward operational assets
+  need no note.
+\item
+  an annotated bibliography of every source cited (full citation; URL
+  when available; original-language title plus English translation for
+  non-English sources; summary annotation of what was drawn from each)
+\end{itemize}
+
+Scope includes all thermal assets > 30 MWe at any stage of the
+lifecycle, including shelved or cancelled projects.
+
+When uncertain, mark confidence LOW and explain why in the Notes field.
+Never fabricate sources or URLs; write ``URL not verified'' if you
+cannot locate the exact handle. Include known plants even without a
+primary source rather than omitting them.
+
+Output format: Markdown.
+
+\textbf{\# QUALITY DIMENSIONS}
+
+Your output is judged on four axes:
+
+\begin{enumerate}
+\tightlist
+\item
+  \emph{Accuracy} — right assets and right attributes. Row level: recall
+  and precision against a curated reference (F1). Cell level: capacity,
+  fuel, location, operator, COD, status correct. Confident fabrication
+  is the policed failure mode.
+\item
+  \emph{Coherence} — internally and externally consistent. Totals
+  reconcile with known subtotals; no negative capacities, no
+  double-counted units, no cross-row contradiction; values plausible in
+  unit, magnitude, geography, technology, date. Conflicting sources
+  reconciled explicitly (which chosen and why), not silently.
+\item
+  \emph{Provenance} — each value traces to a source that actually
+  supports it, not a merely plausible citation. Two independent
+  primaries is the ideal; one primary, a regulator database, or a marked
+  secondary is weaker but acceptable if its status is explicit.
+  Unsupported values are the failure.
+\item
+  \emph{Temporality} — every value carries a best-effort as-of date;
+  status changes are flagged. Distinguish current status from past
+  reports, planned from operating capacity, source date from fact date.
+\end{enumerate}
+
+We prefer a comprehensive inventory with uncertainty clearly expressed
+over a shortlist of well-known assets.
+
+\textbf{\# CONTEXT}
+
+\textbf{\#\# Source quality management}
+
+Two distinct epistemic roles — do not conflate them:
+
+\begin{itemize}
+\tightlist
+\item
+  Discovery \& characterization: parametric knowledge and web search,
+  including tertiary sources, MAY be used to generate leads, locate
+  assets, and form initial hypotheses about attributes.
+\item
+  Justification in the final inventory: a claim can be justified ONLY by
+  an admissible independently consulted source that actually supports
+  it.
+\end{itemize}
+
+Admissible primary sources: official government documents;
+regulator-aggregated official data; operator filings/press releases.
+
+Admissible secondary sources: international-institution reports; bylined
+trade press; industry trackers and data brokers that expose the primary
+they cite.
+
+Not admissible sources:
+
+\begin{itemize}
+\tightlist
+\item
+  Tertiary compilations (encyclopedias, Wikipedia/Wikidata/DBpedia,
+  mirrors, aggregators re-syndicating without independent verification).
+\item
+  Any deposited dataset that does NOT expose, per value, the primary
+  source it draws from — a DOI or repository deposit does not by itself
+  confer admissibility.
+\end{itemize}
+
+Local-language sources are preferred but not required; when used,
+include the original-language title plus an English translation in
+brackets.
+
+If a lead surfaces only via an inadmissible source, trace to its
+original source and cite that; if none is found, record Source = ``not
+found'', confidence LOW. In the table mention the inadmissible source in
+Notes, not in Sources.
+
+\textbf{\#\# Calibrated confidence vocabulary}
+
+Each row in the inventory table carries a confidence level based on
+evidence and agreement:
+
+\begin{itemize}
+\tightlist
+\item
+  HIGH = >=2 INDEPENDENT concordant sources, at least one is primary
+\item
+  MEDIUM = 1 primary source, OR a sourced aggregator citing a verifiable
+  primary
+\item
+  LOW = secondary only / inferred / unresolved conflict / not found
+\end{itemize}
+
+Independence check (run BEFORE judging agreement):
+
+\begin{itemize}
+\tightlist
+\item
+  Trace each source to its origin; merge sources sharing one origin into
+  ONE.
+\item
+  Sources re-syndicating Wikipedia/Wikidata are NOT independent and NOT
+  admissible.
+\item
+  Filling both Source columns does not by itself confer HIGH;
+  independence is required
+\end{itemize}
+
+Hard ceilings (override the above):
+
+\begin{itemize}
+\tightlist
+\item
+  Commercial operator self-reported not confirmed by an official source:
+  cap claim at MEDIUM.
+\item
+  Status attested only by a source older than 24 months and unconfirmed
+  since: cap status at MEDIUM (LOW if older than 48 months). Freshness
+  is measured on the publication date of the most recent admissible
+  source attesting the status — NOT on the older Status as-of-date.
+\item
+  ``Source = not found'' rows: LOW by construction.
+\end{itemize}
+
+Explanatory notes must state the confidence level for the row-level
+existence/status claim and may additionally qualify one or two disputed
+attributes (capacity, status, fuel, COD, owner/operator, or location).
+Per qualified claim, state: value, confidence level, evidence type
+(primary/secondary), and sources. When sources disagree, investigate for
+transcription errors, time-based changes, and unit/translation issues;
+follow the higher-tier source if unresolved, and add a note in the Notes
+cell.
+
+\textbf{\#\# Asset-row and status rules}
+
+Each row corresponds to one asset record. The DEFAULT unit is the plant
+/ unit-group, not the power center: when a site co-locates several
+plants with distinct capacity, COD, owner/developer, fuel, status, or
+financing (BOT/IPP) arrangements, each one is its own row. Aggregate to
+center-level in a single row ONLY when detailed evidence is unavailable;
+in that case mark the row ambiguous and explain the aggregation in
+Notes. Conversely, do not split a single plant into multiple rows when
+the only difference is individual generating units sharing one
+commissioning, owner, and status — record these as Units × MW on one
+row.
+
+Status definitions (use these exact terms, aligned with Global Energy
+Monitor vocabulary):
+
+\begin{itemize}
+\tightlist
+\item
+  Announced: described in government plans or corporate filings; no
+  permits sought, no land acquired.
+\item
+  Pre-permit: environmental and regulatory approvals being sought; no
+  permits issued yet.
+\item
+  Permitted: all required government approvals received; construction
+  not yet started.
+\item
+  Construction: site preparation or EPC execution underway.
+\item
+  Operating: formally commissioned.
+\item
+  Shelved: previously active or advancing but progress halted without
+  formal cancellation.
+\item
+  Cancelled: formally cancelled or replaced by another project.
+\item
+  Retired: permanently closed or decommissioned.
+\end{itemize}
+
+Capacity rule: Record nameplate electrical capacity in MWe when
+available. If sources do not distinguish gross vs net, record the stated
+MW value and note ``gross/net unspecified''. Do not mix thermal MW,
+boiler capacity, steam output, or investment package capacity with
+electrical MWe. For Units × MW, make arithmetic consistent with Total
+MWe or explain discrepancies in Notes.
+
+Explanatory notes discipline: The table comes first. Per-asset notes
+follow the table and are selective: write one only for assets that are
+major, disputed, ambiguous, or historically important. For
+straightforward operational assets a compact Notes cell in the table is
+sufficient; do not repeat it as a separate note.
+\end{quote}
+
+Two prompt-design limitations are acknowledged. First, although the
+prompt asks the model to ``begin the document directly with the
+inventory table'', it lacks a forced-prefix instruction (e.g.~start your
+answer with \texttt{|\ Name}) that would constrain the first generated
+tokens and simplify downstream parsing. Second, its status vocabulary
+follows Global Energy Monitor and offers no label for the reference's
+``Proposed'' stratum (\textasciitilde38\% of rows) nor for ``Planned''
+--- mechanically depressing measured status accuracy, as discussed in
+§\ref{sec:exp1}. Both are grounds for a revised-prompt rerun in the
+journal version.
+
+In both cohorts, every API call carried the same system instruction
+explicitly forbidding web search (the two sweep configurations declare
+the identical string): \emph{``You have no web search capability. Do not
+claim to perform searches, do not invoke tools, do not fabricate URLs.
+Answer from parametric knowledge only.''}
 
 \subsection*{Models}
 \addcontentsline{toc}{subsection}{Models}
@@ -1883,7 +2151,11 @@ each (40 production sessions):
   quality criteria but none of the optimised arm's methodology (budget
   rules, planning headroom, source admissibility, calibrated confidence
   vocabulary). It is the null comparator: the contrast between arms
-  isolates the protocol scaffolding's contribution.
+  isolates the protocol scaffolding's contribution. The file at this
+  path was subsequently revised: the Experiment 2 sessions received the
+  shorter as-sent version archived in the run records (2026-05-24),
+  while the expanded current version is the Experiment 1 analysis-cohort
+  prompt reproduced in \ref{sec:annex-exp1}.
 \item
   \textbf{Optimised arm} --- Phase A design call followed by the Phase B
   multi-turn state machine above (Phase B-0 then Phase B-full).

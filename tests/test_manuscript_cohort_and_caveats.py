@@ -21,6 +21,7 @@ status-difficulty table.
 """
 
 import csv
+import json
 import re
 import tomllib
 from pathlib import Path
@@ -269,3 +270,49 @@ def test_status_vocab_mismatch_sentence_present():
         "status-vocab mismatch sentence missing"
     )
     assert "38%" in text, "status-vocab sentence must state the ~38% Proposed share"
+
+
+# --- Ticket 0539: prompt transparency (Annex B verbatim Doc-07 prompt) ---
+
+EXP1_RUN_RECORD = (
+    REPO_ROOT / "experiments" / "outputs" / "exp1_batch2" / "claude-haiku-4.5-run1.json"
+)
+PROMPT_MD = REPO_ROOT / "experiments" / "sota" / "protocol_07_naive_prompt.md"
+
+
+def test_analysis_cohort_prompt_matches_shipped_record():
+    """The prompt file reproduced in the annex is identical (modulo the
+    worker's trailing-newline ``.strip()``) to the prompt the exp1_batch2
+    analysis cohort actually received, re-derived from an archived per-run
+    record rather than trusted from a survey."""
+    if not (EXP1_RUN_RECORD.exists() and PROMPT_MD.exists()):
+        pytest.skip("exp1_batch2 run record or prompt file not present")
+    record = json.loads(EXP1_RUN_RECORD.read_text(encoding="utf-8"))
+    assert record["prompt"] == PROMPT_MD.read_text(encoding="utf-8").strip(), (
+        "experiments/sota/protocol_07_naive_prompt.md has drifted from the "
+        "prompt shipped to the exp1_batch2 analysis cohort"
+    )
+
+
+def test_body_no_longer_attributes_modules_prompt_to_cohort():
+    """The pre-appendix body must not claim the analysis cohort received the
+    2_goal + 5_table modules composition: that prompt belongs to the archived
+    baseline sweep and is scoped as such in the annex (ticket 0539)."""
+    pre_appendix = body().split("\\appendix")[0]
+    assert "2_goal" not in pre_appendix, (
+        "body still attributes the 2_goal + 5_table composition to the "
+        "analysis cohort; it received the full Doc-07 naive prompt"
+    )
+
+
+def test_annex_carries_doc07_prompt_verbatim_anchors():
+    """The Experiment 1 annex reproduces the Doc-07 analysis-cohort prompt:
+    spot-check distinctive sentences that exist only in that prompt."""
+    annex = body().split("\\appendix")[1]
+    anchors = [
+        "Begin the document directly with the inventory table",
+        "aligned with Global Energy Monitor vocabulary",
+        "Confident fabrication is the policed failure mode",
+    ]
+    for anchor in anchors:
+        assert anchor in annex, f"Doc-07 prompt anchor missing from annex: {anchor!r}"
