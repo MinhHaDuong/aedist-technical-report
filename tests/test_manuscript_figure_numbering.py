@@ -5,9 +5,9 @@ auto-numbering is LaTeX's (ticket 0524 made the source hand-curated LaTeX).
 The numbering invariant is expressed over the *order of figure ``\\label``
 definitions* rather than over grepped integers:
 
-  * the seven main-body figures appear, in document order, exactly as the
-    expected id sequence (Figure 1..7 in the PDF);
-  * the four supplementary figures (S1..S4) appear after them, in order; the
+  * the six main-body figures appear, in document order, exactly as the
+    expected id sequence (Figure 1..6 in the PDF);
+  * the five supplementary figures (S1..S5) appear after them, in order; the
     recognition matrix (S4) is a `\\refstepcounter{figure}\\label{…}` +
     `\\includepdf` block.
 
@@ -26,9 +26,10 @@ from manuscript_source import MANUSCRIPT, body_raw
 
 pytestmark = pytest.mark.adherence
 
-# Expected main-body figure labels, in the document order that yields Figure 1..7.
+# Expected main-body figure labels, in the document order that yields Figure 1..6.
 # Ticket 0507: the reliability-vs-accuracy scatter replaces the quality-floor
 # heatmap as the section-4 headline quality figure.
+# Ticket 0540: the fusion-MVP figure moved to the fusion annex (becoming S5).
 EXPECTED_MAIN = [
     "fig:longtail",
     "fig:capability-timeline",
@@ -36,10 +37,9 @@ EXPECTED_MAIN = [
     "fig:cost-quality",
     "fig:reliability",
     "fig:exp2-arms",
-    "fig:fusion-mvp",
 ]
 
-# Expected supplementary figure labels, in the order that yields S1..S4. The
+# Expected supplementary figure labels, in the order that yields S1..S5. The
 # recognition matrix is defined via \refstepcounter + \label.
 # Ticket 0507: the quality-floor heatmap moved to the Exp1 scoring annex
 # (becoming S1) and the spider (old S1) left the paper (kept in slides).
@@ -48,6 +48,7 @@ EXPECTED_SUPP = [
     "fig:capability-dag",
     "fig:coverage-certainty",
     "fig:recognition-matrix",
+    "fig:fusion-mvp",
 ]
 
 FIG_LABEL_RE = re.compile(r"\\label\{(fig:[a-z0-9-]+)\}")

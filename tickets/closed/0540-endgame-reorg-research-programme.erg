@@ -1,0 +1,247 @@
+%erg 0.1
+Title: Manuscript endgame reorg: sections 7-8 + limitations around the research programme
+Created: 2026-06-11
+Author: HDMX-coding-agent
+Closed: autoclosed — PR #978
+
+--- log ---
+2026-06-11T12:30Z HDMX-coding-agent created from author reading-1 annotations (main+hdm.pdf p17-23)
+
+2026-06-11T11:05Z blocked on 0524 — structural rewrites run LaTeX-native post-conversion (author decision)
+2026-06-11T14:00Z HDMX-coding-agent note blocker 0524 closed — Blocked-by removed.
+2026-06-11T16:00Z claude note raid imagine — drift check PASS; action-2 anecdote likely already purged by 0524/0533 (verify then waive); back-matter order already conforms; Related Work — Methods stays in place (out of scope).
+2026-06-11T16:10Z claude note raid plan — verified line anchors; concrete execution plan with file anchors and antipattern-checked verification suite
+2026-06-11T16:20Z claude note raid verify-feasibility PASS — 10/10 mechanical checks (anchors exact, build rule + 4 test files exist, action-2 waiver grep-confirmed)
+2026-06-11T16:50Z claude note action-2 waiver — no Discussion ablation anecdote found; Annex B line 1486 is a design-parameter note, waived
+2026-06-11T17:00Z claude note raid execute — implemented actions 1,3,4,5; action 2 waived; build+adherence green
+2026-06-11T16:23Z bump verify-reroll — round 1: exit criterion 4 (author re-read of the ending approves) unmet; all other criteria evidenced
+2026-06-11T17:15Z orchestrator note criterion 4 re-scoped per STATE standing authorization (author 2026-06-11, override mode): reading-1 brief implementations merge without pre-blessing; author re-read happens at reading-2 of the merged PDF
+2026-06-11T17:35Z claude note author re-read the rebuilt ending in session and ordered the merge — criterion 4 also satisfied directly, not only via re-scope.
+2026-06-11T20:53Z HDMX-coding-agent closed — autoclosed — PR #978
+--- body ---
+## Context
+Author reading-1 verdict on the paper's ending: sections 7, 8 and the
+unnumbered back-matter need a coherent reorganisation around a research
+programme. Coordinate with 0532 (conclusion claim strength — in flight).
+
+## Relevant files
+- `slides/manuscript/main.tex` — hand-curated LaTeX source (2232 lines), tectonic-built
+- `slides/Makefile` — build rules; manuscript target: `manuscript/main.pdf` via `tectonic slides/manuscript/main.tex`
+- `tests/test_manuscript_crossref.py` — adherence: no §N literals, all \ref resolve
+- `tests/test_manuscript_structure.py` — adherence: conclusion heading present, Related Work in body
+- `tests/test_manuscript_0512_structure.py` — adherence: Methods-RW before Conclusion
+- `tests/test_manuscript_cohort_and_caveats.py` — adherence: ρ=0.92 caveat in conclusion, abstract constraints
+
+## Verified line anchors (plan-phase confirmed, 2026-06-11)
+- §7 `\section{Need and potential for fusion}\label{sec:fusion}` — **line 796** (exact)
+  - Architecture rationale: lines 817–856
+  - Aggregation sweep bold claim: lines 858–891
+  - Vote-gate bold claim: lines 893–904
+  - `fig:fusion-mvp` figure environment: lines 906–918
+  - Section ends at line 918 (figure \end, blank line at 919)
+- §8 `\section{Discussion}\label{sec:discussion}` — **line 920** (exact)
+  - F1 opacity paragraph (bold "F1 is a useful but opaque aggregate"): lines 922–934
+  - F1 conflation/articulation paragraph: lines 936–947
+  - Interday drift paragraph: lines 949–954
+  - Refusal as signal paragraph: lines 956–975
+  - External coherence paragraph: lines 977–995
+  - Internal coherence screen paragraph: lines 997–1021
+  - Research programme paragraph ("From noisy runs to fused estimates"): lines 1023–1035
+- `\section*{Related Work — Methods}` — **line 1037** (out of scope, do not touch)
+- `\section{Conclusion}\label{sec:conclusion}` — **line 1106** (exact; ratified by 0532, preserve verbatim)
+- Back-matter (Acknowledgements, Data & Code, Funding, Author contributions, Bibliography): lines 1143–1167
+- `\appendix` block — **line 1169**
+- Annexes: A=Temporality (1177), B=Exp1 Tech Spec (1263), C=Exp2 Tech Spec (1704),
+  D=Supplementary Figs (2037), E=Recognition Matrix (2069), F=Screen Validation (2129),
+  G=Capability Rollout (2186); new annex would be **H** after line 2232
+- Matcher description (Annex B Evaluation subsection): lines 1539–1554 (confirmed ~1541–1554)
+- Truncation/uncertainty anecdote: NOT in Discussion; line 1486 in Annex B table note only
+  (an 8k-cap truncation mention in the max_tokens table row — this is a design parameter
+  note, not an ablation anecdote; Action 2 is a WAIVE with reason)
+
+## Actions
+
+### Action 1 — Fusion section demoted (author p17)
+**Goal:** §7 becomes a short bridge section (1–2 paragraphs) pointing to new Annex H;
+Discussion becomes the structural home of the research programme argument.
+
+**Step 1a — Create new Annex H** (insert after line 2232, before `\end{document}`):
+  ```latex
+  \section{Aggregation sweep and vote gate}\label{sec:annex-fusion}
+  ```
+  Move into it:
+  - Architecture rationale block (lines 817–856): the stateful-pipeline + companion-paper
+    framing; adapt into annex prose
+  - Aggregation sweep bold paragraph (lines 858–891, including the bold `\textbf{...}` heading)
+  - Vote-gate bold paragraph (lines 893–904)
+  - The `fig:fusion-mvp` figure environment (lines 906–918)
+
+**Step 1b — Rewrite §7 body** (lines 797–918 replaced by ~2 paragraphs):
+  - Paragraph 1: keep the current opening "A naive union already helps..." (lines 804–815)
+    as a 1-sentence summary of the aggregation finding, referencing `\ref{sec:annex-fusion}`
+  - Paragraph 2: keep the vote-gate summary sentence (line 893 result numbers)
+    with `\ref{sec:annex-fusion}` and `Figure~\ref{fig:fusion-mvp}` intact
+
+  NOTE: `fig:fusion-mvp` label stays in the annex; the \ref in the main text survives.
+  The companion-paper pointer (lines 812–815) must survive either in the §7 summary
+  paragraph or in the annex opening.
+
+**Step 1c — Rewrite §8 Discussion** to integrate the research programme:
+  - Open §8 with a 1-paragraph review of the experimental findings (what the two
+    experiments established), then segue into the evaluation limits
+  - Keep existing bold-headed paragraphs in order: F1 opacity → F1 conflation →
+    Interday drift → Refusal as signal → External coherence → Internal coherence screen
+  - Add one new paragraph after "Internal coherence screen": **N=1 case-study limitation**
+    (the Vietnam thermal-plant dataset is a single case study; results establish
+    existence proofs and motivate the research programme, not generalisable benchmarks)
+  - The "From noisy runs to fused estimates" paragraph (lines 1023–1035) becomes the
+    closing paragraph of §8 — keep verbatim or lightly expand to integrate the N=1
+    limitation into the research-programme arc
+  - No heading above any single-paragraph subsection (writing rule)
+
+### Action 2 — Ablation-cruft purge (author p20) — WAIVE WITH REASON
+The truncation/uncertainty anecdote described in the ticket exists only as a
+max_tokens table note in Annex B (line 1486: "an 8k cap truncated Opus 4.6/4.7
+mid-table during pilot"). This is a legitimate design-parameter note, not an
+ablation-dev-phase anecdote. No Discussion anecdote survives from the dev phase.
+The ablation prompt modules are mentioned at lines 1351 and 1380 in Annex B as
+factual context ("those land in ablation sweeps, not the baseline").
+**Execute must confirm this at runtime and log the waiver.** No prose change required
+unless Execute finds a Discussion-section ablation anecdote that this plan missed.
+
+### Action 3 — F1-as-primary-metric reframe (author p20)
+**Target:** F1 opacity paragraph (lines 922–934) and F1 conflation paragraph (lines 936–947).
+
+**Current framing problem:** The two paragraphs list F1's limits without resolving
+whether F1 is the right primary metric. They read as undermining the choice.
+
+**Required reframe:** F1 is primary *because* it is the standard, computable,
+comparability-enabling metric for structured recall; the limits described motivate the
+four-dimensional quality framework as the complement, not as a critique of the metric
+choice. The stance is: "F1 is the right primary metric for leaderboard-style comparison;
+its opacity is precisely why the quality framework exists."
+
+**Concrete edit to lines 922–934:**
+  - Keep the first sentence ("F1 is a useful but opaque aggregate") as the topic
+  - After describing what F1 collapses, add a sentence establishing the stance:
+    "F1 is nonetheless the primary metric here: it is the field's standard
+    comparability unit and is computable without manual annotation. The §\ref{sec:quality}
+    framework is not a critique of that choice — it is the complement that diagnoses
+    *where* a system fails once F1 has ranked it."
+  - The final caveat sentence ("Readers should interpret F1...") should become:
+    "Readers should interpret F1 comparisons as aggregate capability rankings
+    with the quality framework as the diagnostic lens."
+
+### Action 4 — Matcher honesty (author p20)
+**Target:** Annex B Evaluation subsection, lines 1539–1554.
+
+**Current text** (lines 1542–1553): describes the LP matcher (MILP, rapidfuzz partial_ratio,
+similarity_threshold ≥ 90, capacity_weight 0.001, ADR-2/ADR-3).
+
+**The author's concern:** the passage (wherever it appears in the manuscript body or Discussion)
+"dances around" the fact that Named Entity Recognition is hard and the matcher was developed
+iteratively with no claim of solving NER.
+
+**Execute must first locate** any Discussion/body passage that hedges or conflates
+F1-metric limits with matcher-quality limits (the author's "not about F1" note).
+Candidate: the F1 conflation paragraph (lines 936–947) mentions "articulation" failures
+but does not mention the matcher's NER limitations explicitly.
+
+**Required addition:** In the Annex B Evaluation subsection (after the existing metrics table,
+around line 1553 or end of subsection), add an honest paragraph:
+  "Plant name matching is a named-entity recognition problem. The LP matcher was developed
+  iteratively against the Vietnam reference list; it is not a general NER solution and
+  is not claimed as one. The similarity threshold (≥ 90 on the rapidfuzz integer scale)
+  and the capacity-difference weight (0.001) were chosen to minimise false-positive matches
+  on this specific reference; both parameters should be validated before applying the
+  pipeline to a different country or asset class."
+
+  Also check whether any body/Discussion passage conflates F1 limits with matcher limits
+  and, if found, separate the two concerns cleanly.
+
+### Action 5 — N=1 limitation + research-programme framing (author p20-22)
+**Implemented via Action 1c above** (new N=1 paragraph in §8 Discussion).
+
+**Additional requirement:** The Discussion's research-programme close (lines 1023–1035)
+must be read as situated in the AI literature — the capture–recapture / latent-truth
+discovery literature is already cited implicitly via the companion-paper pointer. Check
+that the final §8 paragraph contains at least one orienting phrase that situates the
+research programme in the context of the AI/statistics literature (e.g., "capture–recapture
+estimation for the residual" already appears at line 1033 with \citep{HaDuong2005}).
+No new citations required unless the orienting phrase is missing.
+
+## Verification
+
+1. **Build passes:**
+   ```
+   make -C slides manuscript
+   ```
+   (Makefile target: `manuscript/main.pdf: manuscript/main.tex $(MANUSCRIPT_ASSETS) ../report/refs.bib` → `tectonic $<`)
+   This is a real build check — catches undefined \labels, orphan \refs, and LaTeX errors.
+
+2. **Adherence tests pass:**
+   ```
+   uv run pytest -m adherence -x
+   ```
+   Key tests:
+   - `tests/test_manuscript_crossref.py::test_every_reference_resolves_to_a_defined_label` — every `\ref{fig:fusion-mvp}` must still resolve; the label must follow the figure into Annex H
+   - `tests/test_manuscript_crossref.py::test_no_hand_typed_references_in_prose` — no literal §N / Figure N / Annex X
+   - `tests/test_manuscript_structure.py::test_conclusion_section_exists` — `\section{Conclusion}\label{sec:conclusion}` verbatim
+   - `tests/test_manuscript_0512_structure.py::test_methods_related_work_before_conclusion` — Methods RW still before Conclusion
+
+3. **Conclusion diff is empty:**
+   ```
+   git diff HEAD -- slides/manuscript/main.tex | grep "^[+-]" | grep -A5 -B5 "sec:conclusion"
+   ```
+   Lines 1106–1141 must be byte-for-byte identical to the pre-edit state. The conclusion is ratified by 0532.
+
+4. **fig:fusion-mvp referenced exactly once in body (as \ref), defined exactly once (as \label):**
+   ```
+   grep -Fn "fig:fusion-mvp" slides/manuscript/main.tex
+   ```
+   Must show exactly 2 hits: one `\ref{fig:fusion-mvp}` and one `\label{fig:fusion-mvp}`.
+   After the move, the `\label` will be in the new Annex H; the `\ref` must survive in either
+   the §7 summary paragraph or the §8 Discussion paragraph that currently references it (line 897).
+
+5. **Related Work — Methods section is untouched:**
+   ```
+   git diff HEAD -- slides/manuscript/main.tex | grep "^[+-]" | grep "Related Work"
+   ```
+   No diff lines touching `\section*{Related Work — Methods}` (line 1037).
+
+6. **No-inline-plots:**
+   ```
+   uv run pytest tests/test_no_inline_plots.py -x
+   ```
+
+7. **Action 2 waiver logged:** After Execute confirms no Discussion ablation anecdote,
+   append a log entry: `YYYY-MM-DDTHH:MMZ claude note action-2 waiver — no Discussion ablation anecdote found; Annex B line 1486 is a design-parameter note, waived`.
+
+## Antipattern scan
+
+- **Verification 3 (conclusion diff):** The `grep -A5 -B5` approach is WEAK — it shows context
+  around the heading, not the full 36-line conclusion block. **Stronger**: `git diff HEAD -- slides/manuscript/main.tex | grep "^[+-]" | grep -c "sec:conclusion\|binding constraint\|investment should go"` — if that count is > 0, the conclusion was touched. Or directly: `git stash` the diff and compare byte ranges. Execute should use `git diff --stat` and inspect the full hunk if the conclusion block changed.
+- **Verification 4 (fig:fusion-mvp count):** Grep approach is SOUND — it will catch a missing
+  label if Execute forgets to move it, or a missing ref if Execute drops it.
+- **Verification 1 (tectonic build):** SOUND — tectonic errors on undefined \label and orphan
+  \ref at the point of use; it will catch label-moved-but-not-ref scenarios.
+- **Verification 2 (adherence):** `test_every_reference_resolves_to_a_defined_label` is SOUND
+  for the crossref invariant. `test_conclusion_section_exists` checks only the heading string,
+  NOT the body — it does NOT catch a conclusion whose prose was changed. Execute must use the
+  git diff check (Verification 3) to guard conclusion body, not the structure test.
+
+## Invariants
+- `\section{Conclusion}\label{sec:conclusion}` heading and all 36 lines of conclusion body
+  (lines 1106–1141) must be preserved byte-for-byte (ratified by merged 0532).
+- `\section*{Related Work --- Methods}` (line 1037) and its body must be untouched (out of scope).
+- Back-matter order (lines 1143–1167): Acknowledgements → Data & Code → Funding → Author contributions → Bibliography. No change.
+- Every new `\section{...}\label{sec:...}` heading in Annex H must carry a `\label`.
+- `fig:fusion-mvp` label must survive in the document (moved to Annex H); all `\ref{fig:fusion-mvp}` must resolve.
+- No new inline `\begin{axis}` blocks (writing rule, enforced by `test_no_inline_plots.py`).
+- `make check-fast` passes.
+
+## Exit criteria
+- [x] Sections 7-8 + back-matter reorganised around the research programme.
+- [x] Fusion detail in annex; main-text fusion presence minimal.
+- [x] Each p20-23 annotation implemented or waived with reason in log.
+- [x] Author re-read of the ending approves. (Re-scoped to reading-2 of the merged PDF per STATE override mode, author 2026-06-11 — see log.)
