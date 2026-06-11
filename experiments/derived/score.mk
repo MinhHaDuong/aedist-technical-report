@@ -220,13 +220,15 @@ ANALYSIS_EXP2_PROBE_CLSF := $(wildcard $(ANALYSIS_EXP2_OPTIMISED_DIR)/probes/*/*
 # The armN_flat/.done stamps were the only rules consuming raw P1 committed
 # data — the only place the bug manifested.
 
-$(ANALYSIS_DERIVED_DIR)/arm1_flat/.done: $(ANALYSIS_EXPERIMENTS_DIR)/outputs/sota_exp3_arm1_batch1/.dataset
+$(ANALYSIS_DERIVED_DIR)/arm1_flat/.done: $(ANALYSIS_EXPERIMENTS_DIR)/outputs/sota_exp3_arm1_batch1/.dataset \
+		$(SCORE_SRC)/extract_arm_single_turn.py
 	uv run python -m aedist.extract_arm_single_turn \
 	    --input-dir $(ANALYSIS_EXPERIMENTS_DIR)/outputs/sota_exp3_arm1_batch1 \
 	    --output-dir $(ANALYSIS_DERIVED_DIR)/arm1_flat
 	touch $@
 
-$(ANALYSIS_DERIVED_DIR)/arm2_flat/.done: $(ANALYSIS_EXPERIMENTS_DIR)/outputs/sota_exp3_arm2_batch1/.dataset
+$(ANALYSIS_DERIVED_DIR)/arm2_flat/.done: $(ANALYSIS_EXPERIMENTS_DIR)/outputs/sota_exp3_arm2_batch1/.dataset \
+		$(SCORE_SRC)/extract_arm_multi_turn.py
 	uv run python -m aedist.extract_arm_multi_turn \
 	    --input-dir $(ANALYSIS_EXPERIMENTS_DIR)/outputs/sota_exp3_arm2_batch1 \
 	    --output-dir $(ANALYSIS_DERIVED_DIR)/arm2_flat
@@ -243,13 +245,15 @@ $(ANALYSIS_EXP1_CROSS_EVAL_CSV): $(ANALYSIS_EXP1_INPUT_CSVS) $(ANALYSIS_EXPERIME
 	    --input-dir $(ANALYSIS_EXPERIMENTS_DIR)/outputs/exp1_batch2 \
 	    --output $@
 
-$(ANALYSIS_DERIVED_DIR)/arm3_flat/.done: $(ANALYSIS_EXPERIMENTS_DIR)/outputs/sota_exp3_arm3_batch1/.dataset
+$(ANALYSIS_DERIVED_DIR)/arm3_flat/.done: $(ANALYSIS_EXPERIMENTS_DIR)/outputs/sota_exp3_arm3_batch1/.dataset \
+		$(SCORE_SRC)/extract_arm_single_turn.py
 	uv run python -m aedist.extract_arm_single_turn \
 	    --input-dir $(ANALYSIS_EXPERIMENTS_DIR)/outputs/sota_exp3_arm3_batch1 \
 	    --output-dir $(ANALYSIS_DERIVED_DIR)/arm3_flat
 	touch $@
 
-$(ANALYSIS_DERIVED_DIR)/arm4_flat/.done: $(ANALYSIS_EXPERIMENTS_DIR)/outputs/sota_exp3_arm4_batch1/.dataset
+$(ANALYSIS_DERIVED_DIR)/arm4_flat/.done: $(ANALYSIS_EXPERIMENTS_DIR)/outputs/sota_exp3_arm4_batch1/.dataset \
+		$(SCORE_SRC)/extract_arm_multi_turn.py
 	uv run python -m aedist.extract_arm_multi_turn \
 	    --input-dir $(ANALYSIS_EXPERIMENTS_DIR)/outputs/sota_exp3_arm4_batch1 \
 	    --output-dir $(ANALYSIS_DERIVED_DIR)/arm4_flat
@@ -260,7 +264,8 @@ $(ANALYSIS_DERIVED_DIR)/arm4_flat/.done: $(ANALYSIS_EXPERIMENTS_DIR)/outputs/sot
 $(ANALYSIS_EXP2_CROSS_EVAL_CSV): $(ANALYSIS_DERIVED_DIR)/arm1_flat/.done \
 		$(ANALYSIS_DERIVED_DIR)/arm2_flat/.done \
 		$(ANALYSIS_DERIVED_DIR)/arm3_flat/.done \
-		$(ANALYSIS_DERIVED_DIR)/arm4_flat/.done
+		$(ANALYSIS_DERIVED_DIR)/arm4_flat/.done \
+		$(SCORE_SRC)/score_mechanical.py
 	@mkdir -p $(dir $@)
 	rm -f $@
 	@for f in $(ANALYSIS_EXP2_NAIVE_DIR)/*.json; do \
@@ -304,7 +309,8 @@ $(ANALYSIS_EXP2_MART_JSONL): $(ANALYSIS_DERIVED_DIR)/arm1_flat/.done \
 		$(ANALYSIS_EXP2_OPTIMISED_JSONS) $(ANALYSIS_EXP2_OPTIMISED_MDS) \
 		$(ANALYSIS_EXP2_ARM3_JSONS) $(ANALYSIS_EXP2_ARM3_MDS) \
 		$(ANALYSIS_EXP2_ARM4_JSONS) $(ANALYSIS_EXP2_ARM4_MDS) \
-		$(ANALYSIS_EXP2_CROSS_EVAL_CSV) $(ANALYSIS_EXP2_PROBE_RAWS) $(ANALYSIS_EXP2_PROBE_CLSF)
+		$(ANALYSIS_EXP2_CROSS_EVAL_CSV) $(ANALYSIS_EXP2_PROBE_RAWS) $(ANALYSIS_EXP2_PROBE_CLSF) \
+		$(SCORE_SRC)/build_exp2_mart.py
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.build_exp2_mart \
 	    --naive-dir $(ANALYSIS_EXP2_NAIVE_DIR) \
@@ -324,21 +330,24 @@ $(ANALYSIS_EXP2_MART_JSONL): $(ANALYSIS_DERIVED_DIR)/arm1_flat/.done \
 ANALYSIS_EXP2_OLD_STAGE := $(ANALYSIS_DERIVED_DIR)/parity/exp2-old-path
 ANALYSIS_EXP2_MART_STAGE := $(ANALYSIS_DERIVED_DIR)/parity/exp2-mart-path
 
-$(ANALYSIS_EXP2_OLD_STAGE)/tab_exp2_arms_runs.csv: $(ANALYSIS_EXP2_NAIVE_JSONS) $(ANALYSIS_EXP2_NAIVE_MDS) $(ANALYSIS_EXP2_OPTIMISED_JSONS)
+$(ANALYSIS_EXP2_OLD_STAGE)/tab_exp2_arms_runs.csv: $(ANALYSIS_EXP2_NAIVE_JSONS) $(ANALYSIS_EXP2_NAIVE_MDS) $(ANALYSIS_EXP2_OPTIMISED_JSONS) \
+		$(SCORE_SRC)/tabulate_exp2_arms_runs.py
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.tabulate_exp2_arms_runs \
 	    --naive-dir $(ANALYSIS_EXP2_NAIVE_DIR) \
 	    --optimised-dir $(ANALYSIS_EXP2_OPTIMISED_DIR) \
 	    --output $@
 
-$(ANALYSIS_EXP2_OLD_STAGE)/tab_exp2_bib_quality.csv: $(ANALYSIS_EXP2_NAIVE_MDS) $(ANALYSIS_EXP2_OPTIMISED_MDS)
+$(ANALYSIS_EXP2_OLD_STAGE)/tab_exp2_bib_quality.csv: $(ANALYSIS_EXP2_NAIVE_MDS) $(ANALYSIS_EXP2_OPTIMISED_MDS) \
+		$(SCORE_SRC)/extract_exp2_bib.py
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.extract_exp2_bib \
 	    --naive-dir $(ANALYSIS_EXP2_NAIVE_DIR) \
 	    --optimised-dir $(ANALYSIS_EXP2_OPTIMISED_DIR) \
 	    --output $@
 
-$(ANALYSIS_EXP2_OLD_STAGE)/exp2_turn_trajectory.csv: $(ANALYSIS_EXP2_PROBE_RAWS) $(ANALYSIS_EXP2_PROBE_CLSF)
+$(ANALYSIS_EXP2_OLD_STAGE)/exp2_turn_trajectory.csv: $(ANALYSIS_EXP2_PROBE_RAWS) $(ANALYSIS_EXP2_PROBE_CLSF) \
+		$(SCORE_SRC)/export_exp2_turn_trajectory_csv.py
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.export_exp2_turn_trajectory_csv \
 	    --probes-dir $(ANALYSIS_EXP2_OPTIMISED_DIR)/probes \
@@ -349,7 +358,8 @@ $(ANALYSIS_EXP2_OLD_STAGE)/sota_cross_eval.csv: $(ANALYSIS_EXP2_CROSS_EVAL_CSV)
 	cp $< $@
 
 $(ANALYSIS_EXP2_MART_STAGE)/tab_exp2_arms_runs_view.csv $(ANALYSIS_EXP2_MART_STAGE)/tab_exp2_bib_quality_view.csv \
-$(ANALYSIS_EXP2_MART_STAGE)/exp2_turn_trajectory_view.csv $(ANALYSIS_EXP2_MART_STAGE)/sota_cross_eval_view.csv: $(ANALYSIS_EXP2_MART_JSONL)
+$(ANALYSIS_EXP2_MART_STAGE)/exp2_turn_trajectory_view.csv $(ANALYSIS_EXP2_MART_STAGE)/sota_cross_eval_view.csv: $(ANALYSIS_EXP2_MART_JSONL) \
+		$(SCORE_SRC)/build_exp2_mart_views.py
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.build_exp2_mart_views \
 	    --mart-jsonl $(ANALYSIS_EXP2_MART_JSONL) \
