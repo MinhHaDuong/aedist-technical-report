@@ -1,0 +1,57 @@
+%erg 0.1
+Title: De-mine the title's "Benchmark" claim: one intro sentence defining the sense claimed
+Created: 2026-06-11
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-11T21:30Z orchestrator created from author question "Is the word Benchmark in the title overpromising?"
+
+--- body ---
+## Context
+The title claims "A Benchmark and Research Programme". The claim is earned —
+frozen task, public gold reference (177-plant register, CC BY 4.0, with
+provenance), computable metric (row-level F1 + LP matcher + quality
+dimensions), multi-system comparison — but two reviewer mines remain:
+(1) contamination is structural (the reference derives from public sources
+in every model's training set; the paper measures this as the parametric
+ceiling rather than fighting it); (2) N=1 task instance (one country, one
+subsector, one reference date) — a benchmark task, not a suite.
+
+Decision (author, 2026-06-11): keep "Benchmark" in the title; pre-empt the
+referee with one explicit scoping sentence in the introduction instead of
+weakening the title to "testbed"/"evaluation".
+
+## Relevant files
+- `slides/manuscript/main.tex` — introduction (around the key-results
+  statement placed by 0537, which already says "new computable benchmark")
+
+## Actions
+1. Add one sentence to the introduction, near the key-results statement,
+   defining the precise sense claimed, e.g.: "We use \emph{benchmark} in the
+   narrow sense of a frozen task definition, a public gold reference, and a
+   computable metric; we claim no suite or leaderboard." Adapt wording to the
+   surrounding prose register (hedged, plain verbs).
+2. Check the sentence does not duplicate an existing scoping statement
+   (0537's reorg may have added one); if equivalent prose already exists,
+   waive with reason in log.
+3. Optionally one clause acknowledging that contamination is measured, not
+   prevented (the parametric-ceiling design) — only if the intro does not
+   already say this nearby.
+
+## Test
+- Adherence suite unchanged: `uv run pytest -m adherence` green (no
+  hand-typed cross-ref numbers introduced).
+
+## Verification
+- [ ] Sentence present in intro, register-consistent, no duplication.
+- [ ] tectonic build green.
+
+## Invariants
+- Title unchanged.
+- No new citations; no bibliography change.
+- Conclusion and abstract untouched (0532-ratified).
+
+## Exit criteria
+- [ ] Intro contains the benchmark-sense scoping sentence (or waiver logged
+      with pointer to equivalent existing prose).
+- [ ] Build + adherence green.
