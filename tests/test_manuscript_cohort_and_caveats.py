@@ -310,6 +310,57 @@ def test_body_no_longer_attributes_modules_prompt_to_cohort():
     )
 
 
+BASELINE_RUN_RECORD = (
+    REPO_ROOT
+    / "experiments"
+    / "archive"
+    / "outputs"
+    / "exp1"
+    / "baseline"
+    / "claude-haiku-4.5-run1.json"
+)
+
+
+def test_annex_baseline_prompt_carries_as_sent_status_vocabulary():
+    """The archived-baseline prompt quoted in the annex matches the as-sent
+    text, re-derived from an archived per-run record (all 133 baseline+topup
+    records carry the identical prompt). The 5_table.txt module was aligned to
+    GEM vocabulary only AFTER this cohort ran (cba3ffc5, 2026-05-24), so the
+    annex quote must show the pre-alignment status enumeration, not the
+    module file's current text (post-merge review blocker on #983)."""
+    assert BASELINE_RUN_RECORD.exists(), (
+        f"{BASELINE_RUN_RECORD} missing: the baseline drift guard would be "
+        "silently disabled — update this path if the record was relocated"
+    )
+    prompt = json.loads(BASELINE_RUN_RECORD.read_text(encoding="utf-8"))["prompt"]
+    # Re-derive the as-sent status enumeration from the record.
+    status_line = next(
+        line for line in prompt.splitlines() if line.startswith("- Status:")
+    )
+    statuses = [s.strip() for s in status_line.removeprefix("- Status:").split("/")]
+    assert "Planned" in statuses, "as-sent baseline enum expected to contain Planned"
+    annex = body().split("\\appendix")[1]
+    quote = annex.split("Archived baseline prompt")[1].split("Analysis-cohort prompt")[0]
+    for status in statuses:
+        assert status in quote, (
+            f"as-sent baseline status {status!r} missing from the annex's "
+            "archived-baseline prompt quote"
+        )
+    # The GEM-aligned enum belongs to the analysis cohort, not this quote.
+    for gem_only in ("Announced", "Pre-permit", "Permitted", "Operating", "Shelved"):
+        assert gem_only not in quote, (
+            f"GEM-vocabulary status {gem_only!r} leaked into the baseline "
+            "prompt quote; the cohort ran before the GEM alignment"
+        )
+    # Two further distinctive as-sent sentences, re-derived from the record.
+    for sentence in (
+        "primary-sourced reference inventory",
+        "Actual or expected commercial operation date",
+    ):
+        assert sentence in prompt, f"anchor not in record prompt: {sentence!r}"
+        assert sentence in quote, f"as-sent anchor missing from annex quote: {sentence!r}"
+
+
 def test_annex_carries_doc07_prompt_verbatim_anchors():
     """The Experiment 1 annex reproduces the Doc-07 analysis-cohort prompt:
     spot-check distinctive sentences that exist only in that prompt."""
