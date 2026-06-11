@@ -83,7 +83,7 @@ sur l'Environnement et le Développement, CNRS, France}
 \begin{abstract}
 Open energy-system models need plant-level data that
 are complete, dated, and traceable to sources, yet across much of the
-world these data arrive late, incomplete, or under restrictive licences.
+world these data arrive late or incomplete.
 We introduce a computable benchmark for this task: reconstruct the
 register of Vietnam's 177 thermal power plants and score the result
 against a hand-compiled, fully sourced reference. The register spans the
@@ -171,8 +171,9 @@ measure what model memory alone delivers across 14 language models
 (§\ref{sec:exp1}), test the commercial frontier of mid-2026
 (§\ref{sec:exp2}), and show that targeted pipeline design is needed to
 bridge the gap (§\ref{sec:fusion}). The Discussion
-(§\ref{sec:discussion}) examines the limits of F1 as an aggregate and
-prefigures a fusion-based research programme.
+(§\ref{sec:discussion}) examines why a single aggregate score cannot
+certify fitness for use and prefigures a fusion-based research
+programme.
 
 \section{Related Work --- Empirical landscape}\label{sec:related-empirical}
 
@@ -283,9 +284,9 @@ philosophy-of-science empirical adequacy
 \def\labelenumi{\arabic{enumi}.}
 \item
   \emph{Accuracy} asks whether the dataset contains the right assets and
-  the right attributes. At the row level, this means recall and
-  precision: does the system find all relevant assets, and does it
-  exclude non-assets or duplicates? For a simple inventory table, this
+  the right attributes. At the row level, this means recall (does the
+  system find all relevant assets?) and precision (does it exclude
+  non-assets and duplicates?). For a simple inventory table, this
   can be measured against a manually curated reference table using
   precision, recall, and F1 score
   \citep{Hendrycks-Dan2021:mmlu, Wu-Xianjie2025:tablebench, Tenckhoff-Sonke2026:llmstructbench}.
@@ -385,29 +386,27 @@ reference inventory.
 \end{quote}
 
 Between 2022 and 2025, AI capability advanced as an industry-wide
-\emph{envelope} --- the outer surface of commercially attainable
-capability --- not as a staircase any single lab climbs. The systems
-that push this envelope vary along four axes: \emph{training objective}
-(from raw text completion through instruction-following to extended
-reasoning), \emph{input and output media} (text, vision, audio, video),
-\emph{tool access} (none, web browser, code execution, computer
-control), and \emph{product workflow} (simple chat, single-task agent,
-deep research, coding agent, autonomous task runner). The first two are
-properties of the model; the last two are properties of the software
-that wraps it. Figure~\ref{fig:capability-timeline} shows one projection
-of this coordinate system: when each of eight capability surfaces first
-shipped in a consumer-facing product --- the threshold at which a
-working analyst can rely on it, months after API or privileged-partner
-availability.
+\emph{envelope}: the set of capabilities commercially attainable at a
+given date, across labs. The systems that define this envelope vary
+along four axes: \emph{training objective} (from raw text completion
+through instruction-following to extended reasoning), \emph{input and
+output media} (text, vision, audio, video), \emph{tool access} (none,
+web browser, code execution, computer control), and \emph{product
+workflow} (simple chat, single-task agent, deep research, coding agent,
+autonomous task runner). The first two are properties of the model; the
+last two are properties of the software that wraps it.
+Figure~\ref{fig:capability-timeline} shows one projection of this
+coordinate system: when each of eight capability surfaces first shipped
+in a consumer-facing product, the threshold at which a working analyst
+can rely on it, months after API or privileged-partner availability.
 
-The envelope is pushed outward through a sequence of integrations
-rather than inventions. None of these integrations are model
-properties: retrieval, web access, reasoning surfaces, code execution,
-tool use, and recursion all live in the runtime that wraps the model.
-What the model contributes is \emph{conditioning} --- a lab's
-investment in training the model to exploit retrieved documents, tool
-calls, long reasoning chains, and delegated sub-tasks is what lets it
-use each surface when the framework exposes it. Each marker in
+The envelope grows by integration. The integrations themselves
+(retrieval, web access, reasoning surfaces, code execution, tool use,
+and recursion) live in the runtime that wraps the model. What the model
+contributes is \emph{conditioning}: a lab's investment in training the
+model to exploit retrieved documents, tool calls, long reasoning
+chains, and delegated sub-tasks is what lets it use each surface when
+the framework exposes it. Each marker in
 Figure~\ref{fig:capability-timeline} is the date the framework ×
 trained-model × product triple first appears in a publicly available
 commercial product.
@@ -443,8 +442,8 @@ integration:
   includes the model itself.
 \end{itemize}
 
-Each integration lifts one or more of the §\ref{sec:quality} quality
-limits at the margin; none lifts all four. The detailed per-lab shipping
+Each integration targets one or more of the §\ref{sec:quality} quality
+limits; none addresses all four. The detailed per-lab shipping
 order --- feature parallelism, the deep-research dependency, and the
 DeepSeek negative case --- is given in \ref{sec:annex-rollout}.
 
@@ -700,8 +699,8 @@ web\_search inside thinking mode). The fourth slot is
 hypothesis-relevant rather than decorative: Chinese-language investor
 and trade documents on Vietnamese power assets are under-indexed by
 Western search. The experiment runs two arms over the same four agents
-(N=5 each). \textbf{Arm 1 (naive)} --- a single-shot prompt (Doc-07)
-with no scaffolding, web on; the null comparator. \textbf{Arm 2
+(N=5 each). \textbf{Arm 1 (naive)} --- a single-shot Doc-07 prompt,
+web on; the null comparator. \textbf{Arm 2
 (optimised, simple-harness multi-turn)} --- a multi-turn protocol in
 which each agent first designs its own prompt and settings (Phase A),
 runs once as a smoke gate (Phase B-0), then runs N=5 against a single

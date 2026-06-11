@@ -11,6 +11,15 @@ Author: HDMX-coding-agent
 2026-06-11T17:05Z HDMX-coding-agent note blocker 0537 closed — Blocked-by removed.
 2026-06-11T20:53Z HDMX-coding-agent note blocker 0540 closed — Blocked-by removed.
 2026-06-11T21:25Z claude note 0539 adds a verbatim prompt block in annex-exp1 — its 9 literal em dashes are quoted experimental material, exclude from the item-14 em-dash sweep
+2026-06-12T00:30Z claude note item 14: waived: body prose and abstract carry zero Unicode em dashes; the only 9 prose em dashes sit inside the verbatim Doc-07 prompt block in the annex (quoted experimental material, excluded per 2026-06-11T21:25Z note)
+2026-06-12T00:30Z claude note item 15: waived: flagged runs predate the 0532 abstract rewrite; current abstract verified clean (no three-in-a-row -ly run, no six-in-a-row trisyllabic run)
+2026-06-12T00:31Z claude note item 16: fixed: abstract now reads "arrive late or incomplete"; body-intro licence clause kept (author flagged abstract only)
+2026-06-12T00:31Z claude note item 17: fixed: intro road-map sentence no longer names F1 ("examines why a single aggregate score cannot certify fitness for use"); no other F1 mention in intro prose
+2026-06-12T00:32Z claude note item 18: fixed: §quality row-level sentence now defines recall and precision parenthetically at first use
+2026-06-12T00:32Z claude note item 19: waived: dates already explicit (19 June 2019, revision 902510278, 5 July 2019 split) and drift-guarded by test_wikipedia_seeding_date_matches_provenance; paragraph reads clearly
+2026-06-12T00:33Z claude note item 20: fixed: Arm-1 bullet now "a single-shot Doc-07 prompt, web on"; annex scaffolding occurrence kept (author flagged body)
+2026-06-12T00:33Z claude note item 21: fixed: §capability opening rewritten plainly; envelope kept as defined noun, metaphor scaffolding ("outer surface", "staircase any single lab climbs") removed
+2026-06-12T00:34Z claude note item 22: fixed: contrast-framing ("rather than inventions") and what-it-is-not enumeration recast positively; "lifts ... at the margin" recast as design intent ("targets")
 --- body ---
 ## Context
 
@@ -56,5 +65,5 @@ are not lost in the close.
 
 ## Exit criteria
 
-- [ ] Each item fixed or explicitly waived with a one-line reason in the log
-- [ ] Manuscript builds; `make check` green
+- [x] Each item fixed or explicitly waived with a one-line reason in the log
+- [x] Manuscript builds; `make check` green
