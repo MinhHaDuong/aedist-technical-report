@@ -1,0 +1,57 @@
+%erg 0.1
+Title: Harmonise body register with hedged abstract/conclusion (binding-constraint claim, Exp2 heading)
+Created: 2026-06-11
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-11T11:20Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Ticket 0532 (PR #967) rewrote the abstract and conclusion to frame the
+binding-constraint proposition ("the constraint is the documents, not the
+model") as a working hypothesis / conjecture. The strict review of #967 found
+three pre-existing body sites that still state the same proposition (or an
+adjacent unscoped claim) in factual register, a contrast that 0532 made more
+visible:
+
+1. `slides/manuscript/main.md` §Exp2 heading (~l.113):
+   "Experiment 2: the commercially available frontier still falls short" —
+   unscoped bar; abstract/conclusion now scope "falls short" to the measured
+   dimensions.
+2. `slides/manuscript/main.md` ~l.148 (equalisation paragraph):
+   "it relocates the binding constraint from model capability to document
+   quality" — stated as fact (the paragraph opener does hedge "the pattern is
+   read tentatively", but the relocation clause itself is declarative).
+3. `slides/manuscript/main.md` ~l.156 (fusion section):
+   "the binding constraint shifts from model capability to document quality" —
+   stated as fact.
+
+The abstract and conclusion now hedge ("working hypothesis", "conjecture about
+why", "If the constraint is indeed the documents"); the body asserts. One
+register should win — or the divergence should be a conscious authorial choice
+(e.g. body sections licensed to speak within-experiment, front matter hedging
+the generalisation).
+
+## Relevant files
+
+- `slides/manuscript/main.md` — the three sites above; abstract l.31 and
+  conclusion l.202 as the hedged reference register
+- `tests/test_manuscript_cohort_and_caveats.py` —
+  `test_binding_constraint_framed_as_hypothesis` pins the hedged framing; if
+  the body is re-registered with pinned phrasing, extend there
+
+## Actions
+
+1. Author decides which register wins (hedge the body, or scope the hedge to
+   the cross-experiment generalisation and waive the in-section assertions).
+2. Harmonise the three sites accordingly — or record the waiver in this
+   ticket's log and close.
+
+## Exit criteria
+
+- [ ] Author decision on register recorded
+- [ ] The three sites harmonised, or the divergence consciously waived in the
+      ticket log
+- [ ] `make check` passes
