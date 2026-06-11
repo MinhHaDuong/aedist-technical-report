@@ -8,6 +8,12 @@ Author: HDMX-coding-agent
 
 2026-06-11T11:05Z blocked on 0524 — structural rewrites run LaTeX-native post-conversion (author decision)
 2026-06-11T14:00Z HDMX-coding-agent note blocker 0524 closed — Blocked-by removed.
+2026-06-11T16:05Z HDMX-coding-agent imagine scope = main.tex §quality (266-365) + §capability (366-450) + fig:capability-timeline caption; items 3-7 all target fig:capability-timeline by content match (ticket's "Figure 3" is a build-numbering artifact)
+2026-06-11T16:05Z HDMX-coding-agent imagine item 2 disposition: readability surgery on the §quality enumerate only; glossary consolidation waived — glossary block is 0537 territory (its item 2 relocates the concepts paragraph); revisit post-0537 if still wanted
+2026-06-11T16:05Z HDMX-coding-agent imagine item 7 float fix = \clearpage before \section{Experiment 1}; no placeins package (YAGNI); take-home reframed as capabilities-as-experimental-variables with forward-refs to sec:exp1/sec:exp2
+2026-06-11T16:25Z HDMX-coding-agent plan 9 edits on slides/manuscript/main.tex: (1-2) trim coherence+provenance enumerate items, keep Wang2022:self-consistency; (3) screening-logic paragraph after the enumerate; (4) assertive envelope-led §capability opening; (5) integrations paragraph moved before the figure, bullet-list option; (6) articulation rewrite — drop anteriority claim, double articulation, type-III, prompt engineering, forward-refs exp1/exp2 + annex-exp1/annex-exp2; (7) caption surgery — five leading AI labs, capability=product feature, drop legend + no-claim, capabilities-as-variables take-home, source=author+annex-rollout; (8) \clearpage before sec:exp1; (9) transition rewrite. Verify: tectonic build + test_manuscript_crossref + sharpened greps.
+2026-06-11T16:40Z HDMX-coding-agent verify-feasibility PASS — all 16 mechanical checks green; corrections: "no claim is made" exists only in the caption (not in annex-rollout — drop without compensation per author directive); Wang2022:self-consistency cited only at the coherence item (must survive the trim); \clearpage baseline 0
+2026-06-11T15:53Z HDMX-coding-agent execute started — raid worktree
 --- body ---
 ## Context
 Author reading-1 directives on the quality-bar section and Figures 2-3 prose.
