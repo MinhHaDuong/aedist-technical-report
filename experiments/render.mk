@@ -691,6 +691,7 @@ RENDER_REPORT_TABLES := \
 	$(ANALYSIS_GEN)/tab_status_difficulty.tex \
 	$(ANALYSIS_GEN)/macros_source_concordance.tex \
 	$(ANALYSIS_GEN)/tab_source_concordance.tex \
+	$(ANALYSIS_GEN)/macros_phase_collisions.tex \
 	$(ANALYSIS_WIKI_BAR_CSV) \
 	$(ANALYSIS_EXP2_WIKI_CSV) \
 	$(ANALYSIS_AGG_SWEEP_TEX)
@@ -898,6 +899,25 @@ $(ANALYSIS_GEN)/macros_source_concordance.tex $(ANALYSIS_CONCORDANCE_CSV) \
 	    --csv $(ANALYSIS_CONCORDANCE_CSV) \
 	    --macros $(ANALYSIS_GEN)/macros_source_concordance.tex \
 	    --table $(ANALYSIS_GEN)/tab_source_concordance.tex
+
+# Matcher phase-collision exposure (ticket 0544): structural false-match set
+# of the partial_ratio threshold on the reference (raw exposure / veto-blocked
+# / residual), plus realised sensitivity from the committed threshold sweep.
+# One invocation co-produces the per-pair CSV and the headline macros; both
+# are committed (the manuscript \inputs the macros, so the rule re-runs when
+# the script or its data inputs change).
+$(ANALYSIS_GEN)/tab_phase_collisions.csv \
+$(ANALYSIS_GEN)/macros_phase_collisions.tex &: \
+		$(ANALYSIS_EXPERT_REF) \
+		$(ANALYSIS_REPO_ROOT)/src/aedist/analyze_matcher_phase_collisions.py \
+		$(ANALYSIS_REPO_ROOT)/src/aedist/reconcile.py \
+		$(ANALYSIS_DERIVED_DIR)/matching_sensitivity.csv
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.analyze_matcher_phase_collisions \
+	    --reference $(ANALYSIS_EXPERT_REF) \
+	    --sensitivity $(ANALYSIS_DERIVED_DIR)/matching_sensitivity.csv \
+	    --output-csv $(ANALYSIS_GEN)/tab_phase_collisions.csv \
+	    --output-macros $(ANALYSIS_GEN)/macros_phase_collisions.tex
 
 # Wikipedia recall bar (ticket 0494): per-raw-status seeded-ceiling coverage.
 # Shares the matcher/fold machinery with the concordance script (imported), so
