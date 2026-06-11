@@ -29,6 +29,7 @@ import re
 from pathlib import Path
 from typing import Any
 
+from .expost import resolve_source_cells, strip_preamble
 from .extract import _extract_pipe_tables, parse_and_canonicalize, score_csv_like_block
 
 _BIB_HEADING_RE = re.compile(
@@ -279,6 +280,8 @@ def process_batch(input_dir: Path, output_dir: Path) -> None:
             with chosen_turn_path.open(encoding="utf-8") as fh:
                 record = json.load(fh)
 
+            text = strip_preamble(text)
+            text, source_audit = resolve_source_cells(text)
             bib_text, n_bib = extract_bibliography(text)
 
             model: str | None = None
@@ -318,6 +321,8 @@ def process_batch(input_dir: Path, output_dir: Path) -> None:
                 "n_rows": inventory_rows,
                 "n_bib_entries": n_bib,
                 "narrative_chars": len(text),
+                "n_sources_resolved": source_audit["n_resolved"],
+                "n_sources_unresolved": len(source_audit["unresolved"]),
             }
 
             base_name = f"{agent}_run{run_num:02d}"
@@ -328,6 +333,10 @@ def process_batch(input_dir: Path, output_dir: Path) -> None:
             (output_dir / f"{base_name}.md").write_text(text, encoding="utf-8")
             (output_dir / f"{base_name}_bib.md").write_text(
                 bib_text if bib_text is not None else "",
+                encoding="utf-8",
+            )
+            (output_dir / f"{base_name}_source_audit.json").write_text(
+                json.dumps(source_audit, indent=2, sort_keys=True) + "\n",
                 encoding="utf-8",
             )
 

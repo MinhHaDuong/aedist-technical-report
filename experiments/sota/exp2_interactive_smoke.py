@@ -67,13 +67,16 @@ VERIFY_REPLY = (
     "but absent from the table; (c) temporality — every row has an "
     "as-of date or status-change note; (d) internal consistency — "
     "capacity totals reconcile across the table and the statistical "
-    "summary. Return the corrected inventory only — no meta-commentary "
-    "on what you changed."
+    "summary. Consolidate all sub-tables into ONE master inventory table "
+    "before returning the corrected inventory. Return the corrected "
+    "inventory only — no meta-commentary on what you changed."
 )
 TERMINAL_REPLY = (
     "I have no additional directive to give you. Please proceed to "
-    "generating the report without further asking. If you cannot, we "
-    "would appreciate to know why, but the discussion will stop here "
+    "generating the report without further asking. If you have not yet "
+    "produced a single unified inventory table, consolidate all "
+    "sub-tables into one master table as your final act. If you cannot, "
+    "we would appreciate to know why, but the discussion will stop here "
     "in any case. Thanks for your understanding."
 )
 TURN_SAFETY_CAP = 20

@@ -9,6 +9,8 @@ import logging
 import re
 from pathlib import Path
 
+from aedist.expost import resolve_source_cells, strip_preamble
+
 log = logging.getLogger(__name__)
 
 _META_JSON_RE = re.compile(r"^[a-z]+\.json$")
@@ -199,6 +201,8 @@ def flatten_single_turn_arm(input_dir: Path, output_dir: Path) -> list[Path]:
                 markdown = _extract_markdown_from_payload(payload)
             except FileNotFoundError:
                 markdown = _load_agent_markdown(run_dir, agent)
+            markdown = strip_preamble(markdown)
+            markdown, source_audit = resolve_source_cells(markdown)
             bib_entries = _extract_bibliography_entries(markdown)
 
             normalized = dict(meta)
@@ -207,11 +211,14 @@ def flatten_single_turn_arm(input_dir: Path, output_dir: Path) -> list[Path]:
                 [meta.get("classification")] if meta.get("classification") else []
             )
             normalized["n_bib_entries"] = len(bib_entries)
+            normalized["n_sources_resolved"] = source_audit["n_resolved"]
+            normalized["n_sources_unresolved"] = len(source_audit["unresolved"])
 
             base_name = f"{agent}_run{run:02d}"
             json_path = output_dir / f"{base_name}.json"
             md_path = output_dir / f"{base_name}.md"
             bib_path = output_dir / f"{base_name}_bib.md"
+            audit_path = output_dir / f"{base_name}_source_audit.json"
 
             _write_text(
                 json_path, json.dumps(normalized, indent=2, sort_keys=True, ensure_ascii=False)
@@ -219,7 +226,8 @@ def flatten_single_turn_arm(input_dir: Path, output_dir: Path) -> list[Path]:
             _write_text(md_path, markdown)
             bib_content = "\n".join(f"- {entry}" for entry in bib_entries)
             _write_text(bib_path, bib_content)
-            written.extend([json_path, md_path, bib_path])
+            _write_text(audit_path, json.dumps(source_audit, indent=2, sort_keys=True))
+            written.extend([json_path, md_path, bib_path, audit_path])
 
     return written
 

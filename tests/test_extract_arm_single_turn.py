@@ -192,7 +192,8 @@ def test_flatten_single_turn_arm_outputs_mart_compatible_files(tmp_path):
 
     written = flatten_single_turn_arm(input_dir, output_dir)
 
-    assert len(written) == 9
+    # 4 artifacts per agent×run: .json, .md, _bib.md, _source_audit.json (ticket 0292)
+    assert len(written) == 12
     anthropic_meta = json.loads((output_dir / "anthropic_run01.json").read_text(encoding="utf-8"))
     assert anthropic_meta["class_trace"] == ["report"]
     assert anthropic_meta["n_bib_entries"] == 1
