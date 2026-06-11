@@ -23,8 +23,9 @@ province) + `coherence_vocab_adherence` (fuel controlled vocabulary).
 
 Reference-free indicators available in `exp1_cross_eval.csv`: fuel-vocab
 adherence, capacity non-negativity, province validity, source presence /
-diversity / spread, as-of presence, as-of year plausibility (1980–2100, with
-an all-identical-year → 0 rule), COD plausibility, field completeness.
+diversity / spread, as-of presence, as-of year plausibility (1980–2100; the
+all-identical-year → 0 rule described here was removed by ticket 0505), COD
+plausibility, field completeness.
 `coherence.py` (row / dedup / control-total checks) does **not** feed the
 cross-eval CSV. **Not implemented anywhere: within-run variability of the
 capacity or status columns** — the conjecture's criterion.
@@ -76,16 +77,18 @@ HIGH. `qwen3.6-flash-run5.csv`: 496 rows, every one 1200.0 MW and
   but **gpt-oss-120b escapes** (diversity 1.0, spread 0.83: internally
   beautiful fabrication).
 - Date plausibility carries no signal (weak models score 1.0; strong models
-  can score 0.0 through the all-identical-year annotation rule — see below).
+  could score 0.0 through the all-identical-year annotation rule — see below;
+  that rule was removed by ticket 0505).
 
 ### 3. One conjecture component must be rejected
 
 **Status-as-of variability is not a valid criterion**: constant as-of is the
 norm in strong runs too — claude-sonnet-4.6 stamps the run date on every row
 (median asof_distinct = 1). This is also why its
-`temporality_plausible_range` reads 0.0: an annotation rule
-(`all_identical`), not a failure. A variability requirement on as-of would
-falsely reject top models.
+`temporality_plausible_range` read 0.0 at the time of this analysis: an
+annotation rule (`all_identical`), not a failure — ticket 0505 removed that
+rule, so a uniform plausible as-of year now scores normally. A
+variability requirement on as-of would falsely reject top models.
 
 ## Design implication — two-level scoring (author, 2026-06-06)
 

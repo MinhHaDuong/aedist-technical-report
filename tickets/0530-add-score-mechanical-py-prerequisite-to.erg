@@ -1,0 +1,34 @@
+%erg 0.1
+Title: Add score_mechanical.py prerequisite to sota_cross_eval.csv rule
+Created: 2026-06-11
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-11T08:35Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+PR #949 (ticket 0505) found that `experiments/derived/score.mk` was missing
+`src/aedist/score_mechanical.py` as a prerequisite of the
+`exp1_cross_eval.csv` rule and fixed it there. Review of that PR noted the
+same gap exists for `sota_cross_eval.csv`: its scoring path also imports
+`score_mechanical.py` (via `score_exp1.py` / `score_ingest.py`), so a change
+to `score_mechanical.py` does not trigger a rebuild of `sota_cross_eval.csv`.
+Pre-existing debt, out of 0505's scope.
+
+## Actions
+
+1. Verify the actual import chain from the sota scoring entry point to
+   `score_mechanical.py`.
+2. Add the missing prerequisite(s) to the `sota_cross_eval.csv` rule in
+   `experiments/derived/score.mk`; audit sibling rules in the same file for
+   the same gap while there (rename-sweep rule: fix the whole logical unit).
+3. Regenerate `sota_cross_eval.csv` once to confirm the rule still builds;
+   commit only if content changed.
+
+## Exit criteria
+
+- [ ] `make -B -n` shows `sota_cross_eval.csv` depends on `score_mechanical.py`
+- [ ] No sibling rule in score.mk imports a module it does not declare
+- [ ] `make check` passes

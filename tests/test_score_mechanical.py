@@ -311,15 +311,25 @@ def test_temporality_1979_fails_and_1980_passes_plausible_range() -> None:
     assert result.plausible_range == 0.5
 
 
-def test_temporality_all_identical_years_scores_zero() -> None:
-    rows = [
-        {"name": "A", "status_as_of": "as-of 2025"},
-        {"name": "B", "status_as_of": "2025"},
-        {"name": "C", "status_as_of": "checked 2025"},
-    ]
+def test_uniform_plausible_asof_is_not_failed() -> None:
+    """A uniform but plausible as-of year is an honest freshness claim for a
+    parametric dump, not a degeneracy — it must not score 0 (ticket 0505)."""
+    # 80 rows: realistic full-inventory size, mirroring the misfire case
+    # (claude-sonnet-4.6 run1 stamped "2023" on all 87 rows).
+    rows = [{"name": f"P{i}", "status_as_of": "2023"} for i in range(80)]
+    result = score_temporality(rows)
+    assert result.plausible_range == 1.0  # was 0.0 under all_identical
+    assert result.plausible_range_annotation is None
+
+
+def test_uniform_implausible_asof_still_flagged() -> None:
+    """Uniform year recognized by _YEAR_RE but outside the 1980-2100 band
+    stays a doubt (1850 would be invisible to the regex, not implausible)."""
+    rows = [{"name": f"P{i}", "status_as_of": "1950"} for i in range(80)]
     result = score_temporality(rows)
     assert result.plausible_range == 0.0
-    assert result.plausible_range_annotation == "all_identical"
+    # The 0 comes from the normal plausible fraction, not a special-case rule.
+    assert result.plausible_range_annotation is None
 
 
 def test_empty_total_mwe_counted_absent() -> None:
