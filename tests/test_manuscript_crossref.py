@@ -19,11 +19,14 @@ contains no ``Figure N`` token, so this is safe and keeps the scan simple.
 """
 
 import re
+from pathlib import Path
 
 import pytest
-from manuscript_source import body, body_raw
+from manuscript_source import body, body_raw, normalized
 
 pytestmark = pytest.mark.adherence
+
+REPORT = Path(__file__).resolve().parent.parent / "report" / "report.tex"
 
 # Hand-typed reference literals that must NOT appear in prose. The symbolic
 # forms ("§\ref{…}", "Figure~\ref{…}") put a backslash, not a digit, after the
@@ -78,3 +81,46 @@ def test_at_least_one_symbolic_reference_of_each_kind() -> None:
         assert any(r.startswith(prefix) for r in referenced), (
             f"no symbolic {prefix} reference found — migration incomplete"
         )
+
+
+# --- report/report.tex (FR prose) — ticket 0536 ------------------------------
+#
+# PR #959 hardcoded « pages 1--2 / page 3 » in a report.tex caption; caught
+# only in review. Same invariant as above, French patterns: numbers come from
+# the typesetter (\ref, \pageref, counters), never typed into prose. The
+# symbolic forms put a backslash after the prefix token, so they do not match.
+HANDTYPED_FR_RES = [
+    (re.compile(r"§\s*\d"), "§N section reference"),
+    (re.compile(r"\bFigures?\s+S?\d"), "Figure N reference"),
+    (re.compile(r"\bTableaux?\s+\d"), "Tableau N reference"),
+    (re.compile(r"\bAnnexes?\s+[A-G]\b"), "Annexe X reference"),
+    (re.compile(r"\bpages?\s+\d"), "page N reference"),
+]
+
+# Tiny whitelist for false positives (verbatim numbers, bibliography…).
+# Entries are exact substrings of the normalized prose; keep this list short.
+REPORT_CROSSREF_WHITELIST: list[str] = []
+
+
+def report_prose() -> str:
+    """Normalized prose of report/report.tex (comments dropped)."""
+    if not REPORT.exists():
+        pytest.skip("report/report.tex not found")
+    return normalized(REPORT.read_text(encoding="utf-8"))
+
+
+def test_no_hand_typed_references_in_report_prose() -> None:
+    """No literal §N / Figure N / Tableau N / Annexe X / page N in report.tex."""
+    prose = report_prose()
+    violations = []
+    for rx, label in HANDTYPED_FR_RES:
+        for m in rx.finditer(prose):
+            ctx = prose[max(0, m.start() - 40) : m.end() + 40]
+            if any(w in ctx for w in REPORT_CROSSREF_WHITELIST):
+                continue
+            violations.append(f"{label}: …{ctx}…")
+    assert not violations, (
+        f"{len(violations)} hand-typed cross-reference literal(s) in "
+        "report/report.tex — use \\ref{…}/\\pageref{…} or layout-stable "
+        "phrasing (ticket 0536):\n" + "\n".join(f"  {v}" for v in violations)
+    )
