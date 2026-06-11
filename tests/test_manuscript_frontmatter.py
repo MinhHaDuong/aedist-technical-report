@@ -1,27 +1,26 @@
 """Ticket 0509 — arXiv re-title and front/back matter for the standalone preprint.
 
-Asserts the manuscript carries its arXiv identity: the new (registered) title as
-the H1, the Econom'IA provenance footnote, author ORCID/email, the back-matter
-sections (Data & Code Availability, Funding, author contributions / conflict of
-interest), and that the two stale forward-references to a non-inline 2×2 table /
-to "the slides" are gone.
+Asserts the manuscript (main.tex since ticket 0524) carries its arXiv identity:
+the new (registered) title in \\title{}, the Econom'IA provenance footnote,
+author ORCID/email, the back-matter sections (Data & Code Availability,
+Funding, author contributions / conflict of interest), and that the two stale
+forward-references to a non-inline 2×2 table / to "the slides" are gone.
 """
 
 import csv
-import re
 from pathlib import Path
 
 import pytest
+from manuscript_source import body, longtable_rows, raw, title
 
 pytestmark = pytest.mark.adherence
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-MAIN_MD = REPO_ROOT / "slides" / "manuscript" / "main.md"
 EXP2_2X2_CSV = REPO_ROOT / "experiments" / "derived" / "tab_exp2_2x2.csv"
 
 NEW_TITLE_SUBSTR = "Can Frontier AI Build a Statistical Register?"
 
-# Maps the markdown agent label to the CSV `agent` value, and the markdown
+# Maps the table agent label to the CSV `agent` value, and the table
 # query-mode/documents cell pair to the CSV (`arm`, `docs`) key. The CSV uses
 # arm names (naive/optimised/arm3/arm4); the table re-labels them by the 2×2
 # factors it presents (query mode × documents).
@@ -39,67 +38,46 @@ _CELL_TO_CSV_ARM = {
 }
 
 
-def _md() -> str:
-    return MAIN_MD.read_text(encoding="utf-8")
-
-
-def _h1_line() -> str:
-    """First `# ` heading in the document body, skipping the YAML frontmatter.
-
-    The YAML frontmatter (delimited by `---`) may contain `#`-prefixed comment
-    lines (ticket 0518 added pandoc-crossref config comments); those are not
-    headings.
-    """
-    lines = _md().splitlines()
-    in_frontmatter = False
-    seen_open = False
-    for line in lines:
-        if line.strip() == "---":
-            if not seen_open:
-                seen_open = True
-                in_frontmatter = True
-            else:
-                in_frontmatter = False
-            continue
-        if in_frontmatter:
-            continue
-        if line.startswith("# "):
-            return line
-    raise AssertionError("no H1 line found in main.md body")
-
-
-def test_new_title_is_h1():
-    """The H1 carries the new title; 'Beyond RAG' must not be the H1 title."""
-    h1 = _h1_line()
-    assert NEW_TITLE_SUBSTR in h1, f"new title missing from H1; got: {h1}"
-    assert "Beyond RAG" not in h1, (
-        "old 'Beyond RAG' title must not remain the H1 (it may survive only "
-        f"inside the Econom'IA provenance footnote); got: {h1}"
+def test_new_title_present():
+    """\\title{} carries the new title; 'Beyond RAG' must not be the title."""
+    t = title()
+    assert NEW_TITLE_SUBSTR in t, f"new title missing from \\title{{}}; got: {t}"
+    # The Econom'IA provenance footnote (\thanks) legitimately cites the old
+    # talk title; strip it before asserting the headline title.
+    headline = t.split("\\thanks", 1)[0]
+    assert "Beyond RAG" not in headline, (
+        "old 'Beyond RAG' title must not remain the headline title (it may "
+        f"survive only inside the Econom'IA provenance footnote); got: {headline}"
     )
+
+
+def test_econom_ia_provenance_footnote():
+    assert "Econom'IA 2026" in title(), "Econom'IA provenance footnote missing from title"
 
 
 def test_data_and_code_availability_present():
-    assert "Data & Code Availability" in _md()
+    assert "Data & Code Availability" in body()
 
 
 def test_funding_present():
-    assert re.search(r"\*\*Funding\.\*\*", _md()), "Funding back-matter section missing"
+    assert "\\textbf{Funding.}" in body(), "Funding back-matter section missing"
 
 
 def test_orcid_present():
-    assert "0000-0001-9988-2100" in _md(), "author ORCID missing"
+    # The ORCID lives in the \\author{} block of the preamble.
+    assert "0000-0001-9988-2100" in raw(), "author ORCID missing"
 
 
 def test_conflict_of_interest_present():
-    assert "conflicts of interest" in _md(), "author conflict-of-interest disclosure missing"
+    assert "conflicts of interest" in body(), "author conflict-of-interest disclosure missing"
 
 
 def test_no_dangling_forward_references():
-    md = _md()
-    assert "see the 2×2 factorial table" not in md, (
+    text = body()
+    assert "see the 2×2 factorial table" not in text, (
         "stale forward-ref to a non-inline 2×2 table must be removed"
     )
-    assert "appears in the slides" not in md, (
+    assert "appears in the slides" not in text, (
         "standalone paper must not forward-reference 'the slides'"
     )
 
@@ -116,22 +94,13 @@ def _csv_lookup() -> dict[tuple[str, str, str], tuple[float, float]]:
 
 
 def _parse_table_rows() -> list[tuple[str, str, str, float, float]]:
-    """Parse Table 1 markdown rows: (agent_label, mode, docs, f1, cost)."""
+    """Parse Table 1 longtable rows: (agent_label, mode, docs, f1, cost)."""
     rows: list[tuple[str, str, str, float, float]] = []
-    in_table = False
-    for line in _md().splitlines():
-        stripped = line.strip()
-        if stripped.startswith("| Agent ") and "F1 (mean)" in stripped:
-            in_table = True
+    for cells in longtable_rows("F1 (mean)"):
+        if len(cells) < 5 or cells[0] == "Agent":
             continue
-        if in_table:
-            if not stripped.startswith("|"):
-                break
-            cells = [c.strip() for c in stripped.strip("|").split("|")]
-            if set(cells[0]) <= {"-", " "}:  # the |---|---| separator row
-                continue
-            agent, mode, docs, f1, cost = cells[:5]
-            rows.append((agent, mode, docs, float(f1), float(cost)))
+        agent, mode, docs, f1, cost = cells[:5]
+        rows.append((agent, mode, docs, float(f1), float(cost)))
     return rows
 
 
@@ -139,7 +108,7 @@ def test_table1_values_match_source_csv():
     """Every Table 1 cell re-derives from experiments/derived/tab_exp2_2x2.csv.
 
     Guards the 0452 failure mode: hand-typed manuscript numbers silently drift
-    when the source CSV is regenerated. Each markdown cell is re-parsed and
+    when the source CSV is regenerated. Each table cell is re-parsed and
     compared (to the table's 2-decimal precision) against the CSV.
     """
     csv_data = _csv_lookup()

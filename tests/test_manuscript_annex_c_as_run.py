@@ -1,7 +1,7 @@
-"""Ticket 0433 — main.md Annex C (Exp2 tech spec) rewritten to the as-run story.
+"""Ticket 0433 — manuscript Annex C (Exp2 tech spec) rewritten to the as-run story.
 
-Annex C of the preprint (slides/manuscript/main.md) holds the Experiment 2
-technical specification. Naming history:
+Annex C of the preprint (slides/manuscript/main.tex since ticket 0524) holds
+the Experiment 2 technical specification. Naming history:
 - Originally Annex C (Exp2 tech spec).
 - Renamed to Annex B in ticket 0469 restructure (Annex A moved to Related Work).
 - Renamed back to Annex C in ticket 0482 section reorder (Temporality became
@@ -24,31 +24,23 @@ This adherence test pins the rewrite's load-bearing invariants:
    bibliography parsability, NOT F1-scorability (the F1 cell stays N=5). A flat
    "Claude excluded" would contradict the 2×2 F1 table.
 
-The check reads main.md source rather than re-deriving numbers, so it stays
-fast and offline.
+The check reads the main.tex source rather than re-deriving numbers, so it
+stays fast and offline. It runs on the normalized body (line-wraps joined,
+``\\$``/``\\%`` unescaped), so the markers read as plain prose.
 """
 
-from pathlib import Path
-
 import pytest
+from manuscript_source import body
 
 pytestmark = pytest.mark.adherence
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
-MAIN_MD = REPO_ROOT / "slides" / "manuscript" / "main.md"
-
 
 def _annex_c() -> str:
-    """The text of Annex C (Experiment 2) — from its heading up to the next top-level heading.
-
-    Named Annex C after ticket 0482 section reorder (Temporality→A, Exp1-tech→B,
-    Exp2-tech→C, Supplementary→D, Recognition→E, Screen→F). Ticket 0518 made the
-    annex lettering symbolic, so anchors are now `{#sec:…}` labels.
-    """
-    text = MAIN_MD.read_text(encoding="utf-8")
-    start = text.index("## Experiment 2: Technical specification {#sec:annex-exp2}")
+    """The normalized text of Annex C (Experiment 2) — heading to next \\section."""
+    text = body()
+    start = text.index("\\section{Experiment 2: Technical specification}\\label{sec:annex-exp2}")
     rest = text[start:]
-    nxt = rest.index("\n## Supplementary figures {#sec:annex-suppfigs}", 1)
+    nxt = rest.index("\\section{Supplementary figures}\\label{sec:annex-suppfigs}", 1)
     return rest[:nxt]
 
 
@@ -63,8 +55,8 @@ def test_no_stale_pre_run_markers():
         "N=3",
         "not yet executed",
         "$10.00",
-        r"≤\$10",
-        r"≤\$31",
+        "≤$10",
+        "≤$31",
         "conjectured-results",
         "Δ to N=3",
     ]
@@ -86,7 +78,7 @@ def test_dual_axis_cap_present():
     assert "50 000 tokens" in annex or "50000 tokens" in annex or "50K tokens" in annex, (
         "token axis of the cap absent"
     )
-    assert r"\$3" in annex, "the $3 dollar guard absent"
+    assert "$3" in annex, "the $3 dollar guard absent"
 
 
 def test_factorial_framing_present():

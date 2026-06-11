@@ -3,7 +3,7 @@
 Two invariants:
 1. The committed CSV is bidirectional (neither GEM nor the reference is a
    superset) and internally consistent (per-status sums, matched + ref-only).
-2. The §4/§5/Annex-B literals in main.md are re-derived from the committed
+2. The §4/§5/Annex-B literals in main.tex are re-derived from the committed
    macros artifact (mirrors test_abstract_numbers.py / 0501 guards).
 """
 
@@ -12,13 +12,13 @@ import re
 from pathlib import Path
 
 import pytest
+from manuscript_source import body
 
 pytestmark = pytest.mark.adherence
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 CSV_PATH = REPO_ROOT / "data" / "reference" / "tab_source_concordance.csv"
 MACROS = REPO_ROOT / "report" / "inputs" / "generated" / "macros_source_concordance.tex"
-MAIN_MD = REPO_ROOT / "slides" / "manuscript" / "main.md"
 
 
 def _rows() -> list[dict]:
@@ -60,13 +60,11 @@ def _macro(name: str) -> str:
 
 def test_manuscript_concordance_numbers_match_artifact():
     """§4/§5/Annex-B coverage literals are present and match the generated macros."""
-    if not MAIN_MD.exists():
-        pytest.skip("main.md not found")
-    md = MAIN_MD.read_text(encoding="utf-8")
+    md = body()
     for name in ("GemReviewed", "GemReviewedPct", "WikiReviewed", "WikiReviewedPct", "GemOnly", "GemDistinct"):
         value = _macro(name)
         # percentages appear as "89%"; counts as bare integers in the prose/table
         needle = f"{value}%" if name.endswith("Pct") else value
         assert needle in md, (
-            f"concordance literal {needle} (\\{name} from {MACROS.name}) missing from main.md"
+            f"concordance literal {needle} (\\{name} from {MACROS.name}) missing from main.tex"
         )

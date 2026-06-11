@@ -1,11 +1,11 @@
-"""Ticket 0512 — structural revisions to slides/manuscript/main.md.
+"""Ticket 0512 — structural revisions to the manuscript (now main.tex, 0524).
 
 Adherence tests pinning the §3-review restructuring:
 
-1. A numbered §2 "Related Work — Empirical landscape" heading exists.
+1. A numbered "Related Work — Empirical landscape" section exists.
 2. An unnumbered "Related Work — Methods" section appears *before* the
    Conclusion (the theoretical/methods RW was relocated out of the front).
-3. No internal scaffolding remains in main.md: PR refs (``#NNN``), bare
+3. No internal scaffolding remains in the body: PR refs (``#NNN``), bare
    four-digit ticket refs (``0NNN``, modulo legitimate ORCID digits),
    ``palette.toml``, and commit-hash references.
 4. The long-tail recognition figure is referenced (0514 fold-in), and its
@@ -17,35 +17,25 @@ import re
 from pathlib import Path
 
 import pytest
+from manuscript_source import body
 
 pytestmark = pytest.mark.adherence
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-MAIN_MD = REPO_ROOT / "slides" / "manuscript" / "main.md"
 LONGTAIL_CSV = REPO_ROOT / "data" / "reference" / "tab_longtail_layers.csv"
 
 
-def _md() -> str:
-    if not MAIN_MD.exists():
-        pytest.skip("main.md not found")
-    return MAIN_MD.read_text(encoding="utf-8")
-
-
 def test_empirical_related_work_section_exists():
-    md = _md()
-    # Ticket 0518: number is now symbolic ({#sec:related-empirical}, auto §2).
-    assert "## Related Work — Empirical landscape {#sec:related-empirical}" in md, (
-        "labelled §2 empirical Related Work heading missing"
+    assert "\\section{Related Work — Empirical landscape}\\label{sec:related-empirical}" in body(), (
+        "labelled empirical Related Work heading missing"
     )
 
 
 def test_methods_related_work_before_conclusion():
-    md = _md()
-    methods = md.find("## Related Work — Methods")
+    text = body()
+    methods = text.find("\\section*{Related Work — Methods}")
     assert methods != -1, "unnumbered 'Related Work — Methods' section missing"
-    conclusion = md.find("## Conclusion {#sec:conclusion}")
-    if conclusion == -1:
-        conclusion = md.find("## Conclusion")
+    conclusion = text.find("\\section{Conclusion}\\label{sec:conclusion}")
     assert conclusion != -1, "Conclusion heading missing"
     assert methods < conclusion, (
         "'Related Work — Methods' must appear before the Conclusion"
@@ -53,55 +43,46 @@ def test_methods_related_work_before_conclusion():
 
 
 def test_why_we_redo_gem_paragraph_present():
-    md = _md()
-    # The why-we-redo-GEM paragraph motivates re-compiling GEM with per-cell
-    # provenance / reproducible compilation / licence.
-    assert "per-cell provenance" in md or "per-cell\nprovenance" in md, (
+    assert "per-cell provenance" in body(), (
         "why-we-redo-GEM paragraph (per-cell provenance) missing from §2"
     )
 
 
 def test_no_pr_references():
-    md = _md()
-    hits = re.findall(r"#\d{3}\b", md)
-    assert not hits, f"internal PR references must be stripped from main.md: {hits}"
+    hits = re.findall(r"#\d{3}\b", body())
+    assert not hits, f"internal PR references must be stripped from main.tex: {hits}"
 
 
 def test_no_palette_toml():
-    md = _md()
-    assert "palette.toml" not in md, "internal palette.toml reference must be stripped"
+    assert "palette.toml" not in body(), "internal palette.toml reference must be stripped"
 
 
 def test_no_ticket_scaffolding():
-    """No bare four-digit ticket refs remain.
+    """No bare four-digit ticket refs remain in the document body.
 
-    ORCID identifiers contain legitimate ``0000``/``0001``/``9988`` groups; we
-    exclude any digit-group that is part of the ORCID URL or label line.
+    ORCID identifiers contain legitimate ``0000``/``0001``/``9988`` groups; the
+    ORCID lives in the preamble title block, outside the scanned body. Preamble
+    maintenance comments (which may cite ticket numbers) are stripped by the
+    body() normalizer.
     """
-    md = _md()
-    # Drop the ORCID line(s) before scanning.
-    scrubbed = "\n".join(
-        line for line in md.splitlines() if "orcid" not in line.lower()
-    )
-    # Match a bare 0NNN token (ticket-id shaped) not part of a longer number.
+    text = body()
+    scrubbed = re.sub(r"\S*orcid\S*", " ", text, flags=re.IGNORECASE)
     hits = re.findall(r"(?<![\d.\-])0\d{3}(?![\d.\-])", scrubbed)
-    assert not hits, f"bare ticket-id scaffolding must be stripped from main.md: {hits}"
+    assert not hits, f"bare ticket-id scaffolding must be stripped from main.tex: {hits}"
 
 
 def test_no_commit_hash_reference():
-    md = _md()
-    assert "85a0e6c" not in md, "commit-hash reference must be stripped from main.md"
+    assert "85a0e6c" not in body(), "commit-hash reference must be stripped from main.tex"
 
 
 def test_longtail_figure_referenced():
-    md = _md()
-    assert "fig_longtail_recognition.pdf" in md, (
-        "long-tail recognition figure (0514) must be referenced in main.md"
+    assert "fig_longtail_recognition.pdf" in body(), (
+        "long-tail recognition figure (0514) must be referenced in main.tex"
     )
 
 
 def test_longtail_caption_counts_match_csv():
-    md = _md()
+    text = body()
     if not LONGTAIL_CSV.exists():
         pytest.skip(f"{LONGTAIL_CSV} not found")
     rows = list(csv.DictReader(LONGTAIL_CSV.open(encoding="utf-8")))
@@ -112,14 +93,12 @@ def test_longtail_caption_counts_match_csv():
     assert gold == 177
     # Each derived layer count must appear verbatim in the manuscript prose.
     for val in (str(gem), str(wiki), str(census)):
-        assert val in md, (
-            f"long-tail layer count {val} (re-derived from CSV) missing from main.md"
+        assert val in text, (
+            f"long-tail layer count {val} (re-derived from CSV) missing from main.tex"
         )
 
 
 def test_perimeters_paragraph_present():
-    md = _md()
-    # The statistical-perimeters paragraph defines "complete" per use case.
-    assert "market dispatch" in md.lower(), (
+    assert "market dispatch" in body().lower(), (
         "statistical-perimeters paragraph (0514) missing from §2"
     )

@@ -5,7 +5,7 @@ and ``test_abstract_numbers.py`` (the abstract F1 literals). This file closes
 the remaining ungoverned literals that #906 drifted silently: the Annex B fuel
 split, the §7 difficulty-table total recognition rate, and the §6 run-fusion
 numbers. Each assertion re-derives the value from its source artifact by an
-independent parse, then asserts the rounded literal is present in main.md.
+independent parse, then asserts the rounded literal is present in main.tex.
 
 Scope note: the §4 per-run attribute accuracies (fuel/status/province) are
 deliberately NOT guarded here — ticket 0502 owns the province 0.61→0.89
@@ -18,11 +18,11 @@ import statistics
 from pathlib import Path
 
 import pytest
+from manuscript_source import body
 
 pytestmark = pytest.mark.adherence
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-MAIN_MD = REPO_ROOT / "slides" / "manuscript" / "main.md"
 REF_CSV = REPO_ROOT / "data" / "reference" / "vietnam_thermal_plants_v2_classified.csv"
 SWEEP_CSV = REPO_ROOT / "experiments" / "derived" / "aggregation_sweep.csv"
 XEVAL_CSV = REPO_ROOT / "experiments" / "derived" / "exp1_cross_eval.csv"
@@ -30,9 +30,7 @@ DIFF_TEX = REPO_ROOT / "report" / "inputs" / "generated" / "tab_status_difficult
 
 
 def _md() -> str:
-    if not MAIN_MD.exists():
-        pytest.skip("main.md not found")
-    return MAIN_MD.read_text(encoding="utf-8")
+    return body()
 
 
 def _sweep_cell(method: str, rule: str, pool: int) -> dict:

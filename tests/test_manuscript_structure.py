@@ -1,14 +1,14 @@
-"""Ticket 0469 — main.md restructured from synopsis to a proper IMRaD paper.
+"""Ticket 0469 — the manuscript restructured from synopsis to a proper IMRaD paper.
 
-Adherence tests pin the structural invariants introduced in ticket 0469:
+Adherence tests pin the structural invariants introduced in ticket 0469
+(retargeted at slides/manuscript/main.tex by ticket 0524):
 
 1. No "Synopsis" framing in the title.
-2. Rhetorical "## First" / "## Second" / etc. headings replaced by numbered
-   IMRaD sections.
+2. Rhetorical "First" / "Second" / etc. section headings replaced by IMRaD.
 3. A structured abstract is present and leads with the frontier-falls-short
    result (frontier agents fall short before the parametric ceiling).
 4. Author and affiliation block present.
-5. A numbered Introduction section (§1) exists.
+5. A labelled Introduction section exists.
 6. A Conclusion section exists.
 7. Related Work section exists in the body (not only as a standalone annex).
 """
@@ -16,19 +16,11 @@ Adherence tests pin the structural invariants introduced in ticket 0469:
 from pathlib import Path
 
 import pytest
+from manuscript_source import body, raw
 
 pytestmark = pytest.mark.adherence
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-MAIN_MD = REPO_ROOT / "slides" / "manuscript" / "main.md"
-
-
-def _text() -> str:
-    if not MAIN_MD.exists():
-        pytest.skip("main.md not found")
-    return MAIN_MD.read_text(encoding="utf-8")
-
-
 MACROS_FILE = REPO_ROOT / "report" / "inputs" / "generated" / "macros_exp1_run_stats.tex"
 
 
@@ -42,43 +34,30 @@ def _parse_macro(tex: str, name: str) -> str:
 
 
 def test_no_synopsis_framing():
-    md = _text()
-    assert "Synopsis" not in md, "title still says 'Synopsis' — retitle to a real paper title"
-    assert "## First" not in md, "rhetorical '## First' heading not replaced by IMRaD"
-    assert "## Second" not in md, "rhetorical '## Second' heading not replaced by IMRaD"
-    assert "## Third" not in md, (
-        "rhetorical '## Third' heading not replaced by IMRaD — "
-        "rename to numbered section heading"
-    )
-    assert "## Fourth" not in md, "rhetorical '## Fourth' heading not replaced by IMRaD"
-    assert "## Fifth" not in md, "rhetorical '## Fifth' heading not replaced by IMRaD"
+    text = body()
+    assert "Synopsis" not in raw(), "title still says 'Synopsis' — retitle to a real paper title"
+    for word in ("First", "Second", "Third", "Fourth", "Fifth"):
+        assert f"\\section{{{word}}}" not in text, (
+            f"rhetorical '{word}' section heading not replaced by IMRaD"
+        )
 
 
 def test_abstract_present_and_leads_with_frontier():
     """Abstract must be present and lead with the frontier-falls-short result."""
-    md = _text()
-    assert "**Abstract.**" in md or "## Abstract" in md, (
-        "no abstract found in main.md — add a structured abstract"
+    text = body()
+    assert "\\textbf{Abstract.}" in text, (
+        "no abstract found in main.tex — add a structured abstract"
     )
-    # The abstract must mention frontier agents falling short before the parametric ceiling
-    abstract_start = md.find("**Abstract.**")
-    if abstract_start == -1:
-        abstract_start = md.find("## Abstract")
-    assert abstract_start != -1
-    # Check that "frontier" or "SOTA" appears in the abstract block
-    abstract_block = md[abstract_start : abstract_start + 2000]
+    abstract_block = text[text.find("\\textbf{Abstract.}") :][:2200]
     assert "frontier" in abstract_block.lower() or "sota" in abstract_block.lower(), (
         "abstract does not mention frontier agents"
     )
-    # The abstract mentions the key result: agents fall short of research-grade quality
     has_fall_short = (
         "fall short" in abstract_block.lower()
         or "falls short" in abstract_block.lower()
         or "still fall" in abstract_block.lower()
     )
-    assert has_fall_short, (
-        "abstract does not lead with the frontier-falls-short result"
-    )
+    assert has_fall_short, "abstract does not lead with the frontier-falls-short result"
 
 
 def test_abstract_numbers_in_body():
@@ -93,65 +72,48 @@ def test_abstract_numbers_in_body():
     canonical batch-2 (14 models / 70 runs; exp1_cross_eval.csv). Ticket 0497
     de-hardcoded the F1 literals after the 180→177 reference re-score.
     """
-    md = _text()
+    text = body()
     if not MACROS_FILE.exists():
         pytest.skip(
             f"{MACROS_FILE} not yet generated — "
             "run: make -f experiments/render.mk report-figures"
         )
     macros = MACROS_FILE.read_text(encoding="utf-8")
-    # These F1 stats appear in the Exp1 §4 results paragraph and the abstract.
     for macro in ("ExpOneFOneMin", "ExpOneFOneMean", "ExpOneFOneMax"):
         val = _parse_macro(macros, macro)
-        assert val in md, f"F1 stat {val} ({macro}) missing from manuscript body — update main.md"
+        assert val in text, f"F1 stat {val} ({macro}) missing from manuscript body — update main.tex"
     # ρ = 0.92 has no generated macro (coherence–F1 Spearman computed in §4); literal guard.
-    assert "0.92" in md, "coherence–F1 correlation ρ = 0.92 missing from manuscript"
+    assert "0.92" in text, "coherence–F1 correlation ρ = 0.92 missing from manuscript"
 
 
 def test_author_affiliation_present():
-    md = _text()
-    assert "CIRED" in md or "Ha-Duong" in md, (
-        "author or affiliation block missing from main.md"
+    text = raw()
+    assert "CIRED" in text or "Ha-Duong" in text, (
+        "author or affiliation block missing from main.tex"
     )
 
 
 def test_introduction_section_exists():
-    """Introduction section present and symbolically labelled.
-
-    Ticket 0518 dropped the hand-typed "1." prefix in favour of the
-    pandoc-crossref label `{#sec:intro}` (auto-numbered §1 by LaTeX).
-    """
-    md = _text()
-    assert "## Introduction {#sec:intro}" in md, (
-        "labelled Introduction section ('## Introduction {#sec:intro}') "
-        "missing from main.md"
+    """Introduction section present and symbolically labelled."""
+    assert "\\section{Introduction}\\label{sec:intro}" in body(), (
+        "labelled Introduction section missing from main.tex"
     )
 
 
 def test_conclusion_section_exists():
-    """Conclusion heading present.
-
-    Ticket 0512 inserted a numbered §2 empirical Related Work and relocated the
-    methods Related Work to an unnumbered section before the Conclusion, shifting
-    the Conclusion from §8 to §9. Ticket 0518 made the number symbolic
-    (`{#sec:conclusion}`).
-    """
-    md = _text()
-    assert "## Conclusion {#sec:conclusion}" in md, (
-        "labelled Conclusion section ('## Conclusion {#sec:conclusion}') "
-        "missing from main.md"
+    """Conclusion heading present and symbolically labelled."""
+    assert "\\section{Conclusion}\\label{sec:conclusion}" in body(), (
+        "labelled Conclusion section missing from main.tex"
     )
 
 
 def test_related_work_in_body():
     """Related Work must appear in the body, not only as an annex.
 
-    Ticket 0512 split Related Work into a numbered §2 empirical-landscape
-    section and an unnumbered methods section before the Conclusion. Ticket 0518
-    made the section number symbolic (`{#sec:related-empirical}`).
+    Ticket 0512 split Related Work into a numbered empirical-landscape section
+    and an unnumbered methods section before the Conclusion.
     """
-    md = _text()
-    assert "## Related Work — Empirical landscape {#sec:related-empirical}" in md, (
+    assert "\\section{Related Work — Empirical landscape}\\label{sec:related-empirical}" in body(), (
         "Related Work — Empirical landscape section missing from the body of "
-        "main.md — it should appear as a labelled section, not only as an annex"
+        "main.tex — it should appear as a labelled section, not only as an annex"
     )
