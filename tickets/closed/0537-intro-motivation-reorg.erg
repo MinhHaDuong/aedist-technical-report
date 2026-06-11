@@ -2,12 +2,22 @@
 Title: Manuscript intro & motivation reorg (reading-1 annotations, structural)
 Created: 2026-06-11
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #979
 
 --- log ---
 2026-06-11T12:30Z HDMX-coding-agent created from author reading-1 annotations (main+hdm.pdf p2-4)
 
 2026-06-11T11:05Z blocked on 0524 — structural rewrites run LaTeX-native post-conversion (author decision)
 2026-06-11T14:00Z HDMX-coding-agent note blocker 0524 closed — Blocked-by removed.
+2026-06-11T16:30Z HDMX-coding-agent note item 1 implemented — outline announcement moved after Contributions bullets; inline triple kept (claim) distinct from bullets (deliverables)
+2026-06-11T16:30Z HDMX-coding-agent note item 2 implemented — Glossary quote block moved to head of sec:capability, plain quote styling kept
+2026-06-11T16:30Z HDMX-coding-agent note item 3 implemented — why-recompile rewritten: admit GEM-first for analysis, lead with method-improvement motive, four original reasons compressed as supporting material
+2026-06-11T16:30Z HDMX-coding-agent note item 4 implemented — OSM + Wikipedia added to open-databases survey as community complement, forward-referencing fig:longtail
+2026-06-11T16:30Z HDMX-coding-agent note item 5 implemented — OSM layer replaces language-model census in fig:longtail pipeline (TDD, in_osm via fold+partial_ratio>=88); regenerated coverage 49/177, well above the 20-plant waiver floor
+2026-06-11T16:30Z HDMX-coding-agent note item 6 implemented — perimeters paragraph closes on researcher perspective: history is the research object, long tail stays
+2026-06-11T16:30Z HDMX-coding-agent note item 7 implemented — closing paragraph sharpened into two-sentence bridge to sec:quality; repetition scan of later sections found only annex line 'Neither is a superset' (different sense, 0486 territory, untouched)
+2026-06-11T16:30Z HDMX-coding-agent note exit criterion 2 (author re-read) satisfied via standing override: reading-2 of the merged PDF is the review (STATE.md, author 2026-06-11)
+2026-06-11T17:05Z HDMX-coding-agent closed — autoclosed — PR #979
 --- body ---
 ## Context
 Author's first full read (2026-06-11) of the text body produced structural

@@ -135,16 +135,7 @@ a new computable benchmark, scored against a hand-compiled, fully
 sourced reference. Second, the task is hard for today's agents: neither
 model memory nor web access yields a complete, well-sourced register.
 Third, reference-free coherence criteria suffice to screen out the
-weakest models. We situate the work against the existing open
-power-plant databases (§\ref{sec:related-empirical}), define a
-four-dimensional quality bar (§\ref{sec:quality}), survey AI
-capabilities from chatbots to agentic systems (§\ref{sec:capability}),
-measure what model memory alone delivers across 14 language models
-(§\ref{sec:exp1}), test the commercial frontier of mid-2026
-(§\ref{sec:exp2}), and show that targeted pipeline design is needed to
-bridge the gap (§\ref{sec:fusion}). The Discussion
-(§\ref{sec:discussion}) examines the limits of F1 as an aggregate and
-prefigures a fusion-based research programme.
+weakest models.
 
 \textbf{Contributions.} This paper makes three contributions.
 
@@ -167,23 +158,16 @@ prefigures a fusion-based research programme.
   credibility versus model-level source reliability).
 \end{itemize}
 
-\begin{quote}
-\textbf{Glossary.} \emph{Parametric memory} --- facts a language model
-has internalised in its weights during training, recalled without
-consulting any external document. \emph{RAG (retrieval-augmented
-generation)} --- supplementing the model's parametric memory at
-inference time with passages fetched from an external corpus, so answers
-can be grounded and cited. \emph{Agent} --- a model wrapped in a runtime
-that lets it take multi-step actions (search the web, call tools, run
-code, dispatch sub-agents) rather than emit a single reply. \emph{Token}
---- the sub-word unit a model reads and generates; billing and length
-limits are measured in tokens. \emph{Temperature} --- the
-sampling-randomness knob; temperature 0 makes decoding
-near-deterministic, isolating prompt-driven variation from sampling
-noise. \emph{F1} --- the harmonic mean of precision and recall; here,
-row-level F1 scores how well an extracted plant list matches the
-reference inventory.
-\end{quote}
+We situate the work against the existing open
+power-plant databases (§\ref{sec:related-empirical}), define a
+four-dimensional quality bar (§\ref{sec:quality}), survey AI
+capabilities from chatbots to agentic systems (§\ref{sec:capability}),
+measure what model memory alone delivers across 14 language models
+(§\ref{sec:exp1}), test the commercial frontier of mid-2026
+(§\ref{sec:exp2}), and show that targeted pipeline design is needed to
+bridge the gap (§\ref{sec:fusion}). The Discussion
+(§\ref{sec:discussion}) examines the limits of F1 as an aggregate and
+prefigures a fusion-based research programme.
 
 \section{Related Work --- Empirical landscape}\label{sec:related-empirical}
 
@@ -199,29 +183,44 @@ Coal Plant Tracker \citep{GEM2026:gcpt}; \emph{powerplantmatching}
 \citep{Gotzens-Fabian2019:powerplantmatching} harmonises several such
 sources for European grids through deterministic entity-resolution
 rules. All three solve the aggregation problem for documented,
-large-capacity units in well-resourced contexts.
+large-capacity units in well-resourced contexts. Two community sources
+complement these curated trackers. OpenStreetMap tags power plants
+(\texttt{power=plant}, queryable through the Overpass API) but covers
+only physically existing infrastructure: it answers presence questions
+for built sites, carries no forward-looking pipeline, and offers no
+per-cell sourcing. Wikipedia maintains structured lists of power
+stations, again without provenance. Both serve below as recognition
+layers in Figure~\ref{fig:longtail}.
 
 \textbf{Why we re-compile rather than reuse.} Global Energy Monitor is
 the closest external inventory to ours, and one might ask why the
-reference is built afresh rather than adopted from GEM. Four reasons.
-\emph{Per-cell provenance}: the research-grade bar (§\ref{sec:quality})
-demands that each value (capacity, status, commissioning date) trace to
-a specific primary source, whereas aggregate trackers carry source
-attribution at the record level at best. \emph{Under-documented sites}:
-GEM and WRI cover documented, large-capacity units well; the
-forward-looking PDP8 pipeline of proposed and planned LNG and gas
-projects, much of it in Vietnamese-language master-plan annexes, is
-exactly the under-documented tail they thin out. \emph{Reproducible
-compilation}: a single-author manual compilation from primary sources
-(PDP7/7A/8 annexes, EVN reports, MOIT decisions), version-locked and
-accompanied by per-row source priority, is auditable end-to-end in a way
-a redistributed aggregate is not. \emph{Licence}: the reference and its
-provenance ship under CC BY 4.0, free of the redistribution constraints
-that encumber several upstream sources. The long-tail figure makes the
-documented-head / under-documented-tail split concrete
-(Figure~\ref{fig:longtail}): the 177 reference plants, sorted by
-visibility, are checked against four recognition layers, and the
-speculative tail thins out from layer to layer.
+reference is built afresh rather than adopted from GEM. Let us admit
+it: analysis-oriented research or consulting should start from GEM. But
+this paper is research on the compilation method itself. The purpose is
+to improve how such inventories are built, not just to produce one more
+table. A cheaper method matters because manual inventories die when the
+resources behind them dry up, as WRI's global database illustrates,
+while an automated pipeline can stay evergreen and capture data GEM
+does not carry. Beyond cost, the
+method is groundwork for information fusion across sources, for better
+energy-transition modelling, and for keeping statistical practice
+abreast of research automation. Two ancillary payoffs: the task doubles
+as a benchmark for AI information retrieval, and the build validates AI
+engineering patterns on a concrete case study. The hand-compiled
+reference that anchors this programme also stands on its own merits:
+per-cell provenance to primary sources, as the research-grade bar
+(§\ref{sec:quality}) demands; coverage of under-documented sites ---
+the forward-looking PDP8 pipeline of proposed and planned LNG and gas
+projects, much of it in Vietnamese-language master-plan annexes, exactly
+the tail GEM and WRI thin out; end-to-end auditable compilation from
+primary sources (PDP7/7A/8 annexes, EVN reports, MOIT decisions),
+version-locked with per-row source priority; and a CC BY 4.0 licence
+free of the redistribution constraints that encumber several upstream
+sources. The long-tail figure makes the documented-head /
+under-documented-tail split concrete (Figure~\ref{fig:longtail}): the
+177 reference plants, sorted by visibility, are checked against four
+recognition layers, and the speculative tail thins out from layer to
+layer.
 
 \begin{figure}
 \centering
@@ -230,13 +229,13 @@ speculative tail thins out from layer to layer.
 source holds. The 177 plants, sorted by descending visibility, are
 checked against four recognition layers: the hand-compiled reference
 itself (all 177), the Global Energy Monitor tracker (157), Wikipedia
-coverage (130), and the language-model census from §\ref{sec:exp1} (144
-plants recognised by at least one of the 70 runs). Well-documented
-operating plants appear in every layer; the under-documented tail ---
-proposed and planned projects from the PDP8 pipeline --- thins out layer
-by layer. This tail is the reference's unique contribution, and the
-segment where investing in a sourcing pipeline adds the most value.
-Counts re-derived from
+coverage (130), and OpenStreetMap coverage (49 plants --- existing,
+physically built infrastructure only). Well-documented operating plants
+appear in every layer; the under-documented tail --- proposed and
+planned projects from the PDP8 pipeline --- thins out layer by layer.
+This tail is the reference's unique contribution, and the segment where
+investing in a sourcing pipeline adds the most value. Counts re-derived
+from
 \texttt{data/reference/tab\_longtail\_layers.csv}.}\label{fig:longtail}
 \end{figure}
 
@@ -251,17 +250,19 @@ question is precisely which of them get built. Policy analysis and
 energy-transition studies push furthest, retaining even \emph{cancelled}
 and \emph{abandoned} projects, because the pattern of what was dropped
 --- and why --- is itself the evidence. ``Complete'' therefore has no
-audience-free definition; the reference is built as the superset so that
-each downstream use can take the perimeter it needs, which is why the
-speculative tail is kept rather than pruned.
+audience-free definition. We take the researcher's perimeter, the
+widest one: the reference aims to be exhaustive and detailed for the
+whole economic and policy history of the thermal sector --- proposed,
+cancelled, and abandoned projects included. The long tail is not noise
+to prune; it is the research object. Built as this superset, the
+reference lets each downstream use cut the narrower perimeter it
+needs.
 
-The paper addresses a problem the three aggregators do not: extracting a
-complete, sourced inventory for a country where the facts are dispersed
-across heterogeneous documents, partly in a non-Latin script, and where
-no authoritative single-source aggregate exists. That problem ---
-open-world enumeration of a national asset class with per-cell
-provenance, against a held-out reference --- motivates the benchmark and
-the research programme that follow.
+Neither the aggregators nor the community sources attempt what the task
+demands: enumerate a national asset class in the open world, from facts
+dispersed across heterogeneous documents partly in a non-Latin script,
+and source every cell. Measuring how close AI systems come requires a
+yardstick, which §\ref{sec:quality} defines.
 
 \section{Quality dimensions for research-grade statistical datasets}\label{sec:quality}
 
@@ -359,6 +360,24 @@ coexist; provenance determines whether they are auditable; and
 temporality determines what period of the world they describe.
 
 \section{AI capability landscape: from chatbots to agentic systems}\label{sec:capability}
+
+\begin{quote}
+\textbf{Glossary.} \emph{Parametric memory} --- facts a language model
+has internalised in its weights during training, recalled without
+consulting any external document. \emph{RAG (retrieval-augmented
+generation)} --- supplementing the model's parametric memory at
+inference time with passages fetched from an external corpus, so answers
+can be grounded and cited. \emph{Agent} --- a model wrapped in a runtime
+that lets it take multi-step actions (search the web, call tools, run
+code, dispatch sub-agents) rather than emit a single reply. \emph{Token}
+--- the sub-word unit a model reads and generates; billing and length
+limits are measured in tokens. \emph{Temperature} --- the
+sampling-randomness knob; temperature 0 makes decoding
+near-deterministic, isolating prompt-driven variation from sampling
+noise. \emph{F1} --- the harmonic mean of precision and recall; here,
+row-level F1 scores how well an extracted plant list matches the
+reference inventory.
+\end{quote}
 
 Between 2022 and 2025, AI capability advanced as an industry-wide
 \emph{envelope} --- the outer surface of commercially attainable
