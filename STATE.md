@@ -1,4 +1,4 @@
-Last updated: 2026-06-11T15:40Z
+Last updated: 2026-06-11T15:20Z
 
 ## North star
 
@@ -9,15 +9,15 @@ Produce research-quality energy infrastructure datasets from open sources, valid
 **The preprint WP is `slides/manuscript/main.tex`** (hand-curated LaTeX, tectonic + CI-built since #969) — report.tex is internal ("no future", author 2026-06-05). Merged 2026-06-11: 0524 conversion, 0533 factual fixes, 0532 ratified abstract/conclusion + 0534 minors (#971 superseding #967/#968), 0542 semantic-LaTeX cleanup. **Author reading-2 deferred until the reading-1 wave lands** (DAG below). Standing authorizations (author 2026-06-11): merge-review-merge cadence — merge each PR on APPROVED + green CI, no long-lived branches; override mode — prose implementing the author's reading-1 briefs merges without pre-blessing, reading-2 of the merged PDF is the review; genuinely new judgment calls stay needs-human. 0171 cross-eval OUT (journal delta).
 
 ## Status
-<!-- generated 2026-06-10T21:15Z -->
+<!-- generated 2026-06-11T15:20Z -->
 
-**Tickets:** 24 ready · 33 blocked — `erg ready tickets/` for full list
+**Tickets:** 30 ready · 32 blocked — `erg ready tickets/` for full list
 **Recent commits:**
-  ca25823d Merge pull request #936 from MinhHaDuong/quickpr/state-acknowledgements-confirmed-in-reco-20260610-210418
-  6d2a876b STATE: acknowledgements confirmed in; record 0522 editorial round merged
-  e5d4634f Merge pull request #935 from MinhHaDuong/claude/ticket-0522-editorial-reframe
-  c04f003b ticket(0522): close and archive — PR #935
-  90556531 0522: log anchor approval + full-pass execution
+  ea7919b2 Merge pull request #975 from MinhHaDuong/handoff/state-masterplan-dag
+  30830d46 handoff: STATE + MASTERPLAN + ticket DAG, not a tracker ticket
+  f6af86f1 Merge pull request #974 from MinhHaDuong/tickets/file-wave-handoff
+  eb1a9431 tickets: file 0545 — reading-1 wave orchestration handoff
+  dfcb007a Merge pull request #973 from MinhHaDuong/tickets/0531-note-rapidfuzz-ticket
 
 ## Next actions
 
