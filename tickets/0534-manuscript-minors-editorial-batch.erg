@@ -5,11 +5,12 @@ Author: HDMX-coding-agent
 
 --- log ---
 2026-06-11T08:20Z HDMX-coding-agent created
+2026-06-11T08:45Z HDMX-coding-agent note renumbered from 0529 (ID collision)
 
 --- body ---
 ## Context
 Minor (`verifiable:`) findings from the 2026-06-11 prose review panel, batched
-for one editorial pass. Majors are tickets 0526/0527/0528.
+for one editorial pass. Majors are tickets 0531/0532/0533.
 
 ## Actions (one pass over slides/manuscript/main.md)
 1. "Proposed" status (38% of reference) absent from prompt vocabulary depresses
@@ -37,7 +38,7 @@ for one editorial pass. Majors are tickets 0526/0527/0528.
 
 ## Invariants
 - House crossref rules (tests/test_manuscript_crossref.py) stay green.
-- No new hand-typed empirical numbers (coordinate with 0526).
+- No new hand-typed empirical numbers (coordinate with 0531).
 
 ## Exit criteria
 - [ ] Each item fixed or explicitly waived with a one-line reason in the log.

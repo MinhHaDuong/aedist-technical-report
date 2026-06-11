@@ -5,6 +5,7 @@ Author: HDMX-coding-agent
 
 --- log ---
 2026-06-11T08:20Z HDMX-coding-agent created
+2026-06-11T08:45Z HDMX-coding-agent note renumbered from 0528 (ID collision)
 
 --- body ---
 ## Context
@@ -32,7 +33,7 @@ small prose fix.
 
 ## Test
 - Numbers introduced by fix 3 (refusal rate, conditional F1) derive from
-  committed artifacts (or land as macros if 0526 has shipped).
+  committed artifacts (or land as macros if 0531 has shipped).
 
 ## Exit criteria
 - [ ] Seeding attribution consistent between body and COI; author confirms facts.
