@@ -5,11 +5,12 @@ adherence test guards the load-bearing pieces of the YAML — anything a
 casual edit could break without notice.
 """
 
-import re
 from pathlib import Path
 
 import pytest
 import yaml
+
+from tests.workflow_filter_helpers import filter_patterns, job_runs, paths_filter_output
 
 pytestmark = pytest.mark.adherence
 
@@ -148,89 +149,16 @@ def test_build_runner_pinned():
     )
 
 
-def _filter_patterns() -> tuple[str, list[str]]:
-    """Return (filter_name, patterns) from the paths-filter step."""
-    wf = _load()
-    steps = wf["jobs"]["changes"].get("steps") or []
-    filter_step = next(
-        (s for s in steps if "dorny/paths-filter" in (s.get("uses") or "")),
-        None,
-    )
-    assert filter_step is not None, "dorny/paths-filter step not found"
-    raw_filters = (filter_step.get("with") or {}).get("filters", "")
-    parsed = yaml.safe_load(raw_filters)
-    assert len(parsed) == 1, f"expected exactly one filter, got {list(parsed)}"
-    name, patterns = next(iter(parsed.items()))
-    return name, patterns
-
-
-def _glob_match(path: str, pattern: str) -> bool:
-    """Minimal picomatch subset covering the workflow's patterns.
-
-    Supports brace expansion `{a,b}`, the catch-all `**`, `dir/**`
-    prefixes, and literal filenames — nothing more.
-    """
-    if pattern.startswith("{") and pattern.endswith("}"):
-        return any(_glob_match(path, p) for p in pattern[1:-1].split(","))
-    if pattern == "**":
-        return True
-    if pattern.endswith("/**"):
-        return path.startswith(pattern[:-2])
-    return path == pattern
-
-
-def _paths_filter_output(changed_files: list[str], patterns: list[str]) -> bool:
-    """Emulate dorny/paths-filter with predicate-quantifier: every.
-
-    The filter output is true iff ANY changed file matches ALL patterns;
-    a leading `!` negates the individual pattern (per upstream README).
-    """
-
-    def file_matches(path: str) -> bool:
-        for pat in patterns:
-            if pat.startswith("!"):
-                if _glob_match(path, pat[1:]):
-                    return False
-            elif not _glob_match(path, pat):
-                return False
-        return True
-
-    return any(file_matches(f) for f in changed_files)
-
-
-def _gate_allows(cond: str, output: str, name: str) -> bool:
-    """Evaluate the non-chore comparison clause inside one `if:` condition."""
-    expr = cond.replace("${{", "").replace("}}", "").strip()
-    match = re.search(
-        rf"needs\.changes\.outputs\.{re.escape(name)}\s*(==|!=)\s*'([^']*)'", expr
-    )
-    assert match, f"no {name} comparison found in gate {cond!r}"
-    op, rhs = match.groups()
-    equal = output == rhs
-    return equal if op == "==" else not equal
-
-
-def _build_runs(filter_output: bool | None) -> bool:
-    """Evaluate every build-step gate as GitHub Actions would.
-
-    `filter_output is None` models an empty/errored filter output (the
-    expression then compares against the empty string). All steps must
-    agree — a step whose gate diverges from the others is an error.
-    """
-    wf = _load()
-    steps = wf["jobs"]["build"].get("steps") or []
-    output = "" if filter_output is None else str(filter_output).lower()
-    name, _ = _filter_patterns()
-    verdicts = {_gate_allows(str(s.get("if", "")), output, name) for s in steps}
-    assert len(verdicts) == 1, f"build steps disagree on the {name} gate"
-    return verdicts.pop()
+# Filter-emulation helpers are shared with test_ci_workflow.py (ticket 0527)
+# via tests/workflow_filter_helpers.py.
 
 
 def test_chore_only_diff_skips_build():
     """A purely-chore diff (tickets/** alone) must skip the heavy build."""
-    _, patterns = _filter_patterns()
-    output = _paths_filter_output(["tickets/closed/0523-fix-tau.erg"], patterns)
-    assert not _build_runs(output), "chore-only diff must skip the build steps"
+    wf = _load()
+    _, patterns = filter_patterns(wf)
+    output = paths_filter_output(["tickets/closed/0523-fix-tau.erg"], patterns)
+    assert not job_runs(wf, "build", output), "chore-only diff must skip the build steps"
 
 
 def test_mixed_diff_runs_build():
@@ -240,20 +168,24 @@ def test_mixed_diff_runs_build():
     slides/manuscript/main.tex alongside a ticket file and the entire
     docs-build was skipped.
     """
-    _, patterns = _filter_patterns()
-    output = _paths_filter_output(
+    wf = _load()
+    _, patterns = filter_patterns(wf)
+    output = paths_filter_output(
         ["tickets/closed/0523-fix-tau.erg", "slides/manuscript/main.tex"],
         patterns,
     )
-    assert _build_runs(output), "mixed diff must run the build steps"
+    assert job_runs(wf, "build", output), "mixed diff must run the build steps"
 
 
 def test_source_only_diff_runs_build():
-    _, patterns = _filter_patterns()
-    output = _paths_filter_output(["slides/Makefile"], patterns)
-    assert _build_runs(output), "non-chore diff must run the build steps"
+    wf = _load()
+    _, patterns = filter_patterns(wf)
+    output = paths_filter_output(["slides/Makefile"], patterns)
+    assert job_runs(wf, "build", output), "non-chore diff must run the build steps"
 
 
 def test_empty_filter_output_runs_build():
     """Fail-safe: an empty/errored filter output must still build."""
-    assert _build_runs(None), "ambiguous filter output must default to building"
+    assert job_runs(_load(), "build", None), (
+        "ambiguous filter output must default to building"
+    )

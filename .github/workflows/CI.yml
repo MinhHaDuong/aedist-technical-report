@@ -5,16 +5,19 @@ on:
   pull_request:
 jobs:
   # Decide whether the diff touches anything that lint/tests care about.
-  # `chore` is true ONLY when *every* changed file matches the chore filter
-  # (predicate-quantifier: every) — ticket-only, STATE, in-repo notes, top-
-  # level READMEs, .claude/** harness files. Anything else — including a
-  # mixed diff or an empty/errored output — leaves it != 'true', so the
-  # heavy steps below run. Fail-safe: ambiguity always runs full CI.
-  # Kept in sync with docs-build.yml.
+  # paths-filter's output is true when ANY changed file matches the filter;
+  # predicate-quantifier: every quantifies over PATTERNS per file, not over
+  # files (ticket 0527 — the old `chore` filter fired on mixed diffs and
+  # skipped lint + tests). So the filter is inverted: `non-chore` is true
+  # when at least one changed file matches `**` AND is not in the chore set
+  # (tickets, STATE, in-repo notes, top-level READMEs, .claude/** harness
+  # files). Steps gate on != 'false', so a mixed diff runs full CI and an
+  # empty/errored output runs too. Fail-safe: ambiguity always runs;
+  # only a purely-chore diff skips. Kept in sync with docs-build.yml.
   changes:
     runs-on: ubuntu-latest
     outputs:
-      chore: ${{ steps.filter.outputs.chore }}
+      non-chore: ${{ steps.filter.outputs.non-chore }}
     steps:
       - uses: actions/checkout@v4
       - uses: dorny/paths-filter@v3
@@ -22,8 +25,9 @@ jobs:
         with:
           predicate-quantifier: 'every'
           filters: |
-            chore:
-              - '{tickets/**,.claude/**,docs/**,STATE.md,README.md,AGENTS.md,CLAUDE.md,ADR.md,MASTERPLAN.md,PLAN.md}'
+            non-chore:
+              - '**'
+              - '!{tickets/**,.claude/**,docs/**,STATE.md,README.md,AGENTS.md,CLAUDE.md,ADR.md,MASTERPLAN.md,PLAN.md}'
       - name: Check ticket corpus integrity
         run: tickets/erg check tickets/
   lint:
@@ -31,22 +35,22 @@ jobs:
     if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     steps:
-      - if: needs.changes.outputs.chore != 'true'
+      - if: needs.changes.outputs.non-chore != 'false'
         uses: actions/checkout@v4
-      - if: needs.changes.outputs.chore != 'true'
+      - if: needs.changes.outputs.non-chore != 'false'
         uses: astral-sh/setup-uv@v4
-      - if: needs.changes.outputs.chore != 'true'
+      - if: needs.changes.outputs.non-chore != 'false'
         run: uv run ruff check src/ tests/
   tests:
     needs: changes
     if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     steps:
-      - if: needs.changes.outputs.chore != 'true'
+      - if: needs.changes.outputs.non-chore != 'false'
         uses: actions/checkout@v4
-      - if: needs.changes.outputs.chore != 'true'
+      - if: needs.changes.outputs.non-chore != 'false'
         uses: astral-sh/setup-uv@v4
-      - if: needs.changes.outputs.chore != 'true'
+      - if: needs.changes.outputs.non-chore != 'false'
         run: uv sync --group dev
-      - if: needs.changes.outputs.chore != 'true'
+      - if: needs.changes.outputs.non-chore != 'false'
         run: uv run pytest -q
