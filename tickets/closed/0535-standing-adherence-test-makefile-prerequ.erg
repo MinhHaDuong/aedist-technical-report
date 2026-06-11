@@ -2,6 +2,7 @@
 Title: Standing adherence test: Makefile prerequisites cover script imports
 Created: 2026-06-11
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #984
 
 --- log ---
 2026-06-11T09:45Z HDMX-coding-agent created
@@ -9,6 +10,7 @@ Author: HDMX-coding-agent
 2026-06-11T09:45Z claude note blocked-by relationship with 0530 is soft (test red until 0530 lands); sequence accordingly
 
 2026-06-11T16:30Z claude note implemented as tests/test_makefile_dag_adherence.py. Policy refined from the literal spec: requiring the FULL import closure (config/evaluate/metrics/...) as prerequisites would red ~75 rules and contradict the repo convention that shared library modules are not per-rule edges; the enforced invariant is closure-restricted-to-scripts — when a rule lists src/aedist/X.py, every module in X's transitive first-party closure that is itself executed via `python -m aedist.*` by some registered rule must also be listed (exactly the PR #949 defect shape). Surfaced 18 real instances across score.mk/render.mk (plot_method_convergence, plot_exp1_matrix, extract, extract_exp2_bib, plot_exp2_arms_split gaps); all fixed in this PR. Coordination with sibling 0530: $(ANALYSIS_EXP2_CROSS_EVAL_CSV) rule is in CLOSURE_EXEMPT — after 0530 merges, lift the exemption and add extract.py to that rule's prerequisites. Second check (MANUSCRIPT_ASSETS vs main.tex includes, both directions) green as-is. Fang proven by synthetic-fixture tests in the same file.
+2026-06-11T22:10Z HDMX-coding-agent closed — autoclosed — PR #984
 --- body ---
 ## Context
 
