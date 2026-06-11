@@ -3,12 +3,14 @@ Title: Fix stale erg validation hook in .claude/settings.json (wrong path and ve
 Created: 2026-06-11
 Author: Claude
 Label: needs-human
+Closed: hook command fixed: tickets/erg check tickets/
 
 --- log ---
 2026-06-11T00:00Z Claude created
 2026-06-11T00:01Z Claude tag needs-human
 2026-06-11T00:01Z Claude note tagged needs-human — agent permission classifier blocks edits to .claude/settings.json (self-modification); a human or explicitly-authorized session must apply the one-line fix
 
+2026-06-11T08:37Z HDMX-coding-agent closed — hook command fixed: tickets/erg check tickets/
 --- body ---
 ## Context
 
