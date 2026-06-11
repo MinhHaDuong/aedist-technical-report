@@ -12,7 +12,7 @@ from aedist.analyze_matcher_phase_collisions import structural_false_matches
 
 
 @pytest.fixture(scope="module")
-def pairs_at_90() -> dict[tuple[str, str], bool]:
+def pairs_at_90() -> dict[tuple[str, str], tuple[float, bool]]:
     return structural_false_matches(threshold=90)
 
 
@@ -36,7 +36,9 @@ def test_structural_set_and_veto_flag(pairs_at_90, name_a, name_b, in_set, veto_
     key = (name_a, name_b) if (name_a, name_b) in pairs else (name_b, name_a)
     assert (key in pairs) == in_set
     if in_set:
-        assert pairs[key] == veto_blocked
+        score, blocked = pairs[key]
+        assert score >= 90
+        assert blocked == veto_blocked
 
 
 def test_set_nonempty_at_90(pairs_at_90):
@@ -52,7 +54,7 @@ def test_residual_side_of_veto_flag(pairs_at_90):
     sides, so base-name vs phase-suffixed siblings ("ca na" vs "ca na 2")
     slip through. Both sides of the veto flag must be represented.
     """
-    residual = {k for k, blocked in pairs_at_90.items() if not blocked}
-    blocked = {k for k, is_blocked in pairs_at_90.items() if is_blocked}
+    residual = {k for k, (_, blocked) in pairs_at_90.items() if not blocked}
+    blocked = {k for k, (_, is_blocked) in pairs_at_90.items() if is_blocked}
     assert ("ca na", "ca na 2") in residual
     assert residual and blocked

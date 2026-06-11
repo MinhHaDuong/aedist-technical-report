@@ -32,6 +32,7 @@ from rapidfuzz import fuzz, process
 
 from aedist.config import VN_THERMAL_PLANTS_RELEASE_CSV
 from aedist.evaluate import load_plants_csv
+from aedist.matching.lp import _extract_digit_tokens
 from aedist.reconcile import plants_to_dataframe
 
 log = logging.getLogger(__name__)
@@ -43,14 +44,14 @@ DEFAULT_OUTPUT_CSV = Path("report/inputs/generated/tab_phase_collisions.csv")
 DEFAULT_OUTPUT_MACROS = Path("report/inputs/generated/macros_phase_collisions.tex")
 
 
-def _digit_tokens(name: str) -> frozenset[str]:
-    """Standalone digit tokens of a name_clean string (mirrors lp.py:107)."""
-    return frozenset(tok for tok in name.split() if tok.isdigit())
-
-
 def _veto_blocked(name_a: str, name_b: str) -> bool:
-    """True when the LP unit-number veto fires for this pair (lp.py:203–208)."""
-    d1, d2 = _digit_tokens(name_a), _digit_tokens(name_b)
+    """True when the LP unit-number veto fires for this pair.
+
+    Reuses the LP's own ``_extract_digit_tokens`` and mirrors its veto
+    semantics (lp.py:203–208): both names carry standalone digit tokens
+    and the token sets differ.
+    """
+    d1, d2 = _extract_digit_tokens(name_a), _extract_digit_tokens(name_b)
     return bool(d1 and d2 and d1 != d2)
 
 
@@ -67,24 +68,29 @@ def reference_names_clean(reference: Path = VN_THERMAL_PLANTS_RELEASE_CSV) -> li
 
 def structural_false_matches(
     threshold: int = 90, reference: Path = VN_THERMAL_PLANTS_RELEASE_CSV
-) -> dict[tuple[str, str], bool]:
+) -> dict[tuple[str, str], tuple[float, bool]]:
     """Pairs of distinct reference plants with partial_ratio >= threshold.
 
-    Returns ``{(name_a, name_b): veto_blocked}`` with names in sorted order.
+    Returns ``{(name_a, name_b): (partial_ratio, veto_blocked)}`` with names
+    in sorted order; the score is the cdist one used for selection.
     """
     names = reference_names_clean(reference)
     scores = process.cdist(names, names, scorer=fuzz.partial_ratio)
-    pairs: dict[tuple[str, str], bool] = {}
+    pairs: dict[tuple[str, str], tuple[float, bool]] = {}
     for i in range(len(names)):
         for j in range(i + 1, len(names)):
             if scores[i][j] >= threshold:
-                pairs[(names[i], names[j])] = _veto_blocked(names[i], names[j])
+                pairs[(names[i], names[j])] = (
+                    float(scores[i][j]),
+                    _veto_blocked(names[i], names[j]),
+                )
     return pairs
 
 
 def sensitivity_summary(sensitivity_csv: Path) -> dict[int, dict[str, float]]:
     """Per-threshold mean F1 and total n_fuzzy_below from the committed sweep."""
-    rows = list(csv.DictReader(sensitivity_csv.open(encoding="utf-8")))
+    with sensitivity_csv.open(encoding="utf-8") as fh:
+        rows = list(csv.DictReader(fh))
     out: dict[int, dict[str, float]] = {}
     for t in THRESHOLDS:
         at_t = [r for r in rows if int(r["threshold"]) == t]
@@ -99,25 +105,25 @@ def sensitivity_summary(sensitivity_csv: Path) -> dict[int, dict[str, float]]:
 
 
 def write_csv(
-    by_threshold: dict[int, dict[tuple[str, str], bool]], output: Path
+    by_threshold: dict[int, dict[tuple[str, str], tuple[float, bool]]], output: Path
 ) -> None:
     output.parent.mkdir(parents=True, exist_ok=True)
     with output.open("w", newline="", encoding="utf-8") as fh:
         w = csv.writer(fh)
         w.writerow(["name_a", "name_b", "partial_ratio", "threshold", "veto_blocked"])
         for t in THRESHOLDS:
-            for (a, b), blocked in sorted(by_threshold[t].items()):
-                w.writerow([a, b, round(fuzz.partial_ratio(a, b), 1), t, blocked])
+            for (a, b), (score, blocked) in sorted(by_threshold[t].items()):
+                w.writerow([a, b, round(score, 1), t, blocked])
     log.info("Wrote phase-collision pairs to %s", output)
 
 
 def write_macros(
-    by_threshold: dict[int, dict[tuple[str, str], bool]],
+    by_threshold: dict[int, dict[tuple[str, str], tuple[float, bool]]],
     sens: dict[int, dict[str, float]],
     output: Path,
 ) -> None:
     pairs_90 = by_threshold[90]
-    n_blocked_90 = sum(1 for blocked in pairs_90.values() if blocked)
+    n_blocked_90 = sum(1 for _, blocked in pairs_90.values() if blocked)
     f1_drop = sens[90]["mean_f1"] - sens[95]["mean_f1"]
     output.parent.mkdir(parents=True, exist_ok=True)
     lines = [
@@ -128,6 +134,10 @@ def write_macros(
         f"\\newcommand{{\\PhaseCollisionPairsEightyFive}}{{{len(by_threshold[85])}}}",
         f"\\newcommand{{\\PhaseCollisionPairsNinetyFive}}{{{len(by_threshold[95])}}}",
         f"\\newcommand{{\\RealisedFuzzyBelowNinety}}{{{int(sens[90]['n_fuzzy_below'])}}}",
+        "% Mean-F1 drop from threshold 90 to 95, averaged over the "
+        f"{int(sens[90]['n_runs'])} runs at each threshold in "
+        "matching_sensitivity.csv; not yet cited in the manuscript — "
+        "defined for future citation.",
         f"\\newcommand{{\\ThresholdSensFOneDropNinetyFive}}{{{f1_drop:.3f}}}",
     ]
     output.write_text("\n".join(lines) + "\n", encoding="utf-8")
@@ -157,7 +167,7 @@ def main(argv: list[str] | None = None) -> None:
 
     for t in THRESHOLDS:
         pairs = by_threshold[t]
-        n_blocked = sum(1 for blocked in pairs.values() if blocked)
+        n_blocked = sum(1 for _, blocked in pairs.values() if blocked)
         log.info(
             "t=%d: %d structural pairs (%d veto-blocked, %d residual); "
             "mean_f1=%.4f, n_fuzzy_below=%d over %d runs",
