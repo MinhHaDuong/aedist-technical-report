@@ -5,6 +5,7 @@ Author: HDMX-coding-agent
 
 --- log ---
 2026-06-11T09:00Z HDMX-coding-agent created during /review-pr 950
+2026-06-11T13:30Z claude note executed: (1) ported non-chore inversion to CI.yml, gates now != 'false'; (2) comment rewritten, "Kept in sync with docs-build.yml" restored truthfully; (3) test_ci_workflow.py rewritten with emulation tests; helpers extracted to tests/workflow_filter_helpers.py and shared with test_docs_build_workflow.py. Adherence 244 passed, fast suite 2480 passed.
 
 --- body ---
 ## Context
@@ -41,6 +42,6 @@ CI.yml exactly as #938 skipped docs-build.
   filter output true (lint/tests run) — fails against current CI.yml patterns.
 
 ## Exit criteria
-- [ ] Mixed diffs run lint + tests in CI.yml
-- [ ] Purely-chore diffs still skip
-- [ ] Comment matches behaviour; tests updated
+- [x] Mixed diffs run lint + tests in CI.yml
+- [x] Purely-chore diffs still skip
+- [x] Comment matches behaviour; tests updated
