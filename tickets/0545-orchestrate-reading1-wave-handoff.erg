@@ -1,0 +1,65 @@
+%erg 0.1
+Title: Orchestrate the reading-1 integration wave (0537-0541, 0543, 0531) — supervision handoff
+Created: 2026-06-11
+Author: HDMX-coding-agent
+Label: needs-human
+
+--- log ---
+2026-06-11T15:20Z HDMX-coding-agent created — handoff so supervision can resume from any session (doudou, padme tmux, Claude Code web)
+
+--- body ---
+## Context
+
+State as of 2026-06-11 ~15:20Z: the manuscript pipeline merged today, in
+order: #969 (0524 LaTeX conversion — manuscript is now slides/manuscript/
+main.tex, tectonic-built, CI-built), #964 (0533 factual fixes), #971 (0532
+ratified abstract/conclusion + 0534's 13 minors, ported; supersedes closed
+#967/#968), #972 (0542 semantic LaTeX cleanup). Repo clean: no open PRs, no
+agents on main.tex, all merged branches deleted, erg check green.
+
+The bulk of the author's reading-1 annotations is filed but NOT integrated.
+The author defers reading-2 until this wave lands.
+
+## The wave (all on main.tex, all unblocked)
+
+| Ticket | Scope | Coordination |
+|--------|-------|--------------|
+| 0537 | Intro & motivation reorg (structural) | edits intro |
+| 0538 | Methods & figure-prose rework (structural) | edits §quality/Exp1 |
+| 0540 | Endgame reorg: fusion demoted, ablation purge, F1 stance (structural) | edits §7-8 |
+| 0539 | Annex B verbatim prompt + de-mine Wikipedia/GEM merge question | mostly annex |
+| 0543 | Author annotation items 14-22 (editorial batch) | whole file |
+| 0541 | Body register harmonisation + em-dash purge | whole file; OVERLAPS 0543 item 14 — run 0543 and 0541 as one executor or strictly sequenced |
+| 0531 | Macros everywhere (all numbers via generated macros.tex; includes the 177-count sync folded from 0501 and the 0534#1 stratum-accuracy artifact) | touches numbers everywhere — run LAST |
+
+Sequencing: structural first (0537, 0538, 0540 — separate sections, can be
+parallel worktrees but merge sequentially with rebase-at-every-gate), then
+0539, then 0543+0541 together, then 0531 last (macro pass over settled prose).
+0544 (rapidfuzz validation) is independent code work, any time.
+
+## Standing authorizations (author, 2026-06-11)
+
+- Merge-review-merge cadence: merge each PR as soon as APPROVED + CI green;
+  no long-lived branches (memory: feedback_merge_review_merge_cadence).
+- Override mode: prose changes implementing the author's reading-1 briefs
+  merge WITHOUT pre-merge author blessing; the author's reading-2 of the
+  merged PDF is the review. Genuine NEW judgment calls (not covered by a
+  brief) stay needs-human.
+- Review battery per PR: parallel reviewers on a different model than the
+  coder + exit-criteria gate, then merge (today's #969/#971/#972 pattern).
+
+## Constraints
+
+- One executor per ticket, isolated worktree, ticket as sole input.
+- Sequential merges; rebase onto origin/main at every gate.
+- House rules: tests/test_manuscript_crossref.py (no hand-typed numbers),
+  zero-prose-drift evidence for mechanical passes, erg close in the PR.
+- After the wave: rebuild slides/manuscript/main.pdf on the primary checkout
+  for the author's reading-2; report which annotation items were waived.
+
+## Exit criteria
+
+- [ ] All seven wave tickets closed via merged PRs
+- [ ] make check green on final main; manuscript PDF rebuilt for reading-2
+- [ ] Waivers (if any) listed per ticket in this ticket's log
+- [ ] Author does reading-2; this tracker closes after that review
