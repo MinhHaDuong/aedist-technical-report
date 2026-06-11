@@ -8,6 +8,7 @@ Author: claude
 2026-06-03T10:00Z claude — Imagine-session verification killed the external [30,1600] band: operating centrales max ≈1500 MW but reference power-centers legitimately reach 6000 MW, so a flat ceiling mislabels ~25% of the gold. Capacity plausibility is level-conditional → spun out the `level` schema (0401) and the level-conditioned capacity coherence check (0402). 0397's external check now keeps only province + capacity≥30-numeric; the upper-plausibility signal lives in 0402.
 
 2026-06-09T06:03Z HDMX-coding-agent note Blocked-by 0396 cleared in commit 4fcc0328 (0396 closed).
+2026-06-11T09:30Z HDMX-coding-agent note refreshed against current codebase and reconciled with the 0464 re-scope: (1) internal AND extended with the two 0402 Part-B level predicates (landed in score_coherence_level.py; return None until 0480 backfills `level`); (2) 0396 landed the atomicity signal as an inline run fraction in score_coherence(), not the per-row boolean this ticket assumed — the loop refactor to per-row pass/fail is now explicit in Actions; (3) tied to tracker 0464 as child A8 — the external composite and the per-row AND aggregation have no other home in the run-screen roadmap; the run-grain veto / model-grain floor aggregation question (0201 log 2026-06-08) is orthogonal: 0397 aggregates checks WITHIN a row, 0453/0201 aggregate rows/runs.
 --- body ---
 ## Context
 
@@ -41,11 +42,21 @@ they are not mistaken for the per-field numbers.
 **Internal composite — per-row AND of:**
 - fuel ∈ allowed vocabulary (reuse `_ALLOWED_FUELS`)
 - status ∈ allowed vocabulary (reuse `_ALLOWED_STATUSES`)
-- row is 1NF-atomic — **reuse 0396's per-row predicate; do not re-specify the
-  detector here** (0396 owns the 14%→2.6% tightening and the false-positive
-  exclusions). This ticket only needs 0396 to expose a row-level boolean, not
-  just the run fraction.
+- row is 1NF-atomic — **reuse 0396's detector; do not re-specify it here**
+  (0396 owns the 14%→2.6% tightening and the false-positive exclusions).
+  Codebase state (2026-06-11): 0396 landed the signal as an inline counter in
+  `score_coherence()` (`score_mechanical.py` ~L409–421), a run fraction with no
+  exposed row-level boolean. Refactor that loop into a per-row pass/fail
+  predicate (same regex, same exclusions) — that refactor is in-scope here and
+  is the natural shape for all the composite's checks.
 - capacity numeric and ≥ 0 (reuse `_capacity_nonnegative`)
+- the two 0402 Part-B level predicates (landed in
+  `src/aedist/score_coherence_level.py`): capacity plausible for declared
+  `level`, and `level` consistent with name. Per ticket 0402 ("Both feed the
+  internal composite of 0397"). **None-tolerance:** until 0480 lands the prompt
+  change + backfill, these return `(None, "column_missing")` on all existing
+  rows — a None predicate is excluded from that row's AND (vacuously true), not
+  treated as a failure, so the composite is comparable before and after 0480.
 
 **External composite — per-row AND of:**
 - province ∈ gazetteer (reuse `_province_known` from `coherence.py`; promote it
@@ -83,11 +94,25 @@ into the other. See docs/inventory-1nf-handoff-exp2.md §Two objectives.
 - `{"name":"Hà Tĩnh","fuel":"coal","status":"operating","capacity_mwe":600,
   "province":"Hà Tĩnh"}` → passes both → both composites = 1.0 on a singleton.
 
+## Place in the 0464 run-screen roadmap (reconciled 2026-06-11)
+
+Tracker 0464 (Paper A internal-coherence run-screen) re-scoped 0201 on
+2026-06-08 without citing this ticket. Reconciliation: 0397 is child **A8** of
+0464. Its unduplicated deliverables in that roadmap are (a) the **external**
+composite (province gazetteer + ≥30 MWe task scope — no other 0464 child owns
+world-knowledge checks) and (b) the **within-row AND** aggregation of the
+already-landed per-field indicators. This does not touch the contested
+run-grain veto / model-grain floor question (0201 log 2026-06-08, owned by
+0453/0201): those aggregate across rows and runs; 0397 aggregates across
+checks within one row. The per-field scorer components themselves are owned by
+the re-scoped 0201 (A1); 0397 consumes them.
+
 ## Exit criteria
 - [ ] `coherence_internal` and `coherence_external` emitted per run as per-row
       pass/fail fractions, alongside (not replacing) the per-field indicators.
-- [ ] Internal AND includes 0396's per-row atomicity predicate (consumed, not
-      re-implemented); external AND includes a new `coherence_province_known`
+- [ ] Internal AND includes 0396's atomicity predicate refactored to row level
+      (consumed, not re-implemented) and the two 0402 level predicates with
+      None-tolerance; external AND includes a new `coherence_province_known`
       column and a capacity ≥30-and-numeric check (no flat upper band).
 - [ ] Both composites in `records_to_metrics()` (ADR-7); per-field breakdown
       retained.
@@ -106,15 +131,23 @@ into the other. See docs/inventory-1nf-handoff-exp2.md §Two objectives.
 - Provenance and Temporality dimensions → 0201.
 
 ## Related
-- 0396 — prerequisite: per-field 1NF row-atomicity indicator (provides the
-  per-row predicate the internal composite ANDs)
-- 0401 — `level` schema + reference derivation (foundation for 0402)
-- 0402 — level-conditioned capacity-plausibility coherence; feeds this internal
-  composite (replaces the deleted flat upper band)
-- 0201 — parent: quality composite axis
+- 0464 — tracker (Paper A run-screen); this ticket is child A8
+- 0396 — closed prerequisite: 1NF atomicity detector (inline fraction in
+  `score_coherence()`; row-level refactor happens here)
+- 0401 — closed: `level` schema + reference derivation (foundation for 0402)
+- 0402 — tracking: level-conditioned capacity-plausibility; Part-B scorers
+  landed and feed this internal composite (replace the deleted flat upper band)
+- 0480 — 0402 Part A: prompt emits `level` + backfill; activates the level
+  predicates (None until then)
+- 0201 — re-scoped A1: owns the per-field scorer components this composite
+  consumes
 - 0387 — downstream: mart regen after coherence-field additions
 - 0393 — reference-based counterpart; opposite 1NF reading (do not conflate)
 - docs/inventory-1nf-handoff-exp2.md — 1NF extent, detector, two-objectives split
 - src/aedist/coherence.py — `VIETNAM_PROVINCES`, `_province_known`
 - src/aedist/score_mechanical.py / score_exp1.py — existing `coherence_*` scorers
+- src/aedist/score_coherence_level.py — landed 0402 Part-B level predicates
 - src/aedist/build_exp2_mart.py, build_exp2_mart_views.py — downstream schema
+
+Part of: 0464 — role A8 (external composite + within-row pass/fail aggregation
+over the per-field indicators)
