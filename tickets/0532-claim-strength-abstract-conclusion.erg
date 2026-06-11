@@ -10,6 +10,7 @@ Label: needs-human
 2026-06-11T10:17Z HDMX-coding-agent note reimagined+planned (raid 532-534): passage-level actions anchored (abstract l.31, conclusion l.202); Exp2 l.148 and Discussion l.182 already hedged — do not touch
 2026-06-11T10:30Z HDMX-coding-agent note verify-feasibility WARN (raid 532-534): anchors PASS; needs-human gate — PR cannot auto-merge; stacks on t0533
 
+2026-06-11T12:30Z haduong annotated reading-1 annotations (main+hdm.pdf) triaged into this ticket; see body section 'Author annotation brief'
 --- body ---
 ## Context
 Prose review panel 2026-06-11 (pre-arXiv): two reviewers reached major-revision
@@ -83,3 +84,26 @@ and conclusion. Do not introduce a macro for τ (appears twice; inline it).
 - [ ] ρ=0.92 carries the pooled/confound caveat wherever it appears.
 - [ ] Quality-bar claim scoped to the two measured dimensions.
 - [ ] Author has read and blessed the rewritten abstract + conclusion.
+
+## Author annotation brief (reading 1, 2026-06-11) — this unblocks the needs-human items
+
+Abstract rewrite directives (author, from main+hdm.pdf p1–2):
+- "177 thermal power plants" must not read as 177 *operating* plants — the
+  register spans proposed/planned/abandoned/retired too. Disambiguate.
+- The long benchmark-results sentence loses the general reader — simplify.
+- "Four frontier agents … four-dimensional quality bar": confusing reuse of
+  "four"; rephrase one of them.
+- Remove F1 detail from the abstract ("only you are in love with F1").
+- Remove the ρ=0.92 screening sentence as too complicated (will be superseded
+  by the 0505-line raid results); keep at most a plain-language claim.
+- No literature review in the abstract (drop the "to our knowledge no prior
+  benchmark" closing); remove the fusion/pooling sentence — stay focused.
+- Em-dashes are an AI tell — restyle.
+- Key results, restated by the author (use as the abstract's spine and in the
+  intro): (1) we offer a new computable benchmark; (2) the task is hard for
+  today's agents; (3) reference-free coherence criteria suffice to screen out
+  the weak models.
+- Intro: consider reintegrating the key-results list before the outline
+  announcement. We do NOT check/trace per-cell provenance — instead add a
+  sentence contextualising computable benchmarks in knowledge engineering & AI.
+- Conclusion (p23): currently weakly supported by results — argue better.

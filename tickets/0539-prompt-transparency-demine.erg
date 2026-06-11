@@ -1,0 +1,37 @@
+%erg 0.1
+Title: Prompt transparency (Annex B verbatim) + de-mine the "merge Wikipedia and GEM" reviewer question
+Created: 2026-06-11
+Author: HDMX-coding-agent
+Blocked-by: 0524
+
+--- log ---
+2026-06-11T12:30Z HDMX-coding-agent created from author reading-1 annotations (main+hdm.pdf p9)
+
+--- body ---
+## Context
+Two author directives from reading 1, both about anticipating referee attacks
+on the experimental protocol.
+
+## Actions
+1. **Annex B verbatim prompt**: verify which prompt the rerun actually used
+   (author believes the complete prompt — check the code), and reproduce it
+   verbatim in Annex B. Annex B should also acknowledge two known prompt
+   weaknesses: (a) we missed the "Start your answer with…" trick that would
+   have simplified downstream parsing; (b) the status-list mismatch with the
+   reference vocabulary (cf. "Proposed" stratum, 0534 item 1) — if confirmed,
+   grounds for a rerun in the journal version.
+2. **De-mine "why not tell the model to merge Wikipedia and GEM?"**: add prose
+   answering the inevitable reviewer question. Since we want a GENERIC asset
+   inventory method, we cannot provide the answer in the question — the model
+   gets a fair chance: it has training data; in multi-turn we encourage source
+   discovery. And we never disclose that the reference list is published on
+   Zenodo.
+
+## Relevant files
+- `slides/manuscript/` — Annex B, §Exp1/Exp2 protocol prose
+- `experiments/` — rerun prompt assembly code (verify which prompt shipped)
+
+## Exit criteria
+- [ ] Annex B contains the verbatim rerun prompt, verified against code.
+- [ ] Annex B acknowledges the two prompt-design limitations.
+- [ ] The merge-the-sources de-mining paragraph is in the protocol prose.
