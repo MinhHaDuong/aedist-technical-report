@@ -22,6 +22,7 @@ import logging
 import os
 import re
 from collections import defaultdict
+from collections.abc import Iterable
 from pathlib import Path
 
 from .evaluate import reference_plant_count
@@ -57,6 +58,17 @@ _KNOWN_SIZE_B: dict[str, float] = {
     "nemotron-3-nano": 30,  # 30B MoE, 3B active
     "qwen3.5-plus-02-15": 397,  # 397B MoE, 17B active
     "step-3.5-flash": 196,  # 196B MoE, 11B active
+    # Exp1 census models with undisclosed parameter counts (ticket 0504):
+    # pinned to their _SIZE_CLASS_B value so name-only resolution reproduces
+    # the size_class-derived Figure 2 order exactly.
+    "claude-opus-4.6": 300,  # size_class=frontier in exp1_batch2 records
+    "claude-sonnet-4.6": 300,  # size_class=frontier in exp1_batch2 records
+    "claude-haiku-4.5": 30,  # size_class=medium in exp1_batch2 records
+    "gpt-5.5": 300,  # size_class=frontier in exp1_batch2 records
+    "deepseek-v4-pro": 300,  # size_class=frontier in exp1_batch2 records
+    "deepseek-v4-flash": 30,  # size_class=medium in exp1_batch2 records
+    "qwen3.7-max": 300,  # size_class=frontier in exp1_batch2 records
+    "qwen3.6-flash": 30,  # size_class=medium in exp1_batch2 records
 }
 
 
@@ -71,6 +83,19 @@ def _model_size_b(model: str, size_class: str | None = None) -> float:
     if matches:
         return max(float(m) for m in matches)
     return float(_SIZE_CLASS_B.get(size_class or "", 500))
+
+
+def census_model_order(models: Iterable[str]) -> list[str]:
+    """Canonical ordering of the census models, shared by Figure 2 and the
+    quality-floor heatmap (ticket 0504).
+
+    Sort key: architectural family alphabetical, then effective parameter
+    count descending (``_model_size_b``, name-only resolution: confirmed
+    registry → regex on the name), then name. Every census model must
+    resolve a size from its name alone — undisclosed sizes are pinned in
+    ``_KNOWN_SIZE_B`` — so callers need no per-record ``size_class``.
+    """
+    return sorted(models, key=lambda m: (model_family(m), -_model_size_b(m), m))
 
 
 log = logging.getLogger(__name__)
@@ -292,25 +317,13 @@ def write_pdf(
         # Pick representative reps per model: min / median / max TP.
         method_rows = _select_min_median_max(method_rows)
 
-        # Resolve size per model (not per record). Different reps of the same
-        # model can carry different size_class values in the data — take the
-        # minimum so that any real registry match (or named size_class) wins
-        # over the 500 default fallback when size_class is "unknown".
-        model_size: dict[str, float] = {}
-        for r in method_rows:
-            sz = _model_size_b(r["model"], r.get("size_class"))
-            model_size[r["model"]] = min(sz, model_size.get(r["model"], sz))
-
-        # Group by architectural family (alphabetical); within family, larger
-        # models go first so they land higher on the inverted Y axis.
-        method_rows.sort(
-            key=lambda r: (
-                model_family(r["model"]),
-                -model_size[r["model"]],
-                r["model"],
-                -r["tp"],
-            )
-        )
+        # Canonical census order (family alphabetical, size descending, name)
+        # via the shared name-only resolver — larger models land higher on
+        # the inverted Y axis. Within a model, runs sort by TP descending.
+        order_index = {
+            m: i for i, m in enumerate(census_model_order({r["model"] for r in method_rows}))
+        }
+        method_rows.sort(key=lambda r: (order_index[r["model"]], -r["tp"]))
 
         band_start = y_offset
         model_ys: dict[str, list[float]] = {}
