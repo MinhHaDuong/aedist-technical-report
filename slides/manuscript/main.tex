@@ -33,6 +33,7 @@
 \newunicodechar{≥}{\ensuremath{\geq}}
 \newunicodechar{≈}{\ensuremath{\approx}}
 \newunicodechar{ρ}{\ensuremath{\rho}}
+\newunicodechar{τ}{\ensuremath{\tau}}
 \newunicodechar{Δ}{\ensuremath{\Delta}}
 \newunicodechar{−}{\ensuremath{-}}
 \newunicodechar{⁴}{\ensuremath{^{4}}}
@@ -74,7 +75,8 @@ sur l'Environnement et le Développement, CNRS, France}
 
 \maketitle
 
-\textbf{Abstract.} Open energy-system models need plant-level data that
+\begin{abstract}
+Open energy-system models need plant-level data that
 are complete, dated, and traceable to sources, yet across much of the
 world these data arrive late, incomplete, or under restrictive licences.
 We introduce a computable benchmark for this task: reconstruct the
@@ -100,6 +102,7 @@ be rejected without any ground truth. The results argue for investing in
 the corpus and the sourcing process rather than in a stronger model,
 building a sourced, auditable knowledge base from which statistical
 tables derive as dated snapshots.
+\end{abstract}
 
 \section{Introduction}\label{sec:intro}
 
@@ -1014,7 +1017,7 @@ credibility} while the model-level grade rates \emph{source
 reliability}. Making these scorers part of the standard pipeline is
 future work. \ref{sec:annex-screen} tests whether the screen
 discriminates good from bad runs of the \emph{same} model (removing the
-across-model confound) and reports a model-stratified Kendall \(\tau\) =
+across-model confound) and reports a model-stratified Kendall τ =
 +0.215 for cap\_distinct vs F1, positive in 10/14 models.
 
 \textbf{From noisy runs to fused estimates.} The per-plant recognition
@@ -1136,6 +1139,32 @@ resolution and multi-run fusion, not through a stronger model or a
 single heroic prompt. For the many countries whose statistical systems
 cannot yet supply machine-readable asset inventories, that is where the
 investment should go.
+
+\section*{Acknowledgements}
+\addcontentsline{toc}{section}{Acknowledgements}
+
+We thank Econom'IA 2026 participants for their comments, in particular
+those that led to the updated reference list, the per-plant recognition
+matrix, and the status-composition analysis of task difficulty in the
+annex.
+
+\textbf{Data \& Code Availability.} Code and data are available at
+https://github.com/MinhHaDuong/aedist-technical-report (CC BY 4.0).
+
+\textbf{Funding.} This work was supported by CNRS/CIRED.
+
+\textbf{Author contributions and conflicts of interest.} The author
+compiled the 177-plant reference list, and an intern in the author's
+group, working under the author's supervision, seeded reference-derived
+content into the relevant Wikipedia pages in June 2019; the author also
+made minor edits to those pages directly (§\ref{sec:exp1}; provenance in
+\texttt{data/reference/PROVENANCE.md}). Both the benchmark reference and
+part of its Wikipedia coverage therefore originate from the author's
+group; this dual role is disclosed, and the reference list is provided
+as a supplementary artifact with per-plant source citations.
+
+\renewcommand{\refname}{Bibliography}
+\bibliography{../../report/refs}
 
 \appendix
 \renewcommand{\thesection}{Annex \Alph{section}}
@@ -1326,22 +1355,22 @@ concatenation in filename lex order, joined by a blank line:
 \textbf{\#\# Goal}
 
 Produce a complete, primary-sourced reference inventory of Vietnam's
-past, present and future thermal generation assets (\textgreater{}
+past, present and future thermal generation assets (>
 30MWe) structured as follows:
 
 \textbf{\#\# Structured power plants table}
 
 Tabulate for every thermal power plant in Vietnam:
 
-Name (Vietnamese) \textbar{} Name (English) \textbar{} Province
-\textbar{} Fuel \textbar{} Technology \textbar{} Units × MW \textbar{}
-Total MWe \textbar{} Status \textbar{} COD \textbar{} Owner/Developer
-\textbar{} Source 1 \textbar{} Source 2 \textbar{} Notes \textbar{}
+Name (Vietnamese) | Name (English) | Province
+| Fuel | Technology | Units × MW |
+Total MWe | Status | COD | Owner/Developer
+| Source 1 | Source 2 | Notes |
 
 Where: - Fuel: Coal / Domestic gas / Imported LNG - Technology (coal):
 Subcritical / Supercritical / USC - Technology (gas): CCGT / OCGT -
 Status: Announced / Pre-permit / Permitted / Construction / Operating /
-Shelved / Cancelled / Retired - Total MWe: Include units \textgreater{}
+Shelved / Cancelled / Retired - Total MWe: Include units >
 30MWe. - COD: Actual or expected commercial operation date - Sources:
 specify where in the document, include URL
 
@@ -1474,8 +1503,7 @@ decoding settings; the present discipline is informed by in-project
 measurement rather than external benchmarks.
 
 \subsection*{Post-fix top-up cohort and interday variability}
-\addcontentsline{toc}{subsection}{Post-fix top-up cohort and interday
-variability}
+\addcontentsline{toc}{subsection}{Post-fix top-up cohort and interday variability}
 
 The original 16-model × 5-rep baseline was executed on 2026-05-20
 against a harness that silently dropped
@@ -1518,7 +1546,7 @@ mixed-integer linear programming (MILP) --- the LP matcher in
 combines (i) rapidfuzz \texttt{partial\_ratio} name similarity, with
 candidate pairs requiring \texttt{similarity\_threshold\ ≥\ 90} (integer
 0--100 scale), and (ii) a small capacity-difference term
-(\texttt{capacity\_weight\ ·\ \textbar{}Δcapacity\_MWe\textbar{}},
+(\texttt{capacity\_weight\ ·\ |Δcapacity\_MWe|},
 default weight 0.001). Province and fuel are deliberately not part of
 the matching cost (ADR-3); they are scored separately as cell-level
 attribute accuracy on the matched pairs. The optimal one-to-one
@@ -1603,8 +1631,8 @@ groups.}\label{fig:quality-floor}
 \textbf{Reliability-gate sensitivity.} The Figure~\ref{fig:reliability}
 grade depends on two tuning choices: the indicator set (which
 reference-free dimensions enter the good-run conjunction) and the pass
-threshold \(\tau\) (a dimension counts as failed when its score is
-\(\leq \tau\)). The table below sweeps both --- three indicator sets ×
+threshold τ (a dimension counts as failed when its score is
+≤ τ). The table below sweeps both --- three indicator sets ×
 four thresholds --- and reports, for each cell, the number of
 disqualified models (reliability \(\leq 1\)), whether that set equals
 the baseline floor, and the Spearman correlation between reliability and
@@ -1641,7 +1669,7 @@ DeepSeek (orange). Per-model numbers backing the figure are written to
 The sweep is defined in \texttt{experiments/experiments.toml} as
 \texttt{sweep\_exp1\_baseline} (model\_set =
 \texttt{modelset\_exp1\_journal}, repeat = 5, T = 0, seed = 42,
-budget\_usd = 15, max\_tokens = 32768, prompt\_modules = {[}{]}). These
+budget\_usd = 15, max\_tokens = 32768, prompt\_modules = []). These
 match the Run-parameters table above and the as-run records in
 \texttt{measurements.jsonl}
 (\texttt{method\_params.max\_tokens\ =\ 32768}); an earlier draft quoted
@@ -1661,8 +1689,7 @@ acquisition windows is absorbed into the reported within-model spread
 rather than filtered out.
 
 \subsection*{What this experiment does and does not test}
-\addcontentsline{toc}{subsection}{What this experiment does and does not
-test}
+\addcontentsline{toc}{subsection}{What this experiment does and does not test}
 
 This experiment establishes the \emph{parametric ceiling}: the best
 row-level quality achievable from model memory alone with a
@@ -1750,8 +1777,7 @@ hypothesis-relevant: Chinese-language investor and trade documents on
 Vietnamese power assets are under-indexed by Western search.
 
 \subsection*{Baseline reference for cross-comparison}
-\addcontentsline{toc}{subsection}{Baseline reference for
-cross-comparison}
+\addcontentsline{toc}{subsection}{Baseline reference for cross-comparison}
 
 The naive one-shot baseline that §\ref{sec:exp2} compares against is
 \textbf{not} §\ref{sec:exp1}'s \texttt{modelset\_exp1\_journal} sweep.
@@ -1776,7 +1802,7 @@ B), \texttt{settings} (\texttt{thinking}, \texttt{max\_tokens}), and
 \texttt{rationale} --- that maximises the quality of the report it will
 produce within the dual-axis session cap (below) and an overnight
 wall-clock. Outputs land as
-\texttt{\textless{}agent\textgreater{}\_phase\_a.json} with the four
+\texttt{<agent>\_phase\_a.json} with the four
 envelope fields.
 
 \textbf{Phase B-0 --- Single-rep smoke (optimised arm).} Each designed
@@ -1790,8 +1816,7 @@ instances, (ii) parsed tables are non-empty, (iii) costs sit within the
 dual-axis session cap empirically.
 
 \subsubsection*{Phase B dialogue policy (fixed experimental condition)}
-\addcontentsline{toc}{subsubsection}{Phase B dialogue policy (fixed
-experimental condition)}
+\addcontentsline{toc}{subsubsection}{Phase B dialogue policy (fixed experimental condition)}
 
 Arms 2 and 4 are structured as a \emph{simple harness}: an LLM
 orchestrator (the DeepSeek classifier) drives a loop in which the tested
@@ -1892,8 +1917,7 @@ realised per-session and per-batch costs are reported in
 chapter, not pinned here.
 
 \subsection*{As-run deviations from the registration}
-\addcontentsline{toc}{subsection}{As-run deviations from the
-registration}
+\addcontentsline{toc}{subsection}{As-run deviations from the registration}
 
 The experiment was pre-registered (protocol locked before the production
 batch, with an H1--H6 analysis plan). Execution deviated from the
@@ -1962,7 +1986,7 @@ This experiment is script-based, not sweep-based. No
   \texttt{experiments/outputs/sota\_smoke/} and
   \texttt{sota\_exp2\_smoke/} --- artifact directories. Each Phase B
   turn writes
-  \texttt{\textless{}agent\textgreater{}\_turn\_NN.\{user.txt,raw.json,record.json,cost.json,classification.json,report.md,citations.json\}}.
+  \texttt{<agent>\_turn\_NN.\{user.txt,raw.json,record.json,cost.json,classification.json,report.md,citations.json\}}.
 \item
   \texttt{experiments/derived/tab\_exp2\_2x2.csv},
   \texttt{report/inputs/generated/tab\_exp2\_bib\_quality.tex} ---
@@ -1985,8 +2009,7 @@ operational metrics of §\ref{sec:exp2}, not the
 §\ref{sec:quality}-dimension cross-eval scores.
 
 \subsection*{What this experiment does and does not test}
-\addcontentsline{toc}{subsection}{What this experiment does and does not
-test}
+\addcontentsline{toc}{subsection}{What this experiment does and does not test}
 
 This experiment tests whether removing the §\ref{sec:exp1} handicaps (no
 web, no tools, no documents), by handing the task to a commercially
@@ -2122,15 +2145,15 @@ status values) directly from the exp1\_batch2 raw CSVs. The veto rule
 run to vetoed or surviving. Reference-based F1 is taken from the
 cross-evaluation CSV (the \emph{outcome}; it is never used as a veto
 input, preserving the reference-free property of the screen). The
-model-stratified Kendall \(\tau\) counts concordant and discordant pairs
+model-stratified Kendall τ counts concordant and discordant pairs
 of \texttt{(cap\_distinct,\ F1)} \emph{only within each model's 5 runs},
 then sums the counts across all 14 models --- an exact removal of the
 across-model confound.
 
-\textbf{Results.} The model-stratified Kendall \(\tau\) of cap\_distinct
+\textbf{Results.} The model-stratified Kendall τ of cap\_distinct
 vs F1 is \textbf{+0.215} (65 concordant, 42 discordant pairs across 14
 models; 10/14 models show a positive within-model Spearman ρ). For
-status\_distinct vs F1 the stratified \(\tau\) is \textbf{+0.312} (61
+status\_distinct vs F1 the stratified τ is \textbf{+0.312} (61
 concordant, 32 discordant). Across-model pooled statistics (tautological
 baseline): mean F1 of vetoed runs = 0.146, surviving = 0.481, gap =
 +0.335. Within-model binary gap (only the 3 models with both vetoed and
@@ -2205,31 +2228,5 @@ perpendicular to it. And the consumer-product methodology excludes the
 military and dual-use deployment track: a parallel trajectory operating
 at comparable capability levels, now routine front-page news, that the
 commercial-product framing does not capture and does not claim to.
-
-\section*{Acknowledgements}
-\addcontentsline{toc}{section}{Acknowledgements}
-
-We thank Econom'IA 2026 participants for their comments, in particular
-those that led to the updated reference list, the per-plant recognition
-matrix, and the status-composition analysis of task difficulty in the
-annex.
-
-\textbf{Data \& Code Availability.} Code and data are available at
-https://github.com/MinhHaDuong/aedist-technical-report (CC BY 4.0).
-
-\textbf{Funding.} This work was supported by CNRS/CIRED.
-
-\textbf{Author contributions and conflicts of interest.} The author
-compiled the 177-plant reference list, and an intern in the author's
-group, working under the author's supervision, seeded reference-derived
-content into the relevant Wikipedia pages in June 2019; the author also
-made minor edits to those pages directly (§\ref{sec:exp1}; provenance in
-\texttt{data/reference/PROVENANCE.md}). Both the benchmark reference and
-part of its Wikipedia coverage therefore originate from the author's
-group; this dual role is disclosed, and the reference list is provided
-as a supplementary artifact with per-plant source citations.
-
-\renewcommand{\refname}{Bibliography}
-\bibliography{../../report/refs}
 
 \end{document}

@@ -42,6 +42,15 @@ macro).
 - Unnumbered sections (the methods Related-Work section, Acknowledgements,
   Bibliography, annex subsections) use the starred forms `\section*` /
   `\subsection*`, with `\addcontentsline` for the PDF bookmarks.
+- The abstract is the article-class `\begin{abstract}…\end{abstract}`
+  environment (ticket 0542), not a styled `\textbf{Abstract.}` paragraph.
+- Backmatter order: Acknowledgements, Data & Code Availability, Funding,
+  Author contributions/COI, Bibliography — directly after the Conclusion,
+  before `\appendix`.
+- Glyphs absent from the text font are declared once in the preamble with
+  `\newunicodechar{γ}{\ensuremath{\gamma}}`-style mappings; prose then carries
+  the literal Unicode glyph (ρ, τ, ≤, …), never a `$\tau$` math-mode
+  workaround.
 - Asset paths are relative to `slides/manuscript/` (tectonic resolves against
   the input file's directory): `../../report/inputs/generated/…`.
 

@@ -84,13 +84,14 @@ def test_zero_good_run_models_match_artifact():
 
 
 def _abstract_paragraph() -> str:
-    """The abstract paragraph itself (from '\\textbf{Abstract.}' to the next
-    blank line), normalized — not the whole pre-Introduction region (which
-    contains the em-dashed horizontal-rule markup)."""
+    """The abstract text itself (the article-class abstract environment,
+    ticket 0542), normalized — not the whole pre-Introduction region."""
     text = body_raw()
-    start = text.find("\\textbf{Abstract.}")
-    assert start != -1, "no abstract paragraph found in main.tex"
-    end = text.find("\n\n", start)
+    start = text.find("\\begin{abstract}")
+    assert start != -1, "no abstract environment found in main.tex"
+    start += len("\\begin{abstract}")
+    end = text.find("\\end{abstract}", start)
+    assert end != -1, "unterminated abstract environment in main.tex"
     return normalized(text[start:end])
 
 
