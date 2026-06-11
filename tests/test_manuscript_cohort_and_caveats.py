@@ -64,6 +64,27 @@ def test_cohort_counts_match_artifacts():
     assert f"{n_analysis}-model" in md, "cohort paragraph must state the 14-model analysis cohort"
 
 
+def test_zero_good_run_models_match_artifact():
+    """The [@fig:reliability] caption names the zero-good-run models; re-derive
+    that set from the scoring CSV via the gate so the caption cannot drift
+    silently on a data update (ticket 0507 review finding)."""
+    if not XEVAL_CSV.exists():
+        pytest.skip("cross-eval artifact not present")
+    from aedist.plot_exp1_reliability import load_rows, reliability_by_model
+
+    rel = reliability_by_model(XEVAL_CSV)
+    zero = sorted(m for m, n in rel.items() if n == 0)
+    md = _md()
+    caption = next(line for line in md.splitlines() if "{#fig:reliability}" in line)
+    assert f"the {len(zero)} models with zero good runs" in caption or (
+        len(zero) == 3 and "the three models with zero good runs" in caption
+    ), f"caption must state the zero-good-run count ({len(zero)})"
+    for model in zero:
+        assert model in caption, f"zero-good-run model {model} missing from caption"
+    # load_rows is exercised transitively; keep the import honest.
+    assert load_rows(XEVAL_CSV)
+
+
 def test_rho_caveat_in_abstract_and_conclusion():
     """The ρ=0.92 caveat appears in both the abstract and the conclusion."""
     md = _md()
