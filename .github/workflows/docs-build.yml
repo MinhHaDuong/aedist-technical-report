@@ -82,10 +82,14 @@ jobs:
         continue-on-error: true
         run: make slides
 
-      # Manuscript is not built in CI: the pandoc-crossref toolchain was never
-      # installed here and the manuscript is moving to a tectonic-built main.tex
-      # (ticket 0524, LaTeX decision 2026-06-11). The conversion ticket re-adds
-      # a manuscript build step when main.tex lands.
+      # Tectonic-only since ticket 0524 (main.tex replaced the pandoc/
+      # pandoc-crossref main.md). Separate step rather than relying on
+      # `make slides` (whose `all` target also covers the manuscript): the
+      # slides step is continue-on-error, which would mask a manuscript
+      # failure.
+      - name: Build manuscript
+        if: needs.changes.outputs.non-chore != 'false'
+        run: make -C slides manuscript/main.pdf
 
       - name: Run make check (lint + tests)
         if: needs.changes.outputs.non-chore != 'false'
@@ -100,6 +104,7 @@ jobs:
             report/report.pdf
             slides/slides.pdf
             slides/slides-en.pdf
+            slides/manuscript/main.pdf
           if-no-files-found: warn
           retention-days: 14
 
