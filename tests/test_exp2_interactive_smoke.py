@@ -1116,10 +1116,20 @@ def test_run_anthropic_call_turn2_replays_full_history(monkeypatch, tmp_path):
         system_prompt="you are an analyst",
     )
 
-    # Full history replayed: prior 2 + new user = 3 messages.
+    # Full history replayed: prior 2 + new user = 3 messages. The last
+    # assistant reply carries the sliding cache breakpoint (ticket 0369).
     assert captured["messages"] == [
         {"role": "user", "content": "first user message"},
-        {"role": "assistant", "content": "first assistant reply"},
+        {
+            "role": "assistant",
+            "content": [
+                {
+                    "type": "text",
+                    "text": "first assistant reply",
+                    "cache_control": {"type": "ephemeral"},
+                }
+            ],
+        },
         {"role": "user", "content": "second user message"},
     ]
     # System bytes identical to turn 1 (required by Anthropic), represented as
@@ -1689,3 +1699,67 @@ def test_min_phase_b_max_tokens_floor_applied():
     assert "args.min_phase_b_max_tokens" in src
     # Must use max(), not a conditional assignment
     assert "max(\n        int(design.get" in src or "= max(" in src
+
+
+# ---------------------------------------------------------------------------
+# Ticket 0369: sliding mid-conversation cache breakpoint (Anthropic)
+# ---------------------------------------------------------------------------
+
+
+class TestSlideFollowupCacheBreakpoint:
+    @staticmethod
+    def _mod():
+        import experiments.sota.exp2_interactive_smoke as mod
+
+        return mod
+
+    def test_wraps_last_assistant_with_cache_control(self):
+        mod = self._mod()
+        history = [
+            {"role": "user", "content": [{"type": "text", "text": "ep",
+                                          "cache_control": {"type": "ephemeral"}}]},
+            {"role": "assistant", "content": "reply 1"},
+        ]
+        out = mod._slide_followup_cache_breakpoint(history)
+        last = out[-1]
+        assert last["role"] == "assistant"
+        assert last["content"][0]["cache_control"] == {"type": "ephemeral"}
+        assert last["content"][0]["text"] == "reply 1"
+
+    def test_strips_stale_breakpoint_from_earlier_assistant(self):
+        mod = self._mod()
+        history = [
+            {"role": "user", "content": "ep"},
+            {"role": "assistant", "content": [{"type": "text", "text": "reply 1",
+                                               "cache_control": {"type": "ephemeral"}}]},
+            {"role": "user", "content": "nudge"},
+            {"role": "assistant", "content": "reply 2"},
+        ]
+        out = mod._slide_followup_cache_breakpoint(history)
+        assert "cache_control" not in out[1]["content"][0]
+        assert out[3]["content"][0]["cache_control"] == {"type": "ephemeral"}
+
+    def test_turn1_user_breakpoint_preserved(self):
+        mod = self._mod()
+        history = [
+            {"role": "user", "content": [{"type": "text", "text": "ep",
+                                          "cache_control": {"type": "ephemeral"}}]},
+            {"role": "assistant", "content": "reply 1"},
+        ]
+        out = mod._slide_followup_cache_breakpoint(history)
+        assert out[0]["content"][0]["cache_control"] == {"type": "ephemeral"}
+
+    def test_no_assistant_messages_is_noop(self):
+        mod = self._mod()
+        history = [{"role": "user", "content": "ep"}]
+        assert mod._slide_followup_cache_breakpoint(history) == history
+
+    def test_input_list_not_mutated(self):
+        mod = self._mod()
+        history = [
+            {"role": "user", "content": "ep"},
+            {"role": "assistant", "content": "reply 1"},
+        ]
+        snapshot = json.dumps(history)
+        mod._slide_followup_cache_breakpoint(history)
+        assert json.dumps(history) == snapshot

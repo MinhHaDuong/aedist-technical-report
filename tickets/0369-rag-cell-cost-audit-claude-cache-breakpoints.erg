@@ -6,6 +6,7 @@ Author: claude
 --- log ---
 2026-05-28T00:00Z claude created — Claude costs on arm4 (5D) and possibly arm3 (1D) look high; hypothesis is mid-conversation tail not cached
 2026-05-28T00:00Z claude note — TTL vulnerability surfaced: arm4 Claude wall_s median 253s / max 449s / 31% of turns > 5min ephemeral TTL; cache misses are likely the norm, not the exception (see §TTL vulnerability)
+2026-06-12T00:50Z claude note AUDIT CONFIRMED on existing data (scripts/audit_arm34_cache.py, zero API calls). Anthropic cache_hit_rate = 0.000 on BOTH arms: arm3 5 calls / 1.85M input tok, arm4 16 turns / 3.08M input tok — all billed full rate (~$24.6 at $5/MTok), cache_read=cache_write=0 everywhere. Cross-check: OpenAI auto-cache 21.1% (arm4) / 5.3% (arm3); Mistral 0%, Qwen 7.4% — uniformly-expensive vs tail-heavy split as predicted. CAUSE: batch1 anthropic runs predate the cache_control wiring — commit 96448fb7 (0295) landed 2026-05-25T10:33+02:00; last anthropic rerun is 20260525T0437Z. Not a wiring bug on those records. FIX SHIPPED: breakpoint 3 — sliding mid-conversation cache_control on the last replayed assistant message (_slide_followup_cache_breakpoint, exp2_interactive_smoke.py), stale wraps stripped to respect the 4-breakpoint limit; payload-shape unit tests added. REMAINING (needs API spend, deferred): live smoke verification that the wiring fires (incl. under-4096-token system concern) and the 1h-TTL decision.
 
 --- body ---
 ## Context
