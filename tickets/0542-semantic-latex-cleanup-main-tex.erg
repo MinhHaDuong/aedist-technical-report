@@ -1,0 +1,51 @@
+%erg 0.1
+Title: Semantic LaTeX cleanup of main.tex (author reading feedback on the 0524 conversion)
+Created: 2026-06-11
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-11T13:55Z HDMX-coding-agent created from author feedback on the merged #969 tex source
+
+--- body ---
+## Context
+
+The author read `slides/manuscript/main.tex` after the 0524 conversion (PR
+#969) and asked for a cleanup pass: "Clean semantic LaTeX is the idea" —
+pandoc conversion artifacts out, idiomatic article-class LaTeX in.
+
+Sequencing: runs AFTER the 0532/0534 port PR merges (it rewrites the abstract
+and conclusion; editing those regions in parallel guarantees conflicts).
+
+## Actions (author-specified)
+
+1. Drop every `\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}`
+   decoration (pandoc's rendering of markdown `---` rules).
+2. Unfold `\section{...}` (and `\subsection{...}`) heading lines — one heading
+   per source line, no mid-title line wrapping.
+3. Backmatter order: Acknowledgements, Availability, Funding, Author
+   contributions/COI, Bibliography — in that order, right after the
+   Conclusion, BEFORE `\appendix`. Move, do not reword.
+4. Abstract becomes the article-class `\begin{abstract}...\end{abstract}`
+   environment (it is currently a styled paragraph).
+5. τ glyph: replace the math-mode `$\tau$` workaround (ticket 0523 era) with
+   the project's `\newunicodechar` mechanism so the source carries the literal
+   τ; mirror how report.tex declares its other glyphs. Verify the glyph
+   renders (pdftotext / visual).
+6. General sweep for remaining pandoc/idiosyncratic cruft: `\tightlist`,
+   unused `\def`/`\providecommand` from the pandoc preamble, `\pandocbounded`,
+   gratuitous groups `{[}...{]}`, escaped entities that have clean LaTeX
+   forms, etc. Keep semantic intent; do not touch prose wording.
+
+## Invariants
+
+- Zero prose changes (pdftotext word-stream identical modulo whitespace and
+  the moved backmatter blocks).
+- `make -C slides manuscript/main.pdf` clean; no "??" refs; `make check` green.
+- House conventions in `.claude/rules/writing.md` stay accurate — update them
+  if the cleanup changes a documented idiom (e.g. abstract environment).
+
+## Exit criteria
+
+- [ ] All six actions applied.
+- [ ] pdftotext equivalence evidence in the PR (before/after).
+- [ ] `make check` passes; CI green.
