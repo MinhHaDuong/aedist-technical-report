@@ -5,6 +5,7 @@ Author: HDMX-coding-agent
 
 --- log ---
 2026-06-11T10:25Z HDMX-coding-agent created
+2026-06-11T15:30Z HDMX-coding-agent note Implemented: FR crossref guard added to tests/test_manuscript_crossref.py (HANDTYPED_FR_RES + tiny whitelist). Red step verified with seeded « la page 3 / Figure 2 / Tableau 1 »; report.tex clean as-is; adherence suite + make check pass.
 
 --- body ---
 ## Context
@@ -39,7 +40,7 @@ The new test itself is the deliverable (red step: temporarily reintroduce
 
 ## Exit criteria
 
-- [ ] Adherence test covers report.tex cross-reference literals (FR patterns)
-- [ ] Red-step verified: a planted literal fails the test
-- [ ] report.tex passes as-is (no false positives)
-- [ ] `make check` passes
+- [x] Adherence test covers report.tex cross-reference literals (FR patterns)
+- [x] Red-step verified: a planted literal fails the test
+- [x] report.tex passes as-is (no false positives)
+- [x] `make check` passes
