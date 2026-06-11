@@ -89,13 +89,19 @@ def test_rho_caveat_in_abstract_and_conclusion():
     """The ρ=0.92 caveat appears in both the abstract and the conclusion."""
     md = _md()
     # Ticket 0518: the "Annex F" reference is now the symbolic [-@sec:annex-screen].
-    caveat = "within-model signal positive but modest, [-@sec:annex-screen]"
+    # Ticket 0532: the abstract carries the hardened form — across-model/in-sample
+    # confound named, within-model stratified τ inlined with its 10/14 directional count.
+    abstract_caveat = (
+        "pooled across models and in-sample; stratifying by model leaves a modest "
+        "Kendall $\\tau$ = +0.215, positive in 10 of 14 models ([-@sec:annex-screen])"
+    )
+    conclusion_caveat = "within-model signal positive but modest, [-@sec:annex-screen]"
     # Abstract region: everything before the Introduction section.
     abstract = md.split("## Introduction {#sec:intro}")[0]
     conclusion_heading = "## Conclusion {#sec:conclusion}"
     conclusion = md.split(conclusion_heading)[1].split("\\appendix")[0]
-    assert caveat in abstract, "ρ=0.92 caveat missing from abstract"
-    assert caveat in conclusion, "ρ=0.92 caveat missing from conclusion"
+    assert abstract_caveat in abstract, "ρ=0.92 caveat missing from abstract"
+    assert conclusion_caveat in conclusion, "ρ=0.92 caveat missing from conclusion"
 
 
 def test_cost_savings_claim_cut():
