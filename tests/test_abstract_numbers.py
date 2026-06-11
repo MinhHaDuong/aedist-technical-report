@@ -1,9 +1,14 @@
-"""Ticket 0474 — abstract F1 literals are re-derived from the committed artifact.
+"""Tickets 0474 + 0532 — Exp1 F1 literals are re-derived from the committed artifact.
 
-The adherence invariant: whenever ``macros_exp1_run_stats.tex`` is regenerated
-from ``exp1_cross_eval.csv``, the abstract in ``main.tex`` must still contain
-the same rounded numbers.  The test fails if either the macro file or the
-manuscript drifts independently.
+The adherence invariant (0474): whenever ``macros_exp1_run_stats.tex`` is
+regenerated from ``exp1_cross_eval.csv``, the manuscript must still contain
+the same rounded numbers wherever it quotes them.  The test fails if either
+the macro file or the manuscript drifts independently.
+
+Ticket 0532 round 2 (author reading-1 brief): F1 detail leaves the abstract,
+so the quoted sites are now the Experiment 1 Results paragraph (min, mean,
+max) and the Conclusion (min, max).  The abstract is asserted F1-free in
+``test_manuscript_cohort_and_caveats.py::test_abstract_register_follows_author_brief``.
 
 Pairs with ``test_manuscript_structure.py::test_abstract_present_and_leads_with_frontier``,
 which checks structural presence; this test checks numeric consistency.
@@ -13,7 +18,7 @@ import re
 from pathlib import Path
 
 import pytest
-from manuscript_source import body
+from manuscript_source import body, body_raw, normalized
 
 pytestmark = pytest.mark.adherence
 
@@ -21,12 +26,21 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 MACROS_FILE = REPO_ROOT / "report" / "inputs" / "generated" / "macros_exp1_run_stats.tex"
 
 
-def _abstract_block(text: str) -> str:
-    """Return the abstract paragraph (up to 2200 chars from '\\textbf{Abstract.}')."""
-    start = text.find("\\textbf{Abstract.}")
+def _exp1_results_paragraph() -> str:
+    """The Experiment 1 Results paragraph quoting the run statistics."""
+    text = body_raw()
+    start = text.find("\\textbf{Results: model memory alone yields")
     if start == -1:
-        pytest.skip("no abstract block found in main.tex")
-    return text[start : start + 2200]
+        pytest.skip("Exp1 results paragraph not found in main.tex")
+    return normalized(text[start : text.find("\n\n", start)])
+
+
+def _conclusion() -> str:
+    text = body()
+    heading = "\\section{Conclusion}\\label{sec:conclusion}"
+    if heading not in text:
+        pytest.skip("conclusion section not found in main.tex")
+    return text.split(heading)[1].split("\\appendix")[0]
 
 
 def _parse_macro(tex: str, name: str) -> str:
@@ -37,8 +51,8 @@ def _parse_macro(tex: str, name: str) -> str:
     return match.group(1)
 
 
-def test_abstract_numbers_derived_from_artifact():
-    """Abstract F1 min, mean, max match the committed macros_exp1_run_stats.tex."""
+def test_exp1_f1_numbers_derived_from_artifact():
+    """Quoted F1 min, mean, max match the committed macros_exp1_run_stats.tex."""
     if not MACROS_FILE.exists():
         pytest.skip(
             f"{MACROS_FILE} not yet generated — "
@@ -49,20 +63,19 @@ def test_abstract_numbers_derived_from_artifact():
     mean_f1 = float(_parse_macro(macros, "ExpOneFOneMean"))
     max_f1 = float(_parse_macro(macros, "ExpOneFOneMax"))
 
-    abstract = _abstract_block(body())
+    results = _exp1_results_paragraph()
+    conclusion = _conclusion()
 
-    assert f"{min_f1:.2f}" in abstract, (
-        f"F1 lower bound {min_f1:.2f} (from macros_exp1_run_stats.tex) "
-        "missing from the abstract — update slides/manuscript/main.tex"
-    )
-    assert f"{mean_f1:.2f}" in abstract, (
-        f"mean F1 {mean_f1:.2f} (from macros_exp1_run_stats.tex) "
-        "missing from the abstract — update slides/manuscript/main.tex"
-    )
-    assert f"{max_f1:.2f}" in abstract, (
-        f"F1 upper bound {max_f1:.2f} (from macros_exp1_run_stats.tex) "
-        "missing from the abstract — update slides/manuscript/main.tex"
-    )
+    for value, label in ((min_f1, "F1 lower bound"), (mean_f1, "mean F1"), (max_f1, "F1 upper bound")):
+        assert f"{value:.2f}" in results, (
+            f"{label} {value:.2f} (from macros_exp1_run_stats.tex) "
+            "missing from the Exp1 results paragraph — update slides/manuscript/main.tex"
+        )
+    for value, label in ((min_f1, "F1 lower bound"), (max_f1, "F1 upper bound")):
+        assert f"{value:.2f}" in conclusion, (
+            f"{label} {value:.2f} (from macros_exp1_run_stats.tex) "
+            "missing from the conclusion — update slides/manuscript/main.tex"
+        )
 
 
 def test_macros_exp1_run_stats_present():
