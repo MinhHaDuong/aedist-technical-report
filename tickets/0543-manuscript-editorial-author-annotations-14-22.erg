@@ -22,6 +22,7 @@ Author: HDMX-coding-agent
 2026-06-12T00:34Z claude note item 22: fixed: contrast-framing ("rather than inventions") and what-it-is-not enumeration recast positively; "lifts ... at the margin" recast as design intent ("targets")
 2026-06-12T00:55Z claude note item 14 scope: waiver covers Unicode em dashes only; the LaTeX --- idiom (~187 body occurrences) renders as an em dash in the annotated PDF — authorial-voice decision split to ticket 0549 (needs-human)
 2026-06-12T00:55Z claude note item 16 correction: the removed licence clause was in the abstract; no separate body-intro occurrence existed (earlier log line was imprecise)
+2026-06-11T22:33Z bump verify-reroll — round 1: item-14 follow-up ticket 0549 referenced in resolution comment and ticket log was never committed (not on branch, not on main), and ID 0549 is already claimed by branch t0424 (decomposition-fix drift); create the em-dash authorial-decision ticket under a fresh ID and fix the references
 --- body ---
 ## Context
 
