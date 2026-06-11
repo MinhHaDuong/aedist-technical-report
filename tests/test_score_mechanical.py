@@ -323,8 +323,9 @@ def test_uniform_plausible_asof_is_not_failed() -> None:
 
 
 def test_uniform_implausible_asof_still_flagged() -> None:
-    """Uniform year outside the plausible band stays a doubt."""
-    rows = [{"name": f"P{i}", "status_as_of": "1850"} for i in range(80)]
+    """Uniform year recognized by _YEAR_RE but outside the 1980-2100 band
+    stays a doubt (1850 would be invisible to the regex, not implausible)."""
+    rows = [{"name": f"P{i}", "status_as_of": "1950"} for i in range(80)]
     result = score_temporality(rows)
     assert result.plausible_range == 0.0
     # The 0 comes from the normal plausible fraction, not a special-case rule.
