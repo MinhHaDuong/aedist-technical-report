@@ -3,6 +3,7 @@ Title: git-erg: deprecate and remove vendored ticket-* skills, standardise on er
 Created: 2026-05-27
 Author: Claude
 Label: needs-human
+Closed: transcribed upstream as git-erg tickets/0243 (merged there); local artifacts already converged (skills removed bbd2670d, hook fixed PR #953)
 
 --- log ---
 2026-05-27T06:57Z Claude created
@@ -11,6 +12,7 @@ Label: needs-human
 2026-05-27T06:59Z tagged needs-human — reminder: file upstream in git-erg; agent has no access to that repo
 2026-06-11T08:07Z investigated 2026-06-11: upstream git-erg no longer ships ticket-* skills and integration.md prose is clean (actions 1+3 moot); action 2 (erg update prunes orphans from old installs) still unimplemented upstream; aedist orphan skills already hand-removed in bbd2670d; agent has gh read access to git-erg but issue creation was permission-denied — upstream filing remains a human step; spin-off: ticket 0526 for the stale tickets/tools/go/erg hook path in settings.json
 2026-06-11T08:17Z upstream ticket filed: git-erg tickets/0243 (erg update prunes orphan ticket-* skills) committed and pushed on branch t-prune-orphan-skills; PR creation permission-denied — human to open/merge the PR, then close this with Closed: git-erg#0243
+2026-06-11T08:39Z HDMX-coding-agent closed — transcribed upstream as git-erg tickets/0243 (merged there); local artifacts already converged (skills removed bbd2670d, hook fixed PR #953)
 --- body ---
 ## Upstream ticket — for git-erg, not this repo
 
