@@ -54,7 +54,7 @@ truth.
   pulls in no heavy deps. Key: `(model_family(m), -size_b(m), m)`.
 - Make size resolution work from the **name alone** so the heatmap can use it:
   `_model_size_b(model, size_class=None)` already falls back to the regex and
-  then the `size_class` default (500). Add the 6 exp1 models missing confirmed
+  then the `size_class` default (500). Add the 8 exp1 models (count corrected from 6 by the raid plan below) missing confirmed
   sizes to `_KNOWN_SIZE_B` (claude-haiku-4.5 / -sonnet-4.6 / -opus-4.6,
   gpt-5.5, deepseek-v4-pro / -flash, qwen3.7-max, qwen3.6-flash) so the
   name-only path orders them correctly instead of colliding at 500.
@@ -97,7 +97,7 @@ def test_heatmap_and_figure2_share_one_order():
       `plot_method_convergence` both call it (no second size heuristic for
       census ordering).
 - [ ] Size resolution works from the model name alone (heatmap path needs no
-      `size_class`); the 6 missing exp1 models are in `_KNOWN_SIZE_B` with
+      `size_class`); the 8 missing exp1 models are in `_KNOWN_SIZE_B` with
       values pinned to preserve today's Figure 2 order.
 - [ ] `test_census_model_order.py` (the first test above) passes; the PR #914
       literal-order test is folded into / superseded by it (no orphaned
