@@ -2,12 +2,14 @@
 Title: Shared census model-ordering function (heatmap vs Figure 2 drift)
 Created: 2026-06-09
 Author: claude
+Closed: autoclosed — PR #958
 
 --- log ---
 2026-06-09T20:29Z claude created
 2026-06-11T08:30Z claude note raid imagine+plan — count fix: 8 missing models not 6; plan appended
 2026-06-11T09:08Z claude note feasibility PASS — registry gap, size_class values, regex miss, acyclic imports all verified
 
+2026-06-11T10:10Z HDMX-coding-agent closed — autoclosed — PR #958
 --- body ---
 ## Context
 
