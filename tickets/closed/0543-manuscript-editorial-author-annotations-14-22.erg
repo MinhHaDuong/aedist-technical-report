@@ -2,6 +2,7 @@
 Title: Manuscript editorial: author annotation items 14-22 (reading 1)
 Created: 2026-06-11
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #992
 
 --- log ---
 2026-06-11T15:35Z HDMX-coding-agent created split from 0534
@@ -25,6 +26,7 @@ Author: HDMX-coding-agent
 2026-06-11T22:33Z bump verify-reroll — round 1: item-14 follow-up ticket 0549 referenced in resolution comment and ticket log was never committed (not on branch, not on main), and ID 0549 is already claimed by branch t0424 (decomposition-fix drift); create the em-dash authorial-decision ticket under a fresh ID and fix the references
 2026-06-12T01:05Z claude note item 14 follow-up renumbered: 0549 was claimed by a parallel branch (t0424); the em-dash --- authorial-decision ticket is tickets/0550 (committed on this branch)
 2026-06-12T01:20Z claude note item 14 follow-up renumbered again: 0550 collided with a parallel session's arm1-flat ticket on main; final ID is tickets/0552
+2026-06-11T22:52Z HDMX-coding-agent closed — autoclosed — PR #992
 --- body ---
 ## Context
 
