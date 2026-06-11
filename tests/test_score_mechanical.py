@@ -319,7 +319,7 @@ def test_uniform_plausible_asof_is_not_failed() -> None:
     rows = [{"name": f"P{i}", "status_as_of": "2023"} for i in range(80)]
     result = score_temporality(rows)
     assert result.plausible_range == 1.0  # was 0.0 under all_identical
-    assert result.plausible_range_annotation != "all_identical"
+    assert result.plausible_range_annotation is None
 
 
 def test_uniform_implausible_asof_still_flagged() -> None:
