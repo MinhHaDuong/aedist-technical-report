@@ -2,6 +2,7 @@
 Title: Source concordance: reference vs GEM (+ Wikipedia bar) — annex table + figure bars
 Created: 2026-06-09
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #985
 
 --- log ---
 2026-06-09T00:00Z HDMX-coding-agent created
@@ -11,6 +12,7 @@ Author: HDMX-coding-agent
 2026-06-11T21:27Z claude note feasibility PASS (orchestrator) — executing; manuscript target corrected main.md→main.tex
 2026-06-11T21:50Z claude note delivered on t0486 — bulk landed pre-0524 (04fa7f1e/0efd6f55/8afc7087) and survived the .md→.tex conversion; this branch adds the generated annex-table include (row-grain guard), wikitext provenance, figure rebuilds, exit-criteria evidence
 
+2026-06-11T21:51Z HDMX-coding-agent closed — autoclosed — PR #985
 --- body ---
 
 ## Scope (locked 2026-06-09)
