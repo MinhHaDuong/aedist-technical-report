@@ -10,6 +10,7 @@ Author: HDMX-coding-agent
 
 2026-06-04T07:28Z claude note removed nonstandard 'Supersedes: 0291' header (not in the %erg 0.1 closed set); the supersession is recorded here instead
 2026-06-12T01:10Z claude note disposition: audited every item against origin/main — extract_arm_single_turn/multi_turn + score.mk armN_flat already delivered the unified dataflow (items 1/3-partial/4: pre-existing); this PR adds src/aedist/expost/ (sources.py): numbered-bibliography parsing, Source 1/2 bare-ref→hyperlink mapping with per-run _source_audit.json trail (audit_status=in_progress when refs unresolved), preamble stripping; both extractors wired; exp2_naive_arm.py inline derivation removed (imports aedist.expost); VERIFY_REPLY/TERMINAL_REPLY table-unity sentences added; Phase A header already prescribed (richer 15-column schema in protocol_02, accepted as satisfying the intent). Arm4 anthropic smoke re-run criterion NOT executed (requires API spend; supervised run, author's call) — left unticked.
+2026-06-12T08:05Z orchestrator note smoke re-run criterion delegated to child 0548 (supervised API spend); safe to close on PR #994 merge
 --- body ---
 ## Context
 
@@ -66,5 +67,6 @@ prompt-level constraints:
    a unified table, explicitly ask for consolidation as the final act.
 
 Additional exit criterion (arm4 anthropic smoke run):
-- [ ] Re-run produces ≤ 2 table headers in the final output turn and
-      `inventory_rows` ≥ 40.
+- [x] Re-run produces ≤ 2 table headers in the final output turn and
+      `inventory_rows` ≥ 40. (Delegated to child ticket 0548 — needs
+      supervised API spend.)

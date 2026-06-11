@@ -1,0 +1,24 @@
+%erg 0.1
+Title: Arm4 Anthropic smoke re-run: verify table-unity prompt fixes (child of 0292)
+Created: 2026-06-12
+Author: HDMX-coding-agent
+Label: needs-human
+
+--- log ---
+2026-06-12T08:05Z orchestrator created — split from 0292 (PR #994): the smoke re-run needs supervised API spend
+
+--- body ---
+## Context
+0292 (PR #994) added table-unity sentences to VERIFY_REPLY and
+TERMINAL_REPLY and shipped the ex post citation-resolution package. The
+verification that the prompt changes actually fix the fragmented-table
+behaviour requires a live arm4 Anthropic smoke run — supervised API
+spend, so it could not run in the autonomous raid.
+
+## Actions
+1. Supervised arm4 Anthropic smoke run (test-one-before-blasting applies).
+2. Check the final output turn.
+
+## Exit criteria
+- [ ] Re-run produces ≤ 2 table headers in the final output turn and
+      inventory_rows ≥ 40.
