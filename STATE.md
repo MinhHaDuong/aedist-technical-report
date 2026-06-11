@@ -1,4 +1,4 @@
-Last updated: 2026-06-10T21:15Z
+Last updated: 2026-06-11T09:10Z
 
 ## North star
 
@@ -21,8 +21,8 @@ Produce research-quality energy infrastructure datasets from open sources, valid
 
 ## Next actions
 
-1. **0435 finalization** — author read (incl. new coherence-screen paragraph + 0522 editorial pass), arXiv build. Acknowledgements in. 0445 blocker cleared.
-2. **0486 needs an AUTHOR DECISION** (deferred in raid 2026-06-09, "conference remark"): the GEM/OSM/Wikipedia coverage table cannot ship as written — Wikipedia is a protocol-banned source (§3.4), OSM-via-Overpass is non-reproducible, and the 173-vs-180 count is contested. Recommendation recorded on the ticket: **GEM-only** (data already in-repo), placed in **Annex B** (line 203 already flags GEM reconciliation as deferred), pinned to **173**. Ratify the 3 choices → quick execute.
+1. **0435 finalization, critical path (re-sequenced 2026-06-11):** 0524 execute (md→LaTeX conversion, decided Option 1) → 0531 macros-everywhere → 0532/0533 (author judgment: claim strength, factual fixes) → 0534 minors → 0486 → rebuild → re-review → send. Pre-arXiv prose panel (2026-06-11) verdict: not ready — stale numbers + claim-strength majors, filed as 0531–0534 (PR #948).
+2. **0486 RATIFIED (author 2026-06-11):** the 2026-06-09 scope-lock stands — GEM + Wikipedia, annex, denominator 177 via `reference_plant_count()`. (The earlier "needs decision / GEM-only / 173" entry here was stale autogen; design dialogue trumps.) Ready to execute after 0524.
 3. Imagines awaiting discussion: 0450, 0454. 0255–0262 deferred (Blocked-by 0435), owed to journal.
 4. Backlog: 0520 (arm-1D wider-model extension, deferred); `erg ready tickets/` for the rest.
 
