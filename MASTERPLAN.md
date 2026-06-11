@@ -225,6 +225,18 @@ Deliverable: slides (French, Beamer) in `slides/`. Consumes current state (censu
 - **Experiment 2** — SOTA multi-turn: naive arm (Arm 1) and optimized arm (Arm 2), 4 subjects × 5 reps each (done).
 - **Experiment 3** — evidence-pack intervention: 4-arm design reusing Exp 2 arms as frozen baselines; Arms 3/4 inject a fixed 18-source prompt-side evidence pack; protocol at `docs/protocol-experiment-3.md` (adopted 2026-05-23). Any local-vs-cloud comparison is a separate future experiment.
 
+### arXiv preprint (in flight — 2026-06)
+
+The Econom'IA talk manuscript, anglicised and revised, becomes the arXiv
+preprint (`slides/manuscript/main.tex`, tectonic-built since ticket 0524
+retired pandoc). Editorial pipeline: prose review panel + author annotated
+readings, integrated in waves of erg tickets. Wave state and authorizations
+live in STATE.md; sequencing lives in the ticket DAG (Blocked-by edges).
+Reading-2 by the author gates the arXiv build and sign-off (tracker 0435).
+Post-arXiv spin-offs already ticketed: journal version (Energy and AI first),
+data paper (0517), Paper A internal-coherence screen (0464), Paper B fusion
+(0465).
+
 ### Presentation (done)
 
 Present the methods benchmark pilot.
