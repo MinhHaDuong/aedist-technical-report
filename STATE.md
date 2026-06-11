@@ -1,4 +1,4 @@
-Last updated: 2026-06-11T09:10Z
+Last updated: 2026-06-11T15:40Z
 
 ## North star
 
@@ -6,7 +6,7 @@ Produce research-quality energy infrastructure datasets from open sources, valid
 
 ## Current milestone: arXiv preprint (0435)
 
-**The preprint WP is `slides/manuscript/main.tex`** (hand-curated LaTeX, tectonic-built — 0524 dropped pandoc/pandoc-crossref) — report.tex is internal ("no future", author 2026-06-05). The manuscript is structurally complete on the **177-plant reference (v2.4)**, reconciled by 0501/#909 (2026-06-10). **Figure polish (raid 2026-06-09):** gapless figures 1–7 (0483/#882), quality-floor veto polarity fixed (0487/#883). **Editorial round (0522/#935, 2026-06-10):** data-not-model spine, claim-first findings + captions, de-jargon, age-proofing — anchors author-blessed. Acknowledgements confirmed in (author 2026-06-10; full back-matter since 0509). Remaining: full author read, arXiv build, sign-off. 0171 cross-eval OUT (journal delta).
+**The preprint WP is `slides/manuscript/main.tex`** (hand-curated LaTeX, tectonic + CI-built since #969) — report.tex is internal ("no future", author 2026-06-05). Merged 2026-06-11: 0524 conversion, 0533 factual fixes, 0532 ratified abstract/conclusion + 0534 minors (#971 superseding #967/#968), 0542 semantic-LaTeX cleanup. **Author reading-2 deferred until the reading-1 wave lands** (DAG below). Standing authorizations (author 2026-06-11): merge-review-merge cadence — merge each PR on APPROVED + green CI, no long-lived branches; override mode — prose implementing the author's reading-1 briefs merges without pre-blessing, reading-2 of the merged PDF is the review; genuinely new judgment calls stay needs-human. 0171 cross-eval OUT (journal delta).
 
 ## Status
 <!-- generated 2026-06-10T21:15Z -->
@@ -21,10 +21,10 @@ Produce research-quality energy infrastructure datasets from open sources, valid
 
 ## Next actions
 
-1. **0435 finalization, critical path (re-sequenced 2026-06-11):** 0524 execute (md→LaTeX conversion, decided Option 1) → 0531 macros-everywhere → 0532/0533 (author judgment: claim strength, factual fixes) → 0534 minors → 0486 → rebuild → re-review → send. Pre-arXiv prose panel (2026-06-11) verdict: not ready — stale numbers + claim-strength majors, filed as 0531–0534 (PR #948).
-2. **0486 RATIFIED (author 2026-06-11):** the 2026-06-09 scope-lock stands — GEM + Wikipedia, annex, denominator 177 via `reference_plant_count()`. (The earlier "needs decision / GEM-only / 173" entry here was stale autogen; design dialogue trumps.) Ready to execute after 0524.
-3. Imagines awaiting discussion: 0450, 0454. 0255–0262 deferred (Blocked-by 0435), owed to journal.
-4. Backlog: 0520 (arm-1D wider-model extension, deferred); `erg ready tickets/` for the rest.
+1. **Reading-1 wave (critical path to reading-2):** structural 0537/0538/0540 (parallel worktrees, sequential merges) → 0539 → 0543+0541 together (em-dash overlap) → 0531 macros LAST (settled prose only). Sequencing encoded as Blocked-by in the ticket DAG. After the wave: rebuild manuscript PDF → author reading-2 → arXiv build, sign-off.
+2. **0486 RATIFIED (author 2026-06-11):** GEM + Wikipedia, annex, denominator 177 via `reference_plant_count()`. Unblocked (0524 merged).
+3. Independent code work any time: 0544 (rapidfuzz threshold validation). Imagines awaiting discussion: 0450, 0454. 0255–0262 deferred (Blocked-by 0435), owed to journal.
+4. Backlog: 0520 (arm-1D extension, deferred); `erg ready tickets/` for the rest.
 
 ## Next: methods contribution
 
