@@ -8,7 +8,7 @@ model (OpenAI) keeps headroom. The cohort spread narrows.
 
 Each number in the §6 equalization sentence is re-derived here from the
 committed ``experiments/derived/tab_exp2_2x2.csv`` by an independent parse, at
-the manuscript's 2-decimal rounding, then asserted present in main.md. The
+the manuscript's 2-decimal rounding, then asserted present in main.tex. The
 guard is the CSV re-derivation, not the literal-phrasing absence: "rescues
 cheaper models" was already removed by ticket 0512, so this test adds the claim
 rather than swapping it.
@@ -18,24 +18,22 @@ import csv
 from pathlib import Path
 
 import pytest
+from manuscript_source import body
 
 pytestmark = pytest.mark.adherence
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-MAIN_MD = REPO_ROOT / "slides" / "manuscript" / "main.md"
 CSV_2X2 = REPO_ROOT / "experiments" / "derived" / "tab_exp2_2x2.csv"
 
 
 def _md() -> str:
-    if not MAIN_MD.exists():
-        pytest.skip("main.md not found")
-    return MAIN_MD.read_text(encoding="utf-8")
+    return body()
 
 
 def _section6(md: str) -> str:
-    # Ticket 0518: section numbers are symbolic labels, not literal prefixes.
-    start = md.index("## Experiment 2: the commercially available frontier still falls short {#sec:exp2}")
-    end = md.index("## Need and potential for fusion {#sec:fusion}", start)
+    # Tickets 0518/0524: section numbers are symbolic \label anchors.
+    start = md.index("\\label{sec:exp2}")
+    end = md.index("\\section{Need and potential for fusion}\\label{sec:fusion}", start)
     return md[start:end]
 
 

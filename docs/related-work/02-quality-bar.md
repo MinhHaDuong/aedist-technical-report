@@ -2,7 +2,7 @@
 title: Four-dimensional quality bar — accuracy, coherence, provenance, temporality
 author: Claude prompted by Ha-Duong Minh
 date: 2026-05-21
-paper: slides/manuscript/main.md
+paper: slides/manuscript/main.tex
 section: §2 Quality bar (lines 25–37)
 citation-budget: 12–15
 ---

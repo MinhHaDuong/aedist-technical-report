@@ -82,7 +82,7 @@ log = logging.getLogger(__name__)
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 BASELINE_PATH = REPO_ROOT / "experiments" / "prompts" / "prompt_complete.txt"
-QUALITY_BAR_PATH = REPO_ROOT / "slides" / "manuscript" / "main.md"
+QUALITY_BAR_PATH = REPO_ROOT / "slides" / "manuscript" / "main.tex"
 METAPROMPT_PATH = REPO_ROOT / "experiments" / "sota" / "protocol_02_metaprompt.md"
 MODELS_YAML = REPO_ROOT / "experiments" / "models.yaml"
 DEFAULT_OUTPUT_DIR = REPO_ROOT / "experiments" / "outputs" / "sota_exp2_phase_b0"
@@ -91,8 +91,9 @@ DEFAULT_OUTPUT_DIR = REPO_ROOT / "experiments" / "outputs" / "sota_exp2_phase_b0
 # Work was inserted, shifting Quality dimensions to §3 and the AI capability
 # landscape to §4.
 # Ticket 0518: manuscript headings are label-anchored, not number-prefixed.
-QUALITY_BAR_START = "## Quality dimensions"
-QUALITY_BAR_END = "## AI capability"
+# Ticket 0524: the manuscript is LaTeX (main.tex); markers are \section calls.
+QUALITY_BAR_START = "\\section{Quality dimensions"
+QUALITY_BAR_END = "\\section{AI capability"
 
 FAMILY_BY_AGENT = {
     "mistral": "mistral-direct",

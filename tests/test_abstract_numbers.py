@@ -1,11 +1,11 @@
 """Ticket 0474 — abstract F1 literals are re-derived from the committed artifact.
 
 The adherence invariant: whenever ``macros_exp1_run_stats.tex`` is regenerated
-from ``exp1_cross_eval.csv``, the abstract in ``main.md`` must still contain
+from ``exp1_cross_eval.csv``, the abstract in ``main.tex`` must still contain
 the same rounded numbers.  The test fails if either the macro file or the
 manuscript drifts independently.
 
-Pairs with ``test_main_md_structure.py::test_abstract_present_and_leads_with_frontier``,
+Pairs with ``test_manuscript_structure.py::test_abstract_present_and_leads_with_frontier``,
 which checks structural presence; this test checks numeric consistency.
 """
 
@@ -13,26 +13,20 @@ import re
 from pathlib import Path
 
 import pytest
+from manuscript_source import body
 
 pytestmark = pytest.mark.adherence
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-MAIN_MD = REPO_ROOT / "slides" / "manuscript" / "main.md"
 MACROS_FILE = REPO_ROOT / "report" / "inputs" / "generated" / "macros_exp1_run_stats.tex"
 
 
-def _text() -> str:
-    if not MAIN_MD.exists():
-        pytest.skip("main.md not found")
-    return MAIN_MD.read_text(encoding="utf-8")
-
-
-def _abstract_block(md: str) -> str:
-    """Return the abstract paragraph (up to 2000 chars from '**Abstract.**')."""
-    start = md.find("**Abstract.**")
+def _abstract_block(text: str) -> str:
+    """Return the abstract paragraph (up to 2200 chars from '\\textbf{Abstract.}')."""
+    start = text.find("\\textbf{Abstract.}")
     if start == -1:
-        pytest.skip("no abstract block found in main.md")
-    return md[start : start + 2000]
+        pytest.skip("no abstract block found in main.tex")
+    return text[start : start + 2200]
 
 
 def _parse_macro(tex: str, name: str) -> str:
@@ -55,19 +49,19 @@ def test_abstract_numbers_derived_from_artifact():
     mean_f1 = float(_parse_macro(macros, "ExpOneFOneMean"))
     max_f1 = float(_parse_macro(macros, "ExpOneFOneMax"))
 
-    abstract = _abstract_block(_text())
+    abstract = _abstract_block(body())
 
     assert f"{min_f1:.2f}" in abstract, (
         f"F1 lower bound {min_f1:.2f} (from macros_exp1_run_stats.tex) "
-        "missing from the abstract — update slides/manuscript/main.md"
+        "missing from the abstract — update slides/manuscript/main.tex"
     )
     assert f"{mean_f1:.2f}" in abstract, (
         f"mean F1 {mean_f1:.2f} (from macros_exp1_run_stats.tex) "
-        "missing from the abstract — update slides/manuscript/main.md"
+        "missing from the abstract — update slides/manuscript/main.tex"
     )
     assert f"{max_f1:.2f}" in abstract, (
         f"F1 upper bound {max_f1:.2f} (from macros_exp1_run_stats.tex) "
-        "missing from the abstract — update slides/manuscript/main.md"
+        "missing from the abstract — update slides/manuscript/main.tex"
     )
 
 

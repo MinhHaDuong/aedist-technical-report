@@ -2,12 +2,14 @@
 Title: Convert manuscript to LaTeX (drop pandoc/pandoc-crossref), rework CI build
 Created: 2026-06-10
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #969
 
 --- log ---
 2026-06-10T22:03Z HDMX-coding-agent created
 2026-06-11T08:00Z haduong decision Option 1 chosen — convert manuscript to LaTeX; MD workflow complications outweigh the pandoc-crossref benefits
 
 2026-06-11T12:30Z haduong annotated reading-1 annotations (main+hdm.pdf) triaged into this ticket; see body section 'Author annotation brief'
+2026-06-11T14:00Z HDMX-coding-agent closed — autoclosed — PR #969
 --- body ---
 ## Decision (author, 2026-06-11)
 

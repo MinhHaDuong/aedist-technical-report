@@ -42,7 +42,7 @@ STATUS_ORDER = ["proposed", "planned", "constructing", "operational", "retired",
 # band annotations) and the status difficulty table (0434, row labels) so both
 # consumers render the same language per document. FR serves the report annex;
 # EN serves the preprint (author 2026-06-06: all preprint figures in English)
-# and matches the EN difficulty table in slides/manuscript/main.md.
+# and matches the EN difficulty table in slides/manuscript/main.tex.
 STATUS_LABELS = {
     "operational": "Opérationnelle",
     "proposed": "En projet",

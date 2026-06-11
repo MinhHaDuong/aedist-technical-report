@@ -1,7 +1,7 @@
 """Ticket 0513 — final framing + language pass on the arXiv manuscript.
 
 Guards the prose-quality changes that ticket 0513 lands on
-``slides/manuscript/main.md``:
+``slides/manuscript/main.tex``:
 
 1. A three-item Contributions list at the end of §1 (between the §1 and §2
    headings).
@@ -15,41 +15,34 @@ Guards the prose-quality changes that ticket 0513 lands on
 """
 
 import re
-from pathlib import Path
 
 import pytest
+from manuscript_source import body
 
 pytestmark = pytest.mark.adherence
 
-MAIN_MD = (
-    Path(__file__).resolve().parent.parent / "slides" / "manuscript" / "main.md"
-)
-
-
 def _md() -> str:
-    if not MAIN_MD.exists():
-        pytest.skip("main.md not found")
-    return MAIN_MD.read_text(encoding="utf-8")
+    return body()
 
 
 def _section_1_body() -> str:
-    """Text of §1, the Introduction (ticket 0518: heading is now label-anchored)."""
+    """Text of §1, the Introduction (labels are symbolic since 0518/0524)."""
     md = _md()
-    start = re.search(r"^## Introduction \{#sec:intro\}", md, re.MULTILINE)
-    end = re.search(r"^## Related Work — Empirical landscape \{#sec:related-empirical\}", md, re.MULTILINE)
-    assert start and end, "could not locate Introduction / Related Work headings"
-    return md[start.start() : end.start()]
+    start = md.find("\\section{Introduction}\\label{sec:intro}")
+    end = md.find("\\section{Related Work — Empirical landscape}\\label{sec:related-empirical}")
+    assert start != -1 and end != -1, "could not locate Introduction / Related Work headings"
+    return md[start:end]
 
 
 def test_contributions_list_at_end_of_section_1() -> None:
     """A Contributions run-in label plus three list items live inside §1."""
     sec1 = _section_1_body()
-    assert "**Contributions.**" in sec1, (
+    assert "\\textbf{Contributions.}" in sec1, (
         "§1 must end with a bold 'Contributions.' run-in label, not a heading"
     )
-    # Three list items: count markdown list bullets after the label.
-    tail = sec1[sec1.index("**Contributions.**") :]
-    items = re.findall(r"^\s*(?:\d+\.|[-*])\s+", tail, re.MULTILINE)
+    # Three list items: count \item bullets after the label.
+    tail = sec1[sec1.index("\\textbf{Contributions.}") :]
+    items = re.findall(r"\\item\b", tail)
     assert len(items) >= 3, (
         f"Contributions list should name three contributions; found {len(items)} items"
     )

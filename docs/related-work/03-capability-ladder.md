@@ -2,7 +2,7 @@
 title: Capability ladder — articulation, coverage, reasoning, tool-use, retroactivity, agency
 author: Claude prompted by Ha-Duong Minh
 date: 2026-05-21
-paper: slides/manuscript/main.md
+paper: slides/manuscript/main.tex
 section: §3 Capability ladder (lines 39–50)
 citation-budget: 12–15
 ---

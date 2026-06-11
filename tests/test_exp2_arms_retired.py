@@ -5,7 +5,7 @@ not the old arm-level table (tab_exp2_arms). Only the dead report-table producer
 (tabulate_exp2_arms) is removed. The 'arms' MART pipeline is the 2x2's data
 foundation and produces the slides' coverage/cost figures (plot_exp2_arms_split,
 tabulate_exp2_arms_runs), and plot_exp2_arms_comparison still feeds the live
-manuscript (slides/manuscript/main.md, Figure 3) — all must survive, guarded
+manuscript (slides/manuscript/main.tex, Figure 3) — all must survive, guarded
 below. (Renaming the mart-internal 'arms' terminology is out of scope: 0364.)
 """
 
@@ -58,7 +58,7 @@ def test_dead_arms_report_table_producer_removed():
 
 def test_load_bearing_arms_modules_kept():
     """Regression guard: these feed the live 2x2, the slides coverage/cost figs,
-    and the manuscript (plot_exp2_arms_comparison -> main.md Figure 3)."""
+    and the manuscript (plot_exp2_arms_comparison -> main.tex Figure 3)."""
     required = [
         "src/aedist/plot_exp2_arms_split.py",
         "src/aedist/tabulate_exp2_arms_runs.py",

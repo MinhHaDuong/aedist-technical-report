@@ -12,12 +12,12 @@ import csv
 from pathlib import Path
 
 import pytest
+from manuscript_source import body
 
 pytestmark = pytest.mark.adherence
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 CSV_PATH = REPO_ROOT / "data" / "reference" / "tab_wikipedia_recall_bar.csv"
-MAIN_MD = REPO_ROOT / "slides" / "manuscript" / "main.md"
 
 BUILT = ("operating", "construction", "permitted")
 PIPELINE = ("proposed", "announced")
@@ -53,9 +53,7 @@ def test_recall_bar_consistent_with_concordance():
 
 def test_manuscript_recall_bar_numbers_match_artifact():
     """§4/§7 two-regime literals are re-derived from the committed artifact."""
-    if not MAIN_MD.exists():
-        pytest.skip("main.md not found")
-    md = MAIN_MD.read_text(encoding="utf-8")
+    md = body()
     rows = _rows()
     by = {r["status"]: float(r["coverage"]) for r in rows}
     built = sum(by[s] for s in BUILT) / len(BUILT)
@@ -68,5 +66,5 @@ def test_manuscript_recall_bar_numbers_match_artifact():
     ):
         needle = f"{round(value * 100)}%"
         assert needle in md, (
-            f"recall-bar literal {needle} ({what}, from {CSV_PATH.name}) missing from main.md"
+            f"recall-bar literal {needle} ({what}, from {CSV_PATH.name}) missing from main.tex"
         )

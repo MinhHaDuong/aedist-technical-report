@@ -237,12 +237,12 @@ def test_mixed_diff_runs_build():
     """A mixed diff (tickets/** + slides/**) must run the full build.
 
     This is the ticket 0525 regression: PR #938 changed
-    slides/manuscript/main.md alongside a ticket file and the entire
+    slides/manuscript/main.tex alongside a ticket file and the entire
     docs-build was skipped.
     """
     _, patterns = _filter_patterns()
     output = _paths_filter_output(
-        ["tickets/closed/0523-fix-tau.erg", "slides/manuscript/main.md"],
+        ["tickets/closed/0523-fix-tau.erg", "slides/manuscript/main.tex"],
         patterns,
     )
     assert _build_runs(output), "mixed diff must run the build steps"

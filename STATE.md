@@ -6,7 +6,7 @@ Produce research-quality energy infrastructure datasets from open sources, valid
 
 ## Current milestone: arXiv preprint (0435)
 
-**The preprint WP is `slides/manuscript/main.md`** — report.tex is internal ("no future", author 2026-06-05). main.md is structurally complete on the **177-plant reference (v2.4)**, reconciled by 0501/#909 (2026-06-10). **Figure polish (raid 2026-06-09):** gapless figures 1–7 (0483/#882), quality-floor veto polarity fixed (0487/#883). **Editorial round (0522/#935, 2026-06-10):** data-not-model spine, claim-first findings + captions, de-jargon, age-proofing — anchors author-blessed. Acknowledgements confirmed in (author 2026-06-10; full back-matter since 0509). Remaining: full author read, arXiv build, sign-off. 0171 cross-eval OUT (journal delta).
+**The preprint WP is `slides/manuscript/main.tex`** (hand-curated LaTeX, tectonic-built — 0524 dropped pandoc/pandoc-crossref) — report.tex is internal ("no future", author 2026-06-05). The manuscript is structurally complete on the **177-plant reference (v2.4)**, reconciled by 0501/#909 (2026-06-10). **Figure polish (raid 2026-06-09):** gapless figures 1–7 (0483/#882), quality-floor veto polarity fixed (0487/#883). **Editorial round (0522/#935, 2026-06-10):** data-not-model spine, claim-first findings + captions, de-jargon, age-proofing — anchors author-blessed. Acknowledgements confirmed in (author 2026-06-10; full back-matter since 0509). Remaining: full author read, arXiv build, sign-off. 0171 cross-eval OUT (journal delta).
 
 ## Status
 <!-- generated 2026-06-10T21:15Z -->

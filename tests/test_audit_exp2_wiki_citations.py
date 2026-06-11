@@ -5,6 +5,7 @@ import re
 from pathlib import Path
 
 import pytest
+from manuscript_source import body
 
 from aedist.audit_exp2_wiki_citations import (
     audit_all,
@@ -172,24 +173,22 @@ class TestCorpusPins:
 
 
 # ---------------------------------------------------------------------------
-# Adherence: main.md literal matches CSV-derived aggregate
+# Adherence: main.tex literal matches CSV-derived aggregate
 # ---------------------------------------------------------------------------
 
 
 @pytest.mark.adherence
-class TestMainMdConsistency:
-    """The compliance count quoted in main.md must match the generated CSV."""
+class TestManuscriptConsistency:
+    """The compliance count quoted in main.tex must match the generated CSV."""
 
-    _MAIN_MD = Path("slides/manuscript/main.md")
+
     _CSV_PATH = Path("report/inputs/generated/tab_exp2_wiki_compliance.csv")
 
     def test_optimised_arm_count_matches(self):
-        """The phrase 'N of the 20 optimised-arm runs' in main.md must agree
+        """The phrase 'N of the 20 optimised-arm runs' in main.tex must agree
         with the CSV count of optimised rows having any banned citation."""
         if not self._CSV_PATH.exists():
             pytest.skip("CSV not yet generated")
-        if not self._MAIN_MD.exists():
-            pytest.skip("main.md not found")
 
         # Parse CSV independently (no script import — anti-tautology)
         with self._CSV_PATH.open() as fh:
@@ -202,15 +201,15 @@ class TestMainMdConsistency:
             and (int(r["n_banned_s1s2"]) + int(r["n_banned_bib"]) > 0)
         )
 
-        # Parse main.md independently
-        text = self._MAIN_MD.read_text(encoding="utf-8")
+        # Parse main.tex independently (normalized: line-wraps joined)
+        text = body()
         pattern = re.compile(r"(\d+)\s+of the 20 optimised-arm runs")
         match = pattern.search(text)
         assert match is not None, (
-            "main.md must contain '... N of the 20 optimised-arm runs'"
+            "main.tex must contain '... N of the 20 optimised-arm runs'"
         )
         prose_count = int(match.group(1))
 
         assert prose_count == optimised_banned_runs, (
-            f"main.md says {prose_count} but CSV shows {optimised_banned_runs}"
+            f"main.tex says {prose_count} but CSV shows {optimised_banned_runs}"
         )

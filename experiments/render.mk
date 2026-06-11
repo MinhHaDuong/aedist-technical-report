@@ -59,7 +59,7 @@ ANALYSIS_EXP1_SPIDER_CLAUDE := $(ANALYSIS_GEN)/fig_spider_exp1_claude.pdf
 ANALYSIS_EXP1_SPIDER_FAMILIES_FR := $(ANALYSIS_GEN)/fig_spider_exp1_families_fr.pdf
 ANALYSIS_EXP1_SPIDER_CLAUDE_FR := $(ANALYSIS_GEN)/fig_spider_exp1_claude_fr.pdf
 ANALYSIS_EXP2_COVERAGE_FIG_FR := $(ANALYSIS_GEN)/fig_exp2_coverage_certainty_fr.pdf
-# Quality-floor heatmap (ticket 0466): replaces spider in manuscript (main.md).
+# Quality-floor heatmap (ticket 0466): replaces spider in manuscript (main.tex).
 ANALYSIS_EXP1_QUALITY_HEATMAP := $(ANALYSIS_GEN)/fig_quality_floor_heatmap_exp1.pdf
 # Reliability-vs-accuracy screen (ticket 0506): section-4 figure + annex sweep.
 # The sweep CSV is a P3→P4 handoff artifact, tracked in experiments/derived/.

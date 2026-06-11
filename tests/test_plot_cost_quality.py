@@ -256,27 +256,20 @@ def test_main_writes_figure(tmp_path, monkeypatch):
 
 # --- adherence-style checks on the manuscript caption ----------------------
 
-REPO_ROOT_MD = (
-    __import__("pathlib").Path(__file__).resolve().parent.parent
-    / "slides"
-    / "manuscript"
-    / "main.md"
-)
-
-
 @pytest.mark.adherence
 def test_caption_has_no_stale_pilot_numbers():
     """Figure 2 caption must not carry stale pilot numbers (ticket 0196)."""
-    text = REPO_ROOT_MD.read_text()
+    from manuscript_source import body
+
+    text = body()
     forbidden = [
         "DeepSeek V3.2 decomposed+RAG",
         "89.8%",
         "$0.06",
-        "\\$0.06",
     ]
     found = [needle for needle in forbidden if needle in text]
     assert not found, (
-        f"Stale pilot numbers still present in {REPO_ROOT_MD.name}: {found}. "
+        f"Stale pilot numbers still present in main.tex: {found}. "
         "Rewrite the Figure 2 caption (ticket 0196)."
     )
 
