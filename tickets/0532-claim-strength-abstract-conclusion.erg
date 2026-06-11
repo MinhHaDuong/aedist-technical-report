@@ -7,6 +7,7 @@ Label: needs-human
 --- log ---
 2026-06-11T08:20Z HDMX-coding-agent created
 2026-06-11T08:45Z HDMX-coding-agent note renumbered from 0527 (ID collision)
+2026-06-11T10:17Z HDMX-coding-agent note reimagined+planned (raid 532-534): passage-level actions anchored (abstract l.31, conclusion l.202); Exp2 l.148 and Discussion l.182 already hedged — do not touch
 
 --- body ---
 ## Context
@@ -20,9 +21,9 @@ rewrites of abstract and conclusion — not mechanical.
    not equalise (Anthropic 0.61→0.38). Reframe as hypothesis; carry k/n
    directional hedging into abstract and conclusion.
 2. **ρ=0.92 in the abstract without the across-model-confound caveat.** The
-   honest within-model signal is the modest stratified τ; only 3/14 models
-   contribute to the binary gap. Abstract must carry the "pooled, in-sample
-   existence proof" qualification.
+   honest within-model signal is the modest stratified τ (+0.215, positive in
+   10/14 models); only 3/14 models contribute to the binary gap. Abstract must
+   carry the "pooled, in-sample existence proof" qualification.
 3. **"Falls short of the four-dimensional quality bar" with two dimensions
    measured.** Coherence/provenance/temporality rubric deferred to Phase C;
    scope the claim to measured dimensions.
@@ -30,8 +31,47 @@ rewrites of abstract and conclusion — not mechanical.
 Suggestion from same review: abstract ~400 words, omits best number
 (fusion F1=0.813); consider adding the seeding-mechanism clause and trimming.
 
+Sequencing: runs AFTER sibling 0533 (factual fixes in the body, including
+seeding attribution and the seeded-recall built-fleet scope). The rewrite sits
+on top of those corrections — keep abstract/conclusion seeded-recall language
+scoped to the built fleet, consistent with whatever attribution 0533 lands.
+
+The defect sites are abstract (line ~31) and conclusion (line ~202) ONLY.
+§Exp2 body (line ~148, "relocates the binding constraint ... unregistered and
+exploratory ... four-agent cohort") and Discussion (line ~182, "existence
+proof rather than a validated detector") are already correctly hedged — the
+abstract/conclusion must be brought to THEIR register; do not edit them.
+
 ## Relevant files
-- `slides/manuscript/main.md` — abstract, conclusion, §Exp2 hedging language
+- `slides/manuscript/main.md` — abstract (l.~31), conclusion (l.~202);
+  reference register at §Exp2 l.~148, Discussion l.~182, annex-screen l.~513–523
+
+## Actions
+1. Abstract: reframe the binding-constraint opener as a directional
+   hypothesis with k/n hedging (3/4 agents equalise in single-query; multi-turn
+   does not replicate).
+2. Abstract: scope the seeded-recall ceiling sentence to the built fleet
+   ("Wikipedia covers 92% of the built fleet ..."), consistent with 0533.
+3. Abstract: scope the quality-bar sentence to the measured dimensions
+   (accuracy/F1, coverage, citation-based provenance), naming the deferred
+   rubric (coherence, provenance support, temporality) as follow-on work.
+4. Abstract: harden the ρ=0.92 caveat — explicitly name the across-model
+   confound; within-model signal is stratified τ=+0.215, 10/14 models;
+   match the Discussion's "existence proof" register.
+5. Abstract: OPTIONAL (author decision, mark clearly in PR body): add the
+   fusion result (majority vote of 2-of-4 agents → F1=0.813, 122 plants,
+   5 false positives) and trim ~30–50 words elsewhere to compensate.
+6. Conclusion: same hypothesis reframing as Action 1 ("the evidence points
+   toward a conjecture: ... bottleneck relocates from model capability to
+   document quality — observed in single-query across three of four agents,
+   not replicated multi-turn").
+7. Conclusion: same quality-bar scoping as Action 3.
+8. Conclusion: seeded-recall sentence already carries "92% of the built
+   fleet" — verify consistency with 0533's landed attribution wording; minor
+   cleanup only.
+
+Keep diffs surgical; preserve the author's voice; no edits outside abstract
+and conclusion. Do not introduce a macro for τ (appears twice; inline it).
 
 ## Test
 - Re-run prose review panel post-rewrite: methods + adversarial reviewers no
