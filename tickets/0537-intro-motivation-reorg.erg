@@ -1,0 +1,51 @@
+%erg 0.1
+Title: Manuscript intro & motivation reorg (reading-1 annotations, structural)
+Created: 2026-06-11
+Author: HDMX-coding-agent
+Blocked-by: 0524
+
+--- log ---
+2026-06-11T12:30Z HDMX-coding-agent created from author reading-1 annotations (main+hdm.pdf p2-4)
+
+--- body ---
+## Context
+Author's first full read (2026-06-11) of the text body produced structural
+rewrite directives for the introduction, motivation, and reference sections.
+Structural — sequenced after the 0524 LaTeX conversion so they edit the LaTeX
+source once. Small-grain editorial siblings went to 0534; abstract/conclusion
+claim strength to 0532.
+
+## Actions (from the annotations)
+1. **Key results placement**: revise the key-results statement — (1) new
+   computable benchmark; (2) the task is hard for today's agents; (3)
+   reference-free coherence criteria suffice to screen out weak models.
+   Consider placing the list in the intro before the outline announcement.
+2. **Concept paragraph → text box**: the concepts paragraph at the end of the
+   intro is fine content, wrong place — make it a text box in the section
+   where the concepts are first needed.
+3. **Motivation justification, rethought** (p3): admit that analysis-oriented
+   research or consulting should start from GEM. This is research: the purpose
+   is improving the METHOD, not just the table. Improving = lower cost (cf.
+   inventories like WRI's that die when resources dry up) and evergreen (GEM
+   lacks some of our data). Plus: groundwork for information fusion, better
+   energy-transition modelling, keeping up with research automation. Ancillary:
+   a benchmark for AI information retrieval; validating AI engineering
+   patterns on a case study.
+4. **Global databases discussion** (p3): decide where OSM (limited to existing
+   sites/plants) and Wikipedia are discussed; reference forward or import here.
+5. **Sources table** (p4): add the OSM row for existing plants; remove the
+   Census row.
+6. **Researcher-perspective ending** (p4): revise the long-tail justification —
+   we take the researcher perspective; the reference aims to be exhaustive and
+   detailed for the whole thermal-sector economic and policy history; that is
+   why the long tail stays.
+7. **Reference section flow** (p4): reposition or delete the contents/role
+   paragraph; add transition glue prose; check repetition with later prose.
+
+## Invariants
+- Coordinate with 0486 (concordance annex): item 4-5 touch the same material.
+- No new hand-typed numbers (0531 macros discipline).
+
+## Exit criteria
+- [ ] Each annotation above implemented or waived with reason in log.
+- [ ] Author re-read of intro+motivation approves.

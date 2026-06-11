@@ -7,6 +7,7 @@ Author: HDMX-coding-agent
 2026-06-10T22:03Z HDMX-coding-agent created
 2026-06-11T08:00Z haduong decision Option 1 chosen — convert manuscript to LaTeX; MD workflow complications outweigh the pandoc-crossref benefits
 
+2026-06-11T12:30Z haduong annotated reading-1 annotations (main+hdm.pdf) triaged into this ticket; see body section 'Author annotation brief'
 --- body ---
 ## Decision (author, 2026-06-11)
 
@@ -98,3 +99,11 @@ comment drift that closed PR #939 tried to fix prematurely.
 - [ ] `.claude/rules/writing.md` conventions updated to LaTeX.
 - [ ] Adherence tests (`test_manuscript_crossref.py`, figure numbering)
       rewritten for `.tex` and passing; `make check` passes.
+
+## Author annotation additions (reading 1, 2026-06-11) — preamble requirements
+
+From the annotated PDF, fold into the new LaTeX preamble:
+- Title: insert a linebreak so "A Benchmark and Research Programme…" starts
+  its own line (no orphaned "A" after "Statistical Register?").
+- Paper size: A4, not Letter.
+- Add the date to the title block.

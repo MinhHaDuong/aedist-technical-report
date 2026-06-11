@@ -9,6 +9,7 @@ Author: HDMX-coding-agent
 2026-06-11T10:17Z HDMX-coding-agent note reimagined+planned (raid 532-534): per-item triage — 10 fix, items 6+13 waived (no artifact support / YAGNI), item 12 verified-no-change; runs LAST after 0533+0532
 2026-06-11T10:30Z HDMX-coding-agent note verify-feasibility PASS (raid 532-534): anchors PASS; items 1+4 re-read post-0533 text; item 2 needs real bib data (refs.bib has PyPSA-VN only) else URL note
 
+2026-06-11T12:30Z haduong annotated reading-1 annotations (main+hdm.pdf) triaged into this ticket; see body section 'Author annotation brief'
 --- body ---
 ## Context
 Minor (`verifiable:`) findings from the 2026-06-11 prose review panel, batched
@@ -73,3 +74,19 @@ post-0533 text before editing.
 ## Exit criteria
 - [ ] Each item fixed or explicitly waived with a one-line reason in the log.
 - [ ] Manuscript builds; adherence tests green.
+
+## Author annotation additions (reading 1, 2026-06-11)
+
+Append to the single editorial pass:
+14. Em-dashes are an AI tell — sweep and restyle (abstract and body).
+15. Runs of three -ly adverbs and six-in-a-row trisyllabic words (abstract) —
+    plain bad writing, simplify.
+16. p2: "restrictive licences" is irrelevant to the GIGO argument — cut.
+17. p2: reduce F1 prominence in the intro ("less on F1").
+18. p3: define precision and recall at first use.
+19. p4: clarify the Wikipedia snapshot date.
+20. p4: "scaffolding" sentence is out.
+21. p6: LLM-tell prose flagged near quality-bar section — rewrite plainly.
+22. p6 (Figure 2 intro): remove AI contrast-framing ("not X but Y"), the
+    what-it-is-not enumeration, and the unjustified opening claim that
+    capability improves statistical quality — go straight to the point.
