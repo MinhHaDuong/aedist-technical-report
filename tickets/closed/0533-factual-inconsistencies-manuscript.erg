@@ -2,6 +2,7 @@
 Title: Resolve manuscript factual inconsistencies: seeding attribution, GEM counts, refusals wording
 Created: 2026-06-11
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #964
 
 --- log ---
 2026-06-11T08:20Z HDMX-coding-agent created
@@ -11,6 +12,7 @@ Author: HDMX-coding-agent
 2026-06-11T10:37Z HDMX-coding-agent note executed (raid 532-534): intern account adopted body+COI; GEM 157-vs-119 explained as phase-grain matching, snapshot bounded at 2026-04-02; refusal anecdote attributed to archived p1_base baseline with derived numbers (3/5 refused, F1 0.64 and 0.00 completing)
 2026-06-11T12:05Z HDMX-coding-agent note review fixes (PR 964): annex refusal passage attributed to archived p1_base sweep; conclusion author-seeded -> group-seeded; topup refusals verified from baseline.topup artifacts (3/3 attempts refused, runs 1+3 status=empty, run 2 unrecorded); sweep date dropped from line 101 (archive spans 05-20/21/24); GEM parenthetical reflowed; batch2 F1 range re-derived (0.6087-0.6464); PROVENANCE ticket ref made public-friendly
 
+2026-06-11T11:49Z HDMX-coding-agent closed — autoclosed — PR #964
 --- body ---
 ## Context
 Prose review panel 2026-06-11 (pre-arXiv), three factual inconsistencies that
