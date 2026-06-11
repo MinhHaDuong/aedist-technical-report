@@ -16,6 +16,7 @@
 \DefineVerbatimEnvironment{Prompt}{Verbatim}{frame=single,fontsize=\small}
 \usepackage{graphicx}
 \usepackage{rotating} % sidewaysfigure: full-page landscape recognition matrix (0446)
+\usepackage{pdfpages} % \includepdf: multi-page portrait recognition matrix (0503)
 \usepackage{xcolor}
 
 % Links
@@ -577,7 +578,7 @@ La primitive $\mathrm{master}+\mathrm{fragment}\rightarrow\mathrm{master}'$ inst
 
 \emph{L'incomplétude se mesure et se distingue du conflit.} Dans le modèle des croyances transférables, $m(\emptyset)$ admet deux lectures~: un degré de contradiction entre sources, et un degré de \emph{monde ouvert}, la masse de croyance qui n'est attachée à aucun état décrit \citep{HaDuong2005}. AEDIST sépare délibérément ces deux quantités. Le désaccord entre extractions relève du contrôle de cohérence et de l'arbitrage d'autorité~; le monde ouvert --- les centrales qu'\emph{aucune} source ne mentionne --- est une grandeur propre, le «~chiffre noir~» de l'inventaire, qu'on estimera par recoupement entre listes incomplètes plutôt que de le combler par fabrication. C'est la traduction théorique de l'exigence énoncée au chapitre~\ref{chap:conclusion}~: signaler explicitement les lacunes au lieu de les remplir, et exprimer des intervalles sur les agrégats.
 
-\emph{Le chiffre noir s'estime, il ne se devine pas.} Encore faut-il quantifier ce monde ouvert. La méthode de mise en cohérence des bornes \citep{HaDuong2005} en donne le principe~: connaissant une enveloppe globale --- un total de contrôle, par exemple la capacité installée par combustible publiée par le régulateur --- et des bornes sur les contributions bien attestées (les centrales traçables vers une source primaire), un système de bornes est \emph{cohérent} lorsque la somme des bornes inférieures ne dépasse pas le total et que la somme des bornes supérieures l'atteint au moins. La part résiduelle --- les centrales qu'aucune source du corpus ne mentionne --- se borne alors par programmation linéaire, de la même façon que la mortalité imputable à des facteurs de risque mal caractérisés se déduit du total et des facteurs connus \citep{HaDuong2005}. L'appariement linéaire qui sert déjà à la réconciliation (section~\ref{sec:reconciliation}) en fournit l'ossature. Enfin, le terme $n(\emptyset)$ --- les cas qu'aucune cause connue n'explique --- se calibre dans ce cadre sur une population de référence supposée exhaustive~; sa transposition est l'estimation de la couverture sur le \emph{noyau facile} (les centrales opérationnelles, où l'ancre ouverte est complète), seul sous-ensemble où l'absence d'une centrale dans toutes les sources peut être lue comme une quasi-certitude d'inexistence. La matrice de reconnaissance de l'annexe~\ref{annex:recognition-matrix} préfigure ce programme~: chaque colonne y est une centrale observée par de nombreux runs bruités --- précisément l'objet d'entrée de la découverte de la vérité latente et de l'estimation par capture-recapture. La cohérence entre runs d'un même modèle et entre modèles s'y lit directement (colonnes denses contre clairsemées), et l'on y voit le noyau opérationnel se détacher du reste~; la fusion de ces listes incomplètes en une estimation unique, pondérée par la fiabilité des sources, est l'axe de recherche que ces densités de colonnes invitent à ouvrir.
+\emph{Le chiffre noir s'estime, il ne se devine pas.} Encore faut-il quantifier ce monde ouvert. La méthode de mise en cohérence des bornes \citep{HaDuong2005} en donne le principe~: connaissant une enveloppe globale --- un total de contrôle, par exemple la capacité installée par combustible publiée par le régulateur --- et des bornes sur les contributions bien attestées (les centrales traçables vers une source primaire), un système de bornes est \emph{cohérent} lorsque la somme des bornes inférieures ne dépasse pas le total et que la somme des bornes supérieures l'atteint au moins. La part résiduelle --- les centrales qu'aucune source du corpus ne mentionne --- se borne alors par programmation linéaire, de la même façon que la mortalité imputable à des facteurs de risque mal caractérisés se déduit du total et des facteurs connus \citep{HaDuong2005}. L'appariement linéaire qui sert déjà à la réconciliation (section~\ref{sec:reconciliation}) en fournit l'ossature. Enfin, le terme $n(\emptyset)$ --- les cas qu'aucune cause connue n'explique --- se calibre dans ce cadre sur une population de référence supposée exhaustive~; sa transposition est l'estimation de la couverture sur le \emph{noyau facile} (les centrales opérationnelles, où l'ancre ouverte est complète), seul sous-ensemble où l'absence d'une centrale dans toutes les sources peut être lue comme une quasi-certitude d'inexistence. La matrice de reconnaissance de l'annexe~\ref{annex:recognition-matrix} préfigure ce programme~: chaque ligne y est une centrale observée par de nombreux runs bruités --- précisément l'objet d'entrée de la découverte de la vérité latente et de l'estimation par capture-recapture. La cohérence entre runs d'un même modèle et entre modèles s'y lit directement (lignes denses contre clairsemées), et l'on y voit le noyau opérationnel se détacher du reste~; la fusion de ces listes incomplètes en une estimation unique, pondérée par la fiabilité des sources, est l'axe de recherche que ces densités de lignes invitent à ouvrir.
 
 \emph{Décider sous incomplétude n'impose pas de tout trancher.} L'abandon de l'axiome de complétude des préférences de Savage, dont \citet{HaDuong2005} explore les conséquences en économie, conduit à un ordre partiel sur les décisions~: on ne classe pas toutes les hypothèses, mais on délimite un ensemble acceptable et, à l'intérieur, un sous-ensemble préférable. Appliqué à l'existence d'une centrale, ce critère produit naturellement le triage du pipeline~: un sous-ensemble auto-accepté (assertions dominantes et traçables), un sous-ensemble rejeté, et un reste \emph{non comparable} qui alimente la file de vérification. La priorité au rappel, propre à un inventaire statistique, se formalise comme une asymétrie de ce critère. La table maître livrée reste \emph{ponctuelle} --- un modèle de système énergétique consomme des valeurs scalaires --- et s'interprète comme la projection ponctuelle (pignistique) de l'état crédal~; l'imprécision sous-jacente n'est pas perdue mais portée par les notes méthodologiques et les notes par ligne.
 
@@ -738,22 +739,23 @@ Parmi les axes non explorés ici, le réglage de l'effort de raisonnement des mo
 
 \chapter{Matrice de reconnaissance de l'Expérience~1}\label{annex:recognition-matrix}
 
-La figure~\ref{fig:recognition-matrix} aligne chaque centrale de la liste de
-référence sur une colonne fixe, pour les \ExpOneMatrixRuns{}~runs de
-l'Expérience~1 (les 14~modèles à raison de cinq répétitions chacun, dans
-l'ordre de la figure~du corps de texte~: par famille architecturale puis par
-nombre effectif de paramètres décroissant). Une case bleue indique que le run a
-reconnu la centrale~(vrai positif)~; une case vide marque un oubli. Les
-\ExpOneMatrixPlants{}~colonnes de référence sont ordonnées par groupe de statut
-puis par capacité décroissante, de sorte que les bandes de statut s'alignent sur
-le tableau de difficulté par statut~(table~\ref{tab:status-difficulty}). Le
-panneau de gauche
-montre les \ExpOneMatrixFPs{}~faux positifs les plus fréquents sur l'ensemble des
-runs, triés par occurrence décroissante~; le rouge suit la convention faux
-positif. Contrairement à la figure du corps de texte qui tasse les centrales
-reconnues vers la gauche, l'alignement vertical révèle quelles centrales chaque
-modèle manque~: les centrales célèbres forment des colonnes denses, les
-obscures des colonnes clairsemées.
+La figure~\ref{fig:recognition-matrix} place chacune des
+\ExpOneMatrixPlants{}~centrales de la liste de référence sur sa propre ligne
+(les noms se lisent de gauche à droite, sans rotation), contre les
+\ExpOneMatrixRuns{}~runs de l'Expérience~1 (les 14~modèles à raison de cinq
+répétitions chacun) en colonnes. Une case bleue indique que le run a reconnu la
+centrale~(vrai positif)~; une case vide marque un oubli. Les lignes sont
+regroupées par statut puis par capacité décroissante, selon les mêmes
+catégories de statut que le tableau de difficulté par
+statut~(table~\ref{tab:status-difficulty}). Pour que les noms des centrales
+restent lisibles à l'échelle d'impression, la matrice est répartie sur
+plusieurs pages selon l'étape du cycle de vie. Une dernière page montre les
+\ExpOneMatrixFPs{}~faux positifs les plus fréquents sur l'ensemble des runs,
+triés par occurrence décroissante~; le rouge suit la convention faux positif.
+Contrairement à la figure du corps de texte qui ne fait que compter les
+centrales reconnues par chaque run, l'alignement sur lignes fixes révèle
+quelles centrales chaque modèle manque~: les centrales célèbres forment des
+lignes denses, les obscures des lignes clairsemées.
 
 Le tableau~\ref{tab:status-difficulty}, qui partage la même dérivation des
 données~(bibliothèque \texttt{aedist.exp1\_recognition}, cause commune sans
@@ -764,16 +766,19 @@ d'où un taux de reconnaissance moyen bien plus faible que pour les centrales
 opérationnelles. La faible reconnaissance globale est donc structurelle, liée à
 la composition de la liste, et non un simple défaut des modèles.
 
-\begin{sidewaysfigure}
-\centering
-\includegraphics[width=\textwidth,height=0.88\textheight,keepaspectratio]{inputs/generated/fig_exp1_recognition_matrix_fr.pdf}
-\caption{Matrice de reconnaissance de l'Expérience~1~: \ExpOneMatrixPlants{}~centrales
-de référence (colonnes, par statut puis capacité décroissante) contre
-\ExpOneMatrixRuns{}~runs (lignes, une étiquette par modèle, 5~répétitions
-chacune). Bleu~= centrale reconnue~; panneau de gauche~:
-les \ExpOneMatrixFPs{}~faux positifs les plus fréquents (rouge).}
-\label{fig:recognition-matrix}
-\end{sidewaysfigure}
+\refstepcounter{figure}\label{fig:recognition-matrix}
+\noindent\emph{Figure~\thefigure. (Pages suivantes.) Matrice de reconnaissance
+de l'Expérience~1, transposée en portrait pour garder les noms de centrales
+lisibles~: les \ExpOneMatrixPlants{}~centrales de référence en lignes (groupées
+par statut puis par capacité décroissante, bandes de statut étiquetées dans la
+marge droite) et les \ExpOneMatrixRuns{}~runs (14~modèles $\times$
+5~répétitions) en colonnes sous un en-tête à trois niveaux famille / version /
+répétition. Bleu~= centrale reconnue. Les premières pages répartissent les
+centrales par étape du cycle de vie (centrales en service, retirées et
+annulées, puis proposées, planifiées et en construction)~; la dernière page
+montre les
+\ExpOneMatrixFPs{}~faux positifs les plus fréquents (rouge).}
+\includepdf[pages=-,pagecommand={\thispagestyle{plain}}]{inputs/generated/fig_exp1_recognition_matrix_portrait_fr.pdf}
 
 \input{inputs/generated/tab_status_difficulty}
 

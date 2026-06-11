@@ -2,12 +2,19 @@
 Title: Portrait recognition matrix variant for the FR report.tex annex
 Created: 2026-06-09
 Author: HDMX-coding-agent
-Label: deferred
+Closed: autoclosed — PR #959
 
 --- log ---
 2026-06-09T15:28Z HDMX-coding-agent created
 
 2026-06-09T15:29Z Claude label deferred
+
+2026-06-11T08:30Z claude note raid imagine+plan — author raid authorization discharges the orientation decision (portrait); plan appended
+
+2026-06-11T09:08Z claude note feasibility PASS — all file:line claims verified mechanically
+
+2026-06-11T09:20Z claude label -deferred
+2026-06-11T10:16Z HDMX-coding-agent closed — autoclosed — PR #959
 --- body ---
 ## Context
 
@@ -48,6 +55,23 @@ treatment was not propagated there.
 - [ ] If portrait: FR-localised `_fr` portrait builds via the render DAG
 - [ ] report.tex annex includes the chosen variant; `make report` builds
 - [ ] `make check` passes
+
+## Plan (raid 2026-06-11)
+
+Decision: portrait replaces landscape in the FR annex, mirroring the EN
+preprint (main.md:482 \includepdf). Raid authorization by the author
+(explicit /raid 503) discharges exit criterion 1.
+
+Actions:
+1. `plot_exp1_matrix_portrait.py`: add `--lang {en,fr}` (default en),
+   `_STATUS_LABELS_BY_LANG`, thread `lang` through `write_pdf`→`_draw_page`;
+   page titles stay EN per the landscape `_fr` precedent.
+2. `experiments/render.mk`: explicit rule for
+   `fig_exp1_recognition_matrix_portrait_fr.pdf` (`--lang fr`), registered
+   in the chart-figures grouping list.
+3. `report/report.tex`: add `pdfpages`; replace the landscape
+   `sidewaysfigure` with the pdfpages portrait treatment (kept `\label`),
+   flip the FR annex prose axis description (rows = plants).
 
 ## Related
 

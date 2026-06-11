@@ -42,6 +42,7 @@ from matplotlib.colors import ListedColormap
 
 from .config import VN_THERMAL_PLANTS_RELEASE_CSV
 from .exp1_recognition import (
+    STATUS_LABELS,
     STATUS_LABELS_EN,
     load_exp1_recognition,
     top_false_positives,
@@ -51,6 +52,12 @@ from .plot_method_convergence import _model_size_b
 from .util import COLOR_ALERT, COLOR_MATCHED, model_family, model_family_color
 
 log = logging.getLogger(__name__)
+
+# Status band labels are language-parametric, mirroring the landscape
+# variant (plot_exp1_matrix.py): EN for the preprint, FR for the report
+# annex. Page titles stay EN per the landscape `_fr` precedent — only
+# band/margin labels are localised.
+_STATUS_LABELS_BY_LANG = {"en": STATUS_LABELS_EN, "fr": STATUS_LABELS}
 
 # A4 portrait usable area in inches (ISO 216: 210×297mm, typical margins).
 _A4_USABLE_W = 6.7   # in  (full width: ~8.27in, minus margins)
@@ -204,6 +211,7 @@ def _draw_page(
     n_runs: int,
     tp_cmap: object,
     ui_scale: float,
+    lang: str = "en",
 ) -> None:
     """Render one page of the portrait matrix and append to pdf."""
     # Per-row height in points (usable height / n_rows * 72).
@@ -261,7 +269,7 @@ def _draw_page(
     # Status labels on the right margin.
     fontsize_status = 8.0 * ui_scale
     for first_row, last_row, status in band_list:
-        label = STATUS_LABELS_EN.get(status, status)
+        label = _STATUS_LABELS_BY_LANG[lang].get(status, status)
         cy = (first_row + last_row) / 2
         ax.text(
             n_runs + 0.5, cy, label,
@@ -409,6 +417,7 @@ def write_pdf(
     ui_scale: float = 1.0,
     models: list[str] | None = None,
     exclude_models: list[str] | None = None,
+    lang: str = "en",
 ) -> None:
     """Render the Exp1 recognition matrix portrait variant as a multi-page PDF.
 
@@ -506,6 +515,7 @@ def write_pdf(
                 n_runs=n_runs,
                 tp_cmap=tp_cmap,
                 ui_scale=ui_scale,
+                lang=lang,
             )
 
         _draw_fp_page(
@@ -556,6 +566,12 @@ def main(argv: list[str] | None = None) -> None:
         default=None,
         help="Exclude these models",
     )
+    parser.add_argument(
+        "--lang",
+        choices=["en", "fr"],
+        default="en",
+        help="Language for status band labels (page titles stay EN)",
+    )
     args = parser.parse_args(argv)
 
     write_pdf(
@@ -567,6 +583,7 @@ def main(argv: list[str] | None = None) -> None:
         ui_scale=args.ui_scale,
         models=args.models,
         exclude_models=args.exclude_models,
+        lang=args.lang,
     )
 
 
