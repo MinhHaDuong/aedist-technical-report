@@ -2,11 +2,13 @@
 Title: CI.yml chore filter has the same mixed-diff skip bug fixed in docs-build (0525)
 Created: 2026-06-11
 Author: HDMX-coding-agent
+Closed: PR #981 merged; close fell through (watcher without erg)
 
 --- log ---
 2026-06-11T09:00Z HDMX-coding-agent created during /review-pr 950
 2026-06-11T13:30Z claude note executed: (1) ported non-chore inversion to CI.yml, gates now != 'false'; (2) comment rewritten, "Kept in sync with docs-build.yml" restored truthfully; (3) test_ci_workflow.py rewritten with emulation tests; helpers extracted to tests/workflow_filter_helpers.py and shared with test_docs_build_workflow.py. Adherence 244 passed, fast suite 2480 passed.
 
+2026-06-11T22:05Z HDMX-coding-agent closed — PR #981 merged; close fell through (watcher without erg)
 --- body ---
 ## Context
 PR #950 (ticket 0525) fixed `.github/workflows/docs-build.yml`: under
