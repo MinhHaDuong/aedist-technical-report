@@ -15,7 +15,7 @@ from aedist.plot_quality_floor_heatmap_exp1 import (
     make_figure,
     mean_score,
 )
-from aedist.plot_quality_spider_exp1 import _load_rows, _model_size_rank
+from aedist.plot_quality_spider_exp1 import _load_rows
 from aedist.util import model_family
 
 _CSV_PATH = Path("experiments/derived/exp1_cross_eval.csv")
@@ -124,49 +124,8 @@ def test_scored_columns_excludes_bookkeeping():
         assert col not in {"arm", "model", "run", "prompt_version", "reference", "n_rows"}
 
 
-# ── Model column order: identical to Figure 2, DeepSeek included ──────────────
-
-
-def _figure2_order_ref(rows):
-    """Reference: family alphabetical, size-rank descending, name (mirrors Fig 2)."""
-    models = sorted({str(r.get("model", "")).strip() for r in rows if str(r.get("model", "")).strip()})
-    models.sort(key=lambda m: (model_family(m), -_model_size_rank(m), m))
-    return models
-
-
-def test_model_order_matches_figure2_ordering():
-    """Heatmap columns follow the same ordering rule as Figure 2's census."""
-    rows = _load_rows(_CSV_PATH)
-    assert heatmap_models(rows) == _figure2_order_ref(rows)
-
-
-def test_model_order_literal_matches_figure2_render():
-    """Independent literal guard: the exact column order, verified visually
-    against the committed fig_direct_p1_base.pdf (PR #914, 2026-06-09).
-
-    _figure2_order_ref shares its sort key with heatmap_models, so it cannot
-    catch the name-rank heuristic diverging from Figure 2's size-registry sort
-    (e.g. '20b' substring-matching inside 'gpt-oss-120b'). This literal can:
-    if the model set changes, update it by re-reading Figure 2 — not by
-    copying heatmap_models output.
-    """
-    rows = _load_rows(_CSV_PATH)
-    assert heatmap_models(rows) == [
-        "claude-opus-4.6",
-        "claude-sonnet-4.6",
-        "claude-haiku-4.5",
-        "deepseek-v4-pro",
-        "deepseek-v4-flash",
-        "gpt-5.5",
-        "gpt-oss-120b",
-        "gpt-oss-20b",
-        "mistral-large-2512",
-        "mistral-medium-3-5",
-        "mistral-small-2603",
-        "qwen3.7-max",
-        "qwen3.6-35b-a3b",
-        "qwen3.6-flash",
-    ]
+# ── Model column order: delegation + literal guards live in
+#    tests/test_census_model_order.py (ticket 0504) ─────────────────────────────
 
 
 def test_deepseek_included_in_columns():
