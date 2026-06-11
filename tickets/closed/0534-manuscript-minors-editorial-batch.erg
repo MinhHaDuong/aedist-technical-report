@@ -2,14 +2,21 @@
 Title: Manuscript minors batch: review-panel verifiable fixes (pre-arXiv)
 Created: 2026-06-11
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #971
 
 --- log ---
 2026-06-11T08:20Z HDMX-coding-agent created
 2026-06-11T08:45Z HDMX-coding-agent note renumbered from 0529 (ID collision)
 2026-06-11T10:17Z HDMX-coding-agent note reimagined+planned (raid 532-534): per-item triage — 10 fix, items 6+13 waived (no artifact support / YAGNI), item 12 verified-no-change; runs LAST after 0533+0532
 2026-06-11T10:30Z HDMX-coding-agent note verify-feasibility PASS (raid 532-534): anchors PASS; items 1+4 re-read post-0533 text; item 2 needs real bib data (refs.bib has PyPSA-VN only) else URL note
-
+2026-06-11T11:36Z HDMX-coding-agent note item 1: caveat prose confirmed clear post-0533; accuracy-excluding-proposed number waived — no committed artifact (0531 macros not shipped)
+2026-06-11T11:36Z HDMX-coding-agent note item 6 waived: no committed artifact supports a validated rapidfuzz false-match estimate; concordance table already carries the upper-bound caveat
+2026-06-11T11:36Z HDMX-coding-agent note item 12 confirmed: prose branding (Small 4 / Medium 3.5 / Large 3) matches models.yaml display_name values — no edit
+2026-06-11T11:36Z HDMX-coding-agent note item 13 waived: YAGNI — a reusable ai-tells scanner is a separate chore if ever wanted; item-8 instances fixed directly
+2026-06-11T11:37Z HDMX-coding-agent executed items 1-5,7-11 fixed (item 2: real software citation added — PyPSA-ASEAN GitHub repo, pypsa-meets-earth org; item 11: no orphan cohort uses found), 6+13 waived, 12 confirmed; PR stacked on t0532
 2026-06-11T12:30Z haduong annotated reading-1 annotations (main+hdm.pdf) triaged into this ticket; see body section 'Author annotation brief'
+2026-06-11T15:30Z HDMX-coding-agent note ported onto main.tex (author ratified, override 2026-06-11): #968's 13 dispositions re-applied to the LaTeX source; supersedes PR #968. Items 14-22 (author annotation additions) are NOT covered by this port — they postdate #968
+2026-06-11T14:32Z HDMX-coding-agent closed — autoclosed — PR #971
 --- body ---
 ## Context
 Minor (`verifiable:`) findings from the 2026-06-11 prose review panel, batched

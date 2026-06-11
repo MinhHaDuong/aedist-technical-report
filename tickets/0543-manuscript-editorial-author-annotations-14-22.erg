@@ -1,0 +1,56 @@
+%erg 0.1
+Title: Manuscript editorial: author annotation items 14-22 (reading 1)
+Created: 2026-06-11
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-11T15:35Z HDMX-coding-agent created split from 0534
+2026-06-11T15:45Z HDMX-coding-agent note renumbered from 0542 (ID collision with 0542-semantic-latex-cleanup, PR #970) — items 14-22 postdate PR #968 (executed 11:37Z, annotations triaged 12:30Z) and were not implemented by the t0532/t0534 port PR, which closes 0534
+
+--- body ---
+## Context
+
+Ticket 0534 batched the 13 prose-review-panel minors; PR #968 implemented
+them. The author's reading-1 annotations (2026-06-11, main+hdm.pdf) later
+appended nine more items (14-22) to 0534's body, after #968 was already
+executed. The port PR (supersedes #967/#968, lands the ratified content
+on `slides/manuscript/main.tex`) closes 0534 with only the original 13
+dispositions; this ticket carries the unimplemented additions so they
+are not lost in the close.
+
+## Relevant files
+
+- `slides/manuscript/main.tex` — the manuscript (LaTeX since ticket 0524;
+  page anchors below refer to the author's annotated PDF of the main.md
+  build — re-locate by quoted text)
+- `tests/test_manuscript_cohort_and_caveats.py` — abstract register guard
+  (no em-dash in abstract already enforced; item 14 extends the restyle
+  to the body)
+
+## Actions (verbatim from the author annotation brief)
+
+14. Em-dashes are an AI tell — sweep and restyle (abstract and body).
+    (Abstract is already em-dash-free per 0532 round 2; the body sweep
+    overlaps ticket 0541's register harmonisation — coordinate.)
+15. Runs of three -ly adverbs and six-in-a-row trisyllabic words
+    (abstract) — plain bad writing, simplify.
+16. p2: "restrictive licences" is irrelevant to the GIGO argument — cut.
+17. p2: reduce F1 prominence in the intro ("less on F1").
+18. p3: define precision and recall at first use.
+19. p4: clarify the Wikipedia snapshot date.
+20. p4: "scaffolding" sentence is out.
+21. p6: LLM-tell prose flagged near quality-bar section — rewrite plainly.
+22. p6 (Figure 2 intro): remove AI contrast-framing ("not X but Y"), the
+    what-it-is-not enumeration, and the unjustified opening claim that
+    capability improves statistical quality — go straight to the point.
+
+## Invariants
+
+- House crossref rules (tests/test_manuscript_crossref.py) stay green.
+- The 0532 round-2 ratified abstract/conclusion text is not reworded
+  beyond what an item above explicitly directs.
+
+## Exit criteria
+
+- [ ] Each item fixed or explicitly waived with a one-line reason in the log
+- [ ] Manuscript builds; `make check` green

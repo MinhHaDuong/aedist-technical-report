@@ -12,10 +12,12 @@ from a *different* source:
 (The third count, 12 = the spider-figure cohort, left the manuscript with the
 spider figure in ticket 0507; the spider survives in the slides only.)
 
-The ρ=0.92 caveat must appear in BOTH the abstract and the conclusion regions.
-The cost-savings claim and the cost-F1 non-monotonicity novelty claim must be
-gone. The status-vocabulary mismatch sentence must cite the grouped ~38% from
-the committed status-difficulty table.
+Ticket 0532 round 2 (author brief, reading 1): the abstract carries NO
+statistics (no F1, no ρ) and no em-dash; the ρ=0.92 caveat must accompany ρ
+wherever it still appears (conclusion, Discussion). The cost-savings claim and
+the cost-F1 non-monotonicity novelty claim must be gone. The status-vocabulary
+mismatch sentence must cite the grouped ~38% from the committed
+status-difficulty table.
 """
 
 import csv
@@ -24,7 +26,7 @@ import tomllib
 from pathlib import Path
 
 import pytest
-from manuscript_source import body, figure_caption
+from manuscript_source import body, body_raw, figure_caption, normalized
 
 pytestmark = pytest.mark.adherence
 
@@ -81,16 +83,103 @@ def test_zero_good_run_models_match_artifact():
     assert load_rows(XEVAL_CSV)
 
 
-def test_rho_caveat_in_abstract_and_conclusion():
-    """The ρ=0.92 caveat appears in both the abstract and the conclusion."""
+def _abstract_paragraph() -> str:
+    """The abstract paragraph itself (from '\\textbf{Abstract.}' to the next
+    blank line), normalized — not the whole pre-Introduction region (which
+    contains the em-dashed horizontal-rule markup)."""
+    text = body_raw()
+    start = text.find("\\textbf{Abstract.}")
+    assert start != -1, "no abstract paragraph found in main.tex"
+    end = text.find("\n\n", start)
+    return normalized(text[start:end])
+
+
+def test_abstract_register_follows_author_brief():
+    """Ticket 0532 round 2 (author reading-1 brief): the abstract is written
+    for the general reader — no statistics (no F1 scores, no ρ/τ), no
+    em-dashes, no literature-review closing, no fusion sentence — and the
+    177-plant register is disambiguated as spanning the whole lifecycle."""
+    abstract = _abstract_paragraph()
+    assert "F1" not in abstract, "author brief: no F1 detail in the abstract"
+    assert "ρ" not in abstract and "τ" not in abstract and "\\tau" not in abstract, (
+        "author brief: the ρ=0.92 screening statistics leave the abstract"
+    )
+    assert "—" not in abstract, "author brief: no em-dashes in the abstract"
+    assert "To our knowledge" not in abstract, (
+        "author brief: no literature review in the abstract"
+    )
+    assert "Pooling" not in abstract and "pooling" not in abstract, (
+        "author brief: the fusion/pooling sentence leaves the abstract"
+    )
+    assert "lifecycle" in abstract, (
+        "author brief: 177 plants must read as the full-lifecycle register, "
+        "not 177 operating plants"
+    )
+    assert len(abstract.split()) < 300, (
+        "author brief: the abstract must stay markedly shorter than the "
+        "356-word round-1 version"
+    )
+
+
+def test_rho_caveat_wherever_rho_appears():
+    """Ticket 0532 round 2: ρ=0.92 left the abstract; wherever it still
+    appears in the narrative (conclusion, Discussion), the pooled /
+    across-model / in-sample qualification must accompany it."""
     text = body()
-    # Ticket 0518/0524: the "Annex F" reference is the symbolic \ref{sec:annex-screen}.
-    caveat = "within-model signal positive but modest, \\ref{sec:annex-screen}"
-    # Abstract region: everything before the Introduction section.
-    abstract = text.split("\\section{Introduction}\\label{sec:intro}")[0]
     conclusion = text.split("\\section{Conclusion}\\label{sec:conclusion}")[1].split("\\appendix")[0]
-    assert caveat in abstract, "ρ=0.92 caveat missing from abstract"
-    assert caveat in conclusion, "ρ=0.92 caveat missing from conclusion"
+    assert "ρ = 0.92, pooled across models and in-sample" in conclusion, (
+        "conclusion ρ=0.92 must carry the pooled/in-sample caveat"
+    )
+    assert "within-model signal positive but modest, \\ref{sec:annex-screen}" in conclusion, (
+        "conclusion ρ=0.92 must point to the within-model validation annex"
+    )
+    discussion = text.split("\\section{Discussion}\\label{sec:discussion}")[1].split(
+        "\\section*{Related Work — Methods}"
+    )[0]
+    assert "ρ = 0.92" in discussion and "existence proof rather than a validated detector" in discussion, (
+        "Discussion ρ=0.92 must keep the existence-proof qualification"
+    )
+    assert "tuned on the same 70 runs" in discussion, (
+        "Discussion must keep the in-sample (cutoffs tuned on the same runs) caveat"
+    )
+
+
+def test_binding_constraint_framed_as_hypothesis():
+    """Ticket 0532: abstract and conclusion frame the binding-constraint claim
+    as a hypothesis, not a finding.
+
+    Round 2 (author brief) literals: the abstract's "working hypothesis"
+    framing and the exploratory/unregistered qualifier on the documents
+    condition; the conclusion's "conjecture about why" opener and the
+    conditional recommendation.
+    """
+    abstract = _abstract_paragraph()
+    conclusion = body().split("\\section{Conclusion}\\label{sec:conclusion}")[1].split("\\appendix")[0]
+    assert "point toward a working hypothesis" in abstract, (
+        "abstract must frame the binding-constraint claim as a working hypothesis"
+    )
+    assert "exploratory, unregistered condition" in abstract, (
+        "abstract must name the equalisation evidence exploratory and unregistered"
+    )
+    assert "the evidence points toward a conjecture about why" in conclusion, (
+        "conclusion must frame the binding-constraint claim as a conjecture"
+    )
+    assert "If the constraint is indeed the documents" in conclusion, (
+        "conclusion recommendation must stay conditional on the hypothesis"
+    )
+
+
+def test_intro_does_not_claim_per_cell_provenance_checking():
+    """Author brief (reading 1): the paper measures citation presence and
+    counts; it does not check/trace per-cell provenance. The Introduction
+    (through Contributions) must not claim that it does."""
+    intro = body().split("\\section{Introduction}\\label{sec:intro}")[1].split(
+        "\\section{Related Work — Empirical landscape}"
+    )[0]
+    assert "per-cell provenance" not in intro, (
+        "intro must not claim per-cell provenance checking; scope to per-row "
+        "citation coverage and corroboration"
+    )
 
 
 def test_cost_savings_claim_cut():
@@ -116,6 +205,8 @@ def test_exactly_three_novelty_claims_survive():
     (3) two-grain credibility/reliability scoring. The MoE-non-determinism and
     day-scale-drift assertions are demoted to plain observations; the cost-F1
     claim is dropped. 'we did not find' epistemic hedges are NOT primacy claims.
+    Round 2 (author brief): the abstract's copy of claim (1) is removed (no
+    literature review in the abstract); the claim survives in §fusion.
     """
     text = body()
     demoted_phrasings = [
@@ -127,7 +218,7 @@ def test_exactly_three_novelty_claims_survive():
         assert phrase not in text, f"demoted observation still carries primacy framing: {phrase!r}"
     # The three surviving novelty claims (verbatim anchors).
     survivors = [
-        "no prior benchmark targets open-world enumeration",  # (1) benchmark gap
+        "no published benchmark or system targets open-world enumeration",  # (1) benchmark gap
         "conjunction of per-cell provenance with per-cell temporal validity",  # (2)
         "run-level screen rates \\emph{information credibility} while the model-level grade rates \\emph{source reliability}",  # (3) two-grain
     ]

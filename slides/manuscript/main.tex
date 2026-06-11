@@ -74,42 +74,40 @@ sur l'Environnement et le Développement, CNRS, France}
 
 \maketitle
 
-\textbf{Abstract.} The binding constraint on producing trustworthy
-statistical registers with AI is the quality of the source documents,
-not the capability of the model. Benchmarking the task on Vietnam's 177
-thermal power plants --- the asset-level data that open energy-system
-models need but that arrives late, incomplete, or under restrictive
-licences across much of the developing world --- fourteen language
-models drawing solely on memorised knowledge (70 runs) achieve row-level
-F1 from 0.00 to 0.68 (mean 0.38), well below an available ceiling: the
-reference content sat in the training corpus for years, and the models
-still fail to retrieve it. Attribute classification is uneven: province
-is recovered well, fuel and status remain mediocre. Four frontier agents
-with web access and extended reasoning improve coverage but still fall
-short of the four-dimensional quality bar --- accuracy, coherence,
-provenance, temporality --- consistently and reproducibly. However,
-providing agents with curated documents narrows the performance spread
-across models (max−min F1 from 0.26 to 0.18), equalising weak and
-strong: which documents are supplied matters more than which model runs
-the query. Within-run capacity variability predicts reference-based F1
-at Spearman ρ = 0.92 pooled (within-model signal positive but modest,
-\ref{sec:annex-screen}), offering a reference-free screen that rejects
-the weakest outputs without ground truth. Pooling the 14-model outputs
-already recovers plants no single model reliably finds. The results
-point toward a sourced, auditable knowledge base from which statistical
-tables derive as snapshot projections --- investing in the corpus and
-the sourcing process, not in a stronger model. To our knowledge, no
-prior benchmark targets open-world enumeration of a national asset class
-with per-cell provenance at this granularity.
-
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+\textbf{Abstract.} Open energy-system models need plant-level data that
+are complete, dated, and traceable to sources, yet across much of the
+world these data arrive late, incomplete, or under restrictive licences.
+We introduce a computable benchmark for this task: reconstruct the
+register of Vietnam's 177 thermal power plants and score the result
+against a hand-compiled, fully sourced reference. The register spans the
+whole project lifecycle: proposed and planned projects as well as
+operating, cancelled, and retired plants. The task is hard for today's
+AI systems. Fourteen language models answering from memory recover at
+most about two thirds of the plants, and usually far fewer, even though
+group-seeded Wikipedia lists covering 92\% of the built fleet had sat in
+their training corpus for years. Four frontier agents with web access
+and extended reasoning improve coverage, but they still fall short on
+the quality dimensions measured here: row-level accuracy, coverage, and
+citation-based provenance. The experiments point toward a working
+hypothesis about why: the binding constraint is the quality of the
+source documents, not the capability of the model. In an exploratory,
+unregistered condition, handing the agents a curated document set in a
+single query equalised three of the four; the multi-turn protocol did
+not replicate the effect. Finally, reference-free coherence criteria
+suffice to screen out the weakest models: degenerate outputs betray
+themselves by template-like, near-constant tables, so the worst runs can
+be rejected without any ground truth. The results argue for investing in
+the corpus and the sourcing process rather than in a stronger model,
+building a sourced, auditable knowledge base from which statistical
+tables derive as dated snapshots.
 
 \section{Introduction}\label{sec:intro}
 
-Open energy-system models such as PyPSA-ASEAN need power-plant
+Open energy-system models such as PyPSA-ASEAN
+\citep{PyPSAmeetsEarth2025:pypsa-asean} need power-plant
 inventories that are complete, accurately dated, and traceable to
 primary sources --- the data infrastructure for quasi-real-time policy
-analysis in countries where the energy landscape changes faster than
+analysis in countries where the energy system changes faster than
 publication cycles. Yet across most of the world the relevant facts
 arrive late, incomplete, or under licences that forbid redistribution,
 even though the underlying information is already public --- scattered
@@ -120,16 +118,28 @@ Statistical work requires facts that are sourced, reproducible, and
 auditable, not fluent output from a plausible-text generator somewhere
 in the cloud.
 
-This paper addresses a concrete task --- building a complete, sourced
-inventory of Vietnam's thermal power plants --- as a lens for evaluating
-whether AI systems can yet produce research-grade statistical data. We
-situate the work against the empirical landscape of open power-plant
-databases (§\ref{sec:related-empirical}), define a four-dimensional
-quality bar (§\ref{sec:quality}), survey the AI capability landscape
-(§\ref{sec:capability}), measure what model memory alone delivers across
-14 language models (§\ref{sec:exp1}), test the commercial frontier of
-mid-2026 (§\ref{sec:exp2}), and show that targeted pipeline design is
-needed to bridge the gap (§\ref{sec:fusion}). The Discussion
+This paper addresses a concrete task, building a complete, sourced
+inventory of Vietnam's thermal power plants, as a lens for evaluating
+whether AI systems can yet produce research-grade statistical data.
+Computable benchmarks, tasks whose success criteria a machine can check,
+are how knowledge engineering and AI research have long measured
+progress, from knowledge-base construction with language models
+\citep{Petroni-Fabio2019:lm-as-kb, Singhania-Sneha2022:lm-kbc} to the
+benchmark suites that rank today's systems \citep{Hendrycks-Dan2021:mmlu,
+Ni-Shiwen2025:llm-benchmark-survey}; this paper extends the practice to
+national statistical registers. Three results stand out. First, we offer
+a new computable benchmark, scored against a hand-compiled, fully
+sourced reference. Second, the task is hard for today's agents: neither
+model memory nor web access yields a complete, well-sourced register.
+Third, reference-free coherence criteria suffice to screen out the
+weakest models. We situate the work against the existing open
+power-plant databases (§\ref{sec:related-empirical}), define a
+four-dimensional quality bar (§\ref{sec:quality}), survey AI
+capabilities from chatbots to agentic systems (§\ref{sec:capability}),
+measure what model memory alone delivers across 14 language models
+(§\ref{sec:exp1}), test the commercial frontier of mid-2026
+(§\ref{sec:exp2}), and show that targeted pipeline design is needed to
+bridge the gap (§\ref{sec:fusion}). The Discussion
 (§\ref{sec:discussion}) examines the limits of F1 as an aggregate and
 prefigures a fusion-based research programme.
 
@@ -139,8 +149,10 @@ prefigures a fusion-based research programme.
 \tightlist
 \item
   \emph{Benchmark gap.} To our knowledge, the first sourced evaluation
-  of AI agents on national power-plant inventory construction, with
-  per-cell provenance against a held-out reference.
+  of AI agents on national power-plant inventory construction, scored
+  against a held-out reference, with per-row citation coverage and
+  corroboration measured (the paper counts and checks the presence of
+  citations; it does not verify each cited source against each cell).
 \item
   \emph{Per-row provenance × temporality scoring.} A four-dimension
   quality bar (accuracy, coherence, provenance, temporality) applied to
@@ -170,8 +182,7 @@ row-level F1 scores how well an extracted plant list matches the
 reference inventory.
 \end{quote}
 
-\section{Related Work --- Empirical
-landscape}\label{sec:related-empirical}
+\section{Related Work --- Empirical landscape}\label{sec:related-empirical}
 
 \textbf{Open power-plant databases.} Credible open-source energy
 modelling depends on trustworthy plant-level inventories. PyPSA
@@ -241,7 +252,7 @@ audience-free definition; the reference is built as the superset so that
 each downstream use can take the perimeter it needs, which is why the
 speculative tail is kept rather than pruned.
 
-The paper takes a problem the three aggregators do not: extracting a
+The paper addresses a problem the three aggregators do not: extracting a
 complete, sourced inventory for a country where the facts are dispersed
 across heterogeneous documents, partly in a non-Latin script, and where
 no authoritative single-source aggregate exists. That problem ---
@@ -249,8 +260,7 @@ open-world enumeration of a national asset class with per-cell
 provenance, against a held-out reference --- motivates the benchmark and
 the research programme that follow.
 
-\section{Quality dimensions for research-grade statistical
-datasets}\label{sec:quality}
+\section{Quality dimensions for research-grade statistical datasets}\label{sec:quality}
 
 Datasets can be assessed on four dimensions: accuracy, coherence,
 provenance, and temporality. The decomposition compresses three
@@ -350,8 +360,7 @@ whether the claims are correct; coherence determines whether they can
 coexist; provenance determines whether they are auditable; and
 temporality determines what period of the world they describe.
 
-\section{AI capability landscape: from chatbots to agentic
-systems}\label{sec:capability}
+\section{AI capability landscape: from chatbots to agentic systems}\label{sec:capability}
 
 General-purpose AI systems vary along four axes: \emph{training
 objective} (from raw text completion through instruction-following to
@@ -377,7 +386,7 @@ surfaces, code execution, tool use, and recursion all live in the
 runtime that wraps the model. What the model contributes is
 \emph{conditioning} --- a lab's investment in training the model to
 exploit retrieved documents, tool calls, long reasoning chains, and
-delegated sub-tasks is what lets it leverage each surface when the
+delegated sub-tasks is what lets it use each surface when the
 framework exposes it. Each marker in
 Figure~\ref{fig:capability-timeline} is the date the framework ×
 trained-model × product triple first appears in a publicly available
@@ -553,7 +562,8 @@ thermal reference: each bar is one run; family-coloured segments to the
 right are correctly identified plants (TP), red segments to the left are
 unmatched plants (FP: extracted but not in the reference). The dashed
 green line marks the 177-plant reference; the light-grey dotted line
-marks Wikipedia's light-reviewed coverage of the reference (73\%) ---
+marks Wikipedia's light-reviewed coverage of all 177 reference plants
+(73\%, 130/177) ---
 the seeded recall bar every model should clear, since that content sat
 in the training corpus. Models grouped on the vertical
 axis.}\label{fig:direct-base}
@@ -610,8 +620,7 @@ artifact: \texttt{experiments/derived/exp1\_cross\_eval.csv}; gate
 sensitivity in \ref{sec:annex-exp1}.}\label{fig:reliability}
 \end{figure}
 
-\section{Experiment 2: the commercially available frontier still falls
-short}\label{sec:exp2}
+\section{Experiment 2: the commercially available frontier still falls short}\label{sec:exp2}
 
 How well do state-of-the-art tools perform at producing research-grade
 statistical datasets? The parametric ceiling of §\ref{sec:exp1} is a
@@ -657,7 +666,11 @@ provider under a per-session cap of 50K tokens / \$3 (Phase B); this
 constitutes a simple harness --- an LLM orchestrator (DeepSeek
 classifier) controlling a loop with the tested LLM as the tool. The
 naive-vs-optimised contrast isolates the protocol's contribution over
-raw model capability. Row-level F1 against the 177-plant reference is
+raw model capability. The naive arm is an independent sweep, not a
+re-run of the §\ref{sec:exp1} parametric protocol, so its scores are not
+directly comparable to §\ref{sec:exp1}'s per-model numbers;
+within-Experiment-2 comparisons all use this common arm-1 sweep as their
+baseline. Row-level F1 against the 177-plant reference is
 now scored for all four arms (Table~\ref{tbl:exp2-2x2}); cross-model
 judging on the four §\ref{sec:quality} dimensions remains reserved for
 post-conference analysis (Phase C).
@@ -803,7 +816,7 @@ keeps an organised memory between runs instead of starting from scratch
 at each prompt. The equalisation result in §\ref{sec:exp2} sharpens the
 target: once the agents share a good document set, single-shot
 performance converges and the binding constraint shifts from model
-capability to document quality. The leverage is therefore in the corpus
+capability to document quality. The value is therefore in the corpus
 and the sourcing process --- assembling, curating, and resolving the
 documents --- rather than in chasing a stronger model. That is precisely
 what a stateful pipeline invests in: a managed, auditable knowledge base
@@ -834,13 +847,13 @@ projections --- are where language-model reasoning adds genuine value.
 
 To our knowledge, no published benchmark or system targets open-world
 enumeration of a national asset class with per-cell provenance at this
-granularity. To our knowledge, the conjunction of per-cell provenance
-with per-cell temporal validity in LLM-augmented inventories has not
-been published; demonstrating it is part of the contribution we aim for
-in the follow-on paper.
+granularity. Nor did we find a published demonstration of the
+conjunction of per-cell provenance with per-cell temporal validity in
+LLM-augmented inventories; demonstrating it is part of the contribution
+we aim for in the follow-on paper.
 
-\textbf{Pooling runs by simple union more than doubles recall, at no new
-collection cost.} The 14-model exp1\_batch2 cohort (a subset of the
+\textbf{Pooling runs by simple union more than doubles recall relative
+to the single-run mean (2.4×), at no new collection cost.} The 14-model exp1\_batch2 cohort (a subset of the
 16-model Experiment 1 sweep, dropping \texttt{qwen3.6-27b} and
 \texttt{qwen3.6-plus}; see the cohort note in §\ref{sec:exp1}) allows a
 controlled evaluation of pooling recipes without any new API calls: a 4
@@ -901,8 +914,6 @@ reference). Under ≥2-models in E1: F1=0.750, TP=105, FP=2. Under
 ≥2-models in E2-1D: F1=0.813, TP=122, FP=5.}\label{fig:fusion-mvp}
 \end{figure}
 
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
-
 \section{Discussion}\label{sec:discussion}
 
 \textbf{F1 is a useful but opaque aggregate.} Row-level F1 is the
@@ -931,6 +942,13 @@ four-section prompt in §\ref{sec:exp1} is designed to close the
 articulation gap; the residual F1 deficit is more likely to reflect true
 coverage and freshness limits than articulation failures. But this
 remains an assumption, not a measured separation.
+
+\textbf{Interday drift is an unquantified variance source.} Beyond the
+5-rep within-session spread, provider-side silent movement --- routing
+changes, checkpoint updates --- shifts scores at fixed call shape and
+seed: the top-up canary observed shifts up to \(\Delta\)F1 = 0.289 over
+a 24-hour window (qwen3.6-27b, \ref{sec:annex-exp1}), an interday
+variance the design observes but does not quantify.
 
 \textbf{Refusal is evidence about the standard.} In the archived
 baseline sweep (prompt \texttt{p1\_base}; runs preserved in
@@ -1013,8 +1031,6 @@ programming against a control total, such as the regulator's installed
 capacity per fuel \citep{HaDuong2005} --- is the axis of research these
 row densities invite.
 
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
-
 \section*{Related Work --- Methods}
 \addcontentsline{toc}{section}{Related Work --- Methods}
 
@@ -1084,37 +1100,42 @@ under-documented jurisdiction --- the conjunction of pipeline,
 provenance, reference evaluation, and data-quality framework that this
 paper studies.
 
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
-
 \section{Conclusion}\label{sec:conclusion}
 
 As of mid-2026, AI systems queried with or without web access do not
-produce research-grade statistical inventories reliably --- and the
-binding constraint is the data, not the model. A baseline across 14
-models answering from memory finds row-level F1 from 0.00 to 0.68 with
-high within-model variance --- below an available ceiling, since the
-group-seeded Wikipedia lists alone cover 92\% of the built fleet
-(§\ref{sec:exp1}): the knowledge was demonstrably in the training
-corpus, and the models failed to retrieve it. Frontier agents with web
-access and extended reasoning improve coverage but fail to clear the
-four-dimensional quality bar consistently; handing the same agents a
-curated document set narrows the gap between weak and strong models more
-than any model choice does (§\ref{sec:exp2}). Two levers cost nothing in
-new data collection: an internal coherence screen --- within-run
-capacity variability, ρ = 0.92 pooled with reference-based F1
-(within-model signal positive but modest, \ref{sec:annex-screen}) ---
-rejects the weakest outputs without ground truth, and pooling runs
-across models recovers plants that no single model reliably finds
-(§\ref{sec:fusion}). The path to research-grade quality therefore runs
-through the sourcing pipeline --- assembling, curating, and resolving
-documents in an auditable knowledge base from which statistical tables
-derive as dated snapshots --- with human-in-the-loop resolution and
-multi-run fusion, not through a stronger model or a single heroic
-prompt. For the many countries whose statistical systems cannot yet
-supply machine-readable asset inventories, that is where the investment
-should go.
-
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+reliably produce research-grade statistical inventories, and the
+evidence points toward a conjecture about why: the binding constraint is
+the data, not the model. Each claim in that sentence rests on a measured
+result. That the task is hard is established twice. In the memory-only
+baseline (§\ref{sec:exp1}), fourteen models score row-level F1 between
+0.00 and 0.68 with high within-model variance, below an available
+ceiling: group-seeded Wikipedia lists alone cover 92\% of the built
+fleet and sat in the training corpus for years, yet the models failed to
+retrieve them. At the commercial frontier (§\ref{sec:exp2}), agents with
+web access and extended reasoning enumerate at best around half the
+fleet and fall short on the quality dimensions measured here (row-level
+accuracy, coverage, and citation-based provenance), with the
+rubric-scored dimensions (coherence, provenance support, temporality)
+deferred to a planned cross-evaluation. The conjecture itself rests on
+the exploratory, unregistered documents condition: handing the same
+agents a curated document set in a single query equalises three of the
+four, though the multi-turn protocol does not replicate the effect
+(§\ref{sec:exp2}). Two levers already deliver without any new data
+collection. The reference-free screen rejects the weakest outputs
+without ground truth: within-run capacity variability tracks
+reference-based F1 (Spearman ρ = 0.92, pooled across models and
+in-sample; within-model signal positive but modest,
+\ref{sec:annex-screen}). Fusion recovers coverage: pooling runs across
+models finds plants no single model reliably finds, and requiring two
+models to agree nearly eliminates false positives (§\ref{sec:fusion}).
+If the constraint is indeed the documents, the path to research-grade
+quality runs through the sourcing pipeline: assembling, curating, and
+resolving documents in an auditable knowledge base from which
+statistical tables derive as dated snapshots, with human-in-the-loop
+resolution and multi-run fusion, not through a stronger model or a
+single heroic prompt. For the many countries whose statistical systems
+cannot yet supply machine-readable asset inventories, that is where the
+investment should go.
 
 \appendix
 \renewcommand{\thesection}{Annex \Alph{section}}
@@ -1124,8 +1145,7 @@ should go.
 \renewcommand{\theHfigure}{S\arabic{figure}}
 \setcounter{figure}{0}
 
-\section{Temporality: state representations vs.~event
-representations}\label{sec:annex-temporality}
+\section{Temporality: state representations vs.~event representations}\label{sec:annex-temporality}
 
 The temporality dimension in §\ref{sec:quality} measures \emph{snapshot
 currency}: whether each value carries a best-effort ``as-of'' date and
@@ -1211,8 +1231,6 @@ address both requirements; the databases evaluated in this paper satisfy
 T1 in part and T2 not at all, which is consistent with the IAM gap
 identified in §\ref{sec:exp2}.
 
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
-
 \section{Experiment 1: Technical specification}\label{sec:annex-exp1}
 
 \subsection*{Task}
@@ -1228,8 +1246,7 @@ planned, cancelled, retired). The reference was compiled by the author
 from primary sources (PDP7, PDP7A, PDP8 annexes, EVN annual reports,
 MOIT decisions) and is version-locked for this experiment.
 
-\subsection*{Reference dataset
-provenance}
+\subsection*{Reference dataset provenance}
 \addcontentsline{toc}{subsection}{Reference dataset provenance}
 
 The reference inventory was assembled by single-author manual
@@ -1448,15 +1465,15 @@ it for sampling RNG, Mistral and DeepSeek treat it as advisory. The
 mixture-of-experts (MoE) entries (gpt-oss-*, mistral-large-2512,
 qwen3.6-35b-a3b, qwen3.6-plus, qwen3-max-thinking, deepseek-v4-pro,
 deepseek-v4-flash) carry residual non-determinism even at T=0 + seed
-pinning, characterised in earlier in-project work; the 5-repeat budget
+pinning, characterised in the post-fix top-up and interday-variability
+sub-section below; the 5-repeat budget
 surfaces this as observed within-model variance rather than treating it
 as noise to be eliminated. We did not find an external characterisation
 of MoE non-determinism for multi-row structured outputs at deterministic
 decoding settings; the present discipline is informed by in-project
 measurement rather than external benchmarks.
 
-\subsection*{Post-fix top-up cohort and interday
-variability}
+\subsection*{Post-fix top-up cohort and interday variability}
 \addcontentsline{toc}{subsection}{Post-fix top-up cohort and interday
 variability}
 
@@ -1643,8 +1660,7 @@ unconditionally --- no canary gate. Intra-day variability across the two
 acquisition windows is absorbed into the reported within-model spread
 rather than filtered out.
 
-\subsection*{What this experiment does and does not
-test}
+\subsection*{What this experiment does and does not test}
 \addcontentsline{toc}{subsection}{What this experiment does and does not
 test}
 
@@ -1657,8 +1673,6 @@ data), Freshness (facts post-dating training cutoff), and Coherence
 between intent and prompt --- is partially addressed by the structured
 prompt. The gap between this ceiling and the quality bar defined in
 §\ref{sec:quality} motivates the subsequent experiments.
-
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
 \section{Experiment 2: Technical specification}\label{sec:annex-exp2}
 
@@ -1735,8 +1749,7 @@ access'' requirement. Geographic / corpus spread (US × 2 + FR + CN) is
 hypothesis-relevant: Chinese-language investor and trade documents on
 Vietnamese power assets are under-indexed by Western search.
 
-\subsection*{Baseline reference for
-cross-comparison}
+\subsection*{Baseline reference for cross-comparison}
 \addcontentsline{toc}{subsection}{Baseline reference for
 cross-comparison}
 
@@ -1776,8 +1789,7 @@ confirming (i) all four adapters produced valid \texttt{RunRecord}
 instances, (ii) parsed tables are non-empty, (iii) costs sit within the
 dual-axis session cap empirically.
 
-\subsubsection*{Phase B dialogue policy (fixed experimental
-condition)}
+\subsubsection*{Phase B dialogue policy (fixed experimental condition)}
 \addcontentsline{toc}{subsubsection}{Phase B dialogue policy (fixed
 experimental condition)}
 
@@ -1879,8 +1891,7 @@ realised per-session and per-batch costs are reported in
 §\ref{sec:exp2}'s Figure~\ref{fig:exp2-arms} and the technical report
 chapter, not pinned here.
 
-\subsection*{As-run deviations from the
-registration}
+\subsection*{As-run deviations from the registration}
 \addcontentsline{toc}{subsection}{As-run deviations from the
 registration}
 
@@ -1973,8 +1984,7 @@ post-conference analysis; the as-run results are the F1-based and
 operational metrics of §\ref{sec:exp2}, not the
 §\ref{sec:quality}-dimension cross-eval scores.
 
-\subsection*{What this experiment does and does not
-test}
+\subsection*{What this experiment does and does not test}
 \addcontentsline{toc}{subsection}{What this experiment does and does not
 test}
 
@@ -2000,8 +2010,6 @@ Qwen optimised runs. In the naive arm, where the prompt carries no
 source ban, 1 of the 20 runs (OpenAI run 5) cited a banned domain. This
 audit is mechanical only: paraphrased Wikipedia content without a URL is
 not detected.
-
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
 \section{Supplementary figures}\label{sec:annex-suppfigs}
 
@@ -2035,10 +2043,7 @@ growing coverage; Qwen clusters near the diagonal at low
 volume.}\label{fig:coverage-certainty}
 \end{figure}
 
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
-
-\section{Experiment 1: per-plant recognition matrix and the status
-composition of task difficulty}\label{sec:annex-recognition}
+\section{Experiment 1: per-plant recognition matrix and the status composition of task difficulty}\label{sec:annex-recognition}
 
 Figure~\ref{fig:recognition-matrix} places each of the 177 reference
 plants on its own row (names read left-to-right, no rotation) against
@@ -2098,10 +2103,7 @@ recognition rate (Experiment 1, direct method: 14 models × 5
 repetitions). The rate is the share of run × plant cells recognised
 among plants of that status.}
 
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
-
-\section{Run-grain screen validation: within-model accuracy
-gap}\label{sec:annex-screen}
+\section{Run-grain screen validation: within-model accuracy gap}\label{sec:annex-screen}
 
 The §\ref{sec:discussion} Discussion paragraph ``Internal coherence as a
 zero-reference screen'' reports a pooled Spearman ρ = 0.92 between
@@ -2158,10 +2160,7 @@ held-out runs is future work.
 (produced by \texttt{src/aedist/screen\_validation\_within\_model.py},
 wired in \texttt{experiments/render.mk}).}
 
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
-
-\section{Capability rollout: per-lab shipping
-order}\label{sec:annex-rollout}
+\section{Capability rollout: per-lab shipping order}\label{sec:annex-rollout}
 
 This annex records the detailed shipping-order observations behind
 Figure~\ref{fig:capability-timeline}, kept out of the
@@ -2206,8 +2205,6 @@ perpendicular to it. And the consumer-product methodology excludes the
 military and dual-use deployment track: a parallel trajectory operating
 at comparable capability levels, now routine front-page news, that the
 commercial-product framing does not capture and does not claim to.
-
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
 \section*{Acknowledgements}
 \addcontentsline{toc}{section}{Acknowledgements}
