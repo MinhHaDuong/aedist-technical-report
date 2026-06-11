@@ -44,8 +44,9 @@ bar is thus solidly substantiated for the built fleet and an upper-bound
 heuristic for the forward-looking pipeline — consistent with §4's statement that
 "the pipeline tail, which even Wikipedia barely carries, is the reference's
 unique contribution." The seeding was a deliberate group activity (intern
-content injection from the reference), not a benchmark instrument designed to
-plant the answer key.
+content injection from the reference, done under the author's supervision; the
+author also made minor edits to the pages directly), not a benchmark instrument
+designed to plant the answer key. Author account confirmed 2026-06-11.
 
 ## Adopted release (v2.3, ticket 0395, 2026-06-09)
 
