@@ -2,10 +2,14 @@
 Title: Shared census model-ordering function (heatmap vs Figure 2 drift)
 Created: 2026-06-09
 Author: claude
+Closed: autoclosed — PR #958
 
 --- log ---
 2026-06-09T20:29Z claude created
+2026-06-11T08:30Z claude note raid imagine+plan — count fix: 8 missing models not 6; plan appended
+2026-06-11T09:08Z claude note feasibility PASS — registry gap, size_class values, regex miss, acyclic imports all verified
 
+2026-06-11T10:10Z HDMX-coding-agent closed — autoclosed — PR #958
 --- body ---
 ## Context
 
@@ -52,7 +56,7 @@ truth.
   pulls in no heavy deps. Key: `(model_family(m), -size_b(m), m)`.
 - Make size resolution work from the **name alone** so the heatmap can use it:
   `_model_size_b(model, size_class=None)` already falls back to the regex and
-  then the `size_class` default (500). Add the 6 exp1 models missing confirmed
+  then the `size_class` default (500). Add the 8 exp1 models (count corrected from 6 by the raid plan below) missing confirmed
   sizes to `_KNOWN_SIZE_B` (claude-haiku-4.5 / -sonnet-4.6 / -opus-4.6,
   gpt-5.5, deepseek-v4-pro / -flash, qwen3.7-max, qwen3.6-flash) so the
   name-only path orders them correctly instead of colliding at 500.
@@ -95,7 +99,7 @@ def test_heatmap_and_figure2_share_one_order():
       `plot_method_convergence` both call it (no second size heuristic for
       census ordering).
 - [ ] Size resolution works from the model name alone (heatmap path needs no
-      `size_class`); the 6 missing exp1 models are in `_KNOWN_SIZE_B` with
+      `size_class`); the 8 missing exp1 models are in `_KNOWN_SIZE_B` with
       values pinned to preserve today's Figure 2 order.
 - [ ] `test_census_model_order.py` (the first test above) passes; the PR #914
       literal-order test is folded into / superseded by it (no orphaned
@@ -113,6 +117,35 @@ def test_heatmap_and_figure2_share_one_order():
 - `src/aedist/plot_quality_floor_heatmap_exp1.py` — `heatmap_models`
 - `src/aedist/plot_quality_spider_exp1.py` — `_model_size_rank` (other consumer)
 - `tests/test_plot_quality_floor_heatmap_exp1.py` — `test_model_order_literal_matches_figure2_render` (to fold in)
+
+## Plan (raid 2026-06-11)
+
+Corrections from the raid Imagine + feasibility passes (binding):
+
+- **Count fix: 8 models, not 6**, are missing from `_KNOWN_SIZE_B` and miss the
+  name regex: claude-opus-4.6, claude-sonnet-4.6, claude-haiku-4.5, gpt-5.5,
+  deepseek-v4-pro, deepseek-v4-flash, qwen3.7-max, qwen3.6-flash. Verified
+  `size_class` from exp1_batch2 records: frontier (→300) for claude-opus-4.6,
+  claude-sonnet-4.6, deepseek-v4-pro, gpt-5.5, qwen3.7-max; medium (→30) for
+  claude-haiku-4.5, deepseek-v4-flash, qwen3.6-flash. Pin exactly 300/30 so
+  Figure 2's order is provably unchanged; comment each entry with its
+  size_class provenance.
+- `census_model_order` lives in `plot_method_convergence.py` next to
+  `_model_size_b` (util.py is presentation-only; matplotlib import is inside
+  write_pdf, so the import is cheap and acyclic).
+- Sort key: `(model_family(m), -size_b(m), m)`. Repoint both the inline census
+  sort in plot_method_convergence and `heatmap_models` at it.
+- `_model_size_rank` STAYS in plot_quality_spider_exp1.py (spider panels sort
+  ascending-by-tier, intentionally different); add a spider-panel-only
+  docstring note; delete its now-unused import from the heatmap module.
+- Tests: new tests/test_census_model_order.py with (a) literal-order guard,
+  (b) delegation test `heatmap_models(rows) == census_model_order(...)`,
+  (c) name-only resolution test. DELETE the tautological
+  `test_model_order_matches_figure2_ordering`; FOLD
+  `test_model_order_literal_matches_figure2_render` into the new file.
+- DoD "byte-for-deterministic rebuild" = order unchanged (literal test) + both
+  figures rebuild via make; no byte-hash test (matplotlib timestamps flaky);
+  do not commit noise-only pdf changes.
 
 ## Priority
 

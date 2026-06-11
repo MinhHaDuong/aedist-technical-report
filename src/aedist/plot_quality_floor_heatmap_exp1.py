@@ -46,9 +46,9 @@ import logging
 from collections import defaultdict
 from pathlib import Path
 
+from .plot_method_convergence import census_model_order
 from .plot_quality_spider_exp1 import (
     _load_rows,
-    _model_size_rank,
     _parse_optional_float,
 )
 from .util import model_family, model_family_color
@@ -240,20 +240,16 @@ def discriminating_columns(
 
 
 def heatmap_models(rows: list[dict[str, str]]) -> list[str]:
-    """Return the model column order, laid out to match the Figure 2 census.
+    """Return the model column order: the canonical Figure 2 census order.
 
-    Sort key: architectural family alphabetical, then a coarse name-based size
-    tier (``_model_size_rank``) descending, then name.  This approximates
-    plot_method_convergence's parameter-count ordering using only the model
-    name, so the heatmap reads against the same self-contained CSV without the
-    per-record size_class the census consumes; for the fourteen-model cohort the
-    two orders agree (guarded by test_model_order_literal_matches_figure2_render,
-    verified against the committed figure).  Unlike the four-panel spider, this
-    includes DeepSeek.
+    Delegates to ``census_model_order`` (ticket 0504) — the single shared
+    ordering, resolved from the model name alone, so the heatmap reads
+    against its self-contained CSV without a per-record size_class (guarded
+    by tests/test_census_model_order.py, verified against the committed
+    figure). Unlike the four-panel spider, this includes DeepSeek.
     """
-    models = sorted({str(r.get("model", "")).strip() for r in rows if str(r.get("model", "")).strip()})
-    models.sort(key=lambda m: (model_family(m), -_model_size_rank(m), m))
-    return models
+    models = {str(r.get("model", "")).strip() for r in rows if str(r.get("model", "")).strip()}
+    return census_model_order(models)
 
 
 def _collect_runs(
