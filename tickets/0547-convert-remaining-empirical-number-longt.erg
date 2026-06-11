@@ -1,0 +1,69 @@
+%erg 0.1
+Title: Convert remaining empirical-number longtables in main.tex to generated includes
+Created: 2026-06-11
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-11T21:57Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+PR #985 (ticket 0486) replaced the hand-typed source-concordance longtable in
+`slides/manuscript/main.tex` with a Makefile-generated `\input` include,
+removing ~30 hand-maintained literals that could silently drift from the data.
+The /roar sweep found two more pandoc-era longtables still carrying hand-typed
+**empirical numbers** (the same drift class):
+
+- `tbl:exp2-2x2` (~line 728): row-level F1 and per-run API cost by agent
+  across the 2×2 factorial — values exist in `measurements.jsonl` /
+  exp2 CSVs.
+- Recognition-by-status table (~line 2351, §exp1 annex region): Status / n /
+  share of list / recognition rate — values derivable from the recognition
+  matrix artifacts.
+
+The four other remaining longtables (model registry, run parameters, metrics
+glossary, agents) are descriptive config, low drift risk — out of scope.
+
+## Relevant files
+
+- `slides/manuscript/main.tex` — the two longtables
+- `src/aedist/tabulate_source_concordance.py` — pattern to follow (CSV + .tex
+  co-products, grouped `&:` Makefile target in `experiments/render.mk`,
+  listed in `MANUSCRIPT_ASSETS` in `slides/Makefile`)
+- `tests/test_source_concordance.py` — row-grain guard pattern (re-derive every
+  .tex row from the artifact)
+
+## Actions
+
+1. Script (or extend an existing tabulator) to emit `tab_exp2_2x2.tex` from the
+   exp2 measurements pipeline; wire in render.mk + MANUSCRIPT_ASSETS; replace
+   the longtable with a `\begin{table}` float + `\input`, house-convention
+   caption/label preserved.
+2. Same for the recognition-by-status table.
+3. Row-grain adherence guard per table, following test_source_concordance.py.
+
+## Test
+
+```python
+def test_exp2_2x2_table_is_generated_include():
+    tex = Path("slides/manuscript/main.tex").read_text()
+    assert "tab_exp2_2x2.tex" in tex  # generated include, not hand-typed rows
+```
+
+## Invariants
+
+- `make check` passes; tectonic build green; rendered values byte-match the
+  current hand-typed ones unless the artifact says otherwise (any mismatch is
+  a finding to report, not silently overwrite).
+
+## Exit criteria
+
+- [ ] Both tables are generated includes wired in the Makefile DAG
+- [ ] Row-grain adherence guards for both
+- [ ] No remaining hand-typed empirical-number table rows in main.tex (the four
+      descriptive longtables are exempt)
+- [ ] `make check` passes
+
+Related: 0486 (pattern source, closed), 0524 (LaTeX conversion)
