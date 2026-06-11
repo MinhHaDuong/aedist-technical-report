@@ -75,7 +75,7 @@ def test_changes_job_uses_paths_filter():
         "changes job must use dorny/paths-filter to compute chore output"
     )
     outputs = changes.get("outputs") or {}
-    assert "chore" in outputs, "changes job must expose `chore` output"
+    assert "non-chore" in outputs, "changes job must expose `non-chore` output"
 
 
 def test_build_depends_on_changes():
@@ -100,9 +100,9 @@ def test_build_steps_gated_on_chore_flag():
     ungated = [
         s.get("name") or s.get("uses") or "<unnamed>"
         for s in steps
-        if "needs.changes.outputs.chore" not in str(s.get("if", ""))
+        if "needs.changes.outputs.non-chore != 'false'" not in str(s.get("if", ""))
     ]
-    assert not ungated, f"every build step must gate on the chore flag; ungated: {ungated}"
+    assert not ungated, f"every build step must gate on the non-chore flag; ungated: {ungated}"
 
 
 def test_slides_step_has_continue_on_error():
@@ -147,16 +147,8 @@ def test_build_runner_pinned():
     )
 
 
-def test_chore_filter_is_single_brace_pattern():
-    """Guard against the predicate-quantifier: every + multi-pattern trap.
-
-    Under predicate-quantifier: every, each changed file must match ALL
-    patterns listed.  With mutually-exclusive positive patterns (tickets/**,
-    STATE.md, etc.) no file can satisfy all patterns, so chore is always
-    false.  The fix is exactly one brace-expansion pattern so the single
-    picomatch call returns true whenever the file is in any branch of the
-    brace set.  See ticket 0377.
-    """
+def _filter_patterns() -> tuple[str, list[str]]:
+    """Return (filter_name, patterns) from the paths-filter step."""
     wf = _load()
     steps = wf["jobs"]["changes"].get("steps") or []
     filter_step = next(
@@ -166,14 +158,92 @@ def test_chore_filter_is_single_brace_pattern():
     assert filter_step is not None, "dorny/paths-filter step not found"
     raw_filters = (filter_step.get("with") or {}).get("filters", "")
     parsed = yaml.safe_load(raw_filters)
-    chore_patterns = parsed.get("chore") or []
-    assert len(chore_patterns) == 1, (
-        f"chore filter must have exactly one brace-expansion pattern "
-        f"(predicate-quantifier: every requires this); found {len(chore_patterns)} patterns: "
-        f"{chore_patterns}"
+    assert len(parsed) == 1, f"expected exactly one filter, got {list(parsed)}"
+    name, patterns = next(iter(parsed.items()))
+    return name, patterns
+
+
+def _glob_match(path: str, pattern: str) -> bool:
+    """Minimal picomatch subset covering the workflow's patterns.
+
+    Supports brace expansion `{a,b}`, the catch-all `**`, `dir/**`
+    prefixes, and literal filenames — nothing more.
+    """
+    if pattern.startswith("{") and pattern.endswith("}"):
+        return any(_glob_match(path, p) for p in pattern[1:-1].split(","))
+    if pattern == "**":
+        return True
+    if pattern.endswith("/**"):
+        return path.startswith(pattern[:-2])
+    return path == pattern
+
+
+def _paths_filter_output(changed_files: list[str], patterns: list[str]) -> bool:
+    """Emulate dorny/paths-filter with predicate-quantifier: every.
+
+    The filter output is true iff ANY changed file matches ALL patterns;
+    a leading `!` negates the individual pattern (per upstream README).
+    """
+
+    def file_matches(path: str) -> bool:
+        for pat in patterns:
+            if pat.startswith("!"):
+                if _glob_match(path, pat[1:]):
+                    return False
+            elif not _glob_match(path, pat):
+                return False
+        return True
+
+    return any(file_matches(f) for f in changed_files)
+
+
+def _build_runs(filter_output: bool | None) -> bool:
+    """Evaluate the build-step gate as GitHub Actions would.
+
+    `filter_output is None` models an empty/errored filter output (the
+    expression then compares against the empty string).
+    """
+    wf = _load()
+    steps = wf["jobs"]["build"].get("steps") or []
+    cond = str(steps[0].get("if", ""))
+    output = "" if filter_output is None else str(filter_output).lower()
+    name, _ = _filter_patterns()
+    expr = cond.replace("${{", "").replace("}}", "").strip()
+    expr = expr.replace(f"needs.changes.outputs.{name}", f"'{output}'")
+    lhs, op, rhs = expr.split(maxsplit=2)
+    assert op in ("==", "!="), f"unsupported gate operator in {cond!r}"
+    equal = lhs.strip("'\"") == rhs.strip("'\"")
+    return equal if op == "==" else not equal
+
+
+def test_chore_only_diff_skips_build():
+    """A purely-chore diff (tickets/** alone) must skip the heavy build."""
+    _, patterns = _filter_patterns()
+    output = _paths_filter_output(["tickets/closed/0523-fix-tau.erg"], patterns)
+    assert not _build_runs(output), "chore-only diff must skip the build steps"
+
+
+def test_mixed_diff_runs_build():
+    """A mixed diff (tickets/** + slides/**) must run the full build.
+
+    This is the ticket 0525 regression: PR #938 changed
+    slides/manuscript/main.md alongside a ticket file and the entire
+    docs-build was skipped.
+    """
+    _, patterns = _filter_patterns()
+    output = _paths_filter_output(
+        ["tickets/closed/0523-fix-tau.erg", "slides/manuscript/main.md"],
+        patterns,
     )
-    pattern = chore_patterns[0]
-    assert pattern.startswith("{") and pattern.endswith("}"), (
-        f"chore filter pattern must be a brace expression like "
-        f"'{{tickets/**,...}}'; got: {pattern!r}"
-    )
+    assert _build_runs(output), "mixed diff must run the build steps"
+
+
+def test_source_only_diff_runs_build():
+    _, patterns = _filter_patterns()
+    output = _paths_filter_output(["slides/Makefile"], patterns)
+    assert _build_runs(output), "non-chore diff must run the build steps"
+
+
+def test_empty_filter_output_runs_build():
+    """Fail-safe: an empty/errored filter output must still build."""
+    assert _build_runs(None), "ambiguous filter output must default to building"
