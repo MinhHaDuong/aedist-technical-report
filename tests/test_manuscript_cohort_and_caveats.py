@@ -2,13 +2,14 @@
 
 Each assertion re-derives a number from its committed source artifact by an
 independent parse, then asserts the literal (or required string) is present in
-the manuscript. The cohort counts 16/14/12 each come from a *different* source:
+the manuscript. The cohort counts 16/14 each come from a *different* source:
 
 - 16 = the run set ``modelset_exp1_journal`` in ``experiments/experiments.toml``.
 - 14 = the analysis cohort = distinct models in ``exp1_cross_eval.csv``
-  (the scoring CSV that Figures 2, 3, 4 read).
-- 12 = the spider figure (Annex D, Fig S1), which renders one panel per family
-  for Claude/GPT/Mistral/Qwen and drops the two DeepSeek models.
+  (the scoring CSV the per-model figures read).
+
+(The third count, 12 = the spider-figure cohort, left the manuscript with the
+spider figure in ticket 0507; the spider survives in the slides only.)
 
 The ρ=0.92 caveat must appear in BOTH the abstract and the conclusion regions.
 The cost-savings claim and the cost-F1 non-monotonicity novelty claim must be
@@ -31,26 +32,14 @@ XEVAL_CSV = REPO_ROOT / "experiments" / "derived" / "exp1_cross_eval.csv"
 DIFF_TEX = REPO_ROOT / "report" / "inputs" / "generated" / "tab_status_difficulty.tex"
 PROVENANCE_MD = REPO_ROOT / "data" / "reference" / "PROVENANCE.md"
 
-# The spider figure (Annex D / Fig S1) renders one panel per family for these
-# four families; models in any other family (DeepSeek) get no panel. Mirrors
-# ``_PANELS`` in ``src/aedist/plot_quality_spider_exp1.py``.
-SPIDER_FAMILIES = {"claude", "gpt", "mistral", "qwen"}
-
-
 def _md() -> str:
     if not MAIN_MD.exists():
         pytest.skip("main.md not found")
     return MAIN_MD.read_text(encoding="utf-8")
 
 
-def _model_family(slug: str) -> str:
-    from aedist.util import model_family
-
-    return model_family(slug)
-
-
-def _derive_cohort_counts() -> tuple[int, int, int]:
-    """Re-derive (run set, analysis cohort, spider) model counts from artifacts."""
+def _derive_cohort_counts() -> tuple[int, int]:
+    """Re-derive (run set, analysis cohort) model counts from artifacts."""
     with TOML.open("rb") as f:
         toml = tomllib.load(f)
     n_run = len(toml["sets"]["modelset_exp1_journal"]["model_ids"])
@@ -58,27 +47,42 @@ def _derive_cohort_counts() -> tuple[int, int, int]:
     rows = list(csv.DictReader(XEVAL_CSV.open(encoding="utf-8")))
     analysis_models = sorted({r["model"] for r in rows if r["model"].strip()})
     n_analysis = len(analysis_models)
-
-    spider_models = [m for m in analysis_models if _model_family(m) in SPIDER_FAMILIES]
-    n_spider = len(spider_models)
-    return n_run, n_analysis, n_spider
+    return n_run, n_analysis
 
 
 def test_cohort_counts_match_artifacts():
-    """The cohort paragraph's 16/14/12 match an independent re-derivation."""
+    """The cohort paragraph's 16/14 match an independent re-derivation."""
     if not (TOML.exists() and XEVAL_CSV.exists()):
         pytest.skip("cohort artifacts not present")
-    n_run, n_analysis, n_spider = _derive_cohort_counts()
-    assert (n_run, n_analysis, n_spider) == (16, 14, 12), (
-        f"expected cohorts 16/14/12, derived {n_run}/{n_analysis}/{n_spider}"
+    n_run, n_analysis = _derive_cohort_counts()
+    assert (n_run, n_analysis) == (16, 14), (
+        f"expected cohorts 16/14, derived {n_run}/{n_analysis}"
     )
     md = _md()
-    # The cohort paragraph must name all three counts.
+    # The cohort paragraph must name both counts.
     assert f"{n_run} models" in md, "cohort paragraph must state the 16-model run set"
     assert f"{n_analysis}-model" in md, "cohort paragraph must state the 14-model analysis cohort"
-    assert f"{n_spider} models" in md or f"{n_spider}-model" in md, (
-        "cohort paragraph / Fig S1 caption must state the 12-model spider cohort"
-    )
+
+
+def test_zero_good_run_models_match_artifact():
+    """The [@fig:reliability] caption names the zero-good-run models; re-derive
+    that set from the scoring CSV via the gate so the caption cannot drift
+    silently on a data update (ticket 0507 review finding)."""
+    if not XEVAL_CSV.exists():
+        pytest.skip("cross-eval artifact not present")
+    from aedist.plot_exp1_reliability import load_rows, reliability_by_model
+
+    rel = reliability_by_model(XEVAL_CSV)
+    zero = sorted(m for m, n in rel.items() if n == 0)
+    md = _md()
+    caption = next(line for line in md.splitlines() if "{#fig:reliability}" in line)
+    assert f"the {len(zero)} models with zero good runs" in caption or (
+        len(zero) == 3 and "the three models with zero good runs" in caption
+    ), f"caption must state the zero-good-run count ({len(zero)})"
+    for model in zero:
+        assert model in caption, f"zero-good-run model {model} missing from caption"
+    # load_rows is exercised transitively; keep the import honest.
+    assert load_rows(XEVAL_CSV)
 
 
 def test_rho_caveat_in_abstract_and_conclusion():
