@@ -5,6 +5,7 @@ adherence test guards the load-bearing pieces of the YAML — anything a
 casual edit could break without notice.
 """
 
+import re
 from pathlib import Path
 
 import pytest
@@ -92,7 +93,7 @@ def test_build_depends_on_changes():
     )
 
 
-def test_build_steps_gated_on_chore_flag():
+def test_build_steps_gated_on_non_chore_flag():
     """Every concrete step in `build` must skip when the diff is chore-only."""
     wf = _load()
     steps = wf["jobs"]["build"].get("steps") or []
@@ -197,23 +198,32 @@ def _paths_filter_output(changed_files: list[str], patterns: list[str]) -> bool:
     return any(file_matches(f) for f in changed_files)
 
 
+def _gate_allows(cond: str, output: str, name: str) -> bool:
+    """Evaluate the non-chore comparison clause inside one `if:` condition."""
+    expr = cond.replace("${{", "").replace("}}", "").strip()
+    match = re.search(
+        rf"needs\.changes\.outputs\.{re.escape(name)}\s*(==|!=)\s*'([^']*)'", expr
+    )
+    assert match, f"no {name} comparison found in gate {cond!r}"
+    op, rhs = match.groups()
+    equal = output == rhs
+    return equal if op == "==" else not equal
+
+
 def _build_runs(filter_output: bool | None) -> bool:
-    """Evaluate the build-step gate as GitHub Actions would.
+    """Evaluate every build-step gate as GitHub Actions would.
 
     `filter_output is None` models an empty/errored filter output (the
-    expression then compares against the empty string).
+    expression then compares against the empty string). All steps must
+    agree — a step whose gate diverges from the others is an error.
     """
     wf = _load()
     steps = wf["jobs"]["build"].get("steps") or []
-    cond = str(steps[0].get("if", ""))
     output = "" if filter_output is None else str(filter_output).lower()
     name, _ = _filter_patterns()
-    expr = cond.replace("${{", "").replace("}}", "").strip()
-    expr = expr.replace(f"needs.changes.outputs.{name}", f"'{output}'")
-    lhs, op, rhs = expr.split(maxsplit=2)
-    assert op in ("==", "!="), f"unsupported gate operator in {cond!r}"
-    equal = lhs.strip("'\"") == rhs.strip("'\"")
-    return equal if op == "==" else not equal
+    verdicts = {_gate_allows(str(s.get("if", "")), output, name) for s in steps}
+    assert len(verdicts) == 1, f"build steps disagree on the {name} gate"
+    return verdicts.pop()
 
 
 def test_chore_only_diff_skips_build():
