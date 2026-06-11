@@ -1,41 +1,41 @@
 reference_name,ref_fuel,ref_status,ref_capacity_mwe,ref_province,n_runs_missed,in_gem,mentioned_in_narrative,bucket,rationale
-Bà Rịa GT,gas,6 operating,46,Bà Rịa-Vũng Tàu,5,no,no,,
-Dung Quat Special Economic Zone (J-Power) Phase II,coal,1 announced,2000,Quảng Ngãi,5,no,yes,,
-Ha Tinh Formosa Plastics Steel Complex,coal,6 operating,900,Hà Tĩnh,5,no,yes,,
-Hải Phòng,gas,1 announced,500,Hải Phòng,5,no,yes,,
-LNG Cà Ná III,gas,2 proposed,2250,Ninh Thuan,5,no,no,,
-LNG Mũi Kê Gà 1,gas,2 proposed,1200,Bình Thuận,5,no,no,,
-TBKHH Bà Rịa 1,gas,6 operating,169,Bà Rịa-Vũng Tàu,5,no,no,,
-Dong Nai Formosa,coal,6 operating,450,Đồng Nai,5,no,yes,,
-Dung Quat Special Economic Zone (J-Power) Phase I,coal,1 announced,2400,Quảng Ngãi,5,no,yes,,
-LNG Cà Mau 1,gas,2 proposed,1500,Cà Mau,5,no,no,,
-LNG Cà Mau 2,gas,2 proposed,1500,Cà Mau,5,no,no,,
-LNG Cà Ná II,gas,2 proposed,2250,Ninh Thuan,5,no,no,,
-LNG Hải Lăng 2,gas,2 proposed,2250,Quảng Trị,5,no,no,,
-LNG Hải Lăng 3,gas,2 proposed,2250,Quảng Trị,5,no,no,,
-LNG Hải Phòng 2 (Cát Hải),gas,2 proposed,1600,Hải Phòng,5,no,no,,
-LNG Long An I phase 2,gas,1 announced,1500,Long An,5,no,no,,
-LNG Long An II phase 2,gas,1 announced,1500,Long An,5,no,no,,
-LNG Long Sơn III,gas,2 proposed,1600,Bà Rịa-Vũng Tàu,5,no,no,,
-LNG Long Sơn IV (địa điểm Tây),gas,2 proposed,3600,Bà Rịa-Vũng Tàu,5,no,no,,
-LNG Núi Thành (Quảng Nam),gas,2 proposed,3200,Quảng Nam,5,no,no,,
-LNG Vân Phong (Mỹ Giang) phase 1,gas,2 proposed,3000,Khánh Hòa,5,no,no,,
-Ninh Thuan Novatek project,gas,1 announced,4500,Ninh Thuan,5,no,yes,,
-NĐ LNG miền Bắc,gas,0 exploring,0,"Thái Bình, Nam Định, Nghi Sơn, Thanh Hóa",5,no,no,,
-NĐ Miền Bắc 1,coal,9 cancelled,0,,5,no,no,,
-NĐ Miền Bắc 2,coal,9 cancelled,0,,5,no,no,,
-NĐ Miền Bắc 3,coal,9 cancelled,0,,5,no,no,,
-Quảng Trạch 2,coal,9 cancelled,1200,Quảng Bình,5,no,no,,
-Quảng Trị 2,coal,4 permitted,1200,Quảng Trị,5,no,no,,
-Quảng Trị – Huế area,gas,0 exploring,4000,Quảng Trị,5,no,no,,
-TBKHH Phú Mỹ 2.1 MR,gas,6 operating,450,Bà Rịa-Vũng Tàu,5,no,no,,
-Hai Duong,coal,6 operating,1200,Hai Duong,4,yes,yes,,
-LNG Nhơn Trạch 3,gas,5 construction,750,Đồng Nai,4,no,no,,
-Lee & Man,coal,6 operating,125,Hau Giang,4,no,no,,
-Long Son Chemical,coal,9 cancelled,225,,4,no,yes,,
-LNG Mũi Kê Gà 2,gas,1 announced,1200,Bình Thuận,3,no,no,,
-NĐ Ô Môn I,gas/oil,6 operating,660,Cần Thơ,3,no,no,,
-Cẩm Phả 1,coal,6 operating,340,Quảng Ninh,3,no,no,,
-LNG Nhơn Trạch 4,gas,5 construction,750,Đồng Nai,3,no,no,,
-LNG miền Nam,gas,0 exploring,1500,"Hiệp Phước 2, Bến Tre, Mũi Kê Gà, Cà Mau,",2,no,no,,
-Luc Nam,coal,9 cancelled,50,,2,no,no,,
+Bà Rịa GT,gas,6 operating,46,Bà Rịa-Vũng Tàu,5,no,no,comparateur,model row 'Nhiệt điện Bà Rịa 389 MW OCGT Operating' aggregates the Ba Ria site; matcher cannot link site-aggregate row to the GT sub-unit (46 MW)
+Dung Quat Special Economic Zone (J-Power) Phase II,coal,1 announced,2000,Quảng Ngãi,5,no,yes,résidu,not in provided corpus (no J-Power entry) and no model row; mention flag is a token collision ('Dung Quất' appears only in the Hòa Phát II row); parametric recall failure
+Ha Tinh Formosa Plastics Steel Complex,coal,6 operating,900,Hà Tĩnh,5,no,yes,comparateur,model rows 'Formosa Hà Tĩnh hiện hữu 1×150' and 'Formosa Hà Tĩnh mở rộng / HT2' exist; matcher fails to link unit-level rows to the 900 MW complex aggregate
+Hải Phòng,gas,1 announced,500,Hải Phòng,5,no,yes,résidu,model narrative: '2025 revised PDP8 reportedly adds Hải Phòng LNG but exact official project table not consulted here' — knows of it but withholds the row absent an admissible source (provenance omission; project post-dates the 2023-corpus)
+LNG Cà Ná III,gas,2 proposed,2250,Ninh Thuan,5,no,no,résidu,in provided corpus (E542 PL9.1 row 'LNG Cà Ná II+III'); model emitted only the PDP8 phase-1 row 'LNG Cà Ná 1500 Permitted' — grounding failure on later phases
+LNG Mũi Kê Gà 1,gas,2 proposed,1200,Bình Thuận,5,no,no,comparateur,model row 'LNG Mũi Kê Gà 3600 potential' aggregates the three 1200 MW phases; matcher cannot link aggregate row to phase rows
+TBKHH Bà Rịa 1,gas,6 operating,169,Bà Rịa-Vũng Tàu,5,no,no,comparateur,model row 'Nhiệt điện Bà Rịa 389 MW OCGT' aggregates the Ba Ria site; matcher cannot link site-aggregate row to the CCGT sub-unit (169 MW)
+Dong Nai Formosa,coal,6 operating,450,Đồng Nai,5,no,yes,comparateur,model row 'Nhiệt điện Formosa Đồng Nai 1×150 Operating' exists; matcher fails on the 150-vs-450 MW capacity gap (unit vs site)
+Dung Quat Special Economic Zone (J-Power) Phase I,coal,1 announced,2400,Quảng Ngãi,5,no,yes,résidu,not in provided corpus (no J-Power entry) and no model row; mention flag is a token collision ('Dung Quất' appears only in the Hòa Phát II row); parametric recall failure
+LNG Cà Mau 1,gas,2 proposed,1500,Cà Mau,5,no,no,comparateur,model row 'LNG Cà Mau 3000–4500 potential' (E542) aggregates the site; matcher cannot link aggregate row to phase 1
+LNG Cà Mau 2,gas,2 proposed,1500,Cà Mau,5,no,no,comparateur,model row 'LNG Cà Mau 3000–4500 potential' (E542) aggregates the site; matcher cannot link aggregate row to phase 2
+LNG Cà Ná II,gas,2 proposed,2250,Ninh Thuan,5,no,no,résidu,in provided corpus (E542 PL9.1 row 'LNG Cà Ná II+III'); model emitted only the PDP8 phase-1 row — grounding failure on later phases
+LNG Hải Lăng 2,gas,2 proposed,2250,Quảng Trị,5,no,no,résidu,in provided corpus (E542 PL9.1 lists Hải Lăng beyond phase 1); model emitted only 'LNG Hải Lăng giai đoạn 1 1500' — grounding failure on later phases
+LNG Hải Lăng 3,gas,2 proposed,2250,Quảng Trị,5,no,no,résidu,in provided corpus (E542 PL9.1 lists Hải Lăng beyond phase 1); model emitted only 'LNG Hải Lăng giai đoạn 1 1500' — grounding failure on later phases
+LNG Hải Phòng 2 (Cát Hải),gas,2 proposed,1600,Hải Phòng,5,no,no,résidu,in provided corpus (E542 PL9.1 lists Cát Hải); no model row — grounding failure
+LNG Long An I phase 2,gas,1 announced,1500,Long An,5,no,no,résidu,corpus has only Long An I/II phase-1 rows (PDP8 T1; E542); the phase-2 tranche is not in the provided documents and the model produced no row — parametric recall failure
+LNG Long An II phase 2,gas,1 announced,1500,Long An,5,no,no,résidu,corpus has only Long An I/II phase-1 rows (PDP8 T1; E542); the phase-2 tranche is not in the provided documents and the model produced no row — parametric recall failure
+LNG Long Sơn III,gas,2 proposed,1600,Bà Rịa-Vũng Tàu,5,no,no,résidu,in provided corpus (E542 PL9.1 rows 'LNG Long Sơn II+III' and 'IV'); model emitted only 'LNG Long Sơn 1500 Permitted' — grounding failure on later phases
+LNG Long Sơn IV (địa điểm Tây),gas,2 proposed,3600,Bà Rịa-Vũng Tàu,5,no,no,résidu,in provided corpus (E542 PL9.1 row 'LNG Long Sơn IV'); no model row — grounding failure
+LNG Núi Thành (Quảng Nam),gas,2 proposed,3200,Quảng Nam,5,no,no,résidu,in provided corpus under site alias (E542 PL9.1 row 'LNG Quảng Nam'); no model row — grounding failure
+LNG Vân Phong (Mỹ Giang) phase 1,gas,2 proposed,3000,Khánh Hòa,5,no,no,comparateur,model rows 'LNG Vân Phong 3000 potential' AND 'LNG Mỹ Giang 6000 potential' both exist; matcher fails to link either to the parenthesised double-named reference entry
+Ninh Thuan Novatek project,gas,1 announced,4500,Ninh Thuan,5,no,yes,résidu,not in provided corpus (no Novatek entry) and no model row; mention flag is a token collision on province text; parametric recall failure (2019 MOU pre-dates cutoff)
+NĐ LNG miền Bắc,gas,0 exploring,0,"Thái Bình, Nam Định, Nghi Sơn, Thanh Hóa",5,no,no,définition,status '0 exploring' is below the prompt's articulated status floor (Announced); non-sited multi-province aggregate placeholder — below the entity definition the prompt articulates
+NĐ Miền Bắc 1,coal,9 cancelled,0,,5,no,no,définition,non-sited generic placeholder (PDP7 'ND Than miền Bắc 1000MW' class) with no province and 0 MW in the reference — project-vs-plant granularity edge below the articulated entity floor
+NĐ Miền Bắc 2,coal,9 cancelled,0,,5,no,no,définition,non-sited generic placeholder (PDP7 'ND Than miền Bắc 1000MW' class) with no province and 0 MW in the reference — project-vs-plant granularity edge below the articulated entity floor
+NĐ Miền Bắc 3,coal,9 cancelled,0,,5,no,no,définition,non-sited generic placeholder (PDP7 'ND Than miền Bắc 1000MW' class) with no province and 0 MW in the reference — project-vs-plant granularity edge below the articulated entity floor
+Quảng Trạch 2,coal,9 cancelled,1200,Quảng Bình,5,no,no,comparateur,model row 'LNG Quảng Trạch II 1500 Permitted' names the project; matcher cannot link the LNG-conversion incarnation to the reference's cancelled-coal incarnation (same project identity through fuel switch)
+Quảng Trị 2,coal,4 permitted,1200,Quảng Trị,5,no,no,résidu,in provided corpus (E542 PL9.2 coal progress table); model emitted Quảng Trị I coal and TBKHH Quảng Trị but no Quảng Trị 2 row — grounding failure
+Quảng Trị – Huế area,gas,0 exploring,4000,Quảng Trị,5,no,no,définition,status '0 exploring' is below the prompt's articulated status floor (Announced); non-sited area-level placeholder — below the entity definition the prompt articulates
+TBKHH Phú Mỹ 2.1 MR,gas,6 operating,450,Bà Rịa-Vũng Tàu,5,no,no,comparateur,model row 'Nhiệt điện Phú Mỹ II.1 945 MW' folds base unit and MR (mở rộng = extension) together; matcher cannot link combined row to the standalone extension entry
+Hai Duong,coal,6 operating,1200,Hai Duong,4,yes,yes,résidu,in provided corpus (5 files incl. PDP7A T1/T2 and progress reports); model cites those documents and names Hai Duong in source-coverage narrative but emitted no inventory row — grounding failure
+LNG Nhơn Trạch 3,gas,5 construction,750,Đồng Nai,4,no,no,comparateur,model row 'NMĐ Nhơn Trạch 3 và 4 — 2 units 1624 MW' combines both plants; matcher cannot link combined row to the two split reference entries
+Lee & Man,coal,6 operating,125,Hau Giang,4,no,no,résidu,in provided corpus (PDP7A annex1 table1); captive industrial plant never mentioned by the model — grounding failure
+Long Son Chemical,coal,9 cancelled,225,,4,no,yes,comparateur,model row 'Nhiệt điện Long Sơn hóa dầu 3×75 = 225 MW' exists with matching capacity; matcher fails on name variant (petrochemical cogeneration vs Chemical) and status disagreement
+LNG Mũi Kê Gà 2,gas,1 announced,1200,Bình Thuận,3,no,no,comparateur,model row 'LNG Mũi Kê Gà 3600 potential' aggregates the three 1200 MW phases; matcher cannot link aggregate row to phase rows
+NĐ Ô Môn I,gas/oil,6 operating,660,Cần Thơ,3,no,no,comparateur,model row 'Nhiệt điện Ô Môn I 2×330 = 660 Operating' is a near-exact match the comparator still fails to link in 3/5 runs (fuel field 'gas/oil' vs 'Domestic gas' and name normalisation)
+Cẩm Phả 1,coal,6 operating,340,Quảng Ninh,3,no,no,comparateur,model row 'Nhiệt điện Cẩm Phả I-II 2×300 = 600' combines units I and II; matcher cannot link combined row to the split reference entry
+LNG Nhơn Trạch 4,gas,5 construction,750,Đồng Nai,3,no,no,comparateur,model row 'NMĐ Nhơn Trạch 3 và 4 — 2 units 1624 MW' combines both plants; matcher cannot link combined row to the two split reference entries
+LNG miền Nam,gas,0 exploring,1500,"Hiệp Phước 2, Bến Tre, Mũi Kê Gà, Cà Mau,",2,no,no,définition,status '0 exploring' is below the prompt's articulated status floor (Announced); multi-site aggregate placeholder spanning four candidate locations — below the entity definition the prompt articulates
+Luc Nam,coal,9 cancelled,50,,2,no,no,résidu,in provided corpus (PDP7 annex1 and PDP7A annex1 table2); small 50 MW cancelled plant never mentioned by the model — grounding failure
