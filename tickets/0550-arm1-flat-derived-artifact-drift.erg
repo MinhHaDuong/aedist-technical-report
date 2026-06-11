@@ -1,0 +1,33 @@
+%erg 0.1
+Title: Derived-artifact drift: arm1_flat mistral runs + sota_cross_eval.csv regenerate differently
+Created: 2026-06-12
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-12T08:30Z orchestrator created from #990 observation (0530 raid rebuild)
+
+--- body ---
+## Context
+While finishing ticket 0530 (PR #990), regenerating with the corrected
+prerequisites produced content drift in committed derived artifacts:
+`experiments/derived/arm1_flat/mistral_run0{1..5}.md` (+~28 lines each)
+and `experiments/derived/sota_cross_eval.csv` (~32 lines changed). The
+committed artifacts predate the current extractor code. The drift was
+deliberately NOT committed in #990 (kept that PR Makefile-only).
+
+Note: PR #994 (ticket 0292) subsequently changed the extractors again
+(citation resolution, preamble strip, audit sidecars) — regenerate
+after it lands and diagnose against THAT code state.
+
+## Actions
+1. Regenerate arm1-4 flat dirs + sota_cross_eval.csv from current code.
+2. Diagnose the diff: legitimate extractor evolution vs nondeterminism.
+3. If legitimate: commit refreshed artifacts in a data-refresh PR and
+   verify downstream tables/figures that consume them.
+4. If nondeterministic: isolate and fix the source first.
+
+## Exit criteria
+- [ ] Drift explained (code-vintage or nondeterminism, with evidence).
+- [ ] Committed artifacts consistent with current code, or a dated
+      vintage note added where they are consumed.
+- [ ] make check green.
