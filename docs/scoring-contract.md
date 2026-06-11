@@ -311,6 +311,11 @@ Numerator: rows whose as-of cell contains a year in `[1980, 2100]` (regex
 `\b(19\d{2}|20\d{2}|2100)\b`).  
 Denominator: rows with a non-empty as-of cell.
 
+A uniform as-of year is scored like any other (no `all_identical` special
+case, unlike `temporality_cod_plausible` below): "all this inventory is
+as-of 2023" is an honest freshness claim, not a degeneracy, and template
+degeneracy is already caught by the coherence veto (ticket 0505).
+
 **Null conditions:**
 
 | Condition | Annotation |

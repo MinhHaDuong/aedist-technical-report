@@ -237,7 +237,7 @@ $(ANALYSIS_DERIVED_DIR)/arm2_flat/.done: $(ANALYSIS_EXPERIMENTS_DIR)/outputs/sot
 # no dedicated holding directory. score_exp1 appends, hence the rm -f;
 # .DELETE_ON_ERROR (set via the included paths.mk) makes a crashed write
 # self-clean (tickets 0460, 0461).
-$(ANALYSIS_EXP1_CROSS_EVAL_CSV): $(ANALYSIS_EXP1_INPUT_CSVS) $(ANALYSIS_EXPERIMENTS_DIR)/../src/aedist/score_exp1.py
+$(ANALYSIS_EXP1_CROSS_EVAL_CSV): $(ANALYSIS_EXP1_INPUT_CSVS) $(ANALYSIS_EXPERIMENTS_DIR)/../src/aedist/score_exp1.py $(ANALYSIS_EXPERIMENTS_DIR)/../src/aedist/score_mechanical.py
 	rm -f $@
 	uv run python -m aedist.score_exp1 \
 	    --input-dir $(ANALYSIS_EXPERIMENTS_DIR)/outputs/exp1_batch2 \

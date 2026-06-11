@@ -485,28 +485,24 @@ def score_temporality(rows: list[dict[str, str]]) -> TemporalityScores:
 
     with_asof = 0
     plausible = 0
-    years_found: list[int] = []
     for row in rows:
         cell = _pick_asof_cell(row)
         if not cell:
             continue
         with_asof += 1
         match = _YEAR_RE.search(cell)
-        if not match:
-            continue
-        year = int(match.group(1))
-        years_found.append(year)
-        if 1980 <= year <= 2100:
+        if match and 1980 <= int(match.group(1)) <= 2100:
             plausible += 1
 
     if with_asof == 0:
         plausible_rate = None
         plausible_annotation = "column_empty"
-    elif len(years_found) >= 2 and len(set(years_found)) == 1:
-        # All cells carry the same year — likely the run date stamped on every row.
-        plausible_rate = 0.0
-        plausible_annotation = "all_identical"
     else:
+        # A uniform as-of year is NOT treated as degenerate: "all this inventory
+        # is as-of 2023" is an honest freshness claim for a parametric dump
+        # (ticket 0505). Template degeneracy is caught by the coherence veto
+        # (cap_distinct / status_distinct); an implausible uniform year still
+        # scores 0 via the plausible fraction.
         plausible_rate = _fraction(plausible, with_asof)
         plausible_annotation = None
 
