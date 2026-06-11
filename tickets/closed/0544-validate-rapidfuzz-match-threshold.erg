@@ -2,6 +2,7 @@
 Title: Validate the rapidfuzz partial_ratio>=90 matcher threshold: false-match estimate on phase-named plants
 Created: 2026-06-11
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #988
 
 --- log ---
 2026-06-11T14:55Z HDMX-coding-agent created — 0534 item 6, waived twice (#968, #971) for lack of artifact; ticketed so the question stops recurring
@@ -12,6 +13,7 @@ Author: HDMX-coding-agent
 2026-06-11T22:52Z HDMX-coding-agent sensitivity t=90: mean_f1=0.4679, n_fuzzy_below=0 (195 runs; 174 structural pairs, 104 veto-blocked, 70 residual)
 2026-06-11T22:52Z HDMX-coding-agent sensitivity t=95: mean_f1=0.4215, n_fuzzy_below=1229 (195 runs; 94 structural pairs, 53 veto-blocked, 41 residual; mean F1 drop 90→95 = 0.046)
 2026-06-11T22:53Z HDMX-coding-agent note residual exposure at t=90 is non-empty (70 pairs): the unit-number veto needs digit tokens on BOTH sides, so base-name vs phase-suffixed siblings ("ca na" vs "ca na 2", "bac lieu" vs "bac lieu 1") and base vs extension/complex variants slip through; realised damage is bounded by the LP's one-to-one assignment and n_fuzzy_below=0, but a digit-asymmetric guard (treat bare base as wildcard-phase) would need a scoring change — new ticket per 0502 precedent, not fixed here
+2026-06-11T22:35Z HDMX-coding-agent closed — autoclosed — PR #988
 --- body ---
 ## Context
 
