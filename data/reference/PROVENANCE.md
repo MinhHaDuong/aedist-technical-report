@@ -296,7 +296,8 @@ but is out of scope for the current article.
 **Raw input.** `data/reference/gem_units.csv` (308 rows) is the tracked GEM
 export (Global Energy Monitor, Global Coal Plant Tracker and Gas Plant Tracker,
 Vietnam). Source: manual export from gem.wiki; the export date and URL are not
-stamped. Best-supportable bound (ticket 0533): the file entered version control
+stamped. Best-supportable bound (established 2026-06-11 from version-control
+history): the file entered version control
 on 2026-04-02 (commit `52f3ec7b`), so the snapshot was exported no later than
 that date. The file is committed as the frozen comparator for the cross-check and
 is NOT updated via `raw/import.sh` — it follows the snapshot-on-change pattern
