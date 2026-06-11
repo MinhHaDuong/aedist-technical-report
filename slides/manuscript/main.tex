@@ -847,14 +847,19 @@ inventories}).
 The mirror-image lever buys precision: requiring at least two of the
 four frontier models to agree nearly eliminates false positives --- F1
 = 0.750 with two false positives on the Experiment 1 cohort, F1 = 0.813
-with five on the Experiment 2 naive arm (Figure~\ref{fig:fusion-mvp}).
-Both levers reuse existing runs; the structural answer to the
-single-model ceiling is a stateful pipeline that invests in the corpus
-rather than the model --- a managed, auditable knowledge base
-maintaining a sourced narrative inventory, from which the statistical
-table derives as a dated snapshot. \ref{sec:annex-fusion} develops the
-architecture rationale, the aggregation sweep, and the vote-gate
-result.
+with five on the Experiment 2 naive arm (full results in
+\ref{sec:annex-fusion}). Both levers reuse existing runs; the
+structural answer to the single-model ceiling is a stateful pipeline
+that invests in the corpus rather than the model --- a managed,
+auditable knowledge base maintaining a sourced narrative inventory,
+from which the statistical table derives as a dated snapshot. The
+architecture rationale and the full factorial sweep are developed in
+\ref{sec:annex-fusion}. To our knowledge, no published benchmark or
+system targets open-world enumeration of a national asset class with
+per-cell provenance at this granularity. Nor did we find a published
+demonstration of the conjunction of per-cell provenance with per-cell
+temporal validity in LLM-augmented inventories; demonstrating it is
+part of the contribution we aim for in the follow-on paper.
 
 \section{Discussion}\label{sec:discussion}
 
@@ -872,17 +877,16 @@ findings open.
 \textbf{F1 is a useful but opaque aggregate.} Row-level F1 is the
 primary metric in §\ref{sec:exp1} and §\ref{sec:exp2}: it is the
 field's standard comparability unit for structured recall, and it is
-computable without manual annotation. It is nonetheless an opaque
-aggregate: it collapses coverage (are the right assets present?),
+computable without manual annotation. As an aggregate, it collapses
+coverage (are the right assets present?),
 freshness (are the values current?), articulation (was the query
 well-specified?), and coherence (are the claims consistent?) into a
 single score. A system can achieve high F1 by excelling on one
 dimension while failing silently on others --- a well-articulated
 prompt against a stale corpus, for example, can return complete,
 internally consistent, but outdated values. The §\ref{sec:quality}
-four-dimensional framework is not a critique of that metric choice; it
-is the complement that diagnoses \emph{where} a system fails once F1
-has ranked it. Readers should interpret F1 comparisons as aggregate
+four-dimensional framework diagnoses \emph{where} a system fails once
+F1 has ranked it. Readers should interpret F1 comparisons as aggregate
 capability rankings, with the quality framework as the diagnostic
 lens.
 
@@ -987,7 +991,8 @@ the agents, a reference-free screen and simple fusion rules work here
 parameters, and the quality bar were all developed against this
 reference; transferring them to another country or asset class is a
 replication study, not a configuration change. That is what makes the
-agenda below a research programme rather than a feature list.
+next paragraph a research programme: each step is open to replication
+and extension.
 
 \textbf{From noisy runs to fused estimates.} The per-plant recognition
 matrix in \ref{sec:annex-recognition} prefigures the research programme
@@ -2216,9 +2221,9 @@ partial observer of the 177-plant reference: the per-plant recognition
 matrix (\ref{sec:annex-recognition}) shows that the operational core
 forms dense rows while proposed plants form sparse ones, and the
 density profile predicts which plants are structurally recoverable by
-pooling alone. The architecture rationale below draws the design
-consequence of the single-model ceiling; the aggregation sweep and the
-vote gate then quantify what run-level fusion already delivers.
+pooling alone. The paragraphs below first draw the design consequence
+of the single-model ceiling, then quantify what run-level fusion
+already delivers.
 
 The single-model ceiling motivates a stateful architecture --- one that
 keeps an organised memory between runs instead of starting from scratch
@@ -2253,13 +2258,6 @@ resolution, source authority, and temporal versioning. Cases that
 rule-based schema-fixed systems cannot handle cleanly --- assets
 mid-lifecycle, contested sources, multilingual records, conditional
 projections --- are where language-model reasoning adds genuine value.
-
-To our knowledge, no published benchmark or system targets open-world
-enumeration of a national asset class with per-cell provenance at this
-granularity. Nor did we find a published demonstration of the
-conjunction of per-cell provenance with per-cell temporal validity in
-LLM-augmented inventories; demonstrating it is part of the contribution
-we aim for in the follow-on paper.
 
 \textbf{Pooling runs by simple union more than doubles recall relative
 to the single-run mean (2.4×), at no new collection cost.} The 14-model exp1\_batch2 cohort (a subset of the
@@ -2300,7 +2298,7 @@ fixed token budget. Source artifact:
 positives.} Restricting the pool to the four frontier models and
 applying a simple ≥2-models presence rule --- a plant is admitted if at
 least two of the four models name it --- sharpens the precision/recall
-trade-off in both experiments. Applying the rule separately to
+trade-off in both experiments (Figure~\ref{fig:fusion-mvp}). Applying the rule separately to
 Experiment 1 (the same four models, answering from memory, × 5 repeats)
 and the Experiment 2 naive arm (E1 vs E2) gives: under ≥2-models in E1,
 F1 = 0.750 (TP = 105, FP = 2); under ≥2-models in the E2 naive arm, F1
