@@ -2,11 +2,13 @@
 Title: Reconcile manuscript main.md to v2.4 (177) reference: prose counts, fuel split, difficulty table, fusion numbers + guard test
 Created: 2026-06-09
 Author: claude
+Closed: folded into 0531 — the macros-everywhere pass re-derives every number this ticket would hand-fix; scope and guard test absorbed there (author-approved 2026-06-11)
 
 --- log ---
 2026-06-09T14:38Z claude created
 
 2026-06-09T14:49Z line 90 attribute accuracies (province 0.61->0.89) deferred to 0502 — scoring change, not a 177 effect; would flip the 'mediocre' claim
+2026-06-11T08:58Z HDMX-coding-agent closed — folded into 0531 — the macros-everywhere pass re-derives every number this ticket would hand-fix; scope and guard test absorbed there (author-approved 2026-06-11)
 --- body ---
 
 ## Context
