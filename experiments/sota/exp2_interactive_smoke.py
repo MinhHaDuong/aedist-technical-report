@@ -474,6 +474,59 @@ def run_openai_call(
     return record
 
 
+def _slide_followup_cache_breakpoint(messages: list[dict]) -> list[dict]:
+    """Breakpoint 3 (ticket 0369): cache the replayed conversation prefix.
+
+    Wraps the LAST assistant message in the replayed history with
+    ``cache_control: ephemeral`` so the whole prefix up to and including
+    that reply is the cache key for this turn. Any cache_control left on
+    *earlier* assistant messages by previous turns is stripped first — the
+    breakpoint slides forward each turn (Anthropic matches the longest
+    cached prefix, so sliding does not invalidate earlier cache segments,
+    and stripping keeps us within the 4-breakpoints-per-request limit:
+    system [1] + turn-1 user [2] + this slide [3]).
+
+    No token-minimum guard is needed on this workload: the prefix always
+    contains the ~200K-token turn-1 user message (evidence pack), far
+    above the 4096-token Opus cache minimum; an under-minimum breakpoint
+    would in any case be silently ignored by the API at zero cost.
+    """
+    out: list[dict] = []
+    last_assistant_idx = None
+    for i, msg in enumerate(messages):
+        if msg.get("role") == "assistant":
+            last_assistant_idx = i
+        out.append(msg)
+    for i, msg in enumerate(out):
+        if msg.get("role") != "assistant":
+            continue
+        content = msg.get("content")
+        if i == last_assistant_idx:
+            if isinstance(content, str):
+                out[i] = {
+                    "role": "assistant",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": content,
+                            "cache_control": {"type": "ephemeral"},
+                        }
+                    ],
+                }
+        elif isinstance(content, list):
+            # Strip the wrap a previous turn's slide left behind.
+            out[i] = {
+                "role": "assistant",
+                "content": [
+                    {k: v for k, v in block.items() if k != "cache_control"}
+                    if isinstance(block, dict)
+                    else block
+                    for block in content
+                ],
+            }
+    return out
+
+
 def run_anthropic_call(
     prompt: str,
     *,
@@ -545,7 +598,9 @@ def run_anthropic_call(
             }
     if is_followup:
         new_user_msg = payload["messages"][-1]
-        payload["messages"] = list(continuation["messages"]) + [new_user_msg]
+        payload["messages"] = _slide_followup_cache_breakpoint(
+            list(continuation["messages"])
+        ) + [new_user_msg]
     if extra_metadata is not None:
         # Anthropic metadata only accepts ``user_id``; all other keys are
         # rejected with a 400.  Drop silently — budget info is already in
