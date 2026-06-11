@@ -1,0 +1,45 @@
+%erg 0.1
+Title: Manuscript minors batch: review-panel verifiable fixes (pre-arXiv)
+Created: 2026-06-11
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-11T08:20Z HDMX-coding-agent created
+2026-06-11T08:45Z HDMX-coding-agent note renumbered from 0529 (ID collision)
+
+--- body ---
+## Context
+Minor (`verifiable:`) findings from the 2026-06-11 prose review panel, batched
+for one editorial pass. Majors are tickets 0531/0532/0533.
+
+## Actions (one pass over slides/manuscript/main.md)
+1. "Proposed" status (38% of reference) absent from prompt vocabulary depresses
+   status accuracy 0.57 — state whether mapping to Announced/Pre-permit was
+   attempted, or report accuracy excluding that stratum.
+2. Line ~37: PyPSA-ASEAN motivates the paper but is uncited — cite or note unpublished.
+3. Line ~160: "more than doubles recall" uses the 14-model mean (incl. near-zero
+   runs) as denominator; best single run only 4% below union — state both.
+4. Caption line ~103: the two "73%" figures (pipeline aggregate vs Wikipedia
+   coverage 130/177) are different quantities that round equal — disambiguate.
+5. Line ~388 vs §Exp2 body: cross-experiment naive baseline is a different sweep
+   than Exp1's — qualify the lift attribution.
+6. rapidfuzz `partial_ratio >= 90` threshold unvalidated — report a false-match
+   estimate on Vietnamese phase-named plants (Vũng Áng 1/2).
+7. Line ~325: "characterised in earlier in-project work" — cite or delete.
+8. AI-tells: line ~79 "leverage" (verb); 3x metaphorical "landscape" (~37, 39, 75).
+9. Line ~59 "takes a problem" → "addresses"; line ~158 double "To our knowledge"
+   in one paragraph.
+10. Interday F1 drift up to 0.289/24h not propagated to error bars — at minimum
+    note in limitations.
+11. Cohort naming (`exp1_journal` / `exp1_batch2` / "14-model analysis cohort")
+    — disambiguate on first use.
+12. Verify "Mistral Small 4 / Medium 3.5 / Large 3" branding against vendor naming.
+13. Consider: create `config/ai-tells.yml` so future audits are project-tuned.
+
+## Invariants
+- House crossref rules (tests/test_manuscript_crossref.py) stay green.
+- No new hand-typed empirical numbers (coordinate with 0531).
+
+## Exit criteria
+- [ ] Each item fixed or explicitly waived with a one-line reason in the log.
+- [ ] Manuscript builds; adherence tests green.

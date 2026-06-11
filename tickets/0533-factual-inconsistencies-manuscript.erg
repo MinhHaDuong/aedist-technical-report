@@ -1,0 +1,41 @@
+%erg 0.1
+Title: Resolve manuscript factual inconsistencies: seeding attribution, GEM counts, refusals wording
+Created: 2026-06-11
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-11T08:20Z HDMX-coding-agent created
+2026-06-11T08:45Z HDMX-coding-agent note renumbered from 0528 (ID collision)
+
+--- body ---
+## Context
+Prose review panel 2026-06-11 (pre-arXiv), convergent factual findings that
+block submission. Each needs a fact check against project records, then a
+small prose fix.
+
+1. **Wikipedia seeding attribution inconsistency.** Line ~97 says an intern
+   injected the content; the COI statement says the author authored several
+   pages. Make consistent — the seeded-recall bar's integrity depends on it.
+   Related: seeded-recall framing is well-supported only for the built fleet;
+   over-extrapolated to all 177 plants in abstract/conclusion.
+2. **GEM "119 distinct plants" vs "157 of 177 matched" irreconcilable as
+   written** (157 > 119). Explain (snapshot difference?) or correct. Also:
+   pin the GEM release version (provenance emphasis demands it).
+3. **"All produced usable tables" is false.** GPT-5.5 declined 3/5 reps,
+   scored F1=0. Reword: "all yielded a scored outcome (including three
+   refusals scored F1=0)"; report GPT-5.5's conditional F1 on its 2 completing
+   runs alongside the refusal rate.
+
+## Relevant files
+- `slides/manuscript/main.md` — lines ~97, ~99, GEM coverage paragraph, COI statement
+- `experiments/outputs/` — refusal evidence for GPT-5.5
+- `data/reference/` — GEM snapshot for the count check
+
+## Test
+- Numbers introduced by fix 3 (refusal rate, conditional F1) derive from
+  committed artifacts (or land as macros if 0531 has shipped).
+
+## Exit criteria
+- [ ] Seeding attribution consistent between body and COI; author confirms facts.
+- [ ] GEM count discrepancy explained or corrected; GEM release version pinned.
+- [ ] Refusals wording accurate; conditional F1 + refusal rate reported.

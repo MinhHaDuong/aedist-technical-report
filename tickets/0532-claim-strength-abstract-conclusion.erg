@@ -1,0 +1,44 @@
+%erg 0.1
+Title: Claim-strength rewrite: abstract/conclusion scoped to measured evidence
+Created: 2026-06-11
+Author: HDMX-coding-agent
+Label: needs-human
+
+--- log ---
+2026-06-11T08:20Z HDMX-coding-agent created
+2026-06-11T08:45Z HDMX-coding-agent note renumbered from 0527 (ID collision)
+
+--- body ---
+## Context
+Prose review panel 2026-06-11 (pre-arXiv): two reviewers reached major-revision
+on claim strength, convergent on three findings. These are author-judgment
+rewrites of abstract and conclusion — not mechanical.
+
+1. **Headline claim outruns evidence.** "The binding constraint is the data,
+   not the model" rests on the unregistered exploratory documents condition,
+   N=4 agents, single-query only — and the paper itself notes multi-turn does
+   not equalise (Anthropic 0.61→0.38). Reframe as hypothesis; carry k/n
+   directional hedging into abstract and conclusion.
+2. **ρ=0.92 in the abstract without the across-model-confound caveat.** The
+   honest within-model signal is the modest stratified τ; only 3/14 models
+   contribute to the binary gap. Abstract must carry the "pooled, in-sample
+   existence proof" qualification.
+3. **"Falls short of the four-dimensional quality bar" with two dimensions
+   measured.** Coherence/provenance/temporality rubric deferred to Phase C;
+   scope the claim to measured dimensions.
+
+Suggestion from same review: abstract ~400 words, omits best number
+(fusion F1=0.813); consider adding the seeding-mechanism clause and trimming.
+
+## Relevant files
+- `slides/manuscript/main.md` — abstract, conclusion, §Exp2 hedging language
+
+## Test
+- Re-run prose review panel post-rewrite: methods + adversarial reviewers no
+  longer major on claim strength.
+
+## Exit criteria
+- [ ] Headline data-vs-model claim reframed as hypothesis with explicit scope.
+- [ ] ρ=0.92 carries the pooled/confound caveat wherever it appears.
+- [ ] Quality-bar claim scoped to the two measured dimensions.
+- [ ] Author has read and blessed the rewritten abstract + conclusion.
