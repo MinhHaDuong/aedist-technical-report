@@ -61,6 +61,11 @@ ANALYSIS_EXP1_SPIDER_CLAUDE_FR := $(ANALYSIS_GEN)/fig_spider_exp1_claude_fr.pdf
 ANALYSIS_EXP2_COVERAGE_FIG_FR := $(ANALYSIS_GEN)/fig_exp2_coverage_certainty_fr.pdf
 # Quality-floor heatmap (ticket 0466): replaces spider in manuscript (main.md).
 ANALYSIS_EXP1_QUALITY_HEATMAP := $(ANALYSIS_GEN)/fig_quality_floor_heatmap_exp1.pdf
+# Reliability-vs-accuracy screen (ticket 0506): section-4 figure + annex sweep.
+# The sweep CSV is a P3→P4 handoff artifact, tracked in experiments/derived/.
+ANALYSIS_EXP1_RELIABILITY_FIG := $(ANALYSIS_GEN)/fig_exp1_reliability.pdf
+ANALYSIS_EXP1_RELIABILITY_SENS_CSV := $(ANALYSIS_DERIVED_DIR)/exp1_reliability_sensitivity.csv
+ANALYSIS_EXP1_RELIABILITY_SENS_TEX := $(ANALYSIS_GEN)/tab_exp1_reliability_sensitivity.tex
 # Within-model screen validation summary CSV (ticket 0467).
 ANALYSIS_EXP1_SCREEN_VALID_CSV := $(ANALYSIS_GEN)/tab_screen_validation_within_model.csv
 # Exp1 run-stats macros: F1 min/mean/max/n_runs/n_models (ticket 0474).
@@ -252,6 +257,26 @@ $(ANALYSIS_EXP1_QUALITY_HEATMAP): $(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
 	uv run python -m aedist.plot_quality_floor_heatmap_exp1 \
 	    --input $(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
 	    --output $@
+
+# Reliability-vs-accuracy screen figure (ticket 0506): section-4 main figure.
+# X = good runs out of 5 (12-dim reference-free gate), Y = mean F1 over good runs.
+$(ANALYSIS_EXP1_RELIABILITY_FIG): $(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
+		$(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp1_reliability.py
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.plot_exp1_reliability \
+	    --input $(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
+	    --output $@
+
+# Gate sensitivity sweep (ticket 0506): tau x indicator-set grid for the annex.
+# One invocation, two outputs (grouped &: rule): committed CSV + LaTeX table.
+$(ANALYSIS_EXP1_RELIABILITY_SENS_CSV) $(ANALYSIS_EXP1_RELIABILITY_SENS_TEX) &: \
+		$(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
+		$(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp1_reliability.py
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.plot_exp1_reliability \
+	    --input $(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
+	    --sensitivity-csv $(ANALYSIS_EXP1_RELIABILITY_SENS_CSV) \
+	    --annex-table $(ANALYSIS_EXP1_RELIABILITY_SENS_TEX)
 
 # Within-model screen validation (ticket 0467): Annex F supporting CSV.
 # Consumes raw exp1_batch2 CSVs (cap_distinct/status_distinct) + cross-eval F1.
@@ -665,6 +690,9 @@ report-tables: $(RENDER_REPORT_TABLES)
 RENDER_REPORT_FIGURES := \
 	$(ANALYSIS_EXP1_SPIDER_FAMILIES) \
 	$(ANALYSIS_EXP1_QUALITY_HEATMAP) \
+	$(ANALYSIS_EXP1_RELIABILITY_FIG) \
+	$(ANALYSIS_EXP1_RELIABILITY_SENS_CSV) \
+	$(ANALYSIS_EXP1_RELIABILITY_SENS_TEX) \
 	$(ANALYSIS_EXP1_SCREEN_VALID_CSV) \
 	$(ANALYSIS_EXP1_RUN_STATS_MACROS)
 
