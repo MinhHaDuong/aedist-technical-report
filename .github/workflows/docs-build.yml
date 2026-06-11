@@ -8,15 +8,19 @@ on:
 
 jobs:
   # Decide whether the diff touches anything the docs-build cares about.
-  # `chore` is true ONLY when *every* changed file matches the chore filter
-  # (predicate-quantifier: every) — ticket-only, STATE, in-repo notes, top-
-  # level READMEs, .claude/** harness files. Anything else — including a
-  # mixed diff or an empty/errored output — leaves it != 'true', so the
-  # heavy build steps below run. Fail-safe: ambiguity always builds.
+  # paths-filter's output is true when ANY changed file matches the filter;
+  # predicate-quantifier: every quantifies over PATTERNS per file, not over
+  # files (ticket 0525 — the old `chore` filter fired on mixed diffs and
+  # skipped the whole build). So the filter is inverted: `non-chore` is true
+  # when at least one changed file matches `**` AND is not in the chore set
+  # (tickets, STATE, in-repo notes, top-level READMEs, .claude/** harness
+  # files). Build steps gate on != 'false', so a mixed diff builds and an
+  # empty/errored output builds too. Fail-safe: ambiguity always builds;
+  # only a purely-chore diff skips.
   changes:
     runs-on: ubuntu-latest
     outputs:
-      chore: ${{ steps.filter.outputs.chore }}
+      non-chore: ${{ steps.filter.outputs.non-chore }}
     steps:
       - uses: actions/checkout@v4
       - uses: dorny/paths-filter@v3
@@ -24,8 +28,9 @@ jobs:
         with:
           predicate-quantifier: 'every'
           filters: |
-            chore:
-              - '{tickets/**,.claude/**,docs/**,STATE.md,README.md,AGENTS.md,CLAUDE.md,ADR.md,MASTERPLAN.md,PLAN.md}'
+            non-chore:
+              - '**'
+              - '!{tickets/**,.claude/**,docs/**,STATE.md,README.md,AGENTS.md,CLAUDE.md,ADR.md,MASTERPLAN.md,PLAN.md}'
 
   build:
     needs: changes
@@ -35,28 +40,28 @@ jobs:
       TECTONIC_VERSION: '0.15.0'
     steps:
       - name: Checkout
-        if: needs.changes.outputs.chore != 'true'
+        if: needs.changes.outputs.non-chore != 'false'
         uses: actions/checkout@v4
 
       - name: Setup uv (respects uv.lock)
-        if: needs.changes.outputs.chore != 'true'
+        if: needs.changes.outputs.non-chore != 'false'
         uses: astral-sh/setup-uv@v4
         with:
           enable-cache: true
 
       - name: uv sync (dev group for make check)
-        if: needs.changes.outputs.chore != 'true'
+        if: needs.changes.outputs.non-chore != 'false'
         run: uv sync --group dev
 
       - name: Cache Tectonic bundle
-        if: needs.changes.outputs.chore != 'true'
+        if: needs.changes.outputs.non-chore != 'false'
         uses: actions/cache@v4
         with:
           path: ~/.cache/Tectonic
           key: tectonic-0.15.0-${{ runner.os }}
 
       - name: Install Tectonic 0.15.0 (static musl binary)
-        if: needs.changes.outputs.chore != 'true'
+        if: needs.changes.outputs.non-chore != 'false'
         run: |
           set -euo pipefail
           mkdir -p "$HOME/.local/bin"
@@ -67,34 +72,27 @@ jobs:
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
           "$HOME/.local/bin/tectonic" --version
 
-      - name: Install pandoc
-        if: needs.changes.outputs.chore != 'true'
-        run: |
-          set -euo pipefail
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq pandoc
-          pandoc --version | head -n1
-
       - name: Build report
-        if: needs.changes.outputs.chore != 'true'
+        if: needs.changes.outputs.non-chore != 'false'
         run: make report
 
       - name: Build slides
         id: slides
-        if: needs.changes.outputs.chore != 'true'
+        if: needs.changes.outputs.non-chore != 'false'
         continue-on-error: true
         run: make slides
 
-      - name: Build manuscript
-        if: needs.changes.outputs.chore != 'true'
-        run: make -C slides manuscript/main.pdf
+      # Manuscript is not built in CI: the pandoc-crossref toolchain was never
+      # installed here and the manuscript is moving to a tectonic-built main.tex
+      # (ticket 0524, LaTeX decision 2026-06-11). The conversion ticket re-adds
+      # a manuscript build step when main.tex lands.
 
       - name: Run make check (lint + tests)
-        if: needs.changes.outputs.chore != 'true'
+        if: needs.changes.outputs.non-chore != 'false'
         run: make check
 
       - name: Upload PDF artifacts
-        if: needs.changes.outputs.chore != 'true' && (success() || failure())
+        if: needs.changes.outputs.non-chore != 'false' && (success() || failure())
         uses: actions/upload-artifact@v4
         with:
           name: docs-pdfs
@@ -102,12 +100,11 @@ jobs:
             report/report.pdf
             slides/slides.pdf
             slides/slides-en.pdf
-            slides/manuscript/main.pdf
           if-no-files-found: warn
           retention-days: 14
 
       - name: Upload build logs on failure
-        if: needs.changes.outputs.chore != 'true' && failure()
+        if: needs.changes.outputs.non-chore != 'false' && failure()
         uses: actions/upload-artifact@v4
         with:
           name: build-logs
