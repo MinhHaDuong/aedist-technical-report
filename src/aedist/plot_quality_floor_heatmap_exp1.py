@@ -248,7 +248,7 @@ def heatmap_models(rows: list[dict[str, str]]) -> list[str]:
     by tests/test_census_model_order.py, verified against the committed
     figure). Unlike the four-panel spider, this includes DeepSeek.
     """
-    models = sorted({str(r.get("model", "")).strip() for r in rows if str(r.get("model", "")).strip()})
+    models = {str(r.get("model", "")).strip() for r in rows if str(r.get("model", "")).strip()}
     return census_model_order(models)
 
 
