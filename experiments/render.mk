@@ -101,11 +101,15 @@ ANALYSIS_VARIANCE_JSON := $(ANALYSIS_REPORT_DERIVED_DIR)/variance_decomposition.
 ANALYSIS_VERIFICATION_DIR := $(ANALYSIS_REPORT_DERIVED_DIR)/verification
 ANALYSIS_VERIFICATION_TRADEOFF := $(ANALYSIS_VERIFICATION_DIR)/tradeoff.csv
 
-# Reconciliation CSVs were gitignored (c14136ff) and never archived — the
-# committed tab_decomposition_fix.tex is frozen; see FROZEN_ALLOWLIST in
-# tests/test_makefile_dag.py (ticket 0421).
-ANALYSIS_DECOMP_BEFORE :=
-ANALYSIS_DECOMP_AFTER  :=
+# Reconciliation CSVs regenerated from the archived raw replies by the P2
+# decomp-fix step (experiments/derived/score.mk, ticket 0424 — unfreezing the
+# 0421 freeze). Gitignored regenerable P2 intermediates (run
+# `make -f experiments/derived/score.mk decomp-fix` first); the prereq lists
+# are derived from the archive raw-CSV listing so a missing derived file stops
+# the build with "No rule to make target" (clean-room: render never scores).
+ANALYSIS_DECOMP_FIX_DIR := $(ANALYSIS_DERIVED_DIR)/decomp_fix
+ANALYSIS_DECOMP_BEFORE := $(patsubst $(ANALYSIS_EXPERIMENTS_DIR)/archive/outputs/rag_per_fuel/%.csv,$(ANALYSIS_DECOMP_FIX_DIR)/rag_per_fuel/reconciliation_%.csv,$(wildcard $(ANALYSIS_EXPERIMENTS_DIR)/archive/outputs/rag_per_fuel/*.csv))
+ANALYSIS_DECOMP_AFTER  := $(patsubst $(ANALYSIS_EXPERIMENTS_DIR)/archive/outputs/rag_per_fuel_v2/%.csv,$(ANALYSIS_DECOMP_FIX_DIR)/rag_per_fuel_v2/reconciliation_%.csv,$(wildcard $(ANALYSIS_EXPERIMENTS_DIR)/archive/outputs/rag_per_fuel_v2/*.csv))
 # Raw rag_extract CSVs moved to archive/ by edda724b.
 ANALYSIS_RAG_CSVS      := $(wildcard $(ANALYSIS_EXPERIMENTS_DIR)/archive/outputs/rag_extract/*.csv)
 ANALYSIS_EXPERT_REF    := $(ANALYSIS_REPO_ROOT)/data/reference/vietnam_thermal_plants_v2_classified.csv
@@ -541,14 +545,18 @@ $(ANALYSIS_GEN)/tab_verification.tex: $(ANALYSIS_VERIFICATION_TRADEOFF)
 	    --input $(ANALYSIS_VERIFICATION_DIR) --latex $@ \
 	    --reference $(ANALYSIS_EXPERT_REF)
 
-# tab_decomposition_fix.tex: FROZEN — reconciliation_*.csv inputs were
-# gitignored (c14136ff) and never archived. The committed table is correct
-# but unreproducible from the current DAG. See FROZEN_ALLOWLIST in
-# tests/test_makefile_dag.py. Reproducibility restoration deferred to a
-# follow-up ticket (requires wiring a reconcile-from-archive P2 step).
-# Original rule:
-#   $(ANALYSIS_GEN)/tab_decomposition_fix.tex: $(ANALYSIS_DECOMP_BEFORE) $(ANALYSIS_DECOMP_AFTER)
-#   	uv run python -m aedist.tabulate_decomposition_fix --output $@
+# tab_decomposition_fix.tex: rule restored by ticket 0424 (frozen by 0421 —
+# original reconciliation CSVs were gitignored and never archived). Inputs
+# are the P2 decomp-fix reconciliation CSVs (score.mk decomp-fix; gitignored,
+# regenerable from the committed archive).
+# DRIFT (0383): a regenerated table reflects the CURRENT scorer/reference,
+# not those in force when the 0068 table was produced — any diff vs the
+# committed numbers needs explicit author review before committing.
+$(ANALYSIS_GEN)/tab_decomposition_fix.tex: $(ANALYSIS_DECOMP_BEFORE) $(ANALYSIS_DECOMP_AFTER) $(ANALYSIS_REPO_ROOT)/src/aedist/tabulate_decomposition_fix.py
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.tabulate_decomposition_fix --output $@ \
+	    --before-dir $(ANALYSIS_DECOMP_FIX_DIR)/rag_per_fuel \
+	    --after-dir $(ANALYSIS_DECOMP_FIX_DIR)/rag_per_fuel_v2
 
 $(ANALYSIS_GEN)/tab_coherence.tex: $(ANALYSIS_RAG_CSVS) $(ANALYSIS_REPO_ROOT)/src/aedist/tabulate_coherence.py $(ANALYSIS_REPO_ROOT)/src/aedist/coherence.py
 	@mkdir -p $(dir $@)
@@ -676,6 +684,7 @@ aggregation-sweep: $(ANALYSIS_AGG_SWEEP_TEX)
 
 RENDER_REPORT_TABLES := \
 	$(ANALYSIS_GEN)/tab_decomposition.tex \
+	$(ANALYSIS_GEN)/tab_decomposition_fix.tex \
 	$(ANALYSIS_GEN)/tab_census.tex \
 	$(ANALYSIS_GEN)/macros.tex \
 	$(ANALYSIS_GEN)/macros_census.tex \
@@ -1051,9 +1060,10 @@ all: report-tables report-figures chart-figures self-consistency \
 
 # --- Clean: remove all P3 render outputs (ticket 0360) ----------------------
 # The deletion set is sourced from the SAME variables used by the grouping
-# targets above — never a hand-listed glob that could drift from actual targets
-# and delete the FROZEN tab_decomposition_fix.tex (which has no rule, so it
-# appears in no variable here). Also removes P3-internal intermediates
+# targets above — never a hand-listed glob that could drift from actual
+# targets and delete an artifact without a rule. (tab_decomposition_fix.tex
+# was such a FROZEN case until ticket 0424 restored its producer rule; it is
+# now a regular RENDER_REPORT_TABLES member.) Also removes P3-internal intermediates
 # (variance_decomposition.json, tradeoff.csv) whose only consumers are render
 # targets; they are NOT P2 outcomes (those never get cleaned — see ticket body).
 #

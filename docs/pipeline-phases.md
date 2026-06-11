@@ -152,7 +152,7 @@ prevents recurrence:
 |------|-----|-------------|
 | `tab_coherence.tex` (render.mk) | Repointed wildcard + `--input` to `archive/outputs/rag_extract` | PASS (15 models, identical) |
 | self-consistency (score.mk `SCORE_SC_INPUT`) | Repointed to `archive/outputs/rag_extract` (was doubly stale: `rag` renamed to `rag_extract` + archived) | NOT RUN (writes measurements.jsonl — 0383 hazard) |
-| `tab_decomposition_fix.tex` (render.mk) | FROZEN — reconciliation CSVs gitignored (c14136ff), never archived; rule removed, added to `FROZEN_ALLOWLIST`; reproducibility restoration deferred | N/A (committed table is correct, ticket 0068) |
+| `tab_decomposition_fix.tex` (render.mk) | UNFROZEN by 0424 — P2 `decomp-fix` step (score.mk) reconciles archived raw replies into `experiments/derived/decomp_fix/`; render rule restored, `FROZEN_ALLOWLIST` entry removed | DRIFT — regenerated table reflects current scorer/reference (post-#547 matcher, v2 reference); frozen 0068 numbers kept pending author decision (0424 PR) |
 
 ## Spot-check coverage (other generated paths in the DAG)
 

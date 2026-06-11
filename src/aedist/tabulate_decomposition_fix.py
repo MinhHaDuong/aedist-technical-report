@@ -24,12 +24,12 @@ from .tabulate_utils import format_model_name
 log = logging.getLogger(__name__)
 
 _DEFAULT_OUTPUT = Path("report/inputs/generated/tab_decomposition_fix.tex")
-# Reconciliation CSVs were gitignored (c14136ff) and never archived. The
-# defaults point at the archive dirs where the raw JSONs live, but the
-# reconciliation_*.csv files are NOT present — they were a derived product
-# of evaluation. The committed tab_decomposition_fix.tex is frozen (0421).
-_DEFAULT_BEFORE_DIR = Path("experiments/archive/outputs/rag_per_fuel")
-_DEFAULT_AFTER_DIR = Path("experiments/archive/outputs/rag_per_fuel_v2")
+# The original reconciliation CSVs were gitignored (c14136ff) and never
+# archived; the P2 decomp-fix step (experiments/derived/score.mk, ticket 0424)
+# regenerates them from the archived raw replies in
+# experiments/archive/outputs/rag_per_fuel{,_v2}/ into these derived dirs.
+_DEFAULT_BEFORE_DIR = Path("experiments/derived/decomp_fix/rag_per_fuel")
+_DEFAULT_AFTER_DIR = Path("experiments/derived/decomp_fix/rag_per_fuel_v2")
 
 _RECON_PATTERN = re.compile(r"^reconciliation_(.+)-run(\d+)\.csv$")
 
