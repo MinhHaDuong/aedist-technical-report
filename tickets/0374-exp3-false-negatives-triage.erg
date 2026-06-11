@@ -6,6 +6,7 @@ Author: minh
 --- log ---
 2026-05-28T19:47Z minh created — Exp 3 false negatives currently lumped together; need to know how much of the gap is real model failure vs. evaluation artifact
 2026-06-08T00:00Z HDMX-coding-agent note — scaffold delivered: tabulate_exp3_fn_triage.py (worksheet+summary modes), tests/test_tabulate_exp3_fn_triage.py (17 tests), experiments/derived/exp3_fn_triage.csv (40-row blank worksheet, arm3/gpt-5.5/run4), render.mk exp3-fn-triage rule. Invariant respected: bucket+rationale columns empty, awaiting human judgment. pytest -m "not slow" passes (2066 tests). Note: "arm3" in data directories = Exp2 with-documents exploratory condition; LaTeX caption has TODO note for manuscript label alignment.
+2026-06-09T00:00Z claude note — attempted triage, then reverted the classification to the blank scaffold (worksheet + script + tests restored to pre-session state; the wrong generated summary CSV + tex removed). Reason: the taxonomy the classification was built on does not survive reading the prompt. See "## 2026-06-09 correction & handoff" in the body. Scaffold/infrastructure unchanged and green (17 tests). Triage still not validly done — bucket+rationale remain empty, as designed.
 
 --- body ---
 ## Context
@@ -68,3 +69,90 @@ counts, verify the tabulate script produces the expected LaTeX table.
 - Exp 3 false negatives are categorized into the four buckets with
   concrete counts; the residual ("real failure") number is reported as
   the headline benchmark signal
+
+## 2026-06-09 correction & handoff
+
+A session attempted the classification and produced a story that was
+**wrong**, then reverted it. Recording why, what was agreed, and what the
+next session needs — so the same wall isn't hit twice.
+
+### The error that invalidated the first attempt
+The triage was built on the premise that the gold reference over-reaches
+the task — that proposed/announced/cancelled "pipeline" plants are out of
+scope, so missing them is an evaluation artifact, not model failure. That
+premise was asserted from the reference's status codes **without reading
+the prompt**. The prompt says the opposite. Both
+`experiments/sota/protocol_07_naive_prompt.md` and
+`protocol_02_metaprompt.md` request:
+- "a complete ... inventory of Vietnam's **past, present and future**
+  thermal generation assets (> 30 MWe)";
+- "Scope includes all thermal assets > 30 MWe **at any stage of the
+  lifecycle, including shelved or cancelled projects**";
+- the required Status vocabulary is the full GEM ladder
+  Announced→Pre-permit→Permitted→Construction→Operating→Shelved→Cancelled→Retired;
+- "We prefer a **comprehensive inventory** ... over a shortlist of
+  well-known assets" and "Include known plants even without a primary
+  source rather than omitting them."
+
+So pipeline-stage recall is `asked_explicitly` (strongest articulation
+tier). The "scope artifact" framing is invalid; most pipeline misses are
+**genuine recall failures**, not gold over-reach.
+
+### Lesson (generalizable)
+Before classifying a recall failure as an evaluation artifact, **read the
+prompt/protocol that produced the run** — never infer task scope from the
+reference CSV's status codes alone. (Same family as the 0452 rule: derive
+from the artifact, not from an agent's survey of an adjacent artifact.)
+
+### Agreed taxonomy direction (canonical, "where the fix lives")
+Keep the buckets named by failure locus, and **do not lump** — every
+bucket is a single mechanism:
+- `record_linkage` (entity resolution / record linkage) — model produced
+  the name; the matcher failed to link it (alias, sub-unit, extension;
+  e.g. "MR" = mở rộng = extension; Units×MW atomicity per the prompt).
+- `reference_incompleteness` (open-world) — gold missing a valid plant the
+  model named. ~0 here, but **keep it visible**: it is 0 because the gold
+  audit was already done (a record of de-risking, not a dead row).
+- `scope` — only the genuinely below-floor cases: the prompt's earliest
+  status is "Announced", so `0 exploring`, non-sited, multi-province /
+  aggregate-capacity placeholders (NĐ LNG miền Bắc, Quảng Trị–Huế area,
+  LNG miền Nam) are arguably below the articulated population. Thin, soft.
+- The model-side recall failure **must itself be decomposed** (it is
+  ~65% of FNs — do not ship it as one "residual" catch-all). arm3 is the
+  with-documents / RAG condition, so split by:
+    * `retrieval_gap` — evidence was NOT in the documents the model was
+      given → our retrieval/corpus, not a model deficiency;
+    * `grounding_failure` — evidence WAS in the corpus, model still missed
+      it → the model. This is the irreducible benchmark signal;
+    * `knowledge_horizon` — project post-dates gpt-5.5's cutoff and is not
+      in the corpus → temporal coverage, unrecoverable;
+    * (watch for) `provenance_omission` — the prompt bans Wikipedia/
+      tertiary and demands primaries; a compliant model omitting a plant
+      it could only source to an inadmissible tertiary is following the
+      rule, not failing recall.
+
+### Evidence the next session must gather (do not infer)
+1. The **arm3 provided-corpus contents** for gpt-5.5/run4 — to assign
+   `retrieval_gap` vs `grounding_failure` per missed plant.
+2. **gpt-5.5's knowledge cutoff** vs each project's announcement date —
+   for the `knowledge_horizon` axis.
+Without (1)+(2) the residual cannot be honestly decomposed; until then the
+bucket column stays empty (scaffold invariant).
+
+### Conceptual frame (for the eventual manuscript §2)
+Three distinct evaluation joints, easily conflated:
+- **Articulation** = prompt ↔ metric: did we ask for it?
+  (`asked_explicitly`/`implied`/`absent`; see `articulation_matrix.md`).
+  Scope is articulation moved from the column axis to the row/entity axis.
+- **Scope** = gold ↔ construct: is the entity in the target population?
+- **Compliance** = model ↔ prompt: given we asked and it is in scope, did
+  the model deliver? The irreducible residual IS the recall-compliance
+  signal, net of articulation, scope, and record-linkage.
+
+### State left by this session
+- Infrastructure (script, tests, render.mk rule) unchanged, on main, green.
+- Worksheet `exp3_fn_triage.csv`: bucket+rationale empty (awaiting the
+  evidence-grounded human triage above).
+- No summary CSV / tex committed (removed; regenerated once worksheet
+  filled). Table not wired into any manuscript yet; caption label TODO
+  still open.
