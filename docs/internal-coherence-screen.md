@@ -86,8 +86,8 @@ HIGH. `qwen3.6-flash-run5.csv`: 496 rows, every one 1200.0 MW and
 norm in strong runs too — claude-sonnet-4.6 stamps the run date on every row
 (median asof_distinct = 1). This is also why its
 `temporality_plausible_range` read 0.0 at the time of this analysis: an
-annotation rule (`all_identical`), not a failure — ticket 0505 has since
-removed that rule, so a uniform plausible as-of year now scores normally. A
+annotation rule (`all_identical`), not a failure — ticket 0505 removed that
+rule, so a uniform plausible as-of year now scores normally. A
 variability requirement on as-of would falsely reject top models.
 
 ## Design implication — two-level scoring (author, 2026-06-06)

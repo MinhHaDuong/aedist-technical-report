@@ -314,6 +314,8 @@ def test_temporality_1979_fails_and_1980_passes_plausible_range() -> None:
 def test_uniform_plausible_asof_is_not_failed() -> None:
     """A uniform but plausible as-of year is an honest freshness claim for a
     parametric dump, not a degeneracy — it must not score 0 (ticket 0505)."""
+    # 80 rows: realistic full-inventory size, mirroring the misfire case
+    # (claude-sonnet-4.6 run1 stamped "2023" on all 87 rows).
     rows = [{"name": f"P{i}", "status_as_of": "2023"} for i in range(80)]
     result = score_temporality(rows)
     assert result.plausible_range == 1.0  # was 0.0 under all_identical
@@ -325,6 +327,8 @@ def test_uniform_implausible_asof_still_flagged() -> None:
     rows = [{"name": f"P{i}", "status_as_of": "1850"} for i in range(80)]
     result = score_temporality(rows)
     assert result.plausible_range == 0.0
+    # The 0 comes from the normal plausible fraction, not a special-case rule.
+    assert result.plausible_range_annotation is None
 
 
 def test_empty_total_mwe_counted_absent() -> None:
