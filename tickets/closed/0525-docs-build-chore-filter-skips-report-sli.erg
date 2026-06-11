@@ -2,10 +2,12 @@
 Title: docs-build chore filter skips report+slides build on mixed ticket diffs
 Created: 2026-06-10
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #950
 
 --- log ---
 2026-06-10T22:03Z HDMX-coding-agent created
 
+2026-06-11T08:53Z HDMX-coding-agent closed — autoclosed — PR #950
 --- body ---
 ## Context
 `.github/workflows/docs-build.yml` has a `changes` job (dorny/paths-filter@v3,
