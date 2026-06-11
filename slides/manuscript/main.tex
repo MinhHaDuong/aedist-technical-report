@@ -297,8 +297,8 @@ philosophy-of-science empirical adequacy
   aggregate totals match subtotals, capacities are non-negative,
   duplicate units are counted once. Externally, the dataset must remain
   compatible with other available knowledge --- units, orders of
-  magnitude, locations, technology types, and commissioning dates all
-  plausible. A coherent dataset identifies conflicts between sources
+  magnitude, locations, technology types, and commissioning dates should
+  all be plausible. A coherent dataset identifies conflicts between sources
   rather than silently overwriting them. A weak working test is whether
   repeated runs of the same system agree with one another
   \citep{Wang2022:self-consistency}; the stronger requirement is
@@ -388,8 +388,8 @@ Figure~\ref{fig:capability-timeline} is the date the framework ×
 trained-model × product triple first appears in a publicly available
 commercial product.
 
-The integrations are by now familiar; each maps to a row of
-Figure~\ref{fig:capability-timeline}:
+Each row of Figure~\ref{fig:capability-timeline} corresponds to one
+integration:
 
 \begin{itemize}
 \item
@@ -429,7 +429,7 @@ casting the problem into a query the system can answer. The
 articulation is double: the problem must be cast as the analyst's
 question, and the question as the LLM prompt. The LLM must answer the
 question asked and follow the prompt; but the question must also match
-the problem, and the two links fail independently. A failure of the
+the problem, and either link can fail on its own. A failure of the
 first link is the \emph{Type-III error} \citep{Mitroff1974}: solving
 the wrong problem --- in LLM work, a well-executed answer to a
 mis-posed question. Prompt engineering is the craft that addresses the
@@ -440,7 +440,7 @@ extractor does not recognise produces a missing value indistinguishable
 from a genuine coverage gap (developed in §\ref{sec:discussion}). The
 experiments exercise articulation through structured prompts
 (§\ref{sec:exp1} and §\ref{sec:exp2}); the verbatim prompts are
-reproduced in the protocol annexes \ref{sec:annex-exp1} and
+reproduced verbatim in \ref{sec:annex-exp1} and
 \ref{sec:annex-exp2}.
 
 \begin{figure}
@@ -451,9 +451,9 @@ capability is a feature of the lab's public commercial product, not a
 property of the underlying model. Each row is a capability feature (1
 chat LLM → 8 multi-agent recursion); each marker places when the named
 lab first shipped that feature in a consumer-facing product. The figure
-reads as a capability checklist for the experiments: a lab's position
-on each row is the capability set its system brings to §\ref{sec:exp1}
-and §\ref{sec:exp2}. Source: author's compilation; per-lab primary
+sets the experimental conditions: a lab's position on each row is the
+capability set its system brings to §\ref{sec:exp1} and
+§\ref{sec:exp2}. Source: author's compilation; per-lab primary
 announcements documented in
 \ref{sec:annex-rollout}.}\label{fig:capability-timeline}
 \end{figure}
