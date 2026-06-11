@@ -1,0 +1,63 @@
+%erg 0.1
+Title: Manuscript methods & figure-prose rework (reading-1 annotations)
+Created: 2026-06-11
+Author: HDMX-coding-agent
+Closed: autoclosed — PR #977
+
+--- log ---
+2026-06-11T12:30Z HDMX-coding-agent created from author reading-1 annotations (main+hdm.pdf p6-9)
+
+2026-06-11T11:05Z blocked on 0524 — structural rewrites run LaTeX-native post-conversion (author decision)
+2026-06-11T14:00Z HDMX-coding-agent note blocker 0524 closed — Blocked-by removed.
+2026-06-11T16:05Z HDMX-coding-agent imagine scope = main.tex §quality (266-365) + §capability (366-450) + fig:capability-timeline caption; items 3-7 all target fig:capability-timeline by content match (ticket's "Figure 3" is a build-numbering artifact)
+2026-06-11T16:05Z HDMX-coding-agent imagine item 2 disposition: readability surgery on the §quality enumerate only; glossary consolidation waived — glossary block is 0537 territory (its item 2 relocates the concepts paragraph); revisit post-0537 if still wanted
+2026-06-11T16:05Z HDMX-coding-agent imagine item 7 float fix = \clearpage before \section{Experiment 1}; no placeins package (YAGNI); take-home reframed as capabilities-as-experimental-variables with forward-refs to sec:exp1/sec:exp2
+2026-06-11T16:25Z HDMX-coding-agent plan 9 edits on slides/manuscript/main.tex: (1-2) trim coherence+provenance enumerate items, keep Wang2022:self-consistency; (3) screening-logic paragraph after the enumerate; (4) assertive envelope-led §capability opening; (5) integrations paragraph moved before the figure, bullet-list option; (6) articulation rewrite — drop anteriority claim, double articulation, type-III, prompt engineering, forward-refs exp1/exp2 + annex-exp1/annex-exp2; (7) caption surgery — five leading AI labs, capability=product feature, drop legend + no-claim, capabilities-as-variables take-home, source=author+annex-rollout; (8) \clearpage before sec:exp1; (9) transition rewrite. Verify: tectonic build + test_manuscript_crossref + sharpened greps.
+2026-06-11T16:40Z HDMX-coding-agent verify-feasibility PASS — all 16 mechanical checks green; corrections: "no claim is made" exists only in the caption (not in annex-rollout — drop without compensation per author directive); Wang2022:self-consistency cited only at the coherence item (must survive the trim); \clearpage baseline 0
+2026-06-11T15:53Z HDMX-coding-agent execute started — raid worktree
+2026-06-11T16:55Z HDMX-coding-agent item 1 implemented — screening-logic paragraph added after the §quality enumerate: accuracy alone needs the gold reference, the three reference-free dimensions estimate it where correlated, forward-ref sec:exp1
+2026-06-11T16:55Z HDMX-coding-agent item 2 implemented (partial) — coherence item trimmed to ~6 sentences (two-axis taxonomy cut), provenance to ~5 (graduated-evidence enumeration + satellite tangent cut); glossary consolidation waived per imagine disposition (0537 territory)
+2026-06-11T16:55Z HDMX-coding-agent item 3 implemented — §capability opens with the envelope idea then the four axes, assertive "Figure~\ref shows one projection"; envelope/conditioning paragraph deduplicated
+2026-06-11T16:55Z HDMX-coding-agent item 4 implemented — articulation paragraph rewritten in author tone: anteriority claim dropped (no replacement), double articulation problem→question→prompt, Type-III expanded (Mitroff1974 kept), prompt engineering named, confound sentence condensed, forward-refs sec:exp1/sec:exp2 + annexes; verbatim-prompt inclusion itself is 0539
+2026-06-11T16:55Z HDMX-coding-agent item 5 implemented — integrations paragraph moved before articulation and the figure, recast as itemize mapping to figure rows; all 8 citation keys preserved; bare annex-rollout ref kept
+2026-06-11T16:55Z HDMX-coding-agent item 6 implemented — post-figure sentence rewritten as 2-sentence transition: envelope = experimental conditions, quality bar = empirical question, exp1 floor / exp2 frontier
+2026-06-11T16:55Z HDMX-coding-agent item 7 implemented — caption: "five leading AI labs" (no Experiment-1 cross-ref), capability = public-commercial-product feature, markers legend + no-claim sentence deleted, take-home = capabilities-as-experimental-variables checklist, source = author's compilation + annex-rollout; \clearpage inserted before sec:exp1
+2026-06-11T16:55Z HDMX-coding-agent verified — tectonic build 0 undefined refs/citations, test_manuscript_crossref 3/3, adherence 241 passed, all 16 sharpened greps green
+2026-06-11T16:18Z HDMX-coding-agent closed — autoclosed — PR #977
+--- body ---
+## Context
+Author reading-1 directives on the quality-bar section and Figures 2-3 prose.
+Sequenced after the 0524 LaTeX conversion.
+
+## Actions
+1. **Key methodological idea, currently buried** (p6): the first quality
+   dimension requires a gold reference list; the other three do not. If
+   correlated, reference-free indicators can estimate the first. Introduce
+   this idea explicitly — it is the paper's screening logic.
+2. **Quality-bar prose** (p6): encyclopedic, poor readability — consider
+   consolidating with the glossary.
+3. **Figure 2 stance** (p6): replace hedging prose with assertive "Figure 2
+   shows…", nitpick details afterwards. The central idea is drowned in
+   before/after prose (p7) — surface it; move the relevant paragraph to the
+   Figure 2 intro.
+4. **Problem-analyst-LLM paragraph** (p7): worth a full paragraph, rewritten
+   in the author's tone. Drop the anteriority claim (we don't do it either).
+   The articulation is double: problem→analyst→LLM. The LLM must answer the
+   question and follow the prompt; but the question must match the problem.
+   Discuss type-III error more; mention prompt engineering. Include a verbatim
+   prompt later in the article (see 0539) and refer to it here; forward-ref
+   the experimental sections and protocol annexes.
+5. **Figure-explanation paragraph** (p7): move earlier; clear prose, possibly
+   a bullet list matching the figure; simpler annex reference.
+6. **Transition** (p7): reformulate flagged paragraph as a transition.
+7. **Figure 3 / capabilities table** (p8): float must clear before section 5.
+   No cross-ref to Experiment 1 — just "five leading AI labs". Precision:
+   capability = feature of the lab's public commercial product. Don't repeat
+   the markers legend; drop the "no claim" scaffolding. Rethink the take-home
+   message: is parallel-not-sequential what we want to say? Consider framing
+   capabilities as variables influencing our experimental results.
+   Sources = author, see annex.
+
+## Exit criteria
+- [x] Each annotation implemented or waived with reason in log.
+- [x] Floats placed correctly in the converted LaTeX build.
