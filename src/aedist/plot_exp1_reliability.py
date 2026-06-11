@@ -23,7 +23,8 @@ Ratified definitions (Imagine session 2026-06-09):
 
 The sensitivity sweep (annex companion) varies the gate threshold tau in
 {0.0, 0.1, 0.2, 0.3} (discard run if min dimension <= tau) and the indicator
-set {3 coherence-only, 7 discriminating, 12 all reference-free}, reporting per
+set {3 coherence-only, data-driven discriminating (6 on the current CSV; the
+ticket's "7" was a pre-0505 enumeration), 12 all reference-free}, reporting per
 cell the number of disqualified models (reliability <= 1), whether that set
 equals the baseline trash floor, and Spearman(accuracy, reliability).
 
