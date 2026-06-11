@@ -45,10 +45,10 @@ def test_no_synopsis_framing():
 def test_abstract_present_and_leads_with_frontier():
     """Abstract must be present and lead with the frontier-falls-short result."""
     text = body()
-    assert "\\textbf{Abstract.}" in text, (
-        "no abstract found in main.tex — add a structured abstract"
+    assert "\\begin{abstract}" in text, (
+        "no abstract environment found in main.tex — add a structured abstract"
     )
-    abstract_block = text[text.find("\\textbf{Abstract.}") :][:2200]
+    abstract_block = text[text.find("\\begin{abstract}") :][:2200]
     assert "frontier" in abstract_block.lower() or "sota" in abstract_block.lower(), (
         "abstract does not mention frontier agents"
     )
