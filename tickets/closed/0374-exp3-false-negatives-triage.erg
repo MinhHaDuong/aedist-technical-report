@@ -2,6 +2,7 @@
 Title: Trier les faux négatifs de l'exp 3 (comparateur, liste, définition, résidu)
 Created: 2026-05-28
 Author: minh
+Closed: autoclosed — PR #993
 
 --- log ---
 2026-05-28T19:47Z minh created — Exp 3 false negatives currently lumped together; need to know how much of the gap is real model failure vs. evaluation artifact
@@ -10,6 +11,7 @@ Author: minh
 
 2026-06-12T09:30Z claude note — triage done, evidence-grounded per the 2026-06-09 handoff: gathered (1) the arm3 provided corpus (evidence_packs/all18tables.yaml → data/rag_corpus, full 18-table pack, so no retrieval split — the question per plant is corpus-presence) and (2) per-plant presence in the gpt-5.5/run4 output, then judged all 40 FNs row by row with rationale. Result: comparateur 16 (40%), liste 0 (audit de-risking trace), définition 6 (15%), résidu 18 (45%) — residual decomposed in rationales: 11 grounding failures (evidence in corpus, no row), 6 parametric recall failures (not in corpus), 1 provenance omission (Hải Phòng LNG, PDP8-2025, model knows but withholds absent admissible source). Summary CSV + tex regenerated via make -f experiments/render.mk exp3-fn-triage; report.tex Discussion subsection added (sec:fn-triage) with the headline: residual = 18/40, the apparent recall gap overstates model failure ~2×. Note on the ≥50 criterion: the best run has exactly 40 FNs — the population is exhausted, the n=50 target exceeds it.
 
+2026-06-11T23:48Z HDMX-coding-agent closed — autoclosed — PR #993
 --- body ---
 ## Context
 
