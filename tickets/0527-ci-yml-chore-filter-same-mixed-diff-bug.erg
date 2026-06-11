@@ -1,0 +1,46 @@
+%erg 0.1
+Title: CI.yml chore filter has the same mixed-diff skip bug fixed in docs-build (0525)
+Created: 2026-06-11
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-11T09:00Z HDMX-coding-agent created during /review-pr 950
+
+--- body ---
+## Context
+PR #950 (ticket 0525) fixed `.github/workflows/docs-build.yml`: under
+dorny/paths-filter `predicate-quantifier: every`, a single brace-glob `chore`
+filter is true when ANY changed file matches — so mixed diffs skipped the
+build. The fix inverted the filter to `non-chore: ['**', '!{...}']` gated on
+`!= 'false'`.
+
+`.github/workflows/CI.yml` carries the **identical** old pattern (single
+`chore` brace-glob, `predicate-quantifier: every`, steps gated on
+`chore != 'true'`) and a comment "Kept in sync with docs-build.yml" that is now
+stale. A mixed diff (e.g. ticket file + src/ change) skips lint and tests in
+CI.yml exactly as #938 skipped docs-build.
+
+## Relevant files
+- `.github/workflows/CI.yml` — `changes` job + `chore != 'true'` gates in lint/tests jobs
+- `tests/test_ci_workflow.py` — still asserts the old single-brace-pattern shape
+  (`test_chore_filter_is_single_brace_pattern`, ticket 0377); rewrite to mirror
+  the emulation tests in `tests/test_docs_build_workflow.py` (PR #950)
+- `.github/workflows/docs-build.yml` — the reference implementation after #950
+
+## Actions
+1. Port the `non-chore` inversion from docs-build.yml to CI.yml (same pattern
+   list, gates become `non-chore != 'false'`).
+2. Update the workflow comment; restore "Kept in sync with docs-build.yml"
+   truthfully.
+3. Rewrite `tests/test_ci_workflow.py` filter tests using the
+   `_paths_filter_output` emulation from test_docs_build_workflow.py
+   (consider sharing the helpers).
+
+## Test
+- Red first: mixed diff (`tickets/x.erg` + `src/aedist/util.py`) must yield
+  filter output true (lint/tests run) — fails against current CI.yml patterns.
+
+## Exit criteria
+- [ ] Mixed diffs run lint + tests in CI.yml
+- [ ] Purely-chore diffs still skip
+- [ ] Comment matches behaviour; tests updated
