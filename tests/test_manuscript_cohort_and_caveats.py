@@ -104,6 +104,33 @@ def test_rho_caveat_in_abstract_and_conclusion():
     assert conclusion_caveat in conclusion, "ρ=0.92 caveat missing from conclusion"
 
 
+def test_binding_constraint_framed_as_hypothesis():
+    """Ticket 0532: abstract and conclusion frame the binding-constraint claim
+    as a hypothesis, not a finding.
+
+    The ρ-caveat literals above predate 0532, so reverting the hypothesis
+    framing alone would leave them green — this guard pins the new framing in
+    each region: the abstract's "working hypothesis" opener and conditional
+    evidence framing, the conclusion's "conjecture about why" opener and the
+    conditional recommendation.
+    """
+    md = _md()
+    abstract = md.split("## Introduction {#sec:intro}")[0]
+    conclusion = md.split("## Conclusion {#sec:conclusion}")[1].split("\\appendix")[0]
+    assert "point toward a working hypothesis" in abstract, (
+        "abstract must open the binding-constraint claim as a working hypothesis"
+    )
+    assert "The evidence for the hypothesis is exploratory and unregistered" in abstract, (
+        "abstract must name the equalisation evidence exploratory and unregistered"
+    )
+    assert "the evidence points toward a conjecture about why" in conclusion, (
+        "conclusion must frame the binding-constraint claim as a conjecture"
+    )
+    assert "If the constraint is indeed the documents" in conclusion, (
+        "conclusion recommendation must stay conditional on the hypothesis"
+    )
+
+
 def test_cost_savings_claim_cut():
     """The unsubstantiated cost-savings claim is removed (no committed hours figure)."""
     md = _md()
