@@ -44,8 +44,9 @@ bar is thus solidly substantiated for the built fleet and an upper-bound
 heuristic for the forward-looking pipeline — consistent with §4's statement that
 "the pipeline tail, which even Wikipedia barely carries, is the reference's
 unique contribution." The seeding was a deliberate group activity (intern
-content injection from the reference), not a benchmark instrument designed to
-plant the answer key.
+content injection from the reference, done under the author's supervision; the
+author also made minor edits to the pages directly), not a benchmark instrument
+designed to plant the answer key. Author account confirmed 2026-06-11.
 
 ## Adopted release (v2.3, ticket 0395, 2026-06-09)
 
@@ -296,7 +297,10 @@ but is out of scope for the current article.
 **Raw input.** `data/reference/gem_units.csv` (308 rows) is the tracked GEM
 export (Global Energy Monitor, Global Coal Plant Tracker and Gas Plant Tracker,
 Vietnam). Source: manual export from gem.wiki; the export date and URL are not
-stamped. The file is committed as the frozen comparator for the cross-check and
+stamped. Best-supportable bound (established 2026-06-11 from version-control
+history): the file entered version control
+on 2026-04-02 (commit `52f3ec7b`), so the snapshot was exported no later than
+that date. The file is committed as the frozen comparator for the cross-check and
 is NOT updated via `raw/import.sh` — it follows the snapshot-on-change pattern
 but is managed manually since there is no automated GEM import pipeline.
 
