@@ -801,6 +801,17 @@ $(ANALYSIS_GEN)/fig_exp1_recognition_matrix_portrait.pdf: $(ANALYSIS_EXP1_BATCH2
 	    --reference $(ANALYSIS_EXPERT_REF) \
 	    --output $@
 
+# French-label portrait variant for the report annex (ticket 0503): status
+# band labels in FR, page titles stay EN (matches the landscape `_fr`
+# precedent — only band/margin labels are localised).
+$(ANALYSIS_GEN)/fig_exp1_recognition_matrix_portrait_fr.pdf: $(ANALYSIS_EXP1_BATCH2_RECORDS) $(ANALYSIS_EXPERT_REF) $(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp1_matrix_portrait.py $(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp1_matrix.py $(ANALYSIS_REPO_ROOT)/src/aedist/exp1_recognition.py
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.plot_exp1_matrix_portrait \
+	    --records-glob "$(ANALYSIS_EXPERIMENTS_DIR)/outputs/exp1_batch2/*.record.json" \
+	    --reference $(ANALYSIS_EXPERT_REF) \
+	    --output $@ \
+	    --lang fr
+
 # Exp2 recognition matrices (ticket 0449): one matrix per arm (four figures),
 # same layout as the Exp1 matrix (status group column bands, FP left panel).
 # Derives per-(run x plant) recognition from the Exp2 mart JSONL + paired
@@ -960,6 +971,7 @@ RENDER_CHART_FIGURES := \
 	$(ANALYSIS_GEN)/fig_exp1_recognition_matrix_strong.pdf \
 	$(ANALYSIS_GEN)/fig_exp1_recognition_matrix_top.pdf \
 	$(ANALYSIS_GEN)/fig_exp1_recognition_matrix_portrait.pdf \
+	$(ANALYSIS_GEN)/fig_exp1_recognition_matrix_portrait_fr.pdf \
 	$(ANALYSIS_GEN)/fig_exp2_recognition_matrix_naive.pdf \
 	$(ANALYSIS_GEN)/macros_exp2_matrix_naive.tex \
 	$(ANALYSIS_GEN)/fig_exp2_recognition_matrix_optimised.pdf \
