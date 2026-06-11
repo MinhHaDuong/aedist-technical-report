@@ -255,7 +255,7 @@ audience-free definition; the reference is built as the superset so that
 each downstream use can take the perimeter it needs, which is why the
 speculative tail is kept rather than pruned.
 
-The paper takes a problem the three aggregators do not: extracting a
+The paper addresses a problem the three aggregators do not: extracting a
 complete, sourced inventory for a country where the facts are dispersed
 across heterogeneous documents, partly in a non-Latin script, and where
 no authoritative single-source aggregate exists. That problem ---
@@ -391,7 +391,7 @@ surfaces, code execution, tool use, and recursion all live in the
 runtime that wraps the model. What the model contributes is
 \emph{conditioning} --- a lab's investment in training the model to
 exploit retrieved documents, tool calls, long reasoning chains, and
-delegated sub-tasks is what lets it leverage each surface when the
+delegated sub-tasks is what lets it use each surface when the
 framework exposes it. Each marker in
 Figure~\ref{fig:capability-timeline} is the date the framework ×
 trained-model × product triple first appears in a publicly available
@@ -567,7 +567,8 @@ thermal reference: each bar is one run; family-coloured segments to the
 right are correctly identified plants (TP), red segments to the left are
 unmatched plants (FP: extracted but not in the reference). The dashed
 green line marks the 177-plant reference; the light-grey dotted line
-marks Wikipedia's light-reviewed coverage of the reference (73\%) ---
+marks Wikipedia's light-reviewed coverage of all 177 reference plants
+(73\%, 130/177) ---
 the seeded recall bar every model should clear, since that content sat
 in the training corpus. Models grouped on the vertical
 axis.}\label{fig:direct-base}
@@ -671,7 +672,11 @@ provider under a per-session cap of 50K tokens / \$3 (Phase B); this
 constitutes a simple harness --- an LLM orchestrator (DeepSeek
 classifier) controlling a loop with the tested LLM as the tool. The
 naive-vs-optimised contrast isolates the protocol's contribution over
-raw model capability. Row-level F1 against the 177-plant reference is
+raw model capability. The naive arm is an independent sweep, not a
+re-run of the §\ref{sec:exp1} parametric protocol, so its scores are not
+directly comparable to §\ref{sec:exp1}'s per-model numbers;
+within-Experiment-2 comparisons all use this common arm-1 sweep as their
+baseline. Row-level F1 against the 177-plant reference is
 now scored for all four arms (Table~\ref{tbl:exp2-2x2}); cross-model
 judging on the four §\ref{sec:quality} dimensions remains reserved for
 post-conference analysis (Phase C).
@@ -817,7 +822,7 @@ keeps an organised memory between runs instead of starting from scratch
 at each prompt. The equalisation result in §\ref{sec:exp2} sharpens the
 target: once the agents share a good document set, single-shot
 performance converges and the binding constraint shifts from model
-capability to document quality. The leverage is therefore in the corpus
+capability to document quality. The value is therefore in the corpus
 and the sourcing process --- assembling, curating, and resolving the
 documents --- rather than in chasing a stronger model. That is precisely
 what a stateful pipeline invests in: a managed, auditable knowledge base
@@ -848,13 +853,13 @@ projections --- are where language-model reasoning adds genuine value.
 
 To our knowledge, no published benchmark or system targets open-world
 enumeration of a national asset class with per-cell provenance at this
-granularity. To our knowledge, the conjunction of per-cell provenance
-with per-cell temporal validity in LLM-augmented inventories has not
-been published; demonstrating it is part of the contribution we aim for
-in the follow-on paper.
+granularity. Nor did we find a published demonstration of the
+conjunction of per-cell provenance with per-cell temporal validity in
+LLM-augmented inventories; demonstrating it is part of the contribution
+we aim for in the follow-on paper.
 
-\textbf{Pooling runs by simple union more than doubles recall, at no new
-collection cost.} The 14-model exp1\_batch2 cohort (a subset of the
+\textbf{Pooling runs by simple union more than doubles recall relative
+to the single-run mean (2.4×), at no new collection cost.} The 14-model exp1\_batch2 cohort (a subset of the
 16-model Experiment 1 sweep, dropping \texttt{qwen3.6-27b} and
 \texttt{qwen3.6-plus}; see the cohort note in §\ref{sec:exp1}) allows a
 controlled evaluation of pooling recipes without any new API calls: a 4
@@ -945,6 +950,13 @@ four-section prompt in §\ref{sec:exp1} is designed to close the
 articulation gap; the residual F1 deficit is more likely to reflect true
 coverage and freshness limits than articulation failures. But this
 remains an assumption, not a measured separation.
+
+\textbf{Interday drift is an unquantified variance source.} Beyond the
+5-rep within-session spread, provider-side silent movement --- routing
+changes, checkpoint updates --- shifts scores at fixed call shape and
+seed: the top-up canary observed shifts up to \(\Delta\)F1 = 0.289 over
+a 24-hour window (qwen3.6-27b, \ref{sec:annex-exp1}), an interday
+variance the design observes but does not quantify.
 
 \textbf{Refusal is evidence about the standard.} In the archived
 baseline sweep (prompt \texttt{p1\_base}; runs preserved in
@@ -1471,7 +1483,8 @@ it for sampling RNG, Mistral and DeepSeek treat it as advisory. The
 mixture-of-experts (MoE) entries (gpt-oss-*, mistral-large-2512,
 qwen3.6-35b-a3b, qwen3.6-plus, qwen3-max-thinking, deepseek-v4-pro,
 deepseek-v4-flash) carry residual non-determinism even at T=0 + seed
-pinning, characterised in earlier in-project work; the 5-repeat budget
+pinning, characterised in the post-fix top-up and interday-variability
+sub-section below; the 5-repeat budget
 surfaces this as observed within-model variance rather than treating it
 as noise to be eliminated. We did not find an external characterisation
 of MoE non-determinism for multi-row structured outputs at deterministic
