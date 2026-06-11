@@ -662,7 +662,7 @@ artifact: \texttt{experiments/derived/exp1\_cross\_eval.csv}; gate
 sensitivity in \ref{sec:annex-exp1}.}\label{fig:reliability}
 \end{figure}
 
-\section{Experiment 2: the commercially available frontier still falls short}\label{sec:exp2}
+\section{Experiment 2: frontier agents fall short on the measured quality dimensions}\label{sec:exp2}
 
 How well do state-of-the-art tools perform at producing research-grade
 statistical datasets? The parametric ceiling of §\ref{sec:exp1} is a
@@ -839,8 +839,8 @@ the query matters less than which documents it is handed. The effect is
 specific to single-query prompting --- the multi-turn protocol with the
 same documents does not equalise and in fact degrades Anthropic (0.61 to
 0.38). Equalising at F1 ≈ 0.61 still leaves the cohort short of the
-§\ref{sec:quality} quality bar; it relocates the binding constraint from
-model capability to document quality rather than removing it. Extending
+§\ref{sec:quality} quality bar; it suggests the binding constraint lies
+in document quality rather than model capability, without resolving it. Extending
 these observations to a wider model set (Sonnet, Mistral Medium/Small,
 DeepSeek) is deferred --- no further API calls were made; the finding
 rests entirely on the four-agent cohort already scored in
@@ -2506,8 +2506,8 @@ The single-model ceiling motivates a stateful architecture --- one that
 keeps an organised memory between runs instead of starting from scratch
 at each prompt. The equalisation result in §\ref{sec:exp2} sharpens the
 target: once the agents share a good document set, single-shot
-performance converges and the binding constraint shifts from model
-capability to document quality. The value is therefore in the corpus
+performance converges and the binding constraint appears to shift from
+model capability to document quality. The value is therefore in the corpus
 and the sourcing process --- assembling, curating, and resolving the
 documents --- rather than in chasing a stronger model. That is precisely
 what a stateful pipeline invests in: a managed, auditable knowledge base

@@ -154,9 +154,15 @@ def test_binding_constraint_framed_as_hypothesis():
     framing and the exploratory/unregistered qualifier on the documents
     condition; the conclusion's "conjecture about why" opener and the
     conditional recommendation.
+
+    Ticket 0541 (scoped divergence): the body speaks within-experiment with
+    light epistemic markers — "suggests" in the equalisation paragraph,
+    "appears to" in the fusion section — so a later edit cannot silently
+    revert the body to a flat factual register.
     """
     abstract = _abstract_paragraph()
-    conclusion = body().split("\\section{Conclusion}\\label{sec:conclusion}")[1].split("\\appendix")[0]
+    text = body()
+    conclusion = text.split("\\section{Conclusion}\\label{sec:conclusion}")[1].split("\\appendix")[0]
     assert "point toward a working hypothesis" in abstract, (
         "abstract must frame the binding-constraint claim as a working hypothesis"
     )
@@ -168,6 +174,12 @@ def test_binding_constraint_framed_as_hypothesis():
     )
     assert "If the constraint is indeed the documents" in conclusion, (
         "conclusion recommendation must stay conditional on the hypothesis"
+    )
+    assert "suggests the binding constraint lies" in text, (
+        "equalisation paragraph must hedge the relocation claim with 'suggests'"
+    )
+    assert "appears to shift from model capability" in text, (
+        "fusion section must hedge the constraint-shift claim with 'appears to'"
     )
 
 
