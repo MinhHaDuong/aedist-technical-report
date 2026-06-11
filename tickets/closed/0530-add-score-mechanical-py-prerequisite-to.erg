@@ -2,10 +2,13 @@
 Title: Add score_mechanical.py prerequisite to sota_cross_eval.csv rule
 Created: 2026-06-11
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #990
 
 --- log ---
 2026-06-11T08:35Z HDMX-coding-agent created
+2026-06-11T16:35Z claude note Added score_mechanical.py prereq to sota_cross_eval.csv rule. Sibling sweep added entry-script prereqs to arm1-4 .done stamps (extract_arm_*), exp2_mart (build_exp2_mart.py), and parity rules (tabulate_exp2_arms_runs, extract_exp2_bib, export_exp2_turn_trajectory_csv, build_exp2_mart_views). Depth matches PR #949 precedent: directly-invoked entry script; transitive library modules not enumerated, consistent with the existing self_consistency and exp1 rules. Verified via make -n -W src/aedist/score_mechanical.py; adherence suite green; sota_cross_eval.csv regenerated.
 
+2026-06-11T22:21Z HDMX-coding-agent closed — autoclosed — PR #990
 --- body ---
 ## Context
 
