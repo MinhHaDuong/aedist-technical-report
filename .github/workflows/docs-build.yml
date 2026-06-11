@@ -72,14 +72,6 @@ jobs:
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
           "$HOME/.local/bin/tectonic" --version
 
-      - name: Install pandoc
-        if: needs.changes.outputs.non-chore != 'false'
-        run: |
-          set -euo pipefail
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq pandoc
-          pandoc --version | head -n1
-
       - name: Build report
         if: needs.changes.outputs.non-chore != 'false'
         run: make report
@@ -90,9 +82,10 @@ jobs:
         continue-on-error: true
         run: make slides
 
-      - name: Build manuscript
-        if: needs.changes.outputs.non-chore != 'false'
-        run: make -C slides manuscript/main.pdf
+      # Manuscript is not built in CI: the pandoc-crossref toolchain was never
+      # installed here and the manuscript is moving to a tectonic-built main.tex
+      # (ticket 0524, LaTeX decision 2026-06-11). The conversion ticket re-adds
+      # a manuscript build step when main.tex lands.
 
       - name: Run make check (lint + tests)
         if: needs.changes.outputs.non-chore != 'false'
@@ -107,7 +100,6 @@ jobs:
             report/report.pdf
             slides/slides.pdf
             slides/slides-en.pdf
-            slides/manuscript/main.pdf
           if-no-files-found: warn
           retention-days: 14
 
