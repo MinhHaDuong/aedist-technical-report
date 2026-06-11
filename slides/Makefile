@@ -47,7 +47,8 @@ MANUSCRIPT_ASSETS := \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_exp2_arms_comparison.pdf \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_exp2_coverage_certainty.pdf \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_fusion_mvp.pdf \
-	$(LOCAL_ROOT_REPORT_GEN)/fig_exp1_recognition_matrix_portrait.pdf
+	$(LOCAL_ROOT_REPORT_GEN)/fig_exp1_recognition_matrix_portrait.pdf \
+	$(LOCAL_ROOT_REPORT_GEN)/macros_phase_collisions.tex
 
 .PHONY: all clean manuscript translate-slides
 

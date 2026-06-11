@@ -1,0 +1,194 @@
+%erg 0.1
+Title: Validate the rapidfuzz partial_ratio>=90 matcher threshold: false-match estimate on phase-named plants
+Created: 2026-06-11
+Author: HDMX-coding-agent
+Closed: autoclosed — PR #988
+
+--- log ---
+2026-06-11T14:55Z HDMX-coding-agent created — 0534 item 6, waived twice (#968, #971) for lack of artifact; ticketed so the question stops recurring
+2026-06-11T21:40Z HDMX-coding-agent plan — anchors verified, handoff body rewritten with script spec, macro names, Makefile sketch, and tautological test
+
+2026-06-11T21:55Z HDMX-coding-agent note feasibility PASS (10/10 anchors) — ANALYSIS_EXPERT_REF exists at render.mk:111, use it directly in the rule
+2026-06-11T22:52Z HDMX-coding-agent sensitivity t=85: mean_f1=0.4679, n_fuzzy_below=0 (195 runs; 195 structural pairs, 104 veto-blocked, 91 residual)
+2026-06-11T22:52Z HDMX-coding-agent sensitivity t=90: mean_f1=0.4679, n_fuzzy_below=0 (195 runs; 174 structural pairs, 104 veto-blocked, 70 residual)
+2026-06-11T22:52Z HDMX-coding-agent sensitivity t=95: mean_f1=0.4215, n_fuzzy_below=1229 (195 runs; 94 structural pairs, 53 veto-blocked, 41 residual; mean F1 drop 90→95 = 0.046)
+2026-06-11T22:53Z HDMX-coding-agent note residual exposure at t=90 is non-empty (70 pairs): the unit-number veto needs digit tokens on BOTH sides, so base-name vs phase-suffixed siblings ("ca na" vs "ca na 2", "bac lieu" vs "bac lieu 1") and base vs extension/complex variants slip through; realised damage is bounded by the LP's one-to-one assignment and n_fuzzy_below=0, but a digit-asymmetric guard (treat bare base as wildcard-phase) would need a scoring change — new ticket per 0502 precedent, not fixed here
+2026-06-11T22:35Z HDMX-coding-agent closed — autoclosed — PR #988
+--- body ---
+## Context
+
+The LP matcher (`src/aedist/matching/lp.py`, `DEFAULT_SIMILARITY_THRESHOLD = 90`
+at line 70) uses `rapidfuzz.fuzz.partial_ratio >= similarity_threshold` (line 220)
+to decide fuzzy matches. Review item 0534#6 asked for a false-match estimate on
+phase-named plants (e.g. Vũng Áng 1 vs Vũng Áng 2), where partial_ratio is
+structurally high across phases. The item was waived twice (#968, #971) because no
+committed artifact backed a number; the source-concordance table caption
+(`slides/manuscript/main.tex` ~line 1315) says percentages are "upper bounds" with
+no quantification.
+
+Key finding from Imagine phase: the LP already has a unit-number veto
+(`lp.py` lines 203–208) — when both names carry digit tokens that differ, cost is
+set to `2*dummy_cost+1`, making cross-phase assignment structurally impossible in
+the LP. Equivalent guard in `matching/phased.py` `_digit_compatible()` (line 17).
+The ticket is therefore a **documentation-artifact exercise**: measure and commit
+the structural false-match set (pairs the veto blocks) and the realised cross-phase
+rate from run outputs (which is zero at threshold 90, confirmed from the existing
+`experiments/derived/matching_sensitivity.csv`). The sensitivity data already
+exists: F1 is identical at thresholds 75–90 (`n_fuzzy_below = 0`), drops ~0.046
+mean at threshold 95.
+
+## Relevant files
+
+- `src/aedist/matching/lp.py` — `DEFAULT_SIMILARITY_THRESHOLD` (line 70),
+  `_extract_digit_tokens` (line 107), unit-number veto (lines 203–208),
+  `fuzz.partial_ratio` check (line 220)
+- `src/aedist/matching/phased.py` — `_digit_compatible()` (line 17), applied
+  line 159
+- `src/aedist/config.py` — `VN_THERMAL_PLANTS_RELEASE_CSV` (line 17): path to
+  `data/reference/vietnam_thermal_plants_v2_classified.csv`
+- `src/aedist/evaluate.py` — `load_plants_csv()`, `reference_plant_count()`
+- `experiments/derived/matching_sensitivity.csv` — columns:
+  `model,method,run,threshold,f1,precision,coverage,n_matched,n_fuzzy_above,n_fuzzy_below`;
+  already produced by `scripts/sweep_matching_threshold.py`; NOT yet wired into
+  `experiments/render.mk`
+- `report/inputs/generated/macros_source_concordance.tex` — naming style example:
+  `\newcommand{\GemDistinct}{119}` etc; produced by `tabulate_source_concordance.py`
+- `slides/manuscript/main.tex` — concordance upper-bound caveat ~line 1315;
+  threshold description ~lines 1521 and 1567; only one `\input` exists (line 1631)
+- `experiments/render.mk` — concordance rule pattern at lines 882–890
+  (`$(ANALYSIS_GEN)/macros_source_concordance.tex ... &:` grouped target)
+- `experiments/paths.mk` — `ANALYSIS_GEN ?= $(ANALYSIS_REPORT_DIR)/inputs/generated`
+
+## Actions
+
+1. **New script** `src/aedist/analyze_matcher_phase_collisions.py`:
+   - `argparse` entry point; `logging`, no hardcoded paths
+   - CLI flags: `--reference PATH` (default `VN_THERMAL_PLANTS_RELEASE_CSV`),
+     `--sensitivity PATH` (default `experiments/derived/matching_sensitivity.csv`),
+     `--output-csv PATH` (default `report/inputs/generated/tab_phase_collisions.csv`),
+     `--output-macros PATH` (default `report/inputs/generated/macros_phase_collisions.tex`)
+   - Load reference via `load_plants_csv(VN_THERMAL_PLANTS_RELEASE_CSV)` from
+     `aedist.evaluate`
+   - Compute all-pairs partial_ratio matrix using `rapidfuzz.process.cdist`
+     (177×177, not a hand-rolled nested loop)
+   - For each threshold in [85, 90, 95]: the **structural false-match set** =
+     all pairs of distinct plants where `score >= threshold` (raw exposure of the
+     threshold itself — Vũng Áng 1/2 belongs here, per the original ticket test).
+     Each pair carries a `veto_blocked` boolean: True when both names have digit
+     tokens and they differ (the LP veto would fire, lp.py:203–208). The
+     non-blocked subset is the **residual exposure** the LP could actually pick.
+   - CSV columns: `name_a,name_b,partial_ratio,threshold,veto_blocked`
+   - Read `matching_sensitivity.csv`, compute per-threshold mean F1 and sum of
+     `n_fuzzy_below` across all runs at each threshold (85/90/95)
+   - Emit `macros_phase_collisions.tex` with these macros (follow
+     `macros_source_concordance.tex` naming style — PascalCase nouns):
+     - `\PhaseCollisionPairsNinety` — structural pairs ≥ 90 (raw exposure, incl. veto-blocked)
+     - `\PhaseCollisionVetoBlockedNinety` — of those, blocked by the unit-number veto
+     - `\PhaseCollisionResidualNinety` — not veto-blocked (residual exposure)
+     - `\PhaseCollisionPairsEightyFive` / `\PhaseCollisionPairsNinetyFive` — raw exposure at 85 / 95
+     - `\RealisedFuzzyBelowNinety` — total `n_fuzzy_below` at threshold 90 across
+       all runs (expected: 0)
+     - `\ThresholdSensFOneDropNinetyFive` — mean F1 drop from threshold 90 to 95,
+       expressed as a decimal to 3 places (e.g. `0.046`)
+
+2. **Wire into render.mk** after the concordance rule (after line ~890), following
+   the same grouped-target `&:` pattern:
+   ```make
+   $(ANALYSIS_GEN)/tab_phase_collisions.csv \
+   $(ANALYSIS_GEN)/macros_phase_collisions.tex &: \
+       $(ANALYSIS_EXPERT_REF) \
+       $(ANALYSIS_REPO_ROOT)/src/aedist/analyze_matcher_phase_collisions.py \
+       $(ANALYSIS_REPO_ROOT)/experiments/derived/matching_sensitivity.csv
+       @mkdir -p $(dir $@)
+       uv run python -m aedist.analyze_matcher_phase_collisions \
+           --output-csv $(ANALYSIS_GEN)/tab_phase_collisions.csv \
+           --output-macros $(ANALYSIS_GEN)/macros_phase_collisions.tex
+   ```
+   Check whether `ANALYSIS_EXPERT_REF` is defined in paths.mk or render.mk; if not,
+   substitute the literal variable that resolves to
+   `data/reference/vietnam_thermal_plants_v2_classified.csv`.
+
+3. **Add `\input` to main.tex preamble** (after the existing `\input` at line 1631
+   or near preamble macro-include area — follow the single existing `\input` pattern):
+   ```latex
+   \input{../../report/inputs/generated/macros_phase_collisions.tex}
+   ```
+   Asset path is relative to `slides/manuscript/` per tectonic convention.
+
+4. **Edit concordance caveat** in `main.tex` ~line 1315: replace "so the
+   percentages are upper bounds" with a sentence that cites
+   `\PhaseCollisionPairsNinety` (raw exposure), `\PhaseCollisionResidualNinety`
+   (pairs the veto does not block) and `\RealisedFuzzyBelowNinety` (realised) to
+   quantify the cross-phase false-match exposure.
+   Surgical one-sentence edit only; do not reflow the surrounding paragraph.
+   **Rebase onto current `origin/main` immediately before this prose commit** — the
+   reading-1 wave touches main.tex continuously.
+
+5. **Append sensitivity findings to ticket log** (three lines, one per threshold):
+   ```
+   2026-06-11T??Z HDMX-coding-agent sensitivity t=85: mean_f1=X, n_fuzzy_below=0
+   2026-06-11T??Z HDMX-coding-agent sensitivity t=90: mean_f1=X, n_fuzzy_below=0
+   2026-06-11T??Z HDMX-coding-agent sensitivity t=95: mean_f1=X, n_fuzzy_below=N
+   ```
+   (Values already in `matching_sensitivity.csv`; re-derive from the artifact, not
+   from memory.)
+
+## Test
+
+File: `tests/test_analyze_matcher_phase_collisions.py`
+
+**First red test (write before implementing):**
+
+```python
+@pytest.mark.parametrize("name_a,name_b,in_set,veto_blocked", [
+    # Vũng Áng 1 vs 2: high partial_ratio across phases — MUST appear in the
+    # structural false-match set at t=90 (original ticket red test), and MUST
+    # be flagged veto_blocked=True (digit tokens differ → LP veto fires)
+    ("vung ang 1", "vung ang 2", True, True),
+    # A same-plant pair: never in the set (distinct-plants guard)
+    ("vung ang 1", "vung ang 1", False, None),
+])
+def test_structural_set_and_veto_flag(name_a, name_b, in_set, veto_blocked):
+    from aedist.analyze_matcher_phase_collisions import structural_false_matches
+    pairs = structural_false_matches(threshold=90)  # {(a, b): veto_blocked}
+    key = (name_a, name_b) if (name_a, name_b) in pairs else (name_b, name_a)
+    assert (key in pairs) == in_set
+    if in_set:
+        assert pairs[key] == veto_blocked
+```
+
+Anti-tautology requirements: the Vũng Áng case is the original ticket's red
+test (set must be non-empty and contain it at t=90). Additionally assert at
+least one veto_blocked=False pair if the residual set is non-empty on the real
+reference (derive the pair from the generated CSV after implementing, then
+hardcode it); if the residual set is empty at t=90, assert that instead —
+either way the test pins both sides of the veto flag.
+
+## Verification
+
+- [x] `python -m aedist.analyze_matcher_phase_collisions --help` runs without error
+- [x] `report/inputs/generated/tab_phase_collisions.csv` and `macros_phase_collisions.tex`
+      are produced by the script
+- [x] `macros_phase_collisions.tex` contains all five `\newcommand` entries
+- [x] `\RealisedFuzzyBelowNinety` == 0 (confirmed by matching_sensitivity.csv data)
+- [x] `make -C experiments tab_phase_collisions` or equivalent runs to completion
+- [x] `make check` passes (adherence tests + ruff + unit tests)
+- [x] `tectonic slides/manuscript/main.tex` builds without error after prose edit
+
+## Invariants
+
+- Do NOT change `DEFAULT_SIMILARITY_THRESHOLD` or any matcher logic (0502 precedent)
+- Do NOT re-run experiments; read only the committed `matching_sensitivity.csv`
+- The `\input` line for the new macros goes in the preamble, not mid-document
+- All script outputs regenerate on every build run (Makefile rule re-runs when
+  script or reference CSV changes) — required for a `\input`-ed macros file (see
+  `.claude/rules/writing.md` "LaTeX macro includes (tectonic)")
+- `name_clean` column must be present in reference CSV; use `load_plants_csv()`
+  which normalises headers
+
+## Exit criteria
+
+- [x] Artifact + macro committed, Makefile-wired
+- [x] Concordance caveat cites the measured number (prose via macro)
+- [x] Sensitivity at 85/90/95 documented in the ticket log
+- [x] `make check` green

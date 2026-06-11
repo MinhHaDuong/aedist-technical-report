@@ -1,0 +1,464 @@
+name_a,name_b,partial_ratio,threshold,veto_blocked
+an khanh,an khanh - bac giang,100.0,85,False
+an khanh - bac giang,my giang,85.7,85,False
+ba ria 1,ba ria 2,93.3,85,True
+ba ria 1,ba ria gt,93.3,85,False
+ba ria 2,ba ria gt,93.3,85,False
+bac lieu,bac lieu 1,100.0,85,False
+ca mau 1,ca mau 2,93.3,85,True
+ca mau 1,ca mau 3,93.3,85,True
+ca mau 1,"tan thuan – dam doi, ca mau",85.7,85,False
+ca mau 2,ca mau 3,93.3,85,True
+ca mau 2,"tan thuan – dam doi, ca mau",85.7,85,False
+ca mau 3,"tan thuan – dam doi, ca mau",85.7,85,False
+ca na,ca na 2,100.0,85,False
+ca na,ca na 3,100.0,85,False
+ca na 2,ca na 3,92.3,85,True
+cam pha 1,cam pha 2,94.1,85,True
+cam pha 1,cam pha 3,94.1,85,True
+cam pha 2,cam pha 3,94.1,85,True
+dung quat 1,dung quat 2,95.2,85,True
+dung quat 1,dung quat 3,95.2,85,True
+dung quat 1,dung quat special economic zone phase 1,95.2,85,False
+dung quat 1,dung quat special economic zone phase 2,95.2,85,True
+dung quat 2,dung quat 3,95.2,85,True
+dung quat 2,dung quat special economic zone phase 1,95.2,85,True
+dung quat 2,dung quat special economic zone phase 2,95.2,85,False
+dung quat 3,dung quat special economic zone phase 1,95.2,85,True
+dung quat 3,dung quat special economic zone phase 2,95.2,85,True
+dung quat special economic zone phase 1,dung quat special economic zone phase 2,98.7,85,True
+duyen hai 1,duyen hai 2,95.2,85,True
+duyen hai 1,duyen hai 3,95.2,85,True
+duyen hai 1,duyen hai 3 extension,95.2,85,True
+duyen hai 2,duyen hai 3,95.2,85,True
+duyen hai 2,duyen hai 3 extension,95.2,85,True
+duyen hai 3,duyen hai 3 extension,100.0,85,False
+ha tinh,ha tinh formosa plastics steel complex,100.0,85,False
+hai ha chp phase 1,hai ha chp phase 2,97.1,85,True
+hai ha chp phase 1,hai ha chp phase 3,97.1,85,True
+hai ha chp phase 1,hai ha chp phase 4,97.1,85,True
+hai ha chp phase 2,hai ha chp phase 3,97.1,85,True
+hai ha chp phase 2,hai ha chp phase 4,97.1,85,True
+hai ha chp phase 3,hai ha chp phase 4,97.1,85,True
+hai lang,hai lang 2,100.0,85,False
+hai lang,hai lang 3,100.0,85,False
+hai lang 2,hai lang 3,94.7,85,True
+hai phong,hai phong 1,100.0,85,False
+hai phong,hai phong 2,100.0,85,False
+hai phong,hai phong 3,100.0,85,False
+hai phong,hai phong 4,100.0,85,False
+hai phong 1,hai phong 2,95.2,85,True
+hai phong 1,hai phong 3,95.2,85,True
+hai phong 1,hai phong 4,95.2,85,True
+hai phong 1,van phong 1,85.7,85,False
+hai phong 2,hai phong 3,95.2,85,True
+hai phong 2,hai phong 4,95.2,85,True
+hai phong 3,hai phong 4,95.2,85,True
+kien luong 1,kien luong 2,95.7,85,True
+kien luong 1,kien luong 3,95.7,85,True
+kien luong 2,kien luong 3,95.7,85,True
+lng mien bac,mien bac 1,88.9,85,False
+lng mien bac,mien bac 2,88.9,85,False
+lng mien bac,mien bac 3,88.9,85,False
+long an 1,long an 1 phase 2,100.0,85,True
+long an 1,long an 2,94.1,85,True
+long an 1,long an 2 phase 2,94.1,85,True
+long an 1 phase 2,long an 2,94.1,85,True
+long an 1 phase 2,long an 2 phase 2,94.1,85,True
+long an 2,long an 2 phase 2,100.0,85,False
+long phu 1,long phu 2,94.7,85,True
+long phu 1,long phu 3,94.7,85,True
+long phu 2,long phu 3,94.7,85,True
+long son,long son 2,100.0,85,False
+long son,long son 3,100.0,85,False
+long son,long son 4,100.0,85,False
+long son,long son chemical,100.0,85,False
+long son,nghi son,85.7,85,False
+long son,nong son,93.3,85,False
+long son 2,long son 3,94.7,85,True
+long son 2,long son 4,94.7,85,True
+long son 2,long son chemical,94.7,85,False
+long son 2,nghi son 2,88.9,85,False
+long son 2,nong son,87.5,85,False
+long son 3,long son 4,94.7,85,True
+long son 3,long son chemical,94.7,85,False
+long son 3,nong son,87.5,85,False
+long son 4,long son chemical,94.7,85,False
+long son 4,nong son,87.5,85,False
+long son chemical,nong son,87.5,85,False
+mien bac 1,mien bac 2,94.7,85,True
+mien bac 1,mien bac 3,94.7,85,True
+mien bac 2,mien bac 3,94.7,85,True
+mien trung 1,mien trung 2,95.7,85,True
+mong duong 1,mong duong 2,95.7,85,True
+mong duong 1,na duong 1,90.0,85,False
+mong duong 2,na duong 2,90.0,85,False
+mui ke ga 1,mui ke ga 2,95.2,85,True
+mui ke ga 1,mui ke ga 3,95.2,85,True
+mui ke ga 2,mui ke ga 3,95.2,85,True
+na duong 1,na duong 2,94.7,85,True
+nghi son,nghi son 1,100.0,85,False
+nghi son,nghi son 2,100.0,85,False
+nghi son,nong son,85.7,85,False
+nghi son 1,nghi son 2,94.7,85,True
+nhon trach 1,nhon trach 2,95.7,85,True
+nhon trach 1,nhon trach 3,95.7,85,True
+nhon trach 1,nhon trach 4,95.7,85,True
+nhon trach 2,nhon trach 3,95.7,85,True
+nhon trach 2,nhon trach 4,95.7,85,True
+nhon trach 3,nhon trach 4,95.7,85,True
+o mon 1,o mon 2,92.3,85,True
+o mon 1,o mon 3,92.3,85,True
+o mon 1,o mon 4,92.3,85,True
+o mon 2,o mon 3,92.3,85,True
+o mon 2,o mon 4,92.3,85,True
+o mon 3,o mon 4,92.3,85,True
+pha lai 1,pha lai 2,94.1,85,True
+pha lai 1,pha lai 3,94.1,85,True
+pha lai 2,pha lai 3,94.1,85,True
+phu my 1,phu my 2.1,93.3,85,False
+phu my 1,phu my 2.1 extension,93.3,85,False
+phu my 1,phu my 2.2,93.3,85,False
+phu my 1,phu my 3,93.3,85,True
+phu my 1,phu my 3.1,93.3,85,False
+phu my 1,phu my 4,93.3,85,True
+phu my 2.1,phu my 2.1 extension,100.0,85,False
+phu my 2.1,phu my 2.2,94.7,85,False
+phu my 2.1,phu my 3,93.3,85,False
+phu my 2.1,phu my 3.1,90.0,85,False
+phu my 2.1,phu my 4,93.3,85,False
+phu my 2.1 extension,phu my 2.2,94.7,85,False
+phu my 2.1 extension,phu my 3,93.3,85,False
+phu my 2.1 extension,phu my 3.1,90.0,85,False
+phu my 2.1 extension,phu my 4,93.3,85,False
+phu my 2.2,phu my 3,93.3,85,False
+phu my 2.2,phu my 4,93.3,85,False
+phu my 3,phu my 3.1,100.0,85,False
+phu my 3,phu my 4,93.3,85,True
+phu my 3.1,phu my 4,93.3,85,False
+quang binh,quang ninh 1,90.0,85,False
+quang binh,quang ninh 2,90.0,85,False
+quang binh,quang ninh 3,90.0,85,False
+quang binh,quang ninh 4,90.0,85,False
+quang binh,uong bi,85.7,85,False
+quang nam,quang ninh 1,87.5,85,False
+quang nam,quang ninh 2,87.5,85,False
+quang nam,quang ninh 3,87.5,85,False
+quang nam,quang ninh 4,87.5,85,False
+quang ninh 1,quang ninh 2,95.7,85,True
+quang ninh 1,quang ninh 3,95.7,85,True
+quang ninh 1,quang ninh 4,95.7,85,True
+quang ninh 2,quang ninh 3,95.7,85,True
+quang ninh 2,quang ninh 4,95.7,85,True
+quang ninh 3,quang ninh 4,95.7,85,True
+quang trach 1,quang trach 2,96.0,85,True
+quang trach 1,quang tri,94.1,85,False
+quang trach 2,quang tri,94.1,85,False
+quang tri,quang tri 1,100.0,85,False
+quang tri,quang tri 2,100.0,85,False
+quang tri,quang tri – hue area,100.0,85,False
+quang tri 1,quang tri 2,95.2,85,True
+quang tri 1,quang tri – hue area,95.2,85,False
+quang tri 2,quang tri – hue area,95.2,85,False
+quynh lap,quynh lap 1,100.0,85,False
+quynh lap,quynh lap 2,100.0,85,False
+quynh lap 1,quynh lap 2,95.2,85,True
+son dong,song doc,85.7,85,False
+son my 1,son my 2,93.3,85,True
+song hau 1,song hau 2,94.7,85,True
+tan phuoc,tan phuoc 1,100.0,85,False
+tan phuoc,tan phuoc 2,100.0,85,False
+tan phuoc 1,tan phuoc 2,95.2,85,True
+thai binh,thai binh 1,100.0,85,False
+thai binh,thai binh 2,100.0,85,False
+thai binh 1,thai binh 2,95.2,85,True
+uong bi,uong bi 1 extension,100.0,85,False
+uong bi,uong bi 2 extension,100.0,85,False
+uong bi 1 extension,uong bi 2 extension,94.7,85,True
+van phong,van phong 1,100.0,85,False
+van phong,van phong phase 1,100.0,85,False
+van phong,van phong phase 2,100.0,85,False
+van phong 1,van phong phase 1,95.2,85,False
+van phong 1,van phong phase 2,95.2,85,True
+van phong phase 1,van phong phase 2,97.0,85,True
+vinh tan 1,vinh tan 2,94.7,85,True
+vinh tan 1,vinh tan 3,94.7,85,True
+vinh tan 1,vinh tan 4,94.7,85,True
+vinh tan 1,vinh tan 4 extension,94.7,85,True
+vinh tan 2,vinh tan 3,94.7,85,True
+vinh tan 2,vinh tan 4,94.7,85,True
+vinh tan 2,vinh tan 4 extension,94.7,85,True
+vinh tan 3,vinh tan 4,94.7,85,True
+vinh tan 3,vinh tan 4 extension,94.7,85,True
+vinh tan 4,vinh tan 4 extension,100.0,85,False
+vung ang 1,vung ang 2,94.7,85,True
+vung ang 1,vung ang 3,94.7,85,True
+vung ang 2,vung ang 3,94.7,85,True
+an khanh,an khanh - bac giang,100.0,90,False
+ba ria 1,ba ria 2,93.3,90,True
+ba ria 1,ba ria gt,93.3,90,False
+ba ria 2,ba ria gt,93.3,90,False
+bac lieu,bac lieu 1,100.0,90,False
+ca mau 1,ca mau 2,93.3,90,True
+ca mau 1,ca mau 3,93.3,90,True
+ca mau 2,ca mau 3,93.3,90,True
+ca na,ca na 2,100.0,90,False
+ca na,ca na 3,100.0,90,False
+ca na 2,ca na 3,92.3,90,True
+cam pha 1,cam pha 2,94.1,90,True
+cam pha 1,cam pha 3,94.1,90,True
+cam pha 2,cam pha 3,94.1,90,True
+dung quat 1,dung quat 2,95.2,90,True
+dung quat 1,dung quat 3,95.2,90,True
+dung quat 1,dung quat special economic zone phase 1,95.2,90,False
+dung quat 1,dung quat special economic zone phase 2,95.2,90,True
+dung quat 2,dung quat 3,95.2,90,True
+dung quat 2,dung quat special economic zone phase 1,95.2,90,True
+dung quat 2,dung quat special economic zone phase 2,95.2,90,False
+dung quat 3,dung quat special economic zone phase 1,95.2,90,True
+dung quat 3,dung quat special economic zone phase 2,95.2,90,True
+dung quat special economic zone phase 1,dung quat special economic zone phase 2,98.7,90,True
+duyen hai 1,duyen hai 2,95.2,90,True
+duyen hai 1,duyen hai 3,95.2,90,True
+duyen hai 1,duyen hai 3 extension,95.2,90,True
+duyen hai 2,duyen hai 3,95.2,90,True
+duyen hai 2,duyen hai 3 extension,95.2,90,True
+duyen hai 3,duyen hai 3 extension,100.0,90,False
+ha tinh,ha tinh formosa plastics steel complex,100.0,90,False
+hai ha chp phase 1,hai ha chp phase 2,97.1,90,True
+hai ha chp phase 1,hai ha chp phase 3,97.1,90,True
+hai ha chp phase 1,hai ha chp phase 4,97.1,90,True
+hai ha chp phase 2,hai ha chp phase 3,97.1,90,True
+hai ha chp phase 2,hai ha chp phase 4,97.1,90,True
+hai ha chp phase 3,hai ha chp phase 4,97.1,90,True
+hai lang,hai lang 2,100.0,90,False
+hai lang,hai lang 3,100.0,90,False
+hai lang 2,hai lang 3,94.7,90,True
+hai phong,hai phong 1,100.0,90,False
+hai phong,hai phong 2,100.0,90,False
+hai phong,hai phong 3,100.0,90,False
+hai phong,hai phong 4,100.0,90,False
+hai phong 1,hai phong 2,95.2,90,True
+hai phong 1,hai phong 3,95.2,90,True
+hai phong 1,hai phong 4,95.2,90,True
+hai phong 2,hai phong 3,95.2,90,True
+hai phong 2,hai phong 4,95.2,90,True
+hai phong 3,hai phong 4,95.2,90,True
+kien luong 1,kien luong 2,95.7,90,True
+kien luong 1,kien luong 3,95.7,90,True
+kien luong 2,kien luong 3,95.7,90,True
+long an 1,long an 1 phase 2,100.0,90,True
+long an 1,long an 2,94.1,90,True
+long an 1,long an 2 phase 2,94.1,90,True
+long an 1 phase 2,long an 2,94.1,90,True
+long an 1 phase 2,long an 2 phase 2,94.1,90,True
+long an 2,long an 2 phase 2,100.0,90,False
+long phu 1,long phu 2,94.7,90,True
+long phu 1,long phu 3,94.7,90,True
+long phu 2,long phu 3,94.7,90,True
+long son,long son 2,100.0,90,False
+long son,long son 3,100.0,90,False
+long son,long son 4,100.0,90,False
+long son,long son chemical,100.0,90,False
+long son,nong son,93.3,90,False
+long son 2,long son 3,94.7,90,True
+long son 2,long son 4,94.7,90,True
+long son 2,long son chemical,94.7,90,False
+long son 3,long son 4,94.7,90,True
+long son 3,long son chemical,94.7,90,False
+long son 4,long son chemical,94.7,90,False
+mien bac 1,mien bac 2,94.7,90,True
+mien bac 1,mien bac 3,94.7,90,True
+mien bac 2,mien bac 3,94.7,90,True
+mien trung 1,mien trung 2,95.7,90,True
+mong duong 1,mong duong 2,95.7,90,True
+mong duong 1,na duong 1,90.0,90,False
+mong duong 2,na duong 2,90.0,90,False
+mui ke ga 1,mui ke ga 2,95.2,90,True
+mui ke ga 1,mui ke ga 3,95.2,90,True
+mui ke ga 2,mui ke ga 3,95.2,90,True
+na duong 1,na duong 2,94.7,90,True
+nghi son,nghi son 1,100.0,90,False
+nghi son,nghi son 2,100.0,90,False
+nghi son 1,nghi son 2,94.7,90,True
+nhon trach 1,nhon trach 2,95.7,90,True
+nhon trach 1,nhon trach 3,95.7,90,True
+nhon trach 1,nhon trach 4,95.7,90,True
+nhon trach 2,nhon trach 3,95.7,90,True
+nhon trach 2,nhon trach 4,95.7,90,True
+nhon trach 3,nhon trach 4,95.7,90,True
+o mon 1,o mon 2,92.3,90,True
+o mon 1,o mon 3,92.3,90,True
+o mon 1,o mon 4,92.3,90,True
+o mon 2,o mon 3,92.3,90,True
+o mon 2,o mon 4,92.3,90,True
+o mon 3,o mon 4,92.3,90,True
+pha lai 1,pha lai 2,94.1,90,True
+pha lai 1,pha lai 3,94.1,90,True
+pha lai 2,pha lai 3,94.1,90,True
+phu my 1,phu my 2.1,93.3,90,False
+phu my 1,phu my 2.1 extension,93.3,90,False
+phu my 1,phu my 2.2,93.3,90,False
+phu my 1,phu my 3,93.3,90,True
+phu my 1,phu my 3.1,93.3,90,False
+phu my 1,phu my 4,93.3,90,True
+phu my 2.1,phu my 2.1 extension,100.0,90,False
+phu my 2.1,phu my 2.2,94.7,90,False
+phu my 2.1,phu my 3,93.3,90,False
+phu my 2.1,phu my 3.1,90.0,90,False
+phu my 2.1,phu my 4,93.3,90,False
+phu my 2.1 extension,phu my 2.2,94.7,90,False
+phu my 2.1 extension,phu my 3,93.3,90,False
+phu my 2.1 extension,phu my 3.1,90.0,90,False
+phu my 2.1 extension,phu my 4,93.3,90,False
+phu my 2.2,phu my 3,93.3,90,False
+phu my 2.2,phu my 4,93.3,90,False
+phu my 3,phu my 3.1,100.0,90,False
+phu my 3,phu my 4,93.3,90,True
+phu my 3.1,phu my 4,93.3,90,False
+quang binh,quang ninh 1,90.0,90,False
+quang binh,quang ninh 2,90.0,90,False
+quang binh,quang ninh 3,90.0,90,False
+quang binh,quang ninh 4,90.0,90,False
+quang ninh 1,quang ninh 2,95.7,90,True
+quang ninh 1,quang ninh 3,95.7,90,True
+quang ninh 1,quang ninh 4,95.7,90,True
+quang ninh 2,quang ninh 3,95.7,90,True
+quang ninh 2,quang ninh 4,95.7,90,True
+quang ninh 3,quang ninh 4,95.7,90,True
+quang trach 1,quang trach 2,96.0,90,True
+quang trach 1,quang tri,94.1,90,False
+quang trach 2,quang tri,94.1,90,False
+quang tri,quang tri 1,100.0,90,False
+quang tri,quang tri 2,100.0,90,False
+quang tri,quang tri – hue area,100.0,90,False
+quang tri 1,quang tri 2,95.2,90,True
+quang tri 1,quang tri – hue area,95.2,90,False
+quang tri 2,quang tri – hue area,95.2,90,False
+quynh lap,quynh lap 1,100.0,90,False
+quynh lap,quynh lap 2,100.0,90,False
+quynh lap 1,quynh lap 2,95.2,90,True
+son my 1,son my 2,93.3,90,True
+song hau 1,song hau 2,94.7,90,True
+tan phuoc,tan phuoc 1,100.0,90,False
+tan phuoc,tan phuoc 2,100.0,90,False
+tan phuoc 1,tan phuoc 2,95.2,90,True
+thai binh,thai binh 1,100.0,90,False
+thai binh,thai binh 2,100.0,90,False
+thai binh 1,thai binh 2,95.2,90,True
+uong bi,uong bi 1 extension,100.0,90,False
+uong bi,uong bi 2 extension,100.0,90,False
+uong bi 1 extension,uong bi 2 extension,94.7,90,True
+van phong,van phong 1,100.0,90,False
+van phong,van phong phase 1,100.0,90,False
+van phong,van phong phase 2,100.0,90,False
+van phong 1,van phong phase 1,95.2,90,False
+van phong 1,van phong phase 2,95.2,90,True
+van phong phase 1,van phong phase 2,97.0,90,True
+vinh tan 1,vinh tan 2,94.7,90,True
+vinh tan 1,vinh tan 3,94.7,90,True
+vinh tan 1,vinh tan 4,94.7,90,True
+vinh tan 1,vinh tan 4 extension,94.7,90,True
+vinh tan 2,vinh tan 3,94.7,90,True
+vinh tan 2,vinh tan 4,94.7,90,True
+vinh tan 2,vinh tan 4 extension,94.7,90,True
+vinh tan 3,vinh tan 4,94.7,90,True
+vinh tan 3,vinh tan 4 extension,94.7,90,True
+vinh tan 4,vinh tan 4 extension,100.0,90,False
+vung ang 1,vung ang 2,94.7,90,True
+vung ang 1,vung ang 3,94.7,90,True
+vung ang 2,vung ang 3,94.7,90,True
+an khanh,an khanh - bac giang,100.0,95,False
+bac lieu,bac lieu 1,100.0,95,False
+ca na,ca na 2,100.0,95,False
+ca na,ca na 3,100.0,95,False
+dung quat 1,dung quat 2,95.2,95,True
+dung quat 1,dung quat 3,95.2,95,True
+dung quat 1,dung quat special economic zone phase 1,95.2,95,False
+dung quat 1,dung quat special economic zone phase 2,95.2,95,True
+dung quat 2,dung quat 3,95.2,95,True
+dung quat 2,dung quat special economic zone phase 1,95.2,95,True
+dung quat 2,dung quat special economic zone phase 2,95.2,95,False
+dung quat 3,dung quat special economic zone phase 1,95.2,95,True
+dung quat 3,dung quat special economic zone phase 2,95.2,95,True
+dung quat special economic zone phase 1,dung quat special economic zone phase 2,98.7,95,True
+duyen hai 1,duyen hai 2,95.2,95,True
+duyen hai 1,duyen hai 3,95.2,95,True
+duyen hai 1,duyen hai 3 extension,95.2,95,True
+duyen hai 2,duyen hai 3,95.2,95,True
+duyen hai 2,duyen hai 3 extension,95.2,95,True
+duyen hai 3,duyen hai 3 extension,100.0,95,False
+ha tinh,ha tinh formosa plastics steel complex,100.0,95,False
+hai ha chp phase 1,hai ha chp phase 2,97.1,95,True
+hai ha chp phase 1,hai ha chp phase 3,97.1,95,True
+hai ha chp phase 1,hai ha chp phase 4,97.1,95,True
+hai ha chp phase 2,hai ha chp phase 3,97.1,95,True
+hai ha chp phase 2,hai ha chp phase 4,97.1,95,True
+hai ha chp phase 3,hai ha chp phase 4,97.1,95,True
+hai lang,hai lang 2,100.0,95,False
+hai lang,hai lang 3,100.0,95,False
+hai phong,hai phong 1,100.0,95,False
+hai phong,hai phong 2,100.0,95,False
+hai phong,hai phong 3,100.0,95,False
+hai phong,hai phong 4,100.0,95,False
+hai phong 1,hai phong 2,95.2,95,True
+hai phong 1,hai phong 3,95.2,95,True
+hai phong 1,hai phong 4,95.2,95,True
+hai phong 2,hai phong 3,95.2,95,True
+hai phong 2,hai phong 4,95.2,95,True
+hai phong 3,hai phong 4,95.2,95,True
+kien luong 1,kien luong 2,95.7,95,True
+kien luong 1,kien luong 3,95.7,95,True
+kien luong 2,kien luong 3,95.7,95,True
+long an 1,long an 1 phase 2,100.0,95,True
+long an 2,long an 2 phase 2,100.0,95,False
+long son,long son 2,100.0,95,False
+long son,long son 3,100.0,95,False
+long son,long son 4,100.0,95,False
+long son,long son chemical,100.0,95,False
+mien trung 1,mien trung 2,95.7,95,True
+mong duong 1,mong duong 2,95.7,95,True
+mui ke ga 1,mui ke ga 2,95.2,95,True
+mui ke ga 1,mui ke ga 3,95.2,95,True
+mui ke ga 2,mui ke ga 3,95.2,95,True
+nghi son,nghi son 1,100.0,95,False
+nghi son,nghi son 2,100.0,95,False
+nhon trach 1,nhon trach 2,95.7,95,True
+nhon trach 1,nhon trach 3,95.7,95,True
+nhon trach 1,nhon trach 4,95.7,95,True
+nhon trach 2,nhon trach 3,95.7,95,True
+nhon trach 2,nhon trach 4,95.7,95,True
+nhon trach 3,nhon trach 4,95.7,95,True
+phu my 2.1,phu my 2.1 extension,100.0,95,False
+phu my 3,phu my 3.1,100.0,95,False
+quang ninh 1,quang ninh 2,95.7,95,True
+quang ninh 1,quang ninh 3,95.7,95,True
+quang ninh 1,quang ninh 4,95.7,95,True
+quang ninh 2,quang ninh 3,95.7,95,True
+quang ninh 2,quang ninh 4,95.7,95,True
+quang ninh 3,quang ninh 4,95.7,95,True
+quang trach 1,quang trach 2,96.0,95,True
+quang tri,quang tri 1,100.0,95,False
+quang tri,quang tri 2,100.0,95,False
+quang tri,quang tri – hue area,100.0,95,False
+quang tri 1,quang tri 2,95.2,95,True
+quang tri 1,quang tri – hue area,95.2,95,False
+quang tri 2,quang tri – hue area,95.2,95,False
+quynh lap,quynh lap 1,100.0,95,False
+quynh lap,quynh lap 2,100.0,95,False
+quynh lap 1,quynh lap 2,95.2,95,True
+tan phuoc,tan phuoc 1,100.0,95,False
+tan phuoc,tan phuoc 2,100.0,95,False
+tan phuoc 1,tan phuoc 2,95.2,95,True
+thai binh,thai binh 1,100.0,95,False
+thai binh,thai binh 2,100.0,95,False
+thai binh 1,thai binh 2,95.2,95,True
+uong bi,uong bi 1 extension,100.0,95,False
+uong bi,uong bi 2 extension,100.0,95,False
+van phong,van phong 1,100.0,95,False
+van phong,van phong phase 1,100.0,95,False
+van phong,van phong phase 2,100.0,95,False
+van phong 1,van phong phase 1,95.2,95,False
+van phong 1,van phong phase 2,95.2,95,True
+van phong phase 1,van phong phase 2,97.0,95,True
+vinh tan 4,vinh tan 4 extension,100.0,95,False
