@@ -34,7 +34,9 @@ MANUSCRIPT_ASSETS := \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_longtail_recognition.pdf \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_direct_p1_base.pdf \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_direct_cost_quality.pdf \
-	$(LOCAL_ROOT_REPORT_GEN)/fig_spider_exp1_families.pdf \
+	$(LOCAL_ROOT_REPORT_GEN)/fig_exp1_reliability.pdf \
+	$(LOCAL_ROOT_REPORT_GEN)/fig_quality_floor_heatmap_exp1.pdf \
+	$(LOCAL_ROOT_REPORT_GEN)/tab_exp1_reliability_sensitivity.tex \
 	$(LOCAL_ROOT_REPORT_GEN)/cost_quality.csv \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_capability_timeline.pdf \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_capability_dag.pdf \

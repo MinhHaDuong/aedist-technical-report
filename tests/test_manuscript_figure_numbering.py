@@ -29,20 +29,24 @@ MANUSCRIPT = (
 )
 
 # Expected main-body figure labels, in the document order that yields Figure 1..7.
+# Ticket 0507: the reliability-vs-accuracy scatter replaces the quality-floor
+# heatmap as the section-4 headline quality figure.
 EXPECTED_MAIN = [
     "fig:longtail",
     "fig:capability-timeline",
     "fig:direct-base",
     "fig:cost-quality",
-    "fig:quality-floor",
+    "fig:reliability",
     "fig:exp2-arms",
     "fig:fusion-mvp",
 ]
 
-# Expected supplementary figure labels, in the order that yields S1..S4. S4 is
-# the raw-LaTeX recognition matrix, defined via \refstepcounter + \label.
+# Expected supplementary figure labels, in the order that yields S1..S4. The
+# recognition matrix is raw-LaTeX, defined via \refstepcounter + \label.
+# Ticket 0507: the quality-floor heatmap moved to the Exp1 scoring annex
+# (becoming S1) and the spider (old S1) left the paper (kept in slides).
 EXPECTED_SUPP = [
-    "fig:spider-families",
+    "fig:quality-floor",
     "fig:capability-dag",
     "fig:coverage-certainty",
     "fig:recognition-matrix",
@@ -66,6 +70,30 @@ def test_figure_labels_are_ordered_and_gapless() -> None:
         f"main-then-supplementary sequence.\n  expected: {EXPECTED_MAIN + EXPECTED_SUPP}\n"
         f"  got:      {labels}"
     )
+
+
+def test_spider_removed_but_module_kept() -> None:
+    """Ticket 0507: the Exp1 spider left the paper but its module stays.
+
+    The reliability scatter inherits the spider's thesis, so the figure is
+    redundant in the paper — but plot_quality_floor_heatmap_exp1 imports
+    helpers from the spider module and slides.tex still renders spiders.
+    """
+    text = MANUSCRIPT.read_text(encoding="utf-8")
+    assert "fig_spider_exp1_families" not in text, "spider figure still in paper"
+    assert (
+        MANUSCRIPT.parent.parent.parent / "src" / "aedist" / "plot_quality_spider_exp1.py"
+    ).exists(), "spider module must be kept (imported by heatmap + used by slides)"
+
+
+def test_reliability_in_text_heatmap_in_annex() -> None:
+    """Ticket 0507: scatter is the section-4 figure; heatmap is annex support."""
+    text = MANUSCRIPT.read_text(encoding="utf-8")
+    # Split on the raw-LaTeX \appendix line (not the YAML-comment mentions).
+    body, annex = text.split("\n\\appendix\n", 1)
+    assert "fig_exp1_reliability" in body, "reliability scatter not in main text"
+    assert "fig_quality_floor_heatmap_exp1" not in body, "heatmap still in main text"
+    assert "fig_quality_floor_heatmap_exp1" in annex, "heatmap not in annex"
 
 
 def test_no_hand_typed_figure_numbers_in_captions() -> None:
