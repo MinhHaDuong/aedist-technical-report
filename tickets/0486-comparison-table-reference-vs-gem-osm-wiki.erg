@@ -8,6 +8,7 @@ Author: HDMX-coding-agent
 2026-06-09T08:30Z HDMX-coding-agent note DEFERRED by raid Imagine/Plan verification — three exit-criteria decisions were author-only.
 2026-06-09T11:30Z HDMX-coding-agent note SCOPE LOCKED after the 0486 design dialogue + grounding computation. The three deferred decisions are resolved (see below). Numbers below are measured (light-reviewed); the executor consumes them, does not re-derive the design. Prototype scripts committed at `experiments/exploration/0486/` (reproduce the numbers from tracked inputs); productionise.
 2026-06-11T09:05Z haduong ratified scope-lock confirmed (GEM+Wikipedia, annex, 177) — design dialogue trumps the stale STATE recommendation; ready to execute after 0524
+2026-06-11T21:27Z claude note feasibility PASS (orchestrator) — executing; manuscript target corrected main.md→main.tex
 
 --- body ---
 
