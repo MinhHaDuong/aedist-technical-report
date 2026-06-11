@@ -293,47 +293,33 @@ philosophy-of-science empirical adequacy
   \citep{Lin-Stephanie2022:truthfulqa}.
 \item
   \emph{Coherence} asks whether the dataset is internally and externally
-  consistent. Internally, statistical tables have control constraints:
-  aggregate totals should match regional or technology subtotals when
-  those totals are known; capacities should not be negative; duplicate
-  units should not be counted twice; and cross-row values should not
-  contradict one another. Externally, the dataset should remain
-  compatible with other available knowledge: units, orders of magnitude,
-  geographic location, technology type, and commissioning dates should
-  all be plausible. A coherent dataset identifies conflicts between
-  sources rather than silently overwriting them. A minimal coherence
-  requirement is non-contradiction; a weak working test is whether
+  consistent. Internally, statistical tables carry control constraints:
+  aggregate totals match subtotals, capacities are non-negative,
+  duplicate units are counted once. Externally, the dataset must remain
+  compatible with other available knowledge --- units, orders of
+  magnitude, locations, technology types, and commissioning dates all
+  plausible. A coherent dataset identifies conflicts between sources
+  rather than silently overwriting them. A weak working test is whether
   repeated runs of the same system agree with one another
-  \citep{Wang2022:self-consistency}. A stronger requirement is
-  inferential closure: the system should derive and expose all
-  consequences that follow from the available documents and accounting
-  rules, rather than merely storing isolated claims. Coherence thus has
-  two axes --- \emph{scope} (internal to the dataset vs.~external
-  against world knowledge) and \emph{strength} (weak: no contradiction,
-  vs.~strong: inferential closure). This paper measures weak-internal
-  coherence; the external axis is discussed in the Discussion section.
+  \citep{Wang2022:self-consistency}; the stronger requirement is
+  inferential closure --- the system derives and exposes all
+  consequences of the available documents and accounting rules. This
+  paper measures weak-internal coherence; the external axis is deferred
+  to the Discussion.
 \item
-  \emph{Provenance} requires a pedigree for each data item. Every row,
-  and ideally every cell, should trace back to specific passages,
-  tables, images, or records in specific sources. Strong provenance
-  means more than attaching a plausible citation: the cited source must
-  actually support the value claimed
+  \emph{Provenance} requires a pedigree for each data item: every row,
+  and ideally every cell, traces back to specific passages, tables, or
+  records in specific sources. Strong provenance means more than
+  attaching a plausible citation --- the cited source must actually
+  support the value claimed
   \citep{Gao-Tianyu2023:alce, Asai-Akari2024:self-rag, Es-Shahul2023:ragas}.
   We distinguish \emph{verifiable} provenance --- a citation is present
   and could in principle be checked --- from \emph{verified} provenance
   --- the citation was retrieved and confirmed to support the stated
   value. Verified provenance is the stronger standard; verifiable is the
   minimum floor. When sources contradict one another, the resolution ---
-  which source was preferred and why --- should itself be documented as
-  part of the provenance record. Ideally, each important item should be
-  backed by two independent primary sources. Weaker forms of
-  justification --- for example, one primary source, a regulator
-  database, or a clearly marked secondary compilation --- are still
-  preferable to unsupported values, provided their evidential status is
-  explicit. Satellite imagery and visual inspection can also provide
-  evidence for industrial assets, but they are costly, hard to scale,
-  and mainly confirm the presence of existing installations rather than
-  full project histories.
+  which source was preferred and why --- is itself part of the
+  provenance record.
 \item
   \emph{Temporality} is not metadata added after the fact; it is part of
   the statistical fact itself. Energy infrastructure changes over time:
@@ -356,6 +342,15 @@ philosophy-of-science empirical adequacy
   §\ref{sec:fusion} and discussed in \ref{sec:annex-temporality}.
 \end{enumerate}
 
+Of the four dimensions, accuracy is the only one whose measurement
+requires a held-out gold reference. Coherence, provenance, and
+temporality are reference-free: they can be assessed from the dataset
+and its sources alone. The screening logic of this paper follows from
+that asymmetry: where reference-free indicators correlate with accuracy,
+they can estimate it --- screening out weak outputs without the
+reference. The experiments exercise this logic directly
+(§\ref{sec:exp1}).
+
 The task is not simply to generate a plausible inventory-shaped answer.
 The statistical object is a dated, sourced, internally reconciled set of
 claims about energy-system assets and events. Accuracy determines
@@ -365,90 +360,111 @@ temporality determines what period of the world they describe.
 
 \section{AI capability landscape: from chatbots to agentic systems}\label{sec:capability}
 
-General-purpose AI systems vary along four axes: \emph{training
-objective} (from raw text completion through instruction-following to
-extended reasoning), \emph{input and output media} (text, vision, audio,
-video), \emph{tool access} (none, web browser, code execution, computer
+Between 2022 and 2025, AI capability advanced as an industry-wide
+\emph{envelope} --- the outer surface of commercially attainable
+capability --- not as a staircase any single lab climbs. The systems
+that push this envelope vary along four axes: \emph{training objective}
+(from raw text completion through instruction-following to extended
+reasoning), \emph{input and output media} (text, vision, audio, video),
+\emph{tool access} (none, web browser, code execution, computer
 control), and \emph{product workflow} (simple chat, single-task agent,
 deep research, coding agent, autonomous task runner). The first two are
 properties of the model; the last two are properties of the software
-that wraps it. The cross-product is large, and any single comparison
-axis is a projection. Figure~\ref{fig:capability-timeline} uses one such
-projection: a timeline of when each of eight capability surfaces first
-shipped as a consumer-facing product --- the threshold at which a
+that wraps it. Figure~\ref{fig:capability-timeline} shows one projection
+of this coordinate system: when each of eight capability surfaces first
+shipped in a consumer-facing product --- the threshold at which a
 working analyst can rely on it, months after API or privileged-partner
 availability.
 
-Agent capabilities improve statistical-dataset quality, and the
-2022--2025 industry trajectory bears this out --- not as a single
-staircase any one lab climbs, but as an \emph{envelope}, the outer
-surface of commercially attainable capability, pushed outward through a
-sequence of integrations rather than inventions. None of these
-integrations are model properties: retrieval, web access, reasoning
-surfaces, code execution, tool use, and recursion all live in the
-runtime that wraps the model. What the model contributes is
-\emph{conditioning} --- a lab's investment in training the model to
-exploit retrieved documents, tool calls, long reasoning chains, and
-delegated sub-tasks is what lets it use each surface when the
-framework exposes it. Each marker in
+The envelope is pushed outward through a sequence of integrations
+rather than inventions. None of these integrations are model
+properties: retrieval, web access, reasoning surfaces, code execution,
+tool use, and recursion all live in the runtime that wraps the model.
+What the model contributes is \emph{conditioning} --- a lab's
+investment in training the model to exploit retrieved documents, tool
+calls, long reasoning chains, and delegated sub-tasks is what lets it
+use each surface when the framework exposes it. Each marker in
 Figure~\ref{fig:capability-timeline} is the date the framework ×
 trained-model × product triple first appears in a publicly available
 commercial product.
 
-Below these integrations sits \emph{articulation} --- the craft of
-writing the query so that it asks what the analyst actually means. It is
-the LLM-specific form of the \emph{Type-III error}, solving the wrong
-problem \citep{Mitroff1974}; to our knowledge it has had no explicit
-treatment in the LLM literature. Articulation is a confound for every
-downstream quality metric: a model that retrieves the correct fact but
-expresses it in a form the extractor does not recognise produces a
-missing value indistinguishable from a genuine coverage gap (developed
-in §\ref{sec:discussion}). The §\ref{sec:exp1} baseline already
-exercises articulation through a structured four-section prompt.
+The integrations are by now familiar; each maps to a row of
+Figure~\ref{fig:capability-timeline}:
 
-The integrations are by now familiar. \emph{Retrieval-augmented
-generation} \citep{Lewis-Patrick2020:rag, Gao-Yunfan2024:rag-survey}
-answers the coverage limit; \emph{reasoning} --- step-by-step
-deliberation first elicited by prompting \citep{Wei-Jason2022:cot},
-later built in as computation the model spends before answering ---
-narrows the coherence limit on long, multi-source synthesis; their
-combination is the deep-research surface
-\citep{Wei-Jason2025:browsecomp}. \emph{Code execution} lets the model
-verify arithmetic and produce executable artefacts; \emph{external tool
-use} --- a standardised tool-connection protocol
-\citep{Yao-Shunyu2023:react} --- generalises code execution to an
-extensible registry of external services, with benchmarks on coding
-\citep{Jimenez-Carlos2024:swe-bench}, OS control
-\citep{Xie-Tianbao2024:osworld}, and general-assistant tasks
-\citep{Mialon-Gregoire2024:gaia}; \emph{agency} is the closure of that
-surface, when the tool-use set includes the model itself. Each
-integration lifts one or more of the §\ref{sec:quality} quality limits
-at the margin; none lifts all four. The detailed per-lab shipping order
---- feature parallelism, the deep-research dependency, and the DeepSeek
-negative case --- is given in \ref{sec:annex-rollout}.
+\begin{itemize}
+\item
+  \emph{Retrieval-augmented generation}
+  \citep{Lewis-Patrick2020:rag, Gao-Yunfan2024:rag-survey} answers the
+  coverage limit.
+\item
+  \emph{Reasoning} --- step-by-step deliberation first elicited by
+  prompting \citep{Wei-Jason2022:cot}, later built in as computation
+  the model spends before answering --- narrows the coherence limit on
+  long, multi-source synthesis.
+\item
+  Their combination is the deep-research surface
+  \citep{Wei-Jason2025:browsecomp}.
+\item
+  \emph{Code execution} lets the model verify arithmetic and produce
+  executable artefacts.
+\item
+  \emph{External tool use} --- a standardised tool-connection protocol
+  \citep{Yao-Shunyu2023:react} --- generalises code execution to an
+  extensible registry of external services, with benchmarks on coding
+  \citep{Jimenez-Carlos2024:swe-bench}, OS control
+  \citep{Xie-Tianbao2024:osworld}, and general-assistant tasks
+  \citep{Mialon-Gregoire2024:gaia}.
+\item
+  \emph{Agency} is the closure of that surface, when the tool-use set
+  includes the model itself.
+\end{itemize}
+
+Each integration lifts one or more of the §\ref{sec:quality} quality
+limits at the margin; none lifts all four. The detailed per-lab shipping
+order --- feature parallelism, the deep-research dependency, and the
+DeepSeek negative case --- is given in \ref{sec:annex-rollout}.
+
+Below these integrations sits \emph{articulation} --- the craft of
+casting the problem into a query the system can answer. The
+articulation is double: the problem must be cast as the analyst's
+question, and the question as the LLM prompt. The LLM must answer the
+question asked and follow the prompt; but the question must also match
+the problem, and the two links fail independently. A failure of the
+first link is the \emph{Type-III error} \citep{Mitroff1974}: solving
+the wrong problem --- in LLM work, a well-executed answer to a
+mis-posed question. Prompt engineering is the craft that addresses the
+second link, from the analyst's question to the prompt the model
+receives. Articulation also confounds every downstream quality metric:
+a model that retrieves the correct fact but words it in a form the
+extractor does not recognise produces a missing value indistinguishable
+from a genuine coverage gap (developed in §\ref{sec:discussion}). The
+experiments exercise articulation through structured prompts
+(§\ref{sec:exp1} and §\ref{sec:exp2}); the verbatim prompts are
+reproduced in the protocol annexes \ref{sec:annex-exp1} and
+\ref{sec:annex-exp2}.
 
 \begin{figure}
 \centering
 \includegraphics[width=\linewidth]{../../report/inputs/generated/fig_capability_timeline.pdf}
-\caption{Empirical capability rollout across the five labs in Experiment
-1. Each row is a capability feature (1 chat LLM → 8 multi-agent
-recursion); each marker places when the named lab first shipped that
-feature in a consumer-facing product. Markers are coloured by
-architectural model family (claude / gpt / mistral / qwen / deepseek)
-and shaped by lab. The horizontal spread within each row is the
-cross-lab emergence window; vertical neighbours that overlap in time
-(notably features 3 and 4) indicate parallel-not-sequential capability
-development. The figure is descriptive --- no claim is made that any lab
-is ``ahead'' or that the order is forced. Source:
-\texttt{data/capability\_timeline.csv}; per-lab primary announcements
-documented in
-\texttt{docs/capability-timeline.md}.}\label{fig:capability-timeline}
+\caption{Empirical capability rollout across five leading AI labs. Each
+capability is a feature of the lab's public commercial product, not a
+property of the underlying model. Each row is a capability feature (1
+chat LLM → 8 multi-agent recursion); each marker places when the named
+lab first shipped that feature in a consumer-facing product. The figure
+reads as a capability checklist for the experiments: a lab's position
+on each row is the capability set its system brings to §\ref{sec:exp1}
+and §\ref{sec:exp2}. Source: author's compilation; per-lab primary
+announcements documented in
+\ref{sec:annex-rollout}.}\label{fig:capability-timeline}
 \end{figure}
 
-The empirical envelope nonetheless leaves the §\ref{sec:quality} quality
-bar uncleared, which is what §\ref{sec:exp2} (Experiment 2) tests
-directly.
+This capability envelope defines the conditions under which the
+experiments run; whether any of it clears the §\ref{sec:quality} quality
+bar is an empirical question. §\ref{sec:exp1} measures the parametric
+floor --- what a bare model produces from memory --- and
+§\ref{sec:exp2} tests the full agentic frontier.
 
+\clearpage
 \section{Experiment 1: parametric baseline}\label{sec:exp1}
 
 Submitting a direct query to a large language model produces an
