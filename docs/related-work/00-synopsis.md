@@ -2,7 +2,7 @@
 title: Synopsis — open energy modelling needs sourced/reproducible/auditable facts, not LLM opinions
 author: Claude prompted by Ha-Duong Minh
 date: 2026-05-21
-paper: slides/manuscript/main.md
+paper: slides/manuscript/main.tex
 section: Synopsis (lines 1–7)
 citation-budget: 10–15 (delivered 8 — see Methods)
 ---

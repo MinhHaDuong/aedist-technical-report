@@ -1015,7 +1015,7 @@ row densities invite.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
-\section*{Related Work --- Methods}\label{related-work-methods}
+\section*{Related Work --- Methods}
 \addcontentsline{toc}{section}{Related Work --- Methods}
 
 \textbf{LLM parametric recall for structured extraction.} Petroni et al.
@@ -1215,7 +1215,7 @@ identified in §\ref{sec:exp2}.
 
 \section{Experiment 1: Technical specification}\label{sec:annex-exp1}
 
-\subsection*{Task}\label{task}
+\subsection*{Task}
 \addcontentsline{toc}{subsection}{Task}
 
 Identify all thermal power plants in Vietnam from parametric model
@@ -1229,7 +1229,7 @@ from primary sources (PDP7, PDP7A, PDP8 annexes, EVN annual reports,
 MOIT decisions) and is version-locked for this experiment.
 
 \subsection*{Reference dataset
-provenance}\label{reference-dataset-provenance}
+provenance}
 \addcontentsline{toc}{subsection}{Reference dataset provenance}
 
 The reference inventory was assembled by single-author manual
@@ -1295,7 +1295,7 @@ vs ``Ca Mau 1''), which slightly over-counts via phase/grain mismatch
 upper bounds. Full per-plant human reconciliation is deferred
 (post-arXiv).}
 
-\subsection*{Prompt}\label{prompt}
+\subsection*{Prompt}
 \addcontentsline{toc}{subsection}{Prompt}
 
 The baseline prompt is the locked composition of two modules from
@@ -1337,7 +1337,7 @@ explicitly forbidding web search: \emph{``You have no web search
 capability. Do not claim to perform searches, do not invoke tools, do
 not fabricate URLs. Answer from parametric knowledge only.''}
 
-\subsection*{Models}\label{models}
+\subsection*{Models}
 \addcontentsline{toc}{subsection}{Models}
 
 Sixteen models from \texttt{modelset\_exp1\_journal} (v2, defined in
@@ -1412,7 +1412,7 @@ re-run reported in the body resolved compliance. We retained the
 declined responses as data --- a model viewpoint on the request's
 epistemic standard, not extraction noise.
 
-\subsection*{Run parameters}\label{run-parameters}
+\subsection*{Run parameters}
 \addcontentsline{toc}{subsection}{Run parameters}
 
 \begin{longtable}[]{@{}
@@ -1456,7 +1456,7 @@ decoding settings; the present discipline is informed by in-project
 measurement rather than external benchmarks.
 
 \subsection*{Post-fix top-up cohort and interday
-variability}\label{post-fix-top-up-cohort-and-interday-variability}
+variability}
 \addcontentsline{toc}{subsection}{Post-fix top-up cohort and interday
 variability}
 
@@ -1491,7 +1491,7 @@ quantification of day-scale F1 drift at fixed deterministic call
 parameters for production LLM APIs on structured extraction tasks; we
 report ours as an observation rather than a primacy claim.
 
-\subsection*{Evaluation}\label{evaluation}
+\subsection*{Evaluation}
 \addcontentsline{toc}{subsection}{Evaluation}
 
 Each run is evaluated against the reference by
@@ -1618,7 +1618,7 @@ encodes the architectural family from a colourblind-safe palette: Claude
 DeepSeek (orange). Per-model numbers backing the figure are written to
 \texttt{report/inputs/generated/cost\_quality.csv} for audit.
 
-\subsection*{Sweep configuration}\label{sweep-configuration}
+\subsection*{Sweep configuration}
 \addcontentsline{toc}{subsection}{Sweep configuration}
 
 The sweep is defined in \texttt{experiments/experiments.toml} as
@@ -1644,7 +1644,7 @@ acquisition windows is absorbed into the reported within-model spread
 rather than filtered out.
 
 \subsection*{What this experiment does and does not
-test}\label{what-this-experiment-does-and-does-not-test}
+test}
 \addcontentsline{toc}{subsection}{What this experiment does and does not
 test}
 
@@ -1678,7 +1678,7 @@ execution deviations, and the descriptive statistics --- lives in the
 technical report's Experiment 2 chapter; this annex pins only the as-run
 specification and references that chapter for the inferential analysis.}
 
-\subsection*{Task}\label{task-1}
+\subsection*{Task}
 \addcontentsline{toc}{subsection}{Task}
 
 Identify all thermal power plants in Vietnam using four state-of-the-art
@@ -1687,7 +1687,7 @@ population as Experiment 1: the 177-plant version-locked reference
 inventory at
 \texttt{data/reference/vietnam\_thermal\_plants\_v2\_classified.csv}.
 
-\subsection*{Agents}\label{agents}
+\subsection*{Agents}
 \addcontentsline{toc}{subsection}{Agents}
 
 Four direct-API agents, ordered by ascending baseline smoke cost.
@@ -1736,7 +1736,7 @@ hypothesis-relevant: Chinese-language investor and trade documents on
 Vietnamese power assets are under-indexed by Western search.
 
 \subsection*{Baseline reference for
-cross-comparison}\label{baseline-reference-for-cross-comparison}
+cross-comparison}
 \addcontentsline{toc}{subsection}{Baseline reference for
 cross-comparison}
 
@@ -1747,7 +1747,7 @@ artifact from \texttt{sweep\_direct\_complete} over
 \texttt{modelset\_frontier\_10labs} --- a wider lab survey at a single
 rep per model. Phase C will read from it directly; it is not re-run.
 
-\subsection*{Phase structure}\label{phase-structure}
+\subsection*{Phase structure}
 \addcontentsline{toc}{subsection}{Phase structure}
 
 \textbf{Phase A --- Reflexive prompt design (optimised arm).} Each agent
@@ -1777,7 +1777,7 @@ instances, (ii) parsed tables are non-empty, (iii) costs sit within the
 dual-axis session cap empirically.
 
 \subsubsection*{Phase B dialogue policy (fixed experimental
-condition)}\label{phase-b-dialogue-policy-fixed-experimental-condition}
+condition)}
 \addcontentsline{toc}{subsubsection}{Phase B dialogue policy (fixed
 experimental condition)}
 
@@ -1847,7 +1847,7 @@ closed-weight frontier agents have one vendor each; the cross-provider
 variance reported for MoE models in \ref{sec:annex-exp1} does not
 apply). The four Phase B-0 sessions are the first reps of these five.
 
-\subsection*{Arms and budget}\label{arms-and-budget}
+\subsection*{Arms and budget}
 \addcontentsline{toc}{subsection}{Arms and budget}
 
 The registered design has two arms over the same four agents, five reps
@@ -1880,7 +1880,7 @@ realised per-session and per-batch costs are reported in
 chapter, not pinned here.
 
 \subsection*{As-run deviations from the
-registration}\label{as-run-deviations-from-the-registration}
+registration}
 \addcontentsline{toc}{subsection}{As-run deviations from the
 registration}
 
@@ -1920,7 +1920,7 @@ per-arm validity and exclusion criteria, and the descriptive F1/cost
 statistics --- is in the technical report's Experiment 2 chapter; this
 annex does not reproduce those statistics.
 
-\subsection*{Harness}\label{harness}
+\subsection*{Harness}
 \addcontentsline{toc}{subsection}{Harness}
 
 This experiment is script-based, not sweep-based. No
@@ -1960,7 +1960,7 @@ This experiment is script-based, not sweep-based. No
   C target is reserved for the deferred cross-evaluation.
 \end{itemize}
 
-\subsection*{Evaluation}\label{evaluation-1}
+\subsection*{Evaluation}
 \addcontentsline{toc}{subsection}{Evaluation}
 
 Phase B outputs are evaluated against the 177-plant reference using the
@@ -1974,7 +1974,7 @@ operational metrics of §\ref{sec:exp2}, not the
 §\ref{sec:quality}-dimension cross-eval scores.
 
 \subsection*{What this experiment does and does not
-test}\label{what-this-experiment-does-and-does-not-test-1}
+test}
 \addcontentsline{toc}{subsection}{What this experiment does and does not
 test}
 
@@ -2209,7 +2209,7 @@ commercial-product framing does not capture and does not claim to.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
-\section*{Acknowledgements}\label{acknowledgements}
+\section*{Acknowledgements}
 \addcontentsline{toc}{section}{Acknowledgements}
 
 We thank Econom'IA 2026 participants for their comments, in particular

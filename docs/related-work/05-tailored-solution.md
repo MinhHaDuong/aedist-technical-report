@@ -2,7 +2,7 @@
 title: Tailored stateful-agentic solution — narrative inventory, per-cell provenance, KG-triple analogy
 author: Claude prompted by Ha-Duong Minh
 date: 2026-05-21
-paper: slides/manuscript/main.md
+paper: slides/manuscript/main.tex
 section: §5 Tailored solution (lines 56–62)
 citation-budget: 12–15
 ---

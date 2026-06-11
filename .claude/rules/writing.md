@@ -21,8 +21,10 @@ prose cites the label, never the number.
 This is a **hard rule**, enforced by `tests/test_manuscript_crossref.py`
 (`@pytest.mark.adherence`): `slides/manuscript/main.tex` must contain no
 hand-typed `§N` / `Figure N` / `Figure SN` / `Annex X` / `Table N` literal in
-prose, and every `\ref`/`\Cref` reference must resolve to a `\label` defined in
-the file.
+prose, and every `\ref` reference must resolve to a `\label` defined in the
+file. Use `\ref` only — `cleveref`/`\Cref` is not loaded in the preamble (the
+adherence test would accept `\Cref`, but tectonic would fail on the undefined
+macro).
 
 **House conventions for `main.tex` (hand-curated LaTeX, tectonic-built — ticket 0524):**
 - Label every section heading `\section{Title}\label{sec:id}`, every figure

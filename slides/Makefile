@@ -30,6 +30,10 @@ SLIDE_ASSETS := \
 	$(LOCAL_ROOT_REPORT_GEN)/tab_exp2_2x2_fr.tex \
 	$(LOCAL_ROOT_REPORT_GEN)/macros_p1_base.tex
 
+# Exactly the files main.tex pulls in via \includegraphics/\includepdf/\input —
+# reconciled against the source (PR #969 review): no ghost prerequisites
+# (cost_quality.csv was prose-only -> spurious rebuilds), no missing ones
+# (fig_fusion_mvp.pdf was included but unlisted -> stale PDFs).
 MANUSCRIPT_ASSETS := \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_longtail_recognition.pdf \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_direct_p1_base.pdf \
@@ -37,11 +41,11 @@ MANUSCRIPT_ASSETS := \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_exp1_reliability.pdf \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_quality_floor_heatmap_exp1.pdf \
 	$(LOCAL_ROOT_REPORT_GEN)/tab_exp1_reliability_sensitivity.tex \
-	$(LOCAL_ROOT_REPORT_GEN)/cost_quality.csv \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_capability_timeline.pdf \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_capability_dag.pdf \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_exp2_arms_comparison.pdf \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_exp2_coverage_certainty.pdf \
+	$(LOCAL_ROOT_REPORT_GEN)/fig_fusion_mvp.pdf \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_exp1_recognition_matrix_portrait.pdf
 
 .PHONY: all clean manuscript translate-slides

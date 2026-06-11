@@ -2,7 +2,7 @@
 title: SOTA frontier — three-agent deep-research comparison, cross-model pairwise evaluation
 author: Claude prompted by Ha-Duong Minh
 date: 2026-05-21
-paper: slides/manuscript/main.md
+paper: slides/manuscript/main.tex
 section: §4 SOTA frontier (lines 52–54)
 citation-budget: 10–12
 ---

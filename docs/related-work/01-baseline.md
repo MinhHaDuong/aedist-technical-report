@@ -2,7 +2,7 @@
 title: Parametric direct-query baseline for structured-table generation
 author: Claude prompted by Ha-Duong Minh
 date: 2026-05-21
-paper: slides/manuscript/main.md
+paper: slides/manuscript/main.tex
 section: §1 Baseline (lines 9–23)
 citation-budget: 10–15
 ---
