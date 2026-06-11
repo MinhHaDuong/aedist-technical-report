@@ -7,6 +7,7 @@ Blocked-by: 0524
 --- log ---
 2026-06-11T08:20Z HDMX-coding-agent created
 2026-06-11T08:45Z HDMX-coding-agent note renumbered from 0526 (ID collision); 0524 decided: LaTeX conversion, macros.tex via plain \input
+2026-06-11T09:10Z HDMX-coding-agent note folded 0501 (v2.4/177 prose sync) into this ticket — the macro pass re-derives every number anyway; hand-fixing 18 literals first would be double work (author-approved)
 
 --- body ---
 ## Context
@@ -46,10 +47,39 @@ Design the macros file once 0524's build choice is recorded.
    (this closes the stale-numbers findings above by construction).
 4. Wire `macros.tex` into the Makefile: manuscript target depends on it.
 
+## Folded scope: 0501 — reconcile prose to the v2.4 (177) reference
+
+Closed ticket 0501 lands here (folded 2026-06-11): #906 (ticket 0497) moved the
+reference to v2.4 = 177 plants but deferred the prose sync, so `main.md` still
+carries the v2.1 = 173 vintage. NOT a find-replace (v2.2/v2.3 skipped — fuel
+split and status breakdowns moved too); every value re-derived from the
+committed artifact, which is exactly what the macro pass does. Author decision
+2026-06-09: ship the preprint at 177. Concretely, the macro inventory (action 1)
+must cover at least:
+
+1. 18× "173[-plant]" prose/caption mentions → count macro from `reference_plant_count()`.
+2. Annex B fuel split `coal (81) and gas/gas-oil (92)` → recompute from
+   `data/reference/vietnam_thermal_plants_v2_classified.csv`.
+3. §7 difficulty table total row (`**173** / 100.0% / 26.2%`) + status-group
+   rows → re-derive from the generating script's committed artifact.
+4. §6 fusion secondary numbers (`166 candidates`, recall 0.633/0.262/0.391/0.671,
+   F1 0.659/0.689, "2.4×") → re-derive from the fusion sweep artifact
+   (#906 updated only the §4 macros).
+5. Figure 7 caption ("173 reference plants") — the figure already renders 177 columns.
+
+Inherited notes from 0501: line-90 attribute accuracies (province 0.61→0.89)
+stay deferred to 0502 (scoring change, not a 177 effect). 0494 (Wikipedia
+recall bar) depends on this count sync — unblocked when this ticket closes.
+
 ## Test
 - Adherence test: the manuscript source contains no bare empirical literal
   from a known generated artifact (re-derive a sample of guarded numbers from
   the CSVs via independent parse, assert the macro values match).
+- From 0501 (write FIRST, must fail on current source): every reference-count
+  mention equals `reference_plant_count()`; stale literals ("173-plant",
+  "173 reference", …) absent — `tests/test_manuscript_reference_count.py`,
+  `@pytest.mark.adherence` (0501 body in tickets/closed/ has a draft against
+  `main.md`; target the post-0524 `.tex` source).
 
 ## Invariants
 - `make -C slides manuscript/main.pdf` builds clean-room (`make -B -n` honest).
@@ -61,4 +91,8 @@ Design the macros file once 0524's build choice is recorded.
 - [ ] No hand-typed empirical number in manuscript prose; all via macros.
 - [ ] All review-listed stale numbers now correct (match committed artifacts).
 - [ ] Fusion n_reference (173 vs 177) either regenerated to 177 or disclosed in prose.
+- [ ] Folded 0501 scope: no 173-vintage reference-count literal survives; fuel
+      split, difficulty table, §6 fusion numbers, Figure 7 caption all match
+      their committed artifacts (cite artifact + value in the PR).
+- [ ] `tests/test_manuscript_reference_count.py` exists and passes (failed first).
 - [ ] Adherence test guards the class.
