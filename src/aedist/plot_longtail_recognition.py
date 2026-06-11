@@ -1,23 +1,20 @@
-"""Long-tail recognition figure (ticket 0514).
+"""Long-tail recognition figure (tickets 0514, 0537).
 
 The reference register documents every plant by construction (Gold), but the
-*public* documentation thins out into a long tail: GEM and Wikipedia cover the
-operational head well and the speculative tail poorly, and the AI model census
-(Exp1: 14 models x 5 reps) recognises only the most visible plants. This figure
-makes the long-tail claim empirical — X is the reference plants sorted by
-visibility (descending), Y is four recognition layers, and one glance shows the
-documented head and the under-documented tail.
+*public* documentation thins out into a long tail: GEM, Wikipedia, and
+OpenStreetMap cover the operational head well and the speculative tail poorly.
+This figure makes the long-tail claim empirical — X is the reference plants
+sorted by visibility (descending), Y is four recognition layers, and one glance
+shows the documented head and the under-documented tail.
 
 Layers (rows, top to bottom):
   * Gold       — the reference register; all plants by construction.
   * GEM        — Global Energy Monitor coverage (reviewed match, per concordance).
   * Wikipedia  — Wikipedia coverage (reviewed match, per concordance).
-  * Census     — model recognition: how many of the 70 Exp1 runs named the plant
-                 (graded shade); a plant is "documented by the census" when
-                 recognised by >= 1 run.
-
-OSM is intentionally absent: there is no committed OSM layer (only a code
-comment in fuse_runs.py), so it is not shown rather than faked.
+  * OSM        — OpenStreetMap coverage (power=plant extract, thermal fuels);
+                 a presence check for physically existing infrastructure —
+                 name-only fuzzy matching, no LP reconciliation, no capacity
+                 term, because OSM maps what stands on the ground.
 
 Two-step pipeline (figures-are-artifacts rule):
   1. ``derive_layer_rows`` runs the LP reconciliation once (shared with the
@@ -29,7 +26,6 @@ Two-step pipeline (figures-are-artifacts rule):
 Usage::
 
     uv run python -m aedist.plot_longtail_recognition \\
-        --records 'experiments/outputs/exp1_batch2/*.record.json' \\
         --reference data/reference/vietnam_thermal_plants_v2_classified.csv \\
         --csv data/reference/tab_longtail_layers.csv \\
         --output report/inputs/generated/fig_longtail_recognition.pdf \\
@@ -50,6 +46,7 @@ from matplotlib.colors import LinearSegmentedColormap  # noqa: E402
 from .config import (  # noqa: E402
     GEM_THERMAL_REFERENCE_CSV,
     LONGTAIL_LAYERS_CSV,
+    OSM_VN_POWER_PLANTS_CSV,
     VN_THERMAL_PLANTS_RELEASE_CSV,
 )
 from .evaluate import load_plants_csv  # noqa: E402
@@ -70,11 +67,18 @@ LAYER_COLUMNS = [
     "in_gold",
     "in_gem",
     "in_wiki",
-    "census_count",
+    "in_osm",
 ]
 
 # Display order of the recognition layers, top (most complete) to bottom.
-_LAYER_ROWS = ["Gold", "GEM", "Wikipedia", "Census"]
+_LAYER_ROWS = ["Gold", "GEM", "Wikipedia", "OSM"]
+
+# OSM `source` (fuel) values that count as thermal plants for the OSM layer.
+_OSM_THERMAL_FUELS = {"coal", "gas", "gas;oil", "oil", "waste"}
+
+# ASCII-folded partial_ratio threshold for the OSM name presence check —
+# mirrors tabulate_source_concordance._RECOVER (same fold, same metric).
+_OSM_MATCH = 88
 
 
 def build_row(
@@ -84,12 +88,11 @@ def build_row(
     *,
     in_gem: bool,
     in_wiki: bool,
-    census: int,
+    in_osm: bool,
 ) -> dict:
     """Build one per-plant layer-membership row.
 
     Every reference plant is Gold by construction, so ``in_gold`` is always 1.
-    ``census`` is the number of Exp1 runs (out of 70) that recognised the plant.
     """
     return {
         "plant_id": int(plant_id),
@@ -98,20 +101,20 @@ def build_row(
         "in_gold": 1,
         "in_gem": 1 if in_gem else 0,
         "in_wiki": 1 if in_wiki else 0,
-        "census_count": int(census),
+        "in_osm": 1 if in_osm else 0,
     }
 
 
 def visibility_key(row: dict) -> tuple:
     """Sort key for visibility (higher = more visible / better documented).
 
-    Ordered by the number of public-source layers (GEM + Wikipedia), then the
-    model-census recognition count, then descending plant_id as a stable
-    tie-break so the committed CSV is byte-reproducible. Gold is excluded from
-    the key because every plant has it (it would not discriminate).
+    Ordered by the number of public-source layers (GEM + Wikipedia + OSM),
+    then descending plant_id as a stable tie-break so the committed CSV is
+    byte-reproducible. Gold is excluded from the key because every plant has
+    it (it would not discriminate).
     """
-    source_layers = int(row["in_gem"]) + int(row["in_wiki"])
-    return (source_layers, int(row["census_count"]), -int(row["plant_id"]))
+    source_layers = int(row["in_gem"]) + int(row["in_wiki"]) + int(row["in_osm"])
+    return (source_layers, -int(row["plant_id"]))
 
 
 def sort_by_visibility(rows: list[dict]) -> list[dict]:
@@ -131,28 +134,45 @@ def coverage_counts(rows: list[dict]) -> dict:
         "gold": sum(int(r["in_gold"]) for r in rows),
         "gem": sum(int(r["in_gem"]) for r in rows),
         "wiki": sum(int(r["in_wiki"]) for r in rows),
-        "census": sum(1 for r in rows if int(r["census_count"]) > 0),
+        "osm": sum(int(r["in_osm"]) for r in rows),
     }
 
 
 # --- derivation (slow: LP reconciliation, runs once) ------------------------
 
 
+def load_osm_thermal_names(osm_path: Path) -> list[str]:
+    """Thermal plant names from the OSM power=plant extract.
+
+    Filters on the ``source`` (fuel) column so hydro/solar/wind rows do not
+    count toward the thermal recognition layer.
+    """
+    with Path(osm_path).open(encoding="utf-8") as fh:
+        return [
+            r["name"].strip()
+            for r in csv.DictReader(fh)
+            if r.get("name", "").strip()
+            and r.get("source", "").strip() in _OSM_THERMAL_FUELS
+        ]
+
+
 def derive_layer_rows(
-    records_glob: str,
     reference_path: Path,
     gem_path: Path,
+    osm_path: Path,
 ) -> list[dict]:
-    """Reconcile GEM / Wikipedia / model-census against the reference once.
+    """Reconcile GEM / Wikipedia / OSM against the reference once.
 
     Reuses the concordance script's fold/reconcile machinery (imported, not
     reimplemented) so GEM/Wikipedia coverage matches the committed concordance
-    table exactly, and the shared exp1_recognition library for the census.
+    table exactly. The OSM layer is a deliberate name-only presence check
+    (fold + partial_ratio >= _OSM_MATCH): OSM maps existing infrastructure, so
+    no LP reconciliation and no capacity term apply.
     """
-    from collections import defaultdict
+    from rapidfuzz import fuzz
 
-    from .exp1_recognition import load_exp1_recognition
     from .tabulate_source_concordance import (
+        _fold,
         _names_to_plants,
         _reviewed_coverage,
         _wikipedia_names,
@@ -172,14 +192,14 @@ def derive_layer_rows(
         reference, _names_to_plants(wiki_names), wiki_names
     )
 
-    recog = load_exp1_recognition(records_glob, str(reference_path))
-    census: dict[int, int] = defaultdict(int)
-    for cell in recog.cells:
-        if cell.recognized:
-            census[cell.plant_id] += 1
+    folded_osm = [f for f in (_fold(n) for n in load_osm_thermal_names(osm_path)) if f]
 
     rows: list[dict] = []
     for pid, plant in enumerate(reference):
+        fr = _fold(plant.name)
+        in_osm = bool(fr) and any(
+            fuzz.partial_ratio(fr, fo) >= _OSM_MATCH for fo in folded_osm
+        )
         rows.append(
             build_row(
                 pid,
@@ -187,7 +207,7 @@ def derive_layer_rows(
                 plant.status.value if plant.status else "",
                 in_gem=plant.name in gem_cov,
                 in_wiki=plant.name in wiki_cov,
-                census=census.get(pid, 0),
+                in_osm=in_osm,
             )
         )
     return rows
@@ -209,7 +229,7 @@ def load_layer_table(path: Path) -> list[dict]:
     with Path(path).open(encoding="utf-8") as fh:
         rows = list(csv.DictReader(fh))
     for r in rows:
-        for col in ("plant_id", "in_gold", "in_gem", "in_wiki", "census_count"):
+        for col in ("plant_id", "in_gold", "in_gem", "in_wiki", "in_osm"):
             r[col] = int(r[col])
     return rows
 
@@ -217,10 +237,10 @@ def load_layer_table(path: Path) -> list[dict]:
 # --- rendering (reads the CSV) ----------------------------------------------
 
 
-def _census_cmap() -> LinearSegmentedColormap:
-    """Neutral (miss) -> matched (recognised) ramp from the shared palette."""
+def _layer_cmap() -> LinearSegmentedColormap:
+    """Neutral (miss) -> matched (documented) ramp from the shared palette."""
     return LinearSegmentedColormap.from_list(
-        "longtail_census", ["white", COLOR_MATCHED]
+        "longtail_layers", ["white", COLOR_MATCHED]
     )
 
 
@@ -231,19 +251,18 @@ def render_longtail(rows: list[dict], output: Path, output_macros: Path | None =
     ordered = sort_by_visibility(rows)
     counts = coverage_counts(ordered)
     n = counts["n_reference"]
-    census_max = max((int(r["census_count"]) for r in ordered), default=1) or 1
 
-    # Build a per-layer intensity matrix: rows = layers, cols = plants.
-    # Gold/GEM/Wikipedia are boolean (0/1); Census is graded by run count.
+    # Build a per-layer presence matrix: rows = layers, cols = plants.
+    # All four layers are boolean (0/1).
     grid = np.zeros((len(_LAYER_ROWS), n))
     for j, r in enumerate(ordered):
         grid[0, j] = int(r["in_gold"])
         grid[1, j] = int(r["in_gem"])
         grid[2, j] = int(r["in_wiki"])
-        grid[3, j] = int(r["census_count"]) / census_max
+        grid[3, j] = int(r["in_osm"])
 
     fig, ax = plt.subplots(figsize=(11, 2.6))
-    cmap = _census_cmap()
+    cmap = _layer_cmap()
     ax.imshow(
         grid,
         aspect="auto",
@@ -270,7 +289,7 @@ def render_longtail(rows: list[dict], output: Path, output_macros: Path | None =
     ax.set_title(
         f"Recognition long tail: Gold {counts['gold']}/{n}, "
         f"GEM {counts['gem']}/{n}, Wikipedia {counts['wiki']}/{n}, "
-        f"model census {counts['census']}/{n} (>= 1 run)",
+        f"OSM {counts['osm']}/{n}",
         fontsize=9,
     )
     fig.tight_layout()
@@ -278,12 +297,12 @@ def render_longtail(rows: list[dict], output: Path, output_macros: Path | None =
     fig.savefig(output, bbox_inches="tight")
     plt.close(fig)
     log.info(
-        "Wrote long-tail figure to %s (Gold %d / GEM %d / Wiki %d / census %d of %d)",
+        "Wrote long-tail figure to %s (Gold %d / GEM %d / Wiki %d / OSM %d of %d)",
         output,
         counts["gold"],
         counts["gem"],
         counts["wiki"],
-        counts["census"],
+        counts["osm"],
         n,
     )
 
@@ -299,7 +318,7 @@ def write_macros(counts: dict, output: Path) -> None:
         f"\\newcommand{{\\LongtailReference}}{{{counts['n_reference']}}}\n"
         f"\\newcommand{{\\LongtailGem}}{{{counts['gem']}}}\n"
         f"\\newcommand{{\\LongtailWiki}}{{{counts['wiki']}}}\n"
-        f"\\newcommand{{\\LongtailCensus}}{{{counts['census']}}}\n",
+        f"\\newcommand{{\\LongtailOsm}}{{{counts['osm']}}}\n",
         encoding="utf-8",
     )
     log.info("Wrote long-tail macros to %s", output)
@@ -309,11 +328,6 @@ def main(argv: list[str] | None = None) -> None:
     logging.basicConfig(level=logging.INFO, format="%(message)s")
     parser = argparse.ArgumentParser(
         description="Generate the long-tail recognition figure and layer CSV."
-    )
-    parser.add_argument(
-        "--records",
-        default="experiments/outputs/exp1_batch2/*.record.json",
-        help="Glob for Exp1 record JSON files (model census layer).",
     )
     parser.add_argument(
         "--reference",
@@ -326,6 +340,12 @@ def main(argv: list[str] | None = None) -> None:
         type=Path,
         default=GEM_THERMAL_REFERENCE_CSV,
         help="GEM thermal reference CSV.",
+    )
+    parser.add_argument(
+        "--osm",
+        type=Path,
+        default=OSM_VN_POWER_PLANTS_CSV,
+        help="OSM power=plant extract CSV (OSM recognition layer).",
     )
     parser.add_argument(
         "--csv",
@@ -360,7 +380,7 @@ def main(argv: list[str] | None = None) -> None:
     if args.from_csv:
         rows = load_layer_table(args.csv)
     else:
-        rows = derive_layer_rows(args.records, args.reference, args.gem)
+        rows = derive_layer_rows(args.reference, args.gem, args.osm)
         write_layer_csv(rows, args.csv)
         if args.csv_only:
             return

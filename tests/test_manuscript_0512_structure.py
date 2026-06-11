@@ -89,10 +89,10 @@ def test_longtail_caption_counts_match_csv():
     gold = sum(int(r["in_gold"]) for r in rows)
     gem = sum(int(r["in_gem"]) for r in rows)
     wiki = sum(int(r["in_wiki"]) for r in rows)
-    census = sum(1 for r in rows if int(r["census_count"]) > 0)
+    osm = sum(int(r["in_osm"]) for r in rows)
     assert gold == 177
     # Each derived layer count must appear verbatim in the manuscript prose.
-    for val in (str(gem), str(wiki), str(census)):
+    for val in (str(gem), str(wiki), str(osm)):
         assert val in text, (
             f"long-tail layer count {val} (re-derived from CSV) missing from main.tex"
         )

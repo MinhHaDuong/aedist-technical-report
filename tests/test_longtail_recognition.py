@@ -1,9 +1,9 @@
-"""Tests for the long-tail recognition figure (ticket 0514).
+"""Tests for the long-tail recognition figure (tickets 0514, 0537).
 
 The figure shows, for each of the reference plants sorted by visibility, which
-recognition layers document it (Gold, GEM, Wikipedia, model census). The plot
-script reads a committed per-plant layer CSV; caption/coverage counts are
-re-derived from that CSV, never hardcoded (derive-prose-from-artifacts rule).
+recognition layers document it (Gold, GEM, Wikipedia, OSM). The plot script
+reads a committed per-plant layer CSV; caption/coverage counts are re-derived
+from that CSV, never hardcoded (derive-prose-from-artifacts rule).
 
 These tests exercise the pure table-building / coverage-counting logic with
 small synthetic inputs (no slow LP reconciliation), assert the layer CSV — when
@@ -26,12 +26,18 @@ _SCRIPT = Path(mod.__file__)
 def _sample_rows() -> list[dict]:
     """Three plants spanning head / middle / tail visibility."""
     return [
-        # documented everywhere, recognised by many models -> head
-        mod.build_row(0, "Alpha", "operational", in_gem=True, in_wiki=True, census=58),
-        # GEM only, no model recognises it -> tail
-        mod.build_row(1, "Beta", "proposed", in_gem=True, in_wiki=False, census=0),
-        # Gold-only (no source, no model) -> deep tail
-        mod.build_row(2, "Gamma", "cancelled", in_gem=False, in_wiki=False, census=0),
+        # documented everywhere -> head
+        mod.build_row(
+            0, "Alpha", "operational", in_gem=True, in_wiki=True, in_osm=True
+        ),
+        # GEM only -> tail
+        mod.build_row(
+            1, "Beta", "proposed", in_gem=True, in_wiki=False, in_osm=False
+        ),
+        # Gold-only (no public source) -> deep tail
+        mod.build_row(
+            2, "Gamma", "cancelled", in_gem=False, in_wiki=False, in_osm=False
+        ),
     ]
 
 
@@ -49,20 +55,42 @@ def test_layer_columns_cover_the_four_layers() -> None:
     # Gold is universal (all reference plants) so it need not be a column, but
     # the three differentiating layers must each have a column.
     cols = set(mod.LAYER_COLUMNS)
-    assert {"in_gem", "in_wiki", "census_count"} <= cols
+    assert {"in_gem", "in_wiki", "in_osm"} <= cols
     assert "plant_id" in cols and "plant_name" in cols
+
+
+def test_osm_layer_replaces_census() -> None:
+    """Ticket 0537: the OSM layer replaces the language-model census layer."""
+    cols = set(mod.LAYER_COLUMNS)
+    assert "in_osm" in cols
+    assert "census_count" not in cols
+    assert "OSM" in mod._LAYER_ROWS
+    assert "Census" not in mod._LAYER_ROWS
+    row = mod.build_row(
+        3, "Delta", "operational", in_gem=False, in_wiki=False, in_osm=True
+    )
+    assert row["in_osm"] == 1
+    assert "census_count" not in row
+
+
+def test_coverage_counts_has_osm_not_census() -> None:
+    counts = mod.coverage_counts(_sample_rows())
+    assert "osm" in counts
+    assert "census" not in counts
 
 
 # --- pure table logic -------------------------------------------------------
 
 
 def test_build_row_records_layer_membership() -> None:
-    row = mod.build_row(7, "Foo", "operational", in_gem=True, in_wiki=False, census=12)
+    row = mod.build_row(
+        7, "Foo", "operational", in_gem=True, in_wiki=False, in_osm=False
+    )
     assert row["plant_id"] == 7
     assert row["plant_name"] == "Foo"
     assert row["in_gem"] == 1
     assert row["in_wiki"] == 0
-    assert row["census_count"] == 12
+    assert row["in_osm"] == 0
     # every reference plant is Gold by construction
     assert row["in_gold"] == 1
 
@@ -74,7 +102,7 @@ def test_coverage_counts_re_derived_from_rows() -> None:
     assert counts["gold"] == 3  # all reference plants are Gold
     assert counts["gem"] == 2
     assert counts["wiki"] == 1
-    assert counts["census"] == 1  # only one plant recognised by >=1 model
+    assert counts["osm"] == 1  # only one plant present in OSM
 
 
 def test_coverage_counts_internally_consistent() -> None:
@@ -82,7 +110,7 @@ def test_coverage_counts_internally_consistent() -> None:
     counts = mod.coverage_counts(rows)
     n = counts["n_reference"]
     # no layer can document more plants than exist, and Gold is the ceiling
-    for layer in ("gold", "gem", "wiki", "census"):
+    for layer in ("gold", "gem", "wiki", "osm"):
         assert 0 <= counts[layer] <= n
     assert counts["gold"] == n
 
@@ -131,16 +159,18 @@ def test_generated_csv_has_one_row_per_plant() -> None:
         rows = list(csv.DictReader(fh))
     assert len(rows) == reference_plant_count()
     header = set(rows[0].keys())
-    assert {"plant_id", "plant_name", "in_gem", "in_wiki", "census_count"} <= header
+    assert {"plant_id", "plant_name", "in_gem", "in_wiki", "in_osm"} <= header
+    assert "census_count" not in header
     # internal consistency on the real artifact
     int_rows = [
         {
             "in_gem": int(r["in_gem"]),
             "in_wiki": int(r["in_wiki"]),
-            "census_count": int(r["census_count"]),
+            "in_osm": int(r["in_osm"]),
         }
         for r in rows
     ]
     n = len(int_rows)
     assert sum(r["in_gem"] for r in int_rows) <= n
     assert sum(r["in_wiki"] for r in int_rows) <= n
+    assert sum(r["in_osm"] for r in int_rows) <= n
