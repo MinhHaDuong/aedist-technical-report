@@ -1,0 +1,45 @@
+%erg 0.1
+Title: Extend crossref adherence test to report.tex (FR literals)
+Created: 2026-06-11
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-11T10:25Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+PR #959 (ticket 0503) shipped a FR caption in `report/report.tex` that
+hardcoded page numbers (« pages 1--2 / page 3 ») — caught only by the
+/gaze review (REROLL blocker), fixed in 4940b466 with layout-stable
+phrasing. The writing rule "never hardcode cross-reference numbers" is
+enforced by `tests/test_manuscript_crossref.py` (adherence) for
+`slides/manuscript/main.md` ONLY; `report/report.tex` has no standing
+guard, so the class can come back in any future FR-report PR.
+
+A sweep on 2026-06-11 found report.tex currently clean (zero hand-typed
+`Figure N` / `Tableau N` / `Annexe X` / `page N` / `§N` literals outside
+`\ref`/`\pageref`/`\Cref`).
+
+## Actions
+
+1. Extend `tests/test_manuscript_crossref.py` (or add a sibling
+   `test_report_crossref.py`) to scan `report/report.tex` prose for
+   FR-pattern literals: `Figure N`, `Tableau N`, `Annexe A/B/…`,
+   `page(s) N`, `§N` — excluding lines where the number comes from
+   `\ref{…}`, `\pageref{…}`, `\Cref{…}`, `\thefigure`, or a macro.
+2. Mark `@pytest.mark.adherence`.
+3. Whitelist mechanism for false positives (e.g. literal numbers in
+   bibliography or verbatim blocks) if needed — keep it tiny.
+
+## Test
+
+The new test itself is the deliverable (red step: temporarily reintroduce
+« la page 3 » in a caption and confirm the test fails).
+
+## Exit criteria
+
+- [ ] Adherence test covers report.tex cross-reference literals (FR patterns)
+- [ ] Red-step verified: a planted literal fails the test
+- [ ] report.tex passes as-is (no false positives)
+- [ ] `make check` passes
