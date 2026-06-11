@@ -182,6 +182,13 @@ def _model_label(model: str) -> str:
 
 
 def _model_size_rank(model: str) -> int:
+    """Coarse name-based size tier for the spider's 2x2 panels ONLY.
+
+    The spider sorts ascending-by-tier — intentionally different from the
+    census order (Figure 2 / heatmap), which uses the shared
+    ``plot_method_convergence.census_model_order`` (descending by size).
+    Do not reuse this for census ordering.
+    """
     slug = model.lower()
     if any(t in slug for t in ("haiku", "small", "20b", "flash")):
         return 1
