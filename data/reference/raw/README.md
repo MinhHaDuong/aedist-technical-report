@@ -16,6 +16,25 @@ snapshot is committed to git, it is never overwritten. A same-day re-import
 before the first commit may overwrite; a committed snapshot never. See
 `import.sh` for the overwrite guard.
 
+## `wikipedia_*-YYYY-MM-DD.wikitext`
+
+Raw wikitext snapshots of two English Wikipedia pages, captured 2026-06-09 via
+the `?action=raw` endpoint (tickets 0486/0494 — source concordance and the
+seeded recall bar):
+
+- `wikipedia_coal_vietnam-2026-06-09.wikitext` —
+  [List of coal power stations in Vietnam](https://en.wikipedia.org/wiki/List_of_coal_power_stations_in_Vietnam?action=raw)
+- `wikipedia_power_vietnam-2026-06-09.wikitext` —
+  [List of power stations in Vietnam](https://en.wikipedia.org/wiki/List_of_power_stations_in_Vietnam?action=raw);
+  the gas plants consumed downstream sit in its `==Gas turbines==` section.
+
+Consumed by `src/aedist/tabulate_source_concordance.py`,
+`src/aedist/tabulate_wikipedia_recall_bar.py`, and
+`src/aedist/plot_longtail_recognition.py` (wired in `experiments/render.mk`).
+These pages are not independent of the reference: the author's group seeded
+reference-derived content into them in June 2019 — the edit-history provenance
+(revision IDs, diffs) is documented in `data/reference/PROVENANCE.md`.
+
 ## `pipeline-YYYY-MM-DD.ods`
 
 The master spreadsheet for the Vietnam thermal-units reference list, maintained

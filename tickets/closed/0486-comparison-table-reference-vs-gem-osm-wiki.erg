@@ -2,13 +2,17 @@
 Title: Source concordance: reference vs GEM (+ Wikipedia bar) — annex table + figure bars
 Created: 2026-06-09
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #985
 
 --- log ---
 2026-06-09T00:00Z HDMX-coding-agent created
 2026-06-09T08:30Z HDMX-coding-agent note DEFERRED by raid Imagine/Plan verification — three exit-criteria decisions were author-only.
 2026-06-09T11:30Z HDMX-coding-agent note SCOPE LOCKED after the 0486 design dialogue + grounding computation. The three deferred decisions are resolved (see below). Numbers below are measured (light-reviewed); the executor consumes them, does not re-derive the design. Prototype scripts committed at `experiments/exploration/0486/` (reproduce the numbers from tracked inputs); productionise.
 2026-06-11T09:05Z haduong ratified scope-lock confirmed (GEM+Wikipedia, annex, 177) — design dialogue trumps the stale STATE recommendation; ready to execute after 0524
+2026-06-11T21:27Z claude note feasibility PASS (orchestrator) — executing; manuscript target corrected main.md→main.tex
+2026-06-11T21:50Z claude note delivered on t0486 — bulk landed pre-0524 (04fa7f1e/0efd6f55/8afc7087) and survived the .md→.tex conversion; this branch adds the generated annex-table include (row-grain guard), wikitext provenance, figure rebuilds, exit-criteria evidence
 
+2026-06-11T21:51Z HDMX-coding-agent closed — autoclosed — PR #985
 --- body ---
 
 ## Scope (locked 2026-06-09)
@@ -86,12 +90,12 @@ def test_concordance_table_bidirectional():
 
 ## Exit criteria
 
-- [ ] Annex concordance table generated reproducibly (matched / ref-only / source-only by status), Makefile-wired
-- [ ] Wikipedia bar on Exp1 figures, GEM bar on Exp2 figures (light-grey background, same style)
-- [ ] §4/§5 prose quotes the reviewed numbers from the artifact, with the light-review caveat
-- [ ] Raw Wikipedia snapshots committed under `data/reference/raw/` with provenance
-- [ ] Denominator via `reference_plant_count()` (177); no hardcoded count
-- [ ] `make check` passes
+- [x] Annex concordance table generated reproducibly (matched / ref-only / source-only by status), Makefile-wired — `tabulate_source_concordance.py` (04fa7f1e) emits CSV + macros + the annex table body `report/inputs/generated/tab_source_concordance.tex` that `main.tex` `\input`s (t0486); grouped target in `render.mk`; regeneration is byte-identical
+- [x] Wikipedia bar on Exp1 figures, GEM bar on Exp2 figures (light-grey background, same style) — `plot_method_convergence.py` / `plot_exp2_arms_comparison.py` (0efd6f55): both `color="0.6"`, dotted, `zorder=1`; values read from the concordance CSV; PDFs rebuilt against current scripts and visually verified (t0486)
+- [x] §4/§5 prose quotes the reviewed numbers from the artifact, with the light-review caveat — `main.tex` §exp1 seeded-recall-bar paragraph (73 % aggregate, light-reviewed, annex ref) and §exp2 lead (GEM 89 % after light review); full honesty caveat in the Table caption; literals guarded by `tests/test_source_concordance.py` + `tests/test_wikipedia_recall_bar.py`
+- [x] Raw Wikipedia snapshots committed under `data/reference/raw/` with provenance — snapshots committed 2026-06-09; capture method/URLs/consumers documented in `data/reference/raw/README.md` (t0486), seeding history in `PROVENANCE.md`
+- [x] Denominator via `reference_plant_count()` (177); no hardcoded count — `tabulate_source_concordance.py:189` and both plot scripts; `grep 177` over the concordance/figure code path is clean
+- [x] `make check` passes — full suite green on t0486 before PR
 
 ## Out of scope (spun out)
 
