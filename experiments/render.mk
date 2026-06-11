@@ -684,6 +684,7 @@ RENDER_REPORT_TABLES := \
 	$(ANALYSIS_GEN)/tab_source_grounding.tex \
 	$(ANALYSIS_GEN)/tab_status_difficulty.tex \
 	$(ANALYSIS_GEN)/macros_source_concordance.tex \
+	$(ANALYSIS_GEN)/tab_source_concordance.tex \
 	$(ANALYSIS_WIKI_BAR_CSV) \
 	$(ANALYSIS_EXP2_WIKI_CSV) \
 	$(ANALYSIS_AGG_SWEEP_TEX)
@@ -875,11 +876,13 @@ $(ANALYSIS_GEN)/tab_status_difficulty.tex: $(ANALYSIS_EXP1_BATCH2_RECORDS) $(ANA
 	    --output $(ANALYSIS_GEN)/tab_status_difficulty.tex
 
 # Source concordance (ticket 0486): reference vs GEM + Wikipedia, bidirectional
-# by status. One invocation co-produces the headline macros (this target) and
-# the per-status CSV ($(ANALYSIS_CONCORDANCE_CSV)); both are committed. Reads the
-# reference, GEM, and the two cached Wikipedia wikitext snapshots; denominator
-# via reference_plant_count() (no hardcoded count).
-$(ANALYSIS_GEN)/macros_source_concordance.tex $(ANALYSIS_CONCORDANCE_CSV) &: \
+# by status. One invocation co-produces the headline macros (this target), the
+# per-status CSV ($(ANALYSIS_CONCORDANCE_CSV)), and the annex table body that
+# main.tex \inputs; all three are committed. Reads the reference, GEM, and the
+# two cached Wikipedia wikitext snapshots; denominator via
+# reference_plant_count() (no hardcoded count).
+$(ANALYSIS_GEN)/macros_source_concordance.tex $(ANALYSIS_CONCORDANCE_CSV) \
+		$(ANALYSIS_GEN)/tab_source_concordance.tex &: \
 		$(ANALYSIS_EXPERT_REF) $(ANALYSIS_GEM_REF) $(ANALYSIS_WIKI_COAL) $(ANALYSIS_WIKI_POWER) \
 		$(ANALYSIS_REPO_ROOT)/src/aedist/tabulate_source_concordance.py \
 		$(ANALYSIS_REPO_ROOT)/src/aedist/exp1_recognition.py \
@@ -887,7 +890,8 @@ $(ANALYSIS_GEN)/macros_source_concordance.tex $(ANALYSIS_CONCORDANCE_CSV) &: \
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.tabulate_source_concordance \
 	    --csv $(ANALYSIS_CONCORDANCE_CSV) \
-	    --macros $(ANALYSIS_GEN)/macros_source_concordance.tex
+	    --macros $(ANALYSIS_GEN)/macros_source_concordance.tex \
+	    --table $(ANALYSIS_GEN)/tab_source_concordance.tex
 
 # Wikipedia recall bar (ticket 0494): per-raw-status seeded-ceiling coverage.
 # Shares the matcher/fold machinery with the concordance script (imported), so

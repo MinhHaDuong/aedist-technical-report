@@ -1286,7 +1286,8 @@ exists for Vietnam's thermal fleet, and we did not find a second
 human-curated reference at comparable granularity; the closest available
 external check is Global Energy Monitor (GEM, 119 distinct plants;
 snapshot exported no later than 2026-04-02, the date it entered version
-control), against which we report a light-reviewed concordance below.
+control), against which we report a light-reviewed concordance in
+Table~\ref{tbl:source-concordance}.
 
 \textbf{Source concordance (reference vs GEM and Wikipedia).} GEM covers
 157 of the 177 reference plants (89\%) after light review --- more
@@ -1301,31 +1302,18 @@ lacks (the 20 reference-only rows, concentrated in ``proposed''). The
 built fleet is well covered by both; the divergence is in the
 forward-looking tail, exactly where the reference's contribution lies.
 
-\begin{longtable}[]{@{}lrrrr@{}}
-\toprule\noalign{}
-Status & Reference & GEM matched & GEM-only & Wikipedia matched \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-Proposed & 68 & 53 & 2 & 37 \\
-Planned & 21 & 21 & 0 & 18 \\
-Under construction & 10 & 10 & 0 & 8 \\
-Operational & 56 & 52 & 0 & 53 \\
-Retired & 2 & 2 & 0 & 2 \\
-Cancelled & 20 & 19 & 10 & 12 \\
-\textbf{All} & \textbf{177} & \textbf{157} & \textbf{12} &
-\textbf{130} \\
-\end{longtable}
-
-\emph{Table: source concordance by status, generated from
-\texttt{data/reference/tab\_source\_concordance.csv}. Coverage is
-\textbf{light-reviewed} --- an ASCII-fold pass recovers
+\begin{table}
+\centering
+\caption{\label{tbl:source-concordance}Source concordance by status,
+generated from \texttt{data/reference/tab\_source\_concordance.csv}.
+Coverage is \textbf{light-reviewed} --- an ASCII-fold pass recovers
 Vietnamese-diacritic naming variants the LP matcher floors (``Cà Mau I''
 vs ``Ca Mau 1''), which slightly over-counts via phase/grain mismatch
 (one source row ↔ several reference phases), so the percentages are
 upper bounds. Full per-plant human reconciliation is deferred
 (post-arXiv).}
+\input{../../report/inputs/generated/tab_source_concordance.tex}
+\end{table}
 
 \subsection*{Prompts}
 \addcontentsline{toc}{subsection}{Prompts}

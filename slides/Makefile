@@ -41,6 +41,7 @@ MANUSCRIPT_ASSETS := \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_exp1_reliability.pdf \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_quality_floor_heatmap_exp1.pdf \
 	$(LOCAL_ROOT_REPORT_GEN)/tab_exp1_reliability_sensitivity.tex \
+	$(LOCAL_ROOT_REPORT_GEN)/tab_source_concordance.tex \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_capability_timeline.pdf \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_capability_dag.pdf \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_exp2_arms_comparison.pdf \

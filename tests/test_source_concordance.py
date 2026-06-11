@@ -12,13 +12,39 @@ import re
 from pathlib import Path
 
 import pytest
-from manuscript_source import body
+from manuscript_source import body, raw
 
 pytestmark = pytest.mark.adherence
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 CSV_PATH = REPO_ROOT / "data" / "reference" / "tab_source_concordance.csv"
 MACROS = REPO_ROOT / "report" / "inputs" / "generated" / "macros_source_concordance.tex"
+TABLE_TEX = REPO_ROOT / "report" / "inputs" / "generated" / "tab_source_concordance.tex"
+
+
+def test_annex_table_is_generated_include():
+    """The annex concordance table is a generated include re-derived from the CSV.
+
+    Guards the no-hand-typed-numbers rule at the table grain (the macro guard
+    below covers only the headline aggregates): every CSV row must appear as a
+    tabular row in the generated .tex, and main.tex must \\input that file
+    rather than carry a hand-typed table body.
+    """
+    assert TABLE_TEX.exists(), (
+        f"{TABLE_TEX} not generated — run: make -f experiments/render.mk report-tables"
+    )
+    assert (
+        "\\input{../../report/inputs/generated/tab_source_concordance.tex}" in raw()
+    ), "main.tex must \\input the generated concordance table, not hand-type it"
+    tex = TABLE_TEX.read_text(encoding="utf-8")
+    for r in _rows():
+        cells = [r["status"], r["n_reference"], r["gem_matched"], r["gem_only"], r["wiki_matched"]]
+        if r["status"] == "All":
+            cells = [f"\\textbf{{{c}}}" for c in cells]
+        pattern = r"\s*&\s*".join(re.escape(c) for c in cells)
+        assert re.search(pattern + r"\s*\\\\", tex), (
+            f"row {r['status']!r} not re-derivable from {TABLE_TEX.name}"
+        )
 
 
 def _rows() -> list[dict]:
