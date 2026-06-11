@@ -1,0 +1,47 @@
+%erg 0.1
+Title: LP matcher digit-veto asymmetry: base-name vs phase-suffixed siblings escape the unit-number veto
+Created: 2026-06-11
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-11T22:40Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Ticket 0544 (PR #988) measured the LP matcher's phase-collision exposure and
+found the unit-number veto (`src/aedist/matching/lp.py:203-208`) only fires
+when BOTH names carry digit tokens. A base name vs a phase-suffixed sibling
+("Ca Na" vs "Ca Na 2") has digits on one side only, so the veto cannot fire:
+70 of 174 structural pairs at threshold 90 are residual exposure
+(`report/inputs/generated/tab_phase_collisions.csv`, `veto_blocked=False`).
+Realised false matches in current runs are 0 (`\RealisedFuzzyBelowNinety`),
+so this is robustness hardening, not a live defect — but a future corpus
+with more base-name emissions could realise it. Scoring change = own ticket
+per 0502 precedent; sketch logged in tickets/closed/0544.
+
+## Actions
+
+1. Decide the guard semantics: e.g. veto when exactly one side has digit
+   tokens AND the digit-stripped names are near-identical (digit-asymmetric
+   guard), or switch the pair cost to token_sort_ratio. Prototype both on
+   tab_phase_collisions.csv before touching lp.py.
+2. Apply the chosen guard to `matching/lp.py` and `matching/phased.py`
+   (`_digit_compatible`), keeping both implementations shared (0544's fix
+   reused `_extract_digit_tokens`; extend the same shared helper).
+3. Re-run the affected scoring pipeline and quantify the F1/coverage delta;
+   measurements semantics may change — flag in the PR if any committed
+   metric moves.
+
+## Test
+
+- Red first: ("ca na", "ca na 2") must be veto-blocked (or cost-floored) by
+  the new guard; ("vung ang 1", "vung ang 2") stays blocked; a genuinely
+  distinct digit-free pair stays matchable.
+
+## Exit criteria
+
+- [ ] Guard implemented in both lp.py and phased.py via the shared helper
+- [ ] tab_phase_collisions.csv residual count drops accordingly (regenerated)
+- [ ] Scoring delta quantified and reported in the PR body
+- [ ] `make check` green
