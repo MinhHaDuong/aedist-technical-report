@@ -14,6 +14,7 @@ Blocked-by: 0201
 2026-06-08T21:36Z HDMX-coding-agent note blocker 0453 closed — Blocked-by removed.
 2026-06-09T00:00Z HDMX-coding-agent note added child A7=0487 (Haiku false pass — coherence scoring gap); also Blocked-by 0487.
 2026-06-09T09:00Z HDMX-coding-agent note blocker 0487 closed — Blocked-by removed.
+2026-06-11T09:30Z HDMX-coding-agent note added child A8=0397 (internal/external per-row composites) — predates this tracker (Imagine 2026-06-03) but was orphaned by the 0201 re-scope; its external composite and within-row AND aggregation had no other home in the roadmap.
 --- body ---
 ## Context
 
@@ -61,6 +62,12 @@ It holds no production code of its own; each child lands its own merge request.
 - **A7 = 0487** (NEW): Haiku false pass — heatmap shows all-green for the
   weakest Claude model; root cause is missing free-criterion columns in
   `exp1_cross_eval.csv`; fix after 0201 lands.
+- **A8 = 0397** (pre-existing, reconciled 2026-06-11): `coherence_internal` /
+  `coherence_external` per-row pass/fail composites over the per-field
+  indicators, plus the external checks (province gazetteer, ≥30 MWe task
+  scope) no other child owns. Aggregates checks *within* a row — orthogonal
+  to 0453's across-rows/runs veto and floor. Consumes 0201's scorer
+  components and the 0402 level predicates.
 - **screen-design = 0453** (re-scoped): two-level screen — run-grain veto
   (zero-is-trash on the four free criteria) + model-grain majority-red floor.
 
@@ -72,7 +79,7 @@ It holds no production code of its own; each child lands its own merge request.
 
 ## Exit criteria (IDH tracking-ticket convention)
 
-- [ ] All children merged: 0201, 0453, 0466, 0467, 0468, 0469, 0473, 0487.
+- [ ] All children merged: 0201, 0397, 0453, 0466, 0467, 0468, 0469, 0473, 0487.
 - [ ] Manuscript presents the internal-coherence run-screen as a present
       contribution (not future work) with the model-grain floor heatmap as
       the canonical quality figure.
