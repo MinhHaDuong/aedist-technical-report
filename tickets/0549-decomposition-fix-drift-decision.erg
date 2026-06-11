@@ -1,0 +1,28 @@
+%erg 0.1
+Title: Decide: adopt or annotate the regenerated tab_decomposition_fix numbers (child of 0424)
+Created: 2026-06-12
+Author: HDMX-coding-agent
+Label: needs-human
+
+--- log ---
+2026-06-12T08:10Z orchestrator created — split from 0424 (PR #995): numeric drift is an author decision
+
+--- body ---
+## Context
+0424 (PR #995) restored the reconcile-from-archive P2 step. The
+regenerated table is NOT byte-identical to the frozen 0068 table:
+current scorer (post-#547 Mismatched fix) + v2 reference give much
+higher FP rates (e.g. Panel A DeepSeek mean 5.7%→24.0%; Panel B
+Gemini-3-Flash 0.0%→14.0%), weakening the before→after story. Frozen
+numbers were kept committed; drift table and adoption recipe are in the
+PR #995 body.
+
+## Actions
+1. Author reviews the drift table in PR #995.
+2. Either adopt the regenerated numbers (rebuild + update prose around
+   report.tex decomposition-fix discussion) or keep the frozen table
+   with an explicit vintage annotation (scorer/reference version note).
+
+## Exit criteria
+- [ ] Drift decision recorded; table and any dependent prose consistent
+      with it.
