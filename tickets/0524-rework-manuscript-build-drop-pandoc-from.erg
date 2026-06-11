@@ -1,12 +1,25 @@
 %erg 0.1
-Title: Rework manuscript build: drop pandoc from CI, weigh LaTeX vs local-only
+Title: Convert manuscript to LaTeX (drop pandoc/pandoc-crossref), rework CI build
 Created: 2026-06-10
 Author: HDMX-coding-agent
 
 --- log ---
 2026-06-10T22:03Z HDMX-coding-agent created
+2026-06-11T08:00Z haduong decision Option 1 chosen — convert manuscript to LaTeX; MD workflow complications outweigh the pandoc-crossref benefits
 
 --- body ---
+## Decision (author, 2026-06-11)
+
+**Option 1 — convert the manuscript to LaTeX**, tectonic-built like report and
+slides, eliminating pandoc + pandoc-crossref entirely. Rationale: the Markdown
+workflow accumulated complications (pandoc/pandoc-crossref version pinning,
+CI/local divergence, raw-LaTeX escape blocks, the τ-glyph workaround) that
+outweigh its benefits. Option 2 (local-only pandoc) is rejected.
+
+Sequencing note: convert **before** the 0508 editorial rewrite, so the 0508
+sub-tickets edit the LaTeX source once instead of editing `main.md` and
+re-converting.
+
 ## Context
 The manuscript build (`slides/manuscript/main.md` → `main.pdf`) depends on
 `pandoc` + `pandoc-crossref` (introduced by ticket 0518 for symbolic
@@ -31,36 +44,57 @@ Compounding facts found 2026-06-10:
 build matrix; do not pin a second pandoc + pandoc-crossref toolchain into CI just
 to mirror the local manuscript build.
 
-## Options to weigh
-1. **Convert manuscript to LaTeX** (tectonic-built like report/slides),
-   eliminating pandoc + pandoc-crossref entirely. NOTE: this reverses ticket 0518
-   and the `main.md` pandoc-crossref house conventions in
-   `.claude/rules/writing.md` (`{#sec:…}`/`[@fig:…]` machinery, the τ fix, the
-   `\appendix` raw-LaTeX blocks). Substantial; touches writing rules + adherence
-   tests (`tests/test_manuscript_crossref.py`).
-2. **Keep `main.md` + pandoc, build manuscript locally only.** Remove the
-   "Build manuscript" AND "Install pandoc" steps from `docs-build.yml` (report +
-   slides stay green, tectonic-only). Optionally add a local pre-push hook that
-   runs `make -C slides manuscript/main.pdf` and degrades gracefully when
-   `pandoc-crossref` is absent. In this world the local env (3.7.0.2 / v0.3.20)
-   is the only build env.
+## Conversion plan (reverses ticket 0518's pandoc-crossref machinery)
+1. Convert `slides/manuscript/main.md` → `slides/manuscript/main.tex`
+   (one-shot `pandoc -t latex` as a starting point is fine; the committed
+   result is hand-curated LaTeX, source of truth thereafter; delete `main.md`).
+   - `{#sec:id}` / `[@sec:id]` / `[@fig:id]` / `{#tbl:id}` →
+     `\label{...}` / `\Cref{...}` (cleveref) or `\ref`.
+   - The `[-@sec:annex-…]` prefix-suppressed annex refs → `\appendix` +
+     standard `\Cref` lettering; the raw-LaTeX escape blocks
+     (`\renewcommand{\thefigure}{S\arabic{figure}}`,
+     `\refstepcounter{figure}\label{…}`, `\includepdf` matrix) become plain
+     LaTeX — no escaping needed.
+   - The 0523 τ-glyph math-mode fix becomes moot (native LaTeX throughout).
+2. `slides/Makefile`: `manuscript/main.pdf` rule becomes a tectonic build;
+   drop the `PANDOC_CROSSREF` variable and the install comment (folded task
+   below resolves by deletion).
+3. `.github/workflows/docs-build.yml`: remove "Install pandoc" and rework
+   "Build manuscript" to tectonic (or fold into the existing tectonic build
+   steps) — as few CI builds as possible per the design direction.
+4. `.claude/rules/writing.md`: replace the `main.md` pandoc-crossref house
+   conventions with the LaTeX equivalents (`\label`/`\Cref`, unnumbered
+   sections via `\section*`, annex conventions).
+5. `tests/test_manuscript_crossref.py`: rewrite for LaTeX — no hand-typed
+   "§N"/"Figure N"/"Annex X" literals in `main.tex` prose; every `\ref`/`\Cref`
+   target has a matching `\label`. Keep
+   `tests/test_manuscript_figure_numbering.py` and other manuscript adherence
+   tests working against the `.tex` source.
+6. Sweep for other `main.md` references (Makefile targets, docs, skills,
+   tickets 0501/0507/0508 bodies note the path) — update paths in build
+   plumbing; open tickets may keep stale paths, but in-flight ones (0501,
+   0507, 0508) should be pointed at `main.tex` when they execute.
 
 ## Folded task
-Fix the `slides/Makefile` pandoc-crossref install comment (lines ~74–77). It
-currently reads "compiled against pandoc 3.1.x" — accurate for CI today, wrong
-once the build is local-only. Supersedes closed PR #939 (which prematurely
-changed it to 3.7.0.2). Make the comment match whichever build env is chosen.
+The `slides/Makefile` pandoc-crossref install comment (lines ~74–77, "compiled
+against pandoc 3.1.x") is deleted along with the pandoc rule — resolves the
+comment drift that closed PR #939 tried to fix prematurely.
 
 ## Relevant files
-- `.github/workflows/docs-build.yml` — manuscript + pandoc install steps
+- `slides/manuscript/main.md` — the manuscript source (→ `main.tex`)
 - `slides/Makefile` — `manuscript/main.pdf` rule + install comment
-- `slides/manuscript/main.md` — the manuscript source
-- `.claude/rules/writing.md` — `main.md` pandoc-crossref house conventions
-- `tests/test_manuscript_crossref.py` — adherence test tied to option 1
+- `.github/workflows/docs-build.yml` — manuscript + pandoc install steps
+- `.claude/rules/writing.md` — pandoc-crossref house conventions to replace
+- `tests/test_manuscript_crossref.py` — adherence test to rewrite for LaTeX
 
 ## Exit criteria
-- [ ] Approach chosen (LaTeX conversion vs local-only pandoc) and recorded.
-- [ ] CI no longer fails on the manuscript / `pandoc-crossref`.
-- [ ] `slides/Makefile` install comment matches the actual build environment.
-- [ ] If local-only: manuscript steps removed from `docs-build.yml`; report +
+- [x] Approach chosen and recorded: LaTeX conversion (author, 2026-06-11).
+- [ ] `main.tex` builds locally via tectonic, content-equivalent to the last
+      `main.md` build (same sections, figures, all cross-refs resolve).
+- [ ] `main.md` deleted; no pandoc/pandoc-crossref references remain in
+      Makefiles or CI.
+- [ ] CI no longer fails on the manuscript / `pandoc-crossref`; report +
       slides CI still green.
+- [ ] `.claude/rules/writing.md` conventions updated to LaTeX.
+- [ ] Adherence tests (`test_manuscript_crossref.py`, figure numbering)
+      rewritten for `.tex` and passing; `make check` passes.
