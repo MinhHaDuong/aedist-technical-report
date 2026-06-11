@@ -8,6 +8,10 @@ Author: HDMX-coding-agent
 2026-06-11T21:40Z HDMX-coding-agent plan — anchors verified, handoff body rewritten with script spec, macro names, Makefile sketch, and tautological test
 
 2026-06-11T21:55Z HDMX-coding-agent note feasibility PASS (10/10 anchors) — ANALYSIS_EXPERT_REF exists at render.mk:111, use it directly in the rule
+2026-06-11T22:52Z HDMX-coding-agent sensitivity t=85: mean_f1=0.4679, n_fuzzy_below=0 (195 runs; 195 structural pairs, 104 veto-blocked, 91 residual)
+2026-06-11T22:52Z HDMX-coding-agent sensitivity t=90: mean_f1=0.4679, n_fuzzy_below=0 (195 runs; 174 structural pairs, 104 veto-blocked, 70 residual)
+2026-06-11T22:52Z HDMX-coding-agent sensitivity t=95: mean_f1=0.4215, n_fuzzy_below=1229 (195 runs; 94 structural pairs, 53 veto-blocked, 41 residual; mean F1 drop 90→95 = 0.046)
+2026-06-11T22:53Z HDMX-coding-agent note residual exposure at t=90 is non-empty (70 pairs): the unit-number veto needs digit tokens on BOTH sides, so base-name vs phase-suffixed siblings ("ca na" vs "ca na 2", "bac lieu" vs "bac lieu 1") and base vs extension/complex variants slip through; realised damage is bounded by the LP's one-to-one assignment and n_fuzzy_below=0, but a digit-asymmetric guard (treat bare base as wildcard-phase) would need a scoring change — new ticket per 0502 precedent, not fixed here
 --- body ---
 ## Context
 
@@ -160,14 +164,14 @@ either way the test pins both sides of the veto flag.
 
 ## Verification
 
-- [ ] `python -m aedist.analyze_matcher_phase_collisions --help` runs without error
-- [ ] `report/inputs/generated/tab_phase_collisions.csv` and `macros_phase_collisions.tex`
+- [x] `python -m aedist.analyze_matcher_phase_collisions --help` runs without error
+- [x] `report/inputs/generated/tab_phase_collisions.csv` and `macros_phase_collisions.tex`
       are produced by the script
-- [ ] `macros_phase_collisions.tex` contains all five `\newcommand` entries
-- [ ] `\RealisedFuzzyBelowNinety` == 0 (confirmed by matching_sensitivity.csv data)
-- [ ] `make -C experiments tab_phase_collisions` or equivalent runs to completion
-- [ ] `make check` passes (adherence tests + ruff + unit tests)
-- [ ] `tectonic slides/manuscript/main.tex` builds without error after prose edit
+- [x] `macros_phase_collisions.tex` contains all five `\newcommand` entries
+- [x] `\RealisedFuzzyBelowNinety` == 0 (confirmed by matching_sensitivity.csv data)
+- [x] `make -C experiments tab_phase_collisions` or equivalent runs to completion
+- [x] `make check` passes (adherence tests + ruff + unit tests)
+- [x] `tectonic slides/manuscript/main.tex` builds without error after prose edit
 
 ## Invariants
 
@@ -182,7 +186,7 @@ either way the test pins both sides of the veto flag.
 
 ## Exit criteria
 
-- [ ] Artifact + macro committed, Makefile-wired
-- [ ] Concordance caveat cites the measured number (prose via macro)
-- [ ] Sensitivity at 85/90/95 documented in the ticket log
-- [ ] `make check` green
+- [x] Artifact + macro committed, Makefile-wired
+- [x] Concordance caveat cites the measured number (prose via macro)
+- [x] Sensitivity at 85/90/95 documented in the ticket log
+- [x] `make check` green
