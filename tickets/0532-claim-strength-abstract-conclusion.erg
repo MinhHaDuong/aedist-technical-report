@@ -9,8 +9,11 @@ Label: needs-human
 2026-06-11T08:45Z HDMX-coding-agent note renumbered from 0527 (ID collision)
 2026-06-11T10:17Z HDMX-coding-agent note reimagined+planned (raid 532-534): passage-level actions anchored (abstract l.31, conclusion l.202); Exp2 l.148 and Discussion l.182 already hedged — do not touch
 2026-06-11T10:30Z HDMX-coding-agent note verify-feasibility WARN (raid 532-534): anchors PASS; needs-human gate — PR cannot auto-merge; stacks on t0533
-
+2026-06-11T11:09Z HDMX-coding-agent note executed (raid 532-534): abstract+conclusion reframed as hypothesis with k/n hedging, rho confound named with stratified tau inline, quality bar scoped to measured dimensions; fusion variant offered in PR body
+2026-06-11T11:25Z HDMX-coding-agent note review fixes (PR #967 FIX-THEN-APPROVE): hypothesis-framing guard added to adherence test (fails on revert, verified); conclusion rho parenthetical gains in-sample qualifier; abstract "then" relocated; measured-dimensions list harmonised to row-level form; body-register follow-up filed as 0541
 2026-06-11T12:30Z haduong annotated reading-1 annotations (main+hdm.pdf) triaged into this ticket; see body section 'Author annotation brief'
+2026-06-11T12:22Z HDMX-coding-agent note executed round 2 (author brief): abstract rebuilt on the three-point spine (355->266 words, no F1/rho/em-dash/lit-review, lifecycle disambiguated); intro gains key-results list + benchmark-context sentence, per-cell provenance claim scoped to citation counts; conclusion re-argued claim-by-result; guards updated and fang-verified
+2026-06-11T15:30Z HDMX-coding-agent note ported onto main.tex (author ratified round-2 content, override 2026-06-11): #967 was authored against the now-retired main.md; prose re-applied verbatim modulo LaTeX syntax, guards re-expressed on the manuscript_source surface; supersedes PR #967
 --- body ---
 ## Context
 Prose review panel 2026-06-11 (pre-arXiv): two reviewers reached major-revision
