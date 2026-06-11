@@ -285,8 +285,13 @@ def test_analysis_cohort_prompt_matches_shipped_record():
     worker's trailing-newline ``.strip()``) to the prompt the exp1_batch2
     analysis cohort actually received, re-derived from an archived per-run
     record rather than trusted from a survey."""
-    if not (EXP1_RUN_RECORD.exists() and PROMPT_MD.exists()):
-        pytest.skip("exp1_batch2 run record or prompt file not present")
+    assert EXP1_RUN_RECORD.exists(), (
+        f"{EXP1_RUN_RECORD} missing: the drift guard would be silently "
+        "disabled — update this path if the record was relocated"
+    )
+    assert PROMPT_MD.exists(), (
+        f"{PROMPT_MD} missing: the drift guard would be silently disabled"
+    )
     record = json.loads(EXP1_RUN_RECORD.read_text(encoding="utf-8"))
     assert record["prompt"] == PROMPT_MD.read_text(encoding="utf-8").strip(), (
         "experiments/sota/protocol_07_naive_prompt.md has drifted from the "
