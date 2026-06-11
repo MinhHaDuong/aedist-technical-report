@@ -1,0 +1,50 @@
+%erg 0.1
+Title: Fix stale erg validation hook in .claude/settings.json (wrong path and verb)
+Created: 2026-06-11
+Author: Claude
+Label: needs-human
+
+--- log ---
+2026-06-11T00:00Z Claude created
+2026-06-11T00:01Z Claude tag needs-human
+2026-06-11T00:01Z Claude note tagged needs-human — agent permission classifier blocks edits to .claude/settings.json (self-modification); a human or explicitly-authorized session must apply the one-line fix
+
+--- body ---
+## Context
+
+Found while investigating ticket 0355. The PostToolUse hook in
+`.claude/settings.json` that should validate `.erg` files after every
+Edit/Write is doubly broken, so ticket-file validation silently never runs:
+
+1. **Wrong path**: it invokes `tickets/tools/go/erg` — a directory layout
+   from the pre-0.1 git-erg bundle that does not exist in this repo. The
+   actual binary is `tickets/erg`.
+2. **Wrong verb**: even with the right binary, `erg validate tickets/`
+   errors with "tickets/ is a directory; use 'erg check tickets/'".
+
+Verified 2026-06-11: `tickets/erg check tickets/` → `ERG CHECK: PASS
+(508 tickets, 1 warning)`.
+
+## Relevant files
+
+- `.claude/settings.json` — line 23, the PostToolUse hook command
+
+## Actions
+
+1. In the hook command, replace `tickets/tools/go/erg validate tickets/`
+   with `tickets/erg check tickets/`.
+
+## Verification
+
+- [ ] Edit any `.erg` file in a session; the hook runs and reports
+      `ERG CHECK: PASS` (or real findings) instead of failing silently.
+
+## Invariants
+
+- No other change to `.claude/settings.json` (permissions list untouched).
+
+## Exit criteria
+
+- [ ] Hook command is `tickets/erg check tickets/`.
+- [ ] A deliberate spec violation in a scratch `.erg` edit is flagged by
+      the hook.
