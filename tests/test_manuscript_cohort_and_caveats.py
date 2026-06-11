@@ -161,7 +161,8 @@ def test_binding_constraint_framed_as_hypothesis():
     revert the body to a flat factual register.
     """
     abstract = _abstract_paragraph()
-    conclusion = body().split("\\section{Conclusion}\\label{sec:conclusion}")[1].split("\\appendix")[0]
+    text = body()
+    conclusion = text.split("\\section{Conclusion}\\label{sec:conclusion}")[1].split("\\appendix")[0]
     assert "point toward a working hypothesis" in abstract, (
         "abstract must frame the binding-constraint claim as a working hypothesis"
     )
@@ -174,7 +175,6 @@ def test_binding_constraint_framed_as_hypothesis():
     assert "If the constraint is indeed the documents" in conclusion, (
         "conclusion recommendation must stay conditional on the hypothesis"
     )
-    text = body()
     assert "suggests the binding constraint lies" in text, (
         "equalisation paragraph must hedge the relocation claim with 'suggests'"
     )
