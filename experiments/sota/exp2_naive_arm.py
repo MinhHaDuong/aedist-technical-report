@@ -29,6 +29,7 @@ from pathlib import Path
 
 import yaml
 
+from aedist.expost import append_sources_section, render_mistral_content_with_sources
 from aedist.harness import append_evidence_pack
 from experiments.sota import dialogue_classifier
 
@@ -47,62 +48,6 @@ ANTHROPIC_MAX_TOKENS = 64_000  # streaming already required at 32K; 64K improves
 QWEN_CALL_TIMEOUT = 600  # 160K+ char prompt with evidence pack is slow
 PROBE_CAP_USD = 3.00
 ANTHROPIC_CAP_USD = 6.00  # input alone costs ~$1.7; 64K output adds ~$1.6
-
-
-def _append_sources_section(narrative: str, sources: list[tuple[str, str]]) -> str:
-    """Append a compact sources section to narrative markdown.
-
-    The naive-arm scoring pipeline consumes the generated `.md` file downstream.
-    Keep web/tool references in-band so source-presence checks see them.
-    """
-    if not sources:
-        return narrative
-
-    dedup: list[tuple[str, str]] = []
-    seen: set[tuple[str, str]] = set()
-    for title, url in sources:
-        key = (title.strip(), url.strip())
-        if not key[1] or key in seen:
-            continue
-        seen.add(key)
-        dedup.append(key)
-
-    if not dedup:
-        return narrative
-
-    lines = ["", "", "## Sources", ""]
-    for title, url in dedup:
-        label = title if title else url
-        lines.append(f"- [{label}]({url})")
-    return narrative.rstrip() + "\n" + "\n".join(lines) + "\n"
-
-
-def _render_mistral_content_with_sources(content: list[dict]) -> tuple[str, list[tuple[str, str]]]:
-    """Render Mistral mixed content blocks into markdown with inline source links.
-
-    Mistral probe outputs interleave `text` and `tool_reference` blocks. Keep the
-    original order so references remain in table cells (e.g., Source 1/Source 2).
-    """
-    parts: list[str] = []
-    sources: list[tuple[str, str]] = []
-
-    for block in content:
-        if not isinstance(block, dict):
-            continue
-        btype = block.get("type")
-        if btype == "text":
-            parts.append(block.get("text", ""))
-            continue
-        if btype == "tool_reference":
-            title = str(block.get("title", "")).strip()
-            url = str(block.get("url", "")).strip()
-            if not url:
-                continue
-            label = title if title else url
-            parts.append(f"[{label}]({url})")
-            sources.append((label, url))
-
-    return "".join(parts), sources
 
 
 def load_naive_prompt(path: Path = NAIVE_PROMPT_PATH) -> str:
@@ -176,9 +121,9 @@ def probe_mistral(prompt: str, output_dir: Path) -> dict:
             if isinstance(content, str):
                 narrative = content
             elif isinstance(content, list):
-                narrative, extracted_sources = _render_mistral_content_with_sources(content)
+                narrative, extracted_sources = render_mistral_content_with_sources(content)
                 sources.extend(extracted_sources)
-    narrative = _append_sources_section(narrative, sources)
+    narrative = append_sources_section(narrative, sources)
     return {
         "narrative": narrative,
         "cost_usd": (record.resource_use.cost_usd or 0) + (record.tool_calls_cost_usd or 0),
@@ -224,7 +169,7 @@ def probe_openai(prompt: str, output_dir: Path) -> dict:
     tokens_out = getattr(usage, "output_tokens", 0) or 0
     p_in = float(meta.get("price_per_mtok_in", 0.0)) / 1_000_000
     p_out = float(meta.get("price_per_mtok_out", 0.0)) / 1_000_000
-    narrative = _append_sources_section(narrative, sources)
+    narrative = append_sources_section(narrative, sources)
     return {
         "narrative": narrative,
         "cost_usd": tokens_in * p_in + tokens_out * p_out,
@@ -323,7 +268,7 @@ def probe_anthropic(prompt: str, output_dir: Path) -> dict:
             query = ws.query or "web_search"
             sources.extend((query, url) for url in urls)
 
-    narrative = _append_sources_section(narrative, sources)
+    narrative = append_sources_section(narrative, sources)
     return {
         "narrative": narrative,
         "cost_usd": record.resource_use.cost_usd if record else 0,
