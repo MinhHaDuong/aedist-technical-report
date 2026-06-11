@@ -14,30 +14,34 @@ numbers are *computed by the typesetter*, never typed into prose. A literal
 silently the moment a section is inserted, a figure is reordered, or an annex is
 renamed (ticket 0512 spent a full session re-numbering ~60 such literals by
 hand). Use symbolic references that resolve to the live number at build time —
-`\ref{sec:quality}` / `\Cref{fig:longtail}` in LaTeX, `@sec:quality` /
-`@fig:longtail` (pandoc-crossref) in Markdown — and let the build emit "§3",
+`\ref{sec:quality}` / `\ref{fig:longtail}` — and let the build emit "§3",
 "Figure 2", etc. Each heading, figure, table, and annex carries a stable label;
 prose cites the label, never the number.
 
 This is a **hard rule**, enforced by `tests/test_manuscript_crossref.py`
-(`@pytest.mark.adherence`): `slides/manuscript/main.md` must contain no
+(`@pytest.mark.adherence`): `slides/manuscript/main.tex` must contain no
 hand-typed `§N` / `Figure N` / `Figure SN` / `Annex X` / `Table N` literal in
-prose, and every `@sec:`/`@fig:`/`@tbl:` reference must resolve to a defined
-label.
+prose, and every `\ref`/`\Cref` reference must resolve to a `\label` defined in
+the file.
 
-**House conventions for `main.md` (pandoc-crossref):**
-- Label every section heading `## Title {#sec:id}`, every figure
-  `![caption](path){#fig:id}`, and Table 1 `: caption {#tbl:id}`. Drop any
-  hand-typed "1." / "Figure N." prefix — the build supplies the number.
-- Reference sections as `[@sec:id]` (renders "§N"); annex sections as the
-  prefix-suppressed `[-@sec:annex-…]` (renders "Annex A" via `\appendix`
-  lettering — do **not** prepend the word "Annex").
-- The S-series annex figures and the `\includepdf` recognition matrix rely on
-  raw-LaTeX blocks (`\appendix`, `\renewcommand{\thefigure}{S\arabic{figure}}`,
-  `\refstepcounter{figure}\label{…}`) already in `main.md` — keep them.
-- Mark the title, the methods Related-Work section, Acknowledgements, and
-  Bibliography `{.unnumbered}`; mark annex `###`/`####` subsections
-  `{.unnumbered}` to preserve their unnumbered appearance.
+**House conventions for `main.tex` (hand-curated LaTeX, tectonic-built — ticket 0524):**
+- Label every section heading `\section{Title}\label{sec:id}`, every figure
+  `\caption{...}\label{fig:id}` and table `\caption{\label{tbl:id}...}`. Never
+  type the number — `\thesection`/`\thefigure` supply it.
+- Reference sections as `§\ref{sec:id}` (renders "§N", no space between the
+  literal `§` prefix and the number); figures as `Figure~\ref{fig:id}`; tables
+  as `Table~\ref{tbl:id}`. Annex sections use the bare `\ref{sec:annex-…}` —
+  `\appendix` redefines `\thesection` to `Annex \Alph{section}`, so the word
+  "Annex" comes out of the counter; do **not** prepend it.
+- The S-series annex figures rely on the counter reset after `\appendix`
+  (`\renewcommand{\thefigure}{S\arabic{figure}}`, plus the matching
+  `\theHfigure` for hyperref anchors); the recognition matrix is a
+  `\refstepcounter{figure}\label{…}` + `\includepdf` block — keep both.
+- Unnumbered sections (the methods Related-Work section, Acknowledgements,
+  Bibliography, annex subsections) use the starred forms `\section*` /
+  `\subsection*`, with `\addcontentsline` for the PDF bookmarks.
+- Asset paths are relative to `slides/manuscript/` (tectonic resolves against
+  the input file's directory): `../../report/inputs/generated/…`.
 
 ## Related Work sections
 

@@ -315,7 +315,7 @@ def _generate_latex(summary_rows: list[dict], total: int) -> str:
         "résidu": "Résidu (genuine recall failure)",
     }
     # NOTE: "Exp. 3" is the internal data-directory label (sota_exp3_arm*).
-    # In the preprint (slides/manuscript/main.md) these runs are described as
+    # In the preprint (slides/manuscript/main.tex) these runs are described as
     # Experiment 2's exploratory "with-documents" conditions (2×2 factorial).
     # Update the caption below to match the final manuscript section label
     # before including this table in the preprint.
