@@ -1,0 +1,39 @@
+%erg 0.1
+Title: Decide body-wide em-dash policy: LaTeX --- renders as em dash (reading-1 item 14 scope)
+Created: 2026-06-11
+Author: HDMX-coding-agent
+Label: needs-human
+
+--- log ---
+2026-06-11T22:29Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Reading-1 item 14 said "Em-dashes are an AI tell — sweep and restyle
+(abstract and body)." Ticket 0543 (PR #992) verified the body and
+abstract carry zero *Unicode* em dashes and waived the sweep on that
+basis. The PR #992 prose-review panel pointed out the gap: the LaTeX
+`---` idiom renders as an em dash in the PDF the author annotated, and
+`slides/manuscript/main.tex` carries ~187 `---` occurrences in body
+prose. From the reader's side, item 14 is not resolved; from the
+source side, `---` may be a deliberate typographic convention.
+
+Restyling ~187 sites is an authorial-voice decision, out of scope for
+an autonomous editorial pass (several sit near test-pinned strings).
+
+## Actions
+
+1. Author decides: (a) `---` is house style, item 14 was about Unicode
+   tells only — close this ticket with a waiver note; or (b) sweep and
+   restyle `---` in body prose (commas, colons, parentheses, sentence
+   splits), excluding quoted material (the verbatim Doc-07 prompt
+   block) and table/figure syntax.
+2. If (b): execute as its own PR; extend the abstract em-dash guard in
+   `tests/test_manuscript_cohort_and_caveats.py` to body prose,
+   excluding quote environments.
+
+## Exit criteria
+
+- [ ] Author decision recorded in this log
+- [ ] Sweep executed or waiver noted; `make check` green
