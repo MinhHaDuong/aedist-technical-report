@@ -1,0 +1,42 @@
+%erg 0.1
+Title: Macro-source the coherence-F1 Spearman rho 0.78 in the manuscript
+Created: 2026-06-12
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-12T20:26Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Roar sweep after PR #1042 (tickets 0566/0572): the coherence–F1 Spearman
+ρ = 0.78 is hand-typed in `slides/manuscript/main.tex` (§4 site, ~line
+646 "the inaccurate models are also the unreliable ones (Spearman
+ρ = 0.78", and an annex range "ρ = 0.78--0.80" ~line 1939). No macro for
+it exists in `macros_manuscript.tex`. Same defect class as the pooled
+ρ = 0.92 that 0566 just converted (rule 0531,
+`.claude/rules/writing.md`). Relocate sites by grep, not line number.
+Related: 0575 covers the remaining hand-typed exp2 cost/row-count
+medians; 0576 covers tie handling in the `_spearman` estimator (touch
+that first or together if it shifts the 2dp value).
+
+## Actions
+
+1. Identify the script that computes the coherence–F1 correlation
+   (the §4 coherence analysis) and the committed artifact holding it;
+   extend that emitter to emit the macro(s) — both the point value and
+   the annex range endpoints if they are computed values.
+2. Replace the hand-typed sites; verify each macro value equals the
+   literal it replaces (2dp); escalate any drift instead of accepting it.
+3. Commit regenerated fragments together with the consolidated
+   `macros_manuscript.tex`.
+4. Add a negative ratchet test: no hand-typed `ρ = 0.\d\d` literal
+   remains in the main.tex source (macro calls only) — this closes the
+   class that 0566/0572/0575 fixed instance by instance.
+
+## Exit criteria
+
+- [ ] No hand-typed coherence–F1 ρ literal in main.tex; values flow from
+  a committed generated macros fragment
+- [ ] Class ratchet test in place (source-level, polarity-rule compliant)
+- [ ] `make check` passes
