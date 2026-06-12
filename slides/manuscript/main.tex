@@ -41,6 +41,9 @@
 \newunicodechar{↔}{\ensuremath{\leftrightarrow}}
 \newunicodechar{·}{\ensuremath{\cdot}}
 
+% Author affiliations
+\usepackage{authblk}
+
 % Tables and figures
 \usepackage{longtable,booktabs,array}
 \usepackage{graphicx}
@@ -70,14 +73,13 @@
 
 \title{Can Frontier AI Build a Statistical Register?\\
 A Benchmark and Research Programme on Vietnam's Thermal Power
-Fleet\thanks{Technical report accompanying a talk at Econom'IA 2026, Paris.
-Original talk title: Beyond RAG: Stateful-Agentic Architectures for Reliable
-Economic Statistics.}}
-\author{Minh Ha-Duong\\
-\href{https://orcid.org/0000-0001-9988-2100}{ORCID 0000-0001-9988-2100}
---- \href{mailto:minh.ha-duong@cnrs.fr}{\nolinkurl{minh.ha-duong@cnrs.fr}}\\
-CIRED --- Centre International de Recherche\\
-sur l'Environnement et le Développement, CNRS, France}
+Fleet\thanks{Technical report of the communication: ``Beyond RAG: Stateful-Agentic Architectures for Reliable Economic Statistics'', presented at the Econom'IA 2026 workshop in Cergy on May 27th, 2026. Slides eprint: \href{https://hal.science/hal-05644906v1}{https://hal.science/hal-05644906v1}}}
+\author[1]{Minh Ha-Duong\thanks{Corresponding author.
+  \href{mailto:minh.ha-duong@cnrs.fr}{\nolinkurl{minh.ha-duong@cnrs.fr}}.
+  ORCID: \href{https://orcid.org/0000-0001-9988-2100}{0000-0001-9988-2100}.
+  \url{https://minh.haduong.com/}}}
+\affil[1]{Centre International de Recherche sur l'Environnement
+  et le Développement (CIRED), CNRS, France}
 \date{\today}
 
 \begin{document}
@@ -92,25 +94,14 @@ We introduce a computable benchmark for this task: reconstruct the
 register of Vietnam's \NumRefPlants{} thermal power plants and score the result
 against a hand-compiled, fully sourced reference. The register spans the
 whole project lifecycle: proposed and planned projects as well as
-operating, cancelled, and retired plants. The task is hard for today's
-AI systems. Fourteen language models answering from memory recover at
-most about two thirds of the plants, and usually far fewer, even though
-group-seeded Wikipedia lists covering 92\% of the built fleet had sat in
-their training corpus for years. Four frontier agents with web access
-and extended reasoning improve coverage, but they still fall short on
-the quality dimensions measured here: row-level accuracy, coverage, and
-citation-based provenance. The experiments point toward a working
-hypothesis about why: the binding constraint is the quality of the
-source documents, not the capability of the model. In an exploratory,
-unregistered condition, handing the agents a curated document set in a
-single query equalised three of the four; the multi-turn protocol did
-not replicate the effect. Finally, reference-free coherence criteria
-suffice to screen out the weakest models: degenerate outputs betray
-themselves by template-like, near-constant tables, so the worst runs can
-be rejected without any ground truth. The results argue for investing in
-the corpus and the sourcing process rather than in a stronger model,
-building a sourced, auditable knowledge base from which statistical
-tables derive as dated snapshots.
+operating, cancelled, and retired plants. It is historical, current and prospective.
+We find that the task is hard for today's AI systems.
+First, fourteen language models answering from memory recovered much less than Wikipedia lists, even if these lists presumably sat in their training corpus for years.
+Second, enabling web access and extended reasoning improved coverage over the memory-only query in only one of the four frontier agents.
+Third, introducing a harness in which agents were given the opportunity to plan and execute multi-step search and reasoning degraded results.
+Finally, handing the agents a curated document set did improve coverage, especially for the initially weaker agents.
+Complementary experiments suggest ways forward. Since the goal is to discover the statistical register, it is necessary to be able to screen out weak models without the ground truth, and we found that scoring the internal coherence of replies allows it. Fusing the lists from multiple runs is effective.
+We conclude that an evergreen statistical-quality register requires more knowledge engineering. We propose that statistical datasets should be derived as dated snapshots from a sourced, auditable knowledge base, mechanically updated to assimilate the evidential corpus harvested periodically. Humans can stay in the loop to vet information sources and resolve the authentic hard statistical questions.
 \end{abstract}
 
 \section{Introduction}\label{sec:intro}
