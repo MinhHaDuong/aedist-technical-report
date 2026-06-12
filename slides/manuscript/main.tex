@@ -677,7 +677,7 @@ against an inventory no single open database fully reproduces.
 The quality dimensions §\ref{sec:exp2} measures are the
 \emph{operational and accuracy} ones: row-level F1 against the
 reference, coverage (plants enumerated), and per-row provenance counts
-(Source 1 / Source 2 citation presence, \ref{sec:annex-suppfigs}). The
+(Source 1 / Source 2 citation presence, Figure~\ref{fig:coverage-certainty}). The
 §\ref{sec:quality} dimensions that require \emph{peer cross-evaluation}
 — coherence, provenance support, and temporality scored on a rubric by
 judging agents — are deferred to Phase C (cross-model judging),
@@ -786,7 +786,7 @@ structured-output coverage at this granularity; the contrast is mixed
 \textbf{Provenance: corroboration by a second source is the exception.}
 Every Source 1, Source 2, and Notes cell across all 40 runs was parsed
 to measure citation coverage and corroboration (see
-\ref{sec:annex-suppfigs} for the full figure). OpenAI optimised is the
+Figure~\ref{fig:coverage-certainty} for the full figure). OpenAI optimised is the
 only agent to achieve both high coverage (79--96 rows) and near-complete
 corroboration (77--88 rows with Source 2 — approaching the full
 diagonal). Qwen clusters near the diagonal at low coverage (22--45 rows
@@ -1240,91 +1240,7 @@ as a supplementary artifact with per-plant source citations.
 \renewcommand{\theHfigure}{S\arabic{figure}}
 \setcounter{figure}{0}
 
-\section{Temporality: state representations vs.~event representations}\label{sec:annex-temporality}
-
-The temporality dimension in §\ref{sec:quality} measures \emph{snapshot
-currency}: whether each value carries a best-effort ``as-of'' date and
-whether notable status changes are flagged. This is a deliberately
-scoped definition; a richer requirement exists and is worth naming
-precisely.
-
-The distinction at issue is between \emph{state} representations (a
-snapshot describing the fleet as it stands at a reference date) and
-\emph{event} representations (a log of the installation, retirement, and
-reclassification events that change that state over time). Integrated
-Assessment Models (REMIND, MESSAGE, TIMES/MARKAL, GCAM) reconcile the
-two via \emph{capacity vintaging}: every installation event creates a
-stock unit tagged with a birthdate and a lifetime, so system state at
-time T is the integral of all past installation events minus
-retirements. A database feeding such a model should, in principle,
-support reconstruction of system state at \emph{any} reference date, not
-only the most recent snapshot.
-
-\textbf{Two distinct quality requirements.} This distinction yields two
-separable temporality criteria for an energy-asset database:
-
-\begin{itemize}
-\tightlist
-\item
-  \textbf{T1 — Snapshot currency}: each value carries a
-  source-publication date and a best-effort ``as-of'' validity period;
-  status changes since that date are flagged. This is what
-  §\ref{sec:quality} requires and what the experiments measure.
-\item
-  \textbf{T2 — Historical reconstructability}: the database supports
-  queries of the form ``what was the installed fleet as of 2018?'' This
-  requires logging the events (commissioning, retirement, capacity
-  revision, status reclassification) that change state over time, the
-  approach taken by Global Energy Monitor rather than the Global
-  Powerplant Database snapshot model.
-\end{itemize}
-
-The present paper scopes to T1. T2 is acknowledged as the stronger
-requirement for IAM and scenario-projection use cases; it is not in
-scope here. A GEM-style event log may become necessary when implementing
-the verified-provenance layer (§\ref{sec:ext-system}, future work) — each
-verification act is itself a timestamped event — but that design
-choice is deferred to a subsequent paper.
-
-The narrative inventory component of §\ref{sec:ext-system} handles
-longitudinal aspects pragmatically: plant histories, PDP-cycle
-reclassifications, and developer-name changes appear as free-text
-annotations rather than as structured event records. This is a
-deliberate scoping decision, not an architectural commitment.
-
-\textbf{International energy statistics practice.} The T1/T2 distinction
-maps directly onto the revision policies and data-quality frameworks
-developed by the major international energy statistics bodies. The IEA
-\emph{Energy Statistics Manual} \citep{IEA2004:energy-statistics-manual}
-establishes the canonical treatment of reference-date conventions in
-national energy balances: every supply and consumption entry carries a
-``reference year'' and a ``publication year,'' and subsequent revisions
-are tracked explicitly. The flow vs.~stock distinction in energy
-accounts — the tension between a snapshot of installed capacity and
-the transaction log of commissionings and retirements — is precisely
-the state-vs-event distinction above, codified as professional practice.
-The UN \emph{International Recommendations for Energy Statistics}
-\citep{UNSD2012:ires} extends this to coverage and timeliness criteria,
-noting that data quality includes not only accuracy but also currency: a
-figure is not merely right or wrong, it has a validity window.
-Eurostat's energy balance methodology
-\citep{Eurostat2019:energy-balance-guide} adds the EU-specific
-harmonisation layer: because member-state estimates are subsequently
-revised when Eurostat reconciles supply-use tables, a snapshot of the
-European fleet at any given date inherits a structured revision
-calendar.
-
-From these frameworks, the T1 requirement (snapshot currency with
-source-publication date) corresponds to the notion of currency at
-reference date: every record is tagged with the source-publication year
-and flagged if the underlying situation may have changed since. The T2
-requirement (historical reconstructability) corresponds to the practice
-of maintaining a revision log: the ability to answer ``what did the
-inventory show as of year Y?'' requires recording each revision event,
-not only overwriting the current figure. The energy-statistics bodies
-address both requirements; the databases evaluated in this paper satisfy
-T1 in part and T2 not at all, which is consistent with the IAM gap
-identified in §\ref{sec:exp2}.
+\clearpage
 
 \section{Experiment 1: Technical specification}\label{sec:annex-exp1}
 
@@ -2030,6 +1946,8 @@ between intent and prompt — is partially addressed by the structured
 prompt. The gap between this ceiling and the quality bar defined in
 §\ref{sec:quality} motivates the subsequent experiments.
 
+\clearpage
+
 \section{Experiment 2: Technical specification}\label{sec:annex-exp2}
 
 \emph{This annex describes Experiment 2 as actually run. The registered
@@ -2346,6 +2264,22 @@ post-conference analysis; the as-run results are the F1-based and
 operational metrics of §\ref{sec:exp2}, not the
 §\ref{sec:quality}-dimension cross-eval scores.
 
+\begin{figure}
+\centering
+\includegraphics[width=\linewidth]{../../report/inputs/generated/fig_exp2_coverage_certainty.pdf}
+\caption{Only one agent combines broad coverage with systematic
+double-sourcing. Coverage vs.~corroboration across 31 Exp2 runs (9 with
+zero parsed inventory rows excluded: Mistral arm 2 all 5 runs, Anthropic
+arm 2 runs 2/4/5, and Anthropic arm 1 run 4). X-axis: inventory rows
+enumerated. Y-axis: rows with a Source 2 citation present. The dashed
+diagonal marks full double-sourcing (every row corroborated). Filled
+diamonds: optimised arm (arm 2); open circles: naive arm (arm 1).
+Colours encode agents. OpenAI optimised alone sustains high values on
+both axes; Anthropic optimised shows a corroboration ceiling despite
+growing coverage; Qwen clusters near the diagonal at low
+volume.}\label{fig:coverage-certainty}
+\end{figure}
+
 \subsection*{What this experiment does and does not test}
 \addcontentsline{toc}{subsection}{What this experiment does and does not test}
 
@@ -2372,37 +2306,7 @@ source ban, 1 of the 20 runs (OpenAI run 5) cited a banned domain. This
 audit is mechanical only: paraphrased Wikipedia content without a URL is
 not detected.
 
-\section{Supplementary figures}\label{sec:annex-suppfigs}
-
-\begin{figure}
-\centering
-\includegraphics[width=\linewidth]{../../report/inputs/generated/fig_capability_dag.pdf}
-\caption{Empirical capability transition matrix across N=5 labs. Each
-cell shows the fraction of labs where feature i (row) shipped before
-feature j (column), conditional on both being present; N per cell. Ties
-split as 0.5 so symmetric pairs sum to 100\%. White = no lab made that
-transition; dark green = all labs did. Features 3 and 4 (code execution
-× retrieval) emerge in parallel. Feature 5 (reasoning) consistently
-follows features 1--3. Feature 7 (deep research) draws on features 2 and
-5. Descriptive historical record, N=5 labs — no statistical
-inference.}\label{fig:capability-dag}
-\end{figure}
-
-\begin{figure}
-\centering
-\includegraphics[width=\linewidth]{../../report/inputs/generated/fig_exp2_coverage_certainty.pdf}
-\caption{Only one agent combines broad coverage with systematic
-double-sourcing. Coverage vs.~corroboration across 31 Exp2 runs (9 with
-zero parsed inventory rows excluded: Mistral arm 2 all 5 runs, Anthropic
-arm 2 runs 2/4/5, and Anthropic arm 1 run 4). X-axis: inventory rows
-enumerated. Y-axis: rows with a Source 2 citation present. The dashed
-diagonal marks full double-sourcing (every row corroborated). Filled
-diamonds: optimised arm (arm 2); open circles: naive arm (arm 1).
-Colours encode agents. OpenAI optimised alone sustains high values on
-both axes; Anthropic optimised shows a corroboration ceiling despite
-growing coverage; Qwen clusters near the diagonal at low
-volume.}\label{fig:coverage-certainty}
-\end{figure}
+\clearpage
 
 \section{Experiment 1: per-plant recognition matrix and the status composition of task difficulty}\label{sec:annex-recognition}
 
@@ -2452,107 +2356,7 @@ recognised among plants of that status.}
 \input{../../report/inputs/generated/tab_status_difficulty_en.tex}
 \end{table}
 
-\section{Run-grain screen validation: within-model accuracy gap}\label{sec:annex-screen}
-
-The screening subsection (§\ref{sec:ext-screen}) reports a pooled
-Spearman ρ = 0.92 between
-within-run capacity variability and reference-based F1 across 70
-Experiment 1 runs. A potential confound: weak models are weak across the
-board, so the correlation may reflect \emph{model quality} rather than
-run quality — the screen may be near-tautological at the model grain.
-This annex tests whether the screen discriminates good from bad runs of
-the \textbf{same model}, removing the across-model confound.
-
-\textbf{Method.} For each of the 70 runs (14 models × 5 repetitions), we
-compute \texttt{cap\_distinct} (number of distinct capacity values in
-the raw output table) and \texttt{status\_distinct} (number of distinct
-status values) directly from the exp1\_batch2 raw CSVs. The veto rule
-\texttt{cap\_distinct\ ≤\ 4\ OR\ status\_distinct\ ≤\ 1} assigns each
-run to vetoed or surviving. Reference-based F1 is taken from the
-cross-evaluation CSV (the \emph{outcome}; it is never used as a veto
-input, preserving the reference-free property of the screen). The
-model-stratified Kendall τ counts concordant and discordant pairs
-of \texttt{(cap\_distinct,\ F1)} \emph{only within each model's 5 runs},
-then sums the counts across all 14 models — an exact removal of the
-across-model confound.
-
-\textbf{Results.} The model-stratified Kendall τ of cap\_distinct
-vs F1 is \textbf{+\ScreenTauCap} (\ScreenTauCapConcordant{} concordant, \ScreenTauCapDiscordant{} discordant pairs across \ScreenNModels{}
-models; \ScreenPositiveSpearman/\ScreenNModels{} models show a positive within-model Spearman ρ). For
-status\_distinct vs F1 the stratified τ is \textbf{+\ScreenTauStatus} (\ScreenTauStatusConcordant{}
-concordant, \ScreenTauStatusDiscordant{} discordant). Across-model pooled statistics (tautological
-baseline): mean F1 of vetoed runs = \ScreenPooledVetoedMeanFOne{}, surviving = \ScreenPooledSurvivingMeanFOne{}, gap =
-+\ScreenPooledGap{}. Within-model binary gap (only the \ScreenNMixed{} models with both vetoed and
-surviving runs): mean of per-model gaps = \textbf{+\ScreenBinaryGap} (\ScreenPerModelGaps). The reduction from
-the pooled gap (+\ScreenPooledGap) to the within-model gap (+\ScreenBinaryGap) shows that
-roughly half the pooled signal was attributable to the across-model
-confound; the residual within-model effect (+\ScreenBinaryGap) is the honest lower
-bound.
-
-\textbf{Interpretation and limitations.} The within-model directional
-signal is positive and consistent across a clear majority of models
-(\ScreenPositiveSpearman/\ScreenNModels), supporting the claim that the screen earns its keep at the run
-grain. However, the statistic is modest, and only \ScreenNMixed{} of the \ScreenNModels{} models
-have both vetoed and surviving runs — the binary within-model
-comparison is therefore underpowered for formal significance testing.
-One false-veto case exists: \ScreenFalseVetoModel{} run \ScreenFalseVetoRun{} (F1 = \ScreenFalseVetoFOne)
-is vetoed by the cap\_distinct threshold yet outscores one of the
-model's two surviving runs. These limitations are acknowledged; the
-screen is presented as an existence proof validated within-model, not as
-a fully calibrated detector. The cutoff thresholds were tuned in-sample
-on the same 70 runs — cross-validation against Experiment 2 or
-held-out runs is future work.
-
-\emph{Supporting data:
-\fpath{report/inputs/generated/tab_screen_validation_within_model.csv}
-(produced by \fpath{src/aedist/screen_validation_within_model.py},
-wired in \fpath{experiments/render.mk}).}
-
-\section{Capability rollout: per-lab shipping order}\label{sec:annex-rollout}
-
-This annex records the detailed shipping-order observations behind
-Figure~\ref{fig:capability-timeline}, kept out of the
-§\ref{sec:capability} body to keep the capability discussion at the
-level of the envelope framing. The figure is descriptive: no claim is
-made that any lab is ``ahead'' or that the feature order is forced.
-
-\textbf{Feature sequence and cross-lab parallelism.} Features 1 through
-4 ship within \textasciitilde24 months across the industry, with the
-first three (chat LLM, browsing, code execution) arriving at OpenAI
-between late 2022 and mid-2023 before retrieval followed in October
-2023. Features 3 and 4 emerge in parallel across labs: the per-lab order
-varies (Anthropic shipped retrieval before code execution; OpenAI the
-reverse; Mistral the same day), and the \emph{cross-lab} shipping
-windows overlap substantially. Feature 3 (code execution) was the
-earliest tool-use surface shipped as a built-in consumer feature,
-predating the general MCP-like surface of feature 6 by \textasciitilde18
-months at OpenAI. Feature 7 (deep research) draws on both features 2 and
-5 — at every lab where it shipped as a product, deep research arrived
-within 1--5 months of having both browsing and reasoning in place. This
-is structural evidence that the order is observed in the data, not
-imposed by the framing.
-
-\textbf{The DeepSeek negative case.} DeepSeek confirms the
-framework-not-model framing: it ships features 2 and 5 (Internet Search
-in V2.5; R1 reasoning) and the model components that would enter a
-deep-research loop (V3.1's search-agent claims, V3.2's
-thinking-in-tools), but has not packaged the composer as a public
-product within the cutoff — capability components present, product
-surface absent.
-
-\textbf{Two axes absent by construction.} The figure goes quiet after
-mid-2025 because leading labs had filled all eight features, not because
-development stalled: context length, shell-level execution, persistent
-agent scaffolds, and the modality axis (text to vision to real-time
-audio) all continued to advance outside the tool-affordance ladder
-this schema tracks. Two further dimensions are absent by construction.
-The \emph{constraint axis} — refusal training, content policy, and
-red-teaming — shaped which requests these consumer products would
-serve, running alongside the capability expansion the figure shows but
-perpendicular to it. And the consumer-product methodology excludes the
-military and dual-use deployment track: a parallel trajectory operating
-at comparable capability levels, now routine front-page news, that the
-commercial-product framing does not capture and does not claim to.
+\clearpage
 
 \section{Aggregation sweep and vote gate}\label{sec:annex-fusion}
 
@@ -2627,5 +2431,214 @@ against the reference; FP = unmatched plants (extracted but not in the
 reference). Under ≥2-models in E1: F1=\FusionRTwoEOneFFrac{}, TP=\FusionRTwoEOneTP, FP=\FusionRTwoEOneFP. Under
 ≥2-models in E2-1D: F1=\FusionRTwoETwoOneDFFrac{}, TP=\FusionRTwoETwoOneDTP, FP=\FusionRTwoETwoOneDFP.}\label{fig:fusion-mvp}
 \end{figure}
+
+\clearpage
+
+\section{Run-grain screen validation: within-model accuracy gap}\label{sec:annex-screen}
+
+The screening subsection (§\ref{sec:ext-screen}) reports a pooled
+Spearman ρ = 0.92 between
+within-run capacity variability and reference-based F1 across 70
+Experiment 1 runs. A potential confound: weak models are weak across the
+board, so the correlation may reflect \emph{model quality} rather than
+run quality — the screen may be near-tautological at the model grain.
+This annex tests whether the screen discriminates good from bad runs of
+the \textbf{same model}, removing the across-model confound.
+
+\textbf{Method.} For each of the 70 runs (14 models × 5 repetitions), we
+compute \texttt{cap\_distinct} (number of distinct capacity values in
+the raw output table) and \texttt{status\_distinct} (number of distinct
+status values) directly from the exp1\_batch2 raw CSVs. The veto rule
+\texttt{cap\_distinct\ ≤\ 4\ OR\ status\_distinct\ ≤\ 1} assigns each
+run to vetoed or surviving. Reference-based F1 is taken from the
+cross-evaluation CSV (the \emph{outcome}; it is never used as a veto
+input, preserving the reference-free property of the screen). The
+model-stratified Kendall τ counts concordant and discordant pairs
+of \texttt{(cap\_distinct,\ F1)} \emph{only within each model's 5 runs},
+then sums the counts across all 14 models — an exact removal of the
+across-model confound.
+
+\textbf{Results.} The model-stratified Kendall τ of cap\_distinct
+vs F1 is \textbf{+\ScreenTauCap} (\ScreenTauCapConcordant{} concordant, \ScreenTauCapDiscordant{} discordant pairs across \ScreenNModels{}
+models; \ScreenPositiveSpearman/\ScreenNModels{} models show a positive within-model Spearman ρ). For
+status\_distinct vs F1 the stratified τ is \textbf{+\ScreenTauStatus} (\ScreenTauStatusConcordant{}
+concordant, \ScreenTauStatusDiscordant{} discordant). Across-model pooled statistics (tautological
+baseline): mean F1 of vetoed runs = \ScreenPooledVetoedMeanFOne{}, surviving = \ScreenPooledSurvivingMeanFOne{}, gap =
++\ScreenPooledGap{}. Within-model binary gap (only the \ScreenNMixed{} models with both vetoed and
+surviving runs): mean of per-model gaps = \textbf{+\ScreenBinaryGap} (\ScreenPerModelGaps). The reduction from
+the pooled gap (+\ScreenPooledGap) to the within-model gap (+\ScreenBinaryGap) shows that
+roughly half the pooled signal was attributable to the across-model
+confound; the residual within-model effect (+\ScreenBinaryGap) is the honest lower
+bound.
+
+\textbf{Interpretation and limitations.} The within-model directional
+signal is positive and consistent across a clear majority of models
+(\ScreenPositiveSpearman/\ScreenNModels), supporting the claim that the screen earns its keep at the run
+grain. However, the statistic is modest, and only \ScreenNMixed{} of the \ScreenNModels{} models
+have both vetoed and surviving runs — the binary within-model
+comparison is therefore underpowered for formal significance testing.
+One false-veto case exists: \ScreenFalseVetoModel{} run \ScreenFalseVetoRun{} (F1 = \ScreenFalseVetoFOne)
+is vetoed by the cap\_distinct threshold yet outscores one of the
+model's two surviving runs. These limitations are acknowledged; the
+screen is presented as an existence proof validated within-model, not as
+a fully calibrated detector. The cutoff thresholds were tuned in-sample
+on the same 70 runs — cross-validation against Experiment 2 or
+held-out runs is future work.
+
+\emph{Supporting data:
+\fpath{report/inputs/generated/tab_screen_validation_within_model.csv}
+(produced by \fpath{src/aedist/screen_validation_within_model.py},
+wired in \fpath{experiments/render.mk}).}
+
+\clearpage
+
+\section{Capability rollout: per-lab shipping order}\label{sec:annex-rollout}
+
+This annex records the detailed shipping-order observations behind
+Figure~\ref{fig:capability-timeline}, kept out of the
+§\ref{sec:capability} body to keep the capability discussion at the
+level of the envelope framing. The figure is descriptive: no claim is
+made that any lab is ``ahead'' or that the feature order is forced.
+
+\textbf{Feature sequence and cross-lab parallelism.} Features 1 through
+4 ship within \textasciitilde24 months across the industry, with the
+first three (chat LLM, browsing, code execution) arriving at OpenAI
+between late 2022 and mid-2023 before retrieval followed in October
+2023. Features 3 and 4 emerge in parallel across labs: the per-lab order
+varies (Anthropic shipped retrieval before code execution; OpenAI the
+reverse; Mistral the same day), and the \emph{cross-lab} shipping
+windows overlap substantially. Feature 3 (code execution) was the
+earliest tool-use surface shipped as a built-in consumer feature,
+predating the general MCP-like surface of feature 6 by \textasciitilde18
+months at OpenAI. Feature 7 (deep research) draws on both features 2 and
+5 — at every lab where it shipped as a product, deep research arrived
+within 1--5 months of having both browsing and reasoning in place. This
+is structural evidence that the order is observed in the data, not
+imposed by the framing. Figure~\ref{fig:capability-dag} aggregates these
+transitions into a pairwise shipped-before matrix across the five labs.
+
+\begin{figure}
+\centering
+\includegraphics[width=\linewidth]{../../report/inputs/generated/fig_capability_dag.pdf}
+\caption{Empirical capability transition matrix across N=5 labs. Each
+cell shows the fraction of labs where feature i (row) shipped before
+feature j (column), conditional on both being present; N per cell. Ties
+split as 0.5 so symmetric pairs sum to 100\%. White = no lab made that
+transition; dark green = all labs did. Features 3 and 4 (code execution
+× retrieval) emerge in parallel. Feature 5 (reasoning) consistently
+follows features 1--3. Feature 7 (deep research) draws on features 2 and
+5. Descriptive historical record, N=5 labs — no statistical
+inference.}\label{fig:capability-dag}
+\end{figure}
+
+\textbf{The DeepSeek negative case.} DeepSeek confirms the
+framework-not-model framing: it ships features 2 and 5 (Internet Search
+in V2.5; R1 reasoning) and the model components that would enter a
+deep-research loop (V3.1's search-agent claims, V3.2's
+thinking-in-tools), but has not packaged the composer as a public
+product within the cutoff — capability components present, product
+surface absent.
+
+\textbf{Two axes absent by construction.} The figure goes quiet after
+mid-2025 because leading labs had filled all eight features, not because
+development stalled: context length, shell-level execution, persistent
+agent scaffolds, and the modality axis (text to vision to real-time
+audio) all continued to advance outside the tool-affordance ladder
+this schema tracks. Two further dimensions are absent by construction.
+The \emph{constraint axis} — refusal training, content policy, and
+red-teaming — shaped which requests these consumer products would
+serve, running alongside the capability expansion the figure shows but
+perpendicular to it. And the consumer-product methodology excludes the
+military and dual-use deployment track: a parallel trajectory operating
+at comparable capability levels, now routine front-page news, that the
+commercial-product framing does not capture and does not claim to.
+
+\clearpage
+
+\section{Temporality: state representations vs.~event representations}\label{sec:annex-temporality}
+
+The temporality dimension in §\ref{sec:quality} measures \emph{snapshot
+currency}: whether each value carries a best-effort ``as-of'' date and
+whether notable status changes are flagged. This is a deliberately
+scoped definition; a richer requirement exists and is worth naming
+precisely.
+
+The distinction at issue is between \emph{state} representations (a
+snapshot describing the fleet as it stands at a reference date) and
+\emph{event} representations (a log of the installation, retirement, and
+reclassification events that change that state over time). Integrated
+Assessment Models (REMIND, MESSAGE, TIMES/MARKAL, GCAM) reconcile the
+two via \emph{capacity vintaging}: every installation event creates a
+stock unit tagged with a birthdate and a lifetime, so system state at
+time T is the integral of all past installation events minus
+retirements. A database feeding such a model should, in principle,
+support reconstruction of system state at \emph{any} reference date, not
+only the most recent snapshot.
+
+\textbf{Two distinct quality requirements.} This distinction yields two
+separable temporality criteria for an energy-asset database:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{T1 — Snapshot currency}: each value carries a
+  source-publication date and a best-effort ``as-of'' validity period;
+  status changes since that date are flagged. This is what
+  §\ref{sec:quality} requires and what the experiments measure.
+\item
+  \textbf{T2 — Historical reconstructability}: the database supports
+  queries of the form ``what was the installed fleet as of 2018?'' This
+  requires logging the events (commissioning, retirement, capacity
+  revision, status reclassification) that change state over time, the
+  approach taken by Global Energy Monitor rather than the Global
+  Powerplant Database snapshot model.
+\end{itemize}
+
+The present paper scopes to T1. T2 is acknowledged as the stronger
+requirement for IAM and scenario-projection use cases; it is not in
+scope here. A GEM-style event log may become necessary when implementing
+the verified-provenance layer (§\ref{sec:ext-system}, future work) — each
+verification act is itself a timestamped event — but that design
+choice is out of scope here.
+
+The narrative inventory component of §\ref{sec:ext-system} handles
+longitudinal aspects pragmatically: plant histories, PDP-cycle
+reclassifications, and developer-name changes appear as free-text
+annotations rather than as structured event records. This is a
+deliberate scoping decision, not an architectural commitment.
+
+\textbf{International energy statistics practice.} The T1/T2 distinction
+maps directly onto the revision policies and data-quality frameworks
+developed by the major international energy statistics bodies. The IEA
+\emph{Energy Statistics Manual} \citep{IEA2004:energy-statistics-manual}
+establishes the canonical treatment of reference-date conventions in
+national energy balances: every supply and consumption entry carries a
+``reference year'' and a ``publication year,'' and subsequent revisions
+are tracked explicitly. The flow vs.~stock distinction in energy
+accounts — the tension between a snapshot of installed capacity and
+the transaction log of commissionings and retirements — is precisely
+the state-vs-event distinction above, codified as professional practice.
+The UN \emph{International Recommendations for Energy Statistics}
+\citep{UNSD2012:ires} extends this to coverage and timeliness criteria,
+noting that data quality includes not only accuracy but also currency: a
+figure is not merely right or wrong, it has a validity window.
+Eurostat's energy balance methodology
+\citep{Eurostat2019:energy-balance-guide} adds the EU-specific
+harmonisation layer: because member-state estimates are subsequently
+revised when Eurostat reconciles supply-use tables, a snapshot of the
+European fleet at any given date inherits a structured revision
+calendar.
+
+From these frameworks, the T1 requirement (snapshot currency with
+source-publication date) corresponds to the notion of currency at
+reference date: every record is tagged with the source-publication year
+and flagged if the underlying situation may have changed since. The T2
+requirement (historical reconstructability) corresponds to the practice
+of maintaining a revision log: the ability to answer ``what did the
+inventory show as of year Y?'' requires recording each revision event,
+not only overwriting the current figure. The energy-statistics bodies
+address both requirements; the databases evaluated in this paper satisfy
+T1 in part and T2 not at all, which is consistent with the IAM gap
+identified in §\ref{sec:exp2}.
 
 \end{document}

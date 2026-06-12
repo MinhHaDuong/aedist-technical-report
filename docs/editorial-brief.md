@@ -295,8 +295,9 @@ paper", no "follow-on paper", no "planned cross-evaluation". Work not
 reported in this paper is framed as future work in the research programme
 (the numbered Future research section, label `sec:future`) or as
 not-measured-here scoping, never as a commitment to a specific
-forthcoming paper. (The Temporality annex's "subsequent paper" sentence is
-ticket 0563's to strip.)
+forthcoming paper. (Ticket 0563 stripped the Temporality annex's
+"subsequent paper" sentence; the decision now covers the full manuscript,
+annexes included.)
 
 **Rationale:** Publication promises age badly, bind the authors to titles
 and scopes that drift, and add nothing a "future work" framing does not.
@@ -305,10 +306,10 @@ forward-looking material reads as programme, not promise.
 
 CI negative guard:
 `test_manuscript_0512_structure.py::test_no_companion_paper_promise_in_body`
-bans the promise phrasings in the body, with the Temporality annex carved
-out by label until ticket 0563 strips its sentence.
+bans the promise phrasings across the full body — no carve-out (the
+Temporality exemption was removed when ticket 0563 stripped its sentence).
 
-**Ticket:** 0562 (tracker 0560).
+**Ticket:** 0562, 0563 (tracker 0560).
 
 **Status:** active
 
