@@ -261,6 +261,12 @@ $(ANALYSIS_DERIVED_DIR)/arm4_flat/.done: $(ANALYSIS_EXPERIMENTS_DIR)/outputs/sot
 	touch $@
 
 # --- Cross-eval CSV (scored per-run, both arms) ----------------------------
+# The per-arm loops glob *.json, which also matches the *_source_audit.json
+# sidecars emitted by the extractors (PR #994). Sidecars carry no model/run
+# keys; d.get() makes them print "None None" and hit the skip guard quietly.
+# Silent-loss guard: tests/test_cross_eval_completeness.py asserts the
+# committed CSV holds exactly one row per (arm, model, run) — the `|| true`
+# on score_mechanical otherwise hides any parse failure as a missing row.
 
 $(ANALYSIS_EXP2_CROSS_EVAL_CSV): $(ANALYSIS_DERIVED_DIR)/arm1_flat/.done \
 		$(ANALYSIS_DERIVED_DIR)/arm2_flat/.done \

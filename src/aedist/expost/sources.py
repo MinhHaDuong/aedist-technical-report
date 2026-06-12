@@ -218,6 +218,6 @@ def strip_preamble(markdown: str) -> str:
             return "".join(lines[i:])
         if "|" in stripped and i + 1 < len(lines):
             next_stripped = lines[i + 1].strip()
-            if next_stripped.startswith("|") and set(next_stripped) <= set("|-: \t"):
+            if next_stripped.startswith("|") and _SEPARATOR_ROW_RE.match(next_stripped):
                 return stripped[stripped.index("|") :] + "".join(lines[i + 1 :])
     return markdown
