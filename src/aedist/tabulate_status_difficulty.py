@@ -43,6 +43,8 @@ from .exp1_recognition import (
 
 log = logging.getLogger(__name__)
 
+_REPO_ROOT = Path(__file__).parent.parent.parent
+
 
 def overall_recognition_rate(rows: dict[str, tuple[int, float]]) -> float:
     """Plant-weighted mean recognition rate over all statuses.
@@ -236,13 +238,13 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument(
         "--output",
         type=Path,
-        default=Path("report/inputs/generated/tab_status_difficulty.tex"),
+        default=_REPO_ROOT / "report" / "inputs" / "generated" / "tab_status_difficulty.tex",
         help="Output .tex path",
     )
     parser.add_argument(
         "--output-macros",
         type=Path,
-        default=Path("report/inputs/generated/macros_status_difficulty.tex"),
+        default=_REPO_ROOT / "report" / "inputs" / "generated" / "macros_status_difficulty.tex",
         help="Output LaTeX macros file for the manuscript (ticket 0531)",
     )
     args = parser.parse_args(argv)

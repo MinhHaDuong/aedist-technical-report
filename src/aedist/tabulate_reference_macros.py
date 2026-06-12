@@ -30,6 +30,12 @@ from .evaluate import reference_plant_count
 
 log = logging.getLogger(__name__)
 
+_REPO_ROOT = Path(__file__).parent.parent.parent
+
+# The fuel vocabulary \RefGasOilCount assumes: everything non-coal is gas or
+# gas/oil. A new fuel value must extend the macros, not be absorbed silently.
+_KNOWN_FUELS = {"coal", "gas", "gas/oil"}
+
 
 def generate_macros(reference: Path) -> str:
     """Render the macros from the reference CSV.
@@ -41,6 +47,12 @@ def generate_macros(reference: Path) -> str:
     n_plants = reference_plant_count(reference)
     with reference.open(newline="", encoding="utf-8") as fh:
         rows = list(csv.DictReader(fh))
+    fuels = {(r.get("fuel") or "").strip() for r in rows}
+    unknown = fuels - _KNOWN_FUELS
+    assert not unknown, (
+        f"unexpected fuel value(s) {sorted(unknown)} in {reference.name}; "
+        "\\RefGasOilCount counts all non-coal rows — extend the macros instead"
+    )
     coal = sum(1 for r in rows if (r.get("fuel") or "").strip() == "coal")
     gas_oil = len(rows) - coal
     return (
@@ -65,7 +77,7 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument(
         "--output",
         type=Path,
-        default=Path("report/inputs/generated/macros_reference.tex"),
+        default=_REPO_ROOT / "report" / "inputs" / "generated" / "macros_reference.tex",
         help="Output .tex path",
     )
     args = parser.parse_args(argv)

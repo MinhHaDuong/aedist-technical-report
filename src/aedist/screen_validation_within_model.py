@@ -43,6 +43,8 @@ from pathlib import Path
 
 log = logging.getLogger(__name__)
 
+_REPO_ROOT = Path(__file__).parent.parent.parent
+
 _CAP_KEYS = ("capacity_mwe", "total_mwe", "total_mw", "capacity")
 
 # In-sample threshold from docs/internal-coherence-screen.md.
@@ -480,25 +482,25 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument(
         "--exp1-dir",
         type=Path,
-        default=Path("experiments/outputs/exp1_batch2"),
+        default=_REPO_ROOT / "experiments" / "outputs" / "exp1_batch2",
         help="Directory containing raw {model}-run{N}.csv files",
     )
     parser.add_argument(
         "--cross-eval",
         type=Path,
-        default=Path("experiments/derived/exp1_cross_eval.csv"),
+        default=_REPO_ROOT / "experiments" / "derived" / "exp1_cross_eval.csv",
         help="Exp1 cross-eval CSV (provides reference-based F1 per run)",
     )
     parser.add_argument(
         "--output",
         type=Path,
-        default=Path("report/inputs/generated/tab_screen_validation_within_model.csv"),
+        default=_REPO_ROOT / "report" / "inputs" / "generated" / "tab_screen_validation_within_model.csv",
         help="Output summary CSV",
     )
     parser.add_argument(
         "--output-macros",
         type=Path,
-        default=Path("report/inputs/generated/macros_screen_validation.tex"),
+        default=_REPO_ROOT / "report" / "inputs" / "generated" / "macros_screen_validation.tex",
         help="Output LaTeX macros file for the manuscript annex (ticket 0531)",
     )
     args = parser.parse_args(argv)
