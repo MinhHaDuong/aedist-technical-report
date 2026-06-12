@@ -9,6 +9,7 @@ Author: HDMX-coding-agent
 2026-06-12T11:40Z orchestrator note author decision recorded (2026-06-12): NOT a blanket ban — em dashes are useful; aspect 1 (encoding) decided separately, Unicode — canonical, executing as ticket 0558 (PR #1017). This ticket respec'd to aspect 2: once-over to diversify + density ratchet tests. needs-human label dropped — spec ratified by author, ticket is now executable. Blocked-by 0558 (tests are a clean grep on — only after the encoding sweep lands).
 
 2026-06-12T10:20Z HDMX-coding-agent note blocker 0558 closed — Blocked-by removed.
+2026-06-12T11:16Z claude note once-over executed, PR opened
 --- body ---
 ## Context
 
