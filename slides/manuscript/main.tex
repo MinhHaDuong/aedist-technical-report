@@ -163,9 +163,8 @@ capabilities from chatbots to agentic systems (§\ref{sec:capability}),
 measure what model memory alone delivers across 14 language models
 (§\ref{sec:exp1}), and test the commercial frontier of mid-2026
 (§\ref{sec:exp2}). Post-hoc analyses prompted by the conference
-presentation extend the experiments (§\ref{sec:extensions}): why the
-task is hard, screening runs without a reference, fusing runs, and the
-system the findings imply. The Discussion (§\ref{sec:discussion})
+presentation extend the experiments (§\ref{sec:extensions}). The
+Discussion (§\ref{sec:discussion})
 examines why a single aggregate score cannot certify fitness for use,
 and §\ref{sec:future} turns the lessons of the methods literature into
 a research programme before we conclude.
@@ -904,10 +903,8 @@ four frontier models to agree nearly eliminates false positives — F1
 = \FusionRTwoEOneFFrac{} with \FusionRTwoEOneFP{} false positives on the Experiment 1 cohort, F1 = \FusionRTwoETwoOneDFFrac{}
 with \FusionRTwoETwoOneDFP{} on the Experiment 2 naive arm (full results in
 \ref{sec:annex-fusion}). Both levers reuse existing runs; the
-structural answer to the single-model ceiling is a stateful pipeline
-that invests in the corpus rather than the model — a managed,
-auditable knowledge base maintaining a sourced narrative inventory,
-from which the statistical table derives as a dated snapshot
+structural answer to the ceiling no single model breaks is a stateful
+pipeline that invests in the corpus rather than the model
 (§\ref{sec:ext-system}). To our knowledge, no published benchmark or
 system targets open-world enumeration of a national asset class with
 per-cell provenance at this granularity. Nor did we find a published
@@ -919,12 +916,12 @@ conjunction remains future work.
 
 The single-model ceiling motivates a stateful architecture: one that
 keeps an organised memory between runs instead of starting from scratch
-at each prompt. The equalisation result in §\ref{sec:exp2} sharpens the
-target: once the agents share a good document set, single-shot
-performance converges and the binding constraint appears to shift from
-model capability to document quality. The value may therefore lie in the corpus
-and the sourcing process — assembling, curating, and resolving the
-documents — rather than in chasing a stronger model. That is precisely
+at each prompt. Once the agents share a good document set, single-shot
+performance converges (§\ref{sec:exp2}) and the binding constraint
+appears to shift from model capability to document quality. The value
+may therefore lie in the corpus and the sourcing process — assembling,
+curating, and resolving the documents — rather than in chasing a
+stronger model. That is precisely
 what a stateful pipeline invests in: a managed, auditable knowledge base
 rather than a one-shot prompt against whatever model is current. The
 §\ref{sec:quality} quality dimensions measure \emph{output}: accuracy,
@@ -953,15 +950,11 @@ projections — are where language-model reasoning adds genuine value.
 
 \section{Discussion}\label{sec:discussion}
 
-The two experiments and the post-hoc extensions support a consistent
-reading. Memory alone is incomplete and volatile (§\ref{sec:exp1});
-web access at the commercial frontier buys coverage but not provenance
-or reproducibility, and a curated document set equalises the agents
-(§\ref{sec:exp2}); a reference-free screen rejects the weakest runs,
-pooling existing runs recovers coverage, and a two-model agreement
-gate restores precision (§\ref{sec:extensions}). This section examines
-what the measuring instrument can and cannot support in that reading:
-the F1 metric, its variance sources, and the single-case design.
+The two experiments (§\ref{sec:exp1}, §\ref{sec:exp2}) and the post-hoc
+extensions (§\ref{sec:extensions}) support a consistent reading,
+summarised in the Introduction. This section examines what the
+measuring instrument can and cannot support in that reading: the F1
+metric, its variance sources, and the single-case design.
 
 \textbf{F1 is a useful but opaque aggregate.} Row-level F1 is the
 primary metric in §\ref{sec:exp1} and §\ref{sec:exp2}: it is the
@@ -1215,10 +1208,9 @@ agents a curated document set in a single query equalises three of the
 four, though the multi-turn protocol does not replicate the effect
 (§\ref{sec:exp2}). Two levers already deliver without any new data
 collection. The reference-free screen rejects the weakest outputs
-without ground truth: within-run capacity variability tracks
-reference-based F1 (Spearman ρ = 0.92, pooled across models and
-in-sample; within-model signal positive but modest,
-\ref{sec:annex-screen}). Fusion recovers coverage: pooling runs across
+without ground truth (Spearman ρ = 0.92 against reference-based F1,
+pooled across models and in-sample; within-model signal positive but
+modest, \ref{sec:annex-screen}). Fusion recovers coverage: pooling runs across
 models finds plants no single model reliably finds, and requiring two
 models to agree nearly eliminates false positives (§\ref{sec:fusion}).
 If the constraint is indeed the documents, the path to research-grade
@@ -1711,12 +1703,11 @@ Opus 4.6 is preferred over the newer 4.7 for the parametric baseline
 because 4.7's verbosity exceeds the \texttt{max\_tokens} budget on the
 full Vietnam plant table. \textbf{GPT-5.5 declined this task on 3 of 5
 reps in this archived baseline sweep (prompt \texttt{p1\_base})},
-opening with ``I can't honestly produce a complete, primary-sourced
-inventory\ldots{}'' and refusing to fabricate URLs or source citations
-from parametric knowledge alone; the \texttt{modelset\_exp1\_batch2}
-re-run reported in the body resolved compliance. We retained the
-declined responses as data: a model viewpoint on the request's
-epistemic standard, not extraction noise.
+refusing to fabricate URLs or source citations from parametric
+knowledge alone; the \texttt{modelset\_exp1\_batch2} re-run reported in
+the body resolved compliance. The declined replies, quoted and read
+against the provenance bar, are taken up in the Discussion
+(§\ref{sec:discussion}).
 
 \subsection*{Run parameters}
 \addcontentsline{toc}{subsection}{Run parameters}
@@ -2359,11 +2350,11 @@ under-construction ones); page 3 lists the \ExpOneMatrixFPs{} most frequent fals
 The table below shares the same data derivation as the figure (library
 \texttt{aedist.exp1\_recognition}: common cause, no
 producer--consumer chaining) and decomposes the difficulty by status.
-The reference list is dominated by proposed plants — the largest share
-— which parametric memory cannot know; their mean recognition rate is
-far below that of operational plants. The low overall recognition is
-therefore structural, a property of the list's composition, not merely a
-model failure.
+Proposed plants form the largest share of the rows, and parametric
+memory cannot know them; their mean recognition rate falls far below
+that of operational plants. The low overall recognition is thus
+structural: it reflects the composition of the list, not merely model
+failure.
 
 \begin{table}[htbp]
 \centering
