@@ -1,0 +1,79 @@
+%erg 0.1
+Title: Em-dash encoding: sweep LaTeX --- to Unicode em dash in main.tex + adherence guard
+Created: 2026-06-12
+Author: orchestrator
+
+--- log ---
+2026-06-12T10:30Z orchestrator created — author decided 0552 aspect 1 (encoding): canonical em-dash encoding in manuscript prose is the literal Unicode glyph, not the --- TeX ligature
+
+--- body ---
+## Context
+
+Ticket 0552 (reading-1 item 14 follow-up) split into two aspects.
+Aspect 1 — encoding — is DECIDED by the author (2026-06-12): the
+canonical encoding is the literal Unicode em dash (—, U+2014), not the
+LaTeX `---` ligature. Grounds: house style already mandates literal
+Unicode glyphs in prose (.claude/rules/writing.md); guards and audits
+become a plain grep (the 0543 waiver gap happened because the two
+encodings diverge); the glyph is immune to fontspec/ligature-mapping
+regressions.
+
+Aspect 2 — whether to *restyle* (reduce the ~187 em dashes to commas,
+colons, parentheses) — remains open in 0552 and is NOT this ticket.
+This ticket is mechanical encoding conversion only: after it lands,
+the em-dash count is unchanged but visible to a one-line grep.
+
+## Relevant files
+
+- `slides/manuscript/main.tex` — ~187 `---` occurrences in body prose
+- `tests/test_manuscript_cohort_and_caveats.py` — existing abstract
+  em-dash guard (knows about both encodings today)
+- `.claude/rules/writing.md` — glyph convention (\newunicodechar
+  preamble mappings for glyphs absent from the text font)
+
+## Actions
+
+1. Red test first (see Test below).
+2. Sweep `main.tex`: replace prose `---` with the literal — glyph.
+   Exclusions: verbatim/quote environments (the as-sent Doc-07 prompt
+   block in Annex B is frozen quoted material — do NOT touch it; there
+   is a drift guard on its text), LaTeX comments, any table or TikZ
+   syntax where `-` runs are syntactic. Inspect each non-prose hit
+   rather than blanket-sed.
+3. Verify the rendering path: confirm the text font carries U+2014
+   under tectonic; add a `\newunicodechar{—}{...}` preamble mapping
+   ONLY if the build drops the glyph (follow the existing γ/ρ/τ
+   pattern). The build must produce an identical-looking PDF.
+4. Adherence guard: extend/add a test asserting `main.tex` contains no
+   `---` outside the excluded environments, so the ligature encoding
+   cannot creep back. Keep the existing abstract guard semantics.
+5. Log the aspect-1 resolution in ticket 0552 (note, not close — its
+   aspect 2 / restyle decision stays open, needs-human).
+
+## Test
+
+- Red step: a pytest (adherence-marked) that parses
+  `slides/manuscript/main.tex`, strips verbatim/quote environments and
+  comments, and asserts no `---` remains in prose. It must FAIL before
+  the sweep (~187 hits) and PASS after.
+
+## Verification
+
+- [ ] `make -C slides manuscript` builds; em dashes render identically
+      (spot-check a page in the PDF)
+- [ ] Doc-07 prompt block byte-identical (its drift guard stays green)
+- [ ] grep -c '—' main.tex ≈ prior `---` prose count (encoding moved,
+      count unchanged)
+
+## Invariants
+
+- No prose rewording — this is encoding-only; aspect 2 (restyle) is
+  0552's open decision
+- `make check` green; existing adherence suite untouched semantics
+
+## Exit criteria
+
+- [ ] Prose `---` swept to — in main.tex, exclusions respected
+- [ ] Adherence guard prevents `---` reintroduction in prose
+- [ ] 0552 log notes aspect-1 resolution
+- [ ] `make check` green
