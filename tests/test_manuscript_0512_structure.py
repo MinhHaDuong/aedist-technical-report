@@ -57,14 +57,12 @@ def test_future_research_section_absorbs_methods_review():
 
 def test_no_companion_paper_promise_in_body():
     """Negative guard for the no-companion-paper-promise brief entry
-    (ticket 0562): the main text body frames forward-looking work as
+    (tickets 0562, 0563): the manuscript frames forward-looking work as
     programme (sec:future) or not-measured-here scoping, never as a
-    commitment to a specific forthcoming publication. The Temporality
-    annex's "subsequent paper" sentence is ticket 0563's to strip; until
-    then it is carved out by label rather than left unguarded."""
+    commitment to a specific forthcoming publication. Ticket 0563 stripped
+    the Temporality annex's "subsequent paper" sentence, so the guard now
+    scans the full body with no carve-out."""
     text = body()
-    carved_out = section("sec:annex-temporality")
-    guarded = text.replace(carved_out, " ")
     for promise in (
         "companion paper",
         "follow-on paper",
@@ -73,9 +71,53 @@ def test_no_companion_paper_promise_in_body():
         "in preparation",
         "working title",
     ):
-        assert promise not in guarded, (
+        assert promise not in text, (
             f"publication promise {promise!r} found in the manuscript body "
             "(no-companion-paper-promise, docs/editorial-brief.md, ticket 0562)"
+        )
+
+
+def test_supplementary_figures_annex_dissolved():
+    """Ticket 0563 (tracker 0560): the Supplementary-figures annex is gone.
+
+    Both of its figures live in their natural annexes (coverage-certainty in
+    the Experiment 2 annex, capability-dag in the rollout annex); the
+    ``sec:annex-suppfigs`` label and every reference to it are deleted —
+    the only label the 0560 stability contract removes by design."""
+    assert "sec:annex-suppfigs" not in body(), (
+        "sec:annex-suppfigs label or reference remains — the Supplementary "
+        "figures annex must be dissolved (ticket 0563)"
+    )
+
+
+def test_capability_dag_figure_referenced():
+    """Ticket 0563: fig:capability-dag is anchored by at least one \\ref —
+    it was previously an unreferenced float in the suppfigs annex."""
+    assert "\\ref{fig:capability-dag}" in body(), (
+        "fig:capability-dag is never \\ref'd — the rollout annex must tie "
+        "the transition-matrix figure to its prose (ticket 0563)"
+    )
+
+
+def test_clearpage_between_annexes():
+    """Ticket 0563: every annex opens on a fresh page.
+
+    Loose between-blocks check, not an "immediately preceded by \\clearpage"
+    pin (a blank or comment line would spuriously fail that): at least one
+    \\clearpage occurs in the gap before the first annex \\section after
+    \\appendix, and in the gap between each pair of consecutive annex
+    \\section headings."""
+    text = body()
+    assert "\\appendix" in text, "no \\appendix divider in main.tex"
+    appendix = text.split("\\appendix", 1)[1]
+    starts = [m.start() for m in re.finditer(r"(?<!sub)\\section\{", appendix)]
+    assert len(starts) >= 2, "expected several annex sections after \\appendix"
+    bounds = [0, *starts[:-1]]
+    for gap_start, section_start in zip(bounds, starts, strict=True):
+        gap = appendix[gap_start:section_start]
+        assert "\\clearpage" in gap, (
+            "annex \\section without a \\clearpage between it and the "
+            f"previous block (ticket 0563): ...{appendix[section_start : section_start + 60]}"
         )
 
 

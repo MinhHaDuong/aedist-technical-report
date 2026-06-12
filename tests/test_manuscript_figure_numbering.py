@@ -43,12 +43,15 @@ EXPECTED_MAIN = [
 # recognition matrix is defined via \refstepcounter + \label.
 # Ticket 0507: the quality-floor heatmap moved to the Exp1 scoring annex
 # (becoming S1) and the spider (old S1) left the paper (kept in slides).
+# Ticket 0563: the Supplementary-figures annex dissolved (coverage-certainty
+# to the Exp2 annex, capability-dag to the rollout annex) and the annexes
+# reordered method/investigation/support, so the S-series reflows.
 EXPECTED_SUPP = [
     "fig:quality-floor",
-    "fig:capability-dag",
     "fig:coverage-certainty",
     "fig:recognition-matrix",
     "fig:fusion-mvp",
+    "fig:capability-dag",
 ]
 
 FIG_LABEL_RE = re.compile(r"\\label\{(fig:[a-z0-9-]+)\}")
