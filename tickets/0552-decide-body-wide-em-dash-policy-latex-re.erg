@@ -2,12 +2,13 @@
 Title: Em-dash once-over: diversify punctuation + density ratchet tests (reading-1 item 14 scope)
 Created: 2026-06-11
 Author: HDMX-coding-agent
-Blocked-by: 0558
 
 --- log ---
 2026-06-11T22:29Z HDMX-coding-agent created
+2026-06-12T09:51Z claude note aspect 1 (encoding) resolved by ticket 0558: prose --- swept to literal Unicode em dash in main.tex + adherence guard (tests/test_manuscript_em_dash.py); aspect 2 (restyle/reduce ~187 em dashes) stays open here
 2026-06-12T11:40Z orchestrator note author decision recorded (2026-06-12): NOT a blanket ban — em dashes are useful; aspect 1 (encoding) decided separately, Unicode — canonical, executing as ticket 0558 (PR #1017). This ticket respec'd to aspect 2: once-over to diversify + density ratchet tests. needs-human label dropped — spec ratified by author, ticket is now executable. Blocked-by 0558 (tests are a clean grep on — only after the encoding sweep lands).
 
+2026-06-12T10:20Z HDMX-coding-agent note blocker 0558 closed — Blocked-by removed.
 --- body ---
 ## Context
 

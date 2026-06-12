@@ -51,6 +51,10 @@ macro).
   `\newunicodechar{γ}{\ensuremath{\gamma}}`-style mappings; prose then carries
   the literal Unicode glyph (ρ, τ, ≤, …), never a `$\tau$` math-mode
   workaround.
+- The em dash in prose is the literal Unicode glyph `—` (U+2014), never the
+  LaTeX `---` ligature (ticket 0558; enforced by
+  `tests/test_manuscript_em_dash.py`). The font carries U+2014 natively — no
+  `\newunicodechar` mapping needed.
 - Asset paths are relative to `slides/manuscript/` (tectonic resolves against
   the input file's directory): `../../report/inputs/generated/…`.
 - File paths, config keys, and other long monospaced identifiers in prose use
