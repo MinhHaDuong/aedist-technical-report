@@ -8,6 +8,7 @@ Author: HDMX-coding-agent
 2026-06-12T14:10Z claude note raid-557 Imagine pass — drift verdict clean, inventory + triage table appended
 2026-06-12T14:25Z claude note raid-557 Plan pass — concrete rewrites, day-one guard safety verified, IDH companion is existing ticket 0253
 2026-06-12T14:40Z claude note raid-557 Feasibility PASS — all paths/headings/phrases verified, baseline 22 passed; WARN: PR #1017 also touches .claude/rules/writing.md (rebase before merge)
+2026-06-12T10:42Z claude note executed — demotions per triage, brief 13 entries, polarity rule appended; gates a/b + fang verified on scratch copies; IDH companion already merged upstream (IDH PR #393, ticket 0253 closed there)
 
 --- body ---
 ## Context
@@ -67,10 +68,10 @@ Policy decided with the author (2026-06-12 session):
 
 ## Verification
 
-- [ ] `make check` green
-- [ ] A trial rewording of a hedged sentence (same meaning, different
+- [x] `make check` green
+- [x] A trial rewording of a hedged sentence (same meaning, different
   words) no longer fails CI
-- [ ] Reintroducing "the binding constraint is the documents" flatly in
+- [x] Reintroducing "the binding constraint is the documents" flatly in
   the abstract DOES fail CI
 
 ## Invariants
@@ -82,9 +83,9 @@ Policy decided with the author (2026-06-12 session):
 
 ## Exit criteria
 
-- [ ] No positive prose-literal assertion remains in CI
-- [ ] `docs/editorial-brief.md` exists and carries every demoted decision
-- [ ] Prose review path references the brief
+- [x] No positive prose-literal assertion remains in CI
+- [x] `docs/editorial-brief.md` exists and carries every demoted decision
+- [x] Prose review path references the brief
 
 ## Reimagined (raid 2026-06-12)
 
