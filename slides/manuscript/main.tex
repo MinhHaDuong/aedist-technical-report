@@ -228,7 +228,7 @@ layer.
 source holds. The \LongtailReference{} plants, sorted by descending visibility, are
 checked against four recognition layers: the hand-compiled reference
 itself (all \LongtailReference{}), the Global Energy Monitor tracker (\LongtailGem{}), Wikipedia
-coverage (\LongtailWiki{}), and OpenStreetMap coverage (\LongtailOsm{} plants — existing,
+coverage (\LongtailWiki{}), and OpenStreetMap coverage (\LongtailOsm{} plants: existing,
 physically built infrastructure only). Well-documented operating plants
 appear in every layer; the under-documented tail — proposed and
 planned projects from the PDP8 pipeline — thins out layer by layer.
@@ -251,8 +251,8 @@ and \emph{abandoned} projects, because the pattern of what was dropped
 — and why — is itself the evidence. ``Complete'' therefore has no
 audience-free definition. We take the researcher's perimeter, the
 widest one: the reference aims to be exhaustive and detailed for the
-whole economic and policy history of the thermal sector — proposed,
-cancelled, and abandoned projects included. The long tail is not noise
+whole economic and policy history of the thermal sector (proposed,
+cancelled, and abandoned projects included). The long tail is not noise
 to prune; it is the research object. Built as this superset, the
 reference lets each downstream use cut the narrower perimeter it
 needs.
@@ -288,7 +288,7 @@ philosophy-of-science empirical adequacy
   commissioning year, status, and so on. A system can therefore be good
   at finding the right assets but weak at describing them, or conversely
   reliable on attributes once the correct asset has been identified.
-  Plausibility is not truth — confidently-stated fabrications are the
+  Plausibility is not truth: confidently-stated fabrications are the
   failure mode this dimension polices
   \citep{Lin-Stephanie2022:truthfulqa}.
 \item
@@ -296,13 +296,13 @@ philosophy-of-science empirical adequacy
   consistent. Internally, statistical tables carry control constraints:
   aggregate totals match subtotals, capacities are non-negative,
   duplicate units are counted once. Externally, the dataset must remain
-  compatible with other available knowledge — units, orders of
+  compatible with other available knowledge: units, orders of
   magnitude, locations, technology types, and commissioning dates should
   all be plausible. A coherent dataset identifies conflicts between sources
   rather than silently overwriting them. A weak working test is whether
   repeated runs of the same system agree with one another
   \citep{Wang2022:self-consistency}; the stronger requirement is
-  inferential closure — the system derives and exposes all
+  inferential closure: the system derives and exposes all
   consequences of the available documents and accounting rules. This
   paper measures weak-internal coherence; the external axis is deferred
   to the Discussion.
@@ -310,13 +310,13 @@ philosophy-of-science empirical adequacy
   \emph{Provenance} requires a pedigree for each data item: every row,
   and ideally every cell, traces back to specific passages, tables, or
   records in specific sources. Strong provenance means more than
-  attaching a plausible citation — the cited source must actually
+  attaching a plausible citation: the cited source must actually
   support the value claimed
   \citep{Gao-Tianyu2023:alce, Asai-Akari2024:self-rag, Es-Shahul2023:ragas}.
-  We distinguish \emph{verifiable} provenance — a citation is present
-  and could in principle be checked — from \emph{verified} provenance
-  — the citation was retrieved and confirmed to support the stated
-  value. Verified provenance is the stronger standard; verifiable is the
+  We distinguish \emph{verifiable} provenance (a citation is present
+  and could in principle be checked) from \emph{verified} provenance
+  (the citation was retrieved and confirmed to support the stated
+  value). Verified provenance is the stronger standard; verifiable is the
   minimum floor. When sources contradict one another, the resolution —
   which source was preferred and why — is itself part of the
   provenance record.
@@ -336,8 +336,8 @@ philosophy-of-science empirical adequacy
   practice, which the present work positions as a gap. This paper scopes
   to snapshot currency: the table describes the fleet at a reference
   date, each value carries a best-effort as-of date, and notable status
-  changes are flagged. The fuller requirement — supporting queries of
-  the form ``what was the installed fleet in 2018?'' — applies to
+  changes are flagged. The fuller requirement (supporting queries of
+  the form ``what was the installed fleet in 2018?'') applies to
   scenario-projection use cases; it is addressed structurally in
   §\ref{sec:fusion} and discussed in \ref{sec:annex-temporality}.
 \end{enumerate}
@@ -424,8 +424,8 @@ integration:
   \emph{Code execution} lets the model verify arithmetic and produce
   executable artefacts.
 \item
-  \emph{External tool use} — a standardised tool-connection protocol
-  \citep{Yao-Shunyu2023:react} — generalises code execution to an
+  \emph{External tool use} (a standardised tool-connection protocol
+  \citep{Yao-Shunyu2023:react}) generalises code execution to an
   extensible registry of external services, with benchmarks on coding
   \citep{Jimenez-Carlos2024:swe-bench}, OS control
   \citep{Xie-Tianbao2024:osworld}, and general-assistant tasks
@@ -518,7 +518,7 @@ USD and wall-clock time are recorded per run.
 \textbf{A seeded recall bar: the answer key was already in the training
 corpus.} These scores need an upper bound the reader can judge them
 against. Before the experiment, the author's group published a
-derivative of the reference — the MOIT/PDP8 coal plant list — on
+derivative of the reference (the MOIT/PDP8 coal plant list) on
 Wikipedia; the experimental protocol therefore bans Wikipedia as a
 \emph{justification} source (compliance audit in \ref{sec:annex-exp2}),
 while permitting any source for \emph{lead generation}: a model may
@@ -531,8 +531,8 @@ increasing its coverage; verifiable in the page history, revision
 \texttt{902510278}), and \emph{List of coal power stations in Vietnam}
 was split off on 5 July 2019 (provenance and diff in
 \texttt{data/reference/PROVENANCE.md}). Both events predate the 2026-era
-model cohort by roughly six and a half years — comfortably before any
-plausible training cutoff — so the bar's validity is not in doubt for
+model cohort by roughly six and a half years (comfortably before any
+plausible training cutoff), so the bar's validity is not in doubt for
 the cohort; we report the comparison directionally because the project
 does not record per-model cutoff dates. One caveat on coverage: the
 built fleet (operating, retired) has been on these pages since mid-2019
@@ -549,7 +549,7 @@ not justification. The bar has two regimes (light-reviewed,
 (operating 95\%, construction 80\%, permitted 100\%), while the
 forward-looking pipeline sits at 55\% (proposed and announced; 73\%
 aggregate). Scoring below the built-fleet bar is therefore not missing
-obscure facts — it is failing to retrieve knowledge demonstrably
+obscure facts: it is failing to retrieve knowledge demonstrably
 present in the training corpus. The pipeline tail, which even Wikipedia
 barely carries, is the reference's unique contribution; no parametric
 source holds it.
@@ -559,20 +559,20 @@ inventories.} Across \ExpOneNRuns{} runs (\ExpOneNModels{} models × 5 repeats),
 usable tables, but row-level F1 ranges from \ExpOneFOneMin{} to \ExpOneFOneMax{}, with a mean of
 \ExpOneFOneMean{}. Asking the same model the same question does not return the same
 plants: DeepSeek V4-Flash ranges from F1 0.07 to 0.52 across 5 identical
-runs — a spread wider than the gap between many adjacent model means.
+runs, a spread wider than the gap between many adjacent model means.
 Even for correctly matched plants, attribute classification is uneven:
 province accuracy is high (mean \ExpOneProvinceAcc{}) — unsurprising, since Vietnamese
 plants are typically named after the places that host them, so the name
 itself usually gives away the province — but fuel (\ExpOneFuelAcc{}) and status
 (\ExpOneStatusAcc{}) remain mediocre, reflecting the finer coal-versus-gas and
 lifecycle distinctions the models conflate. The status figure is partly
-an artefact of vocabulary: ``Proposed'' — the grouped status of
-\textasciitilde\StatusProposedSharePct\% of the reference (\ref{sec:annex-recognition}) —
+an artefact of vocabulary: ``Proposed'', the grouped status of
+\textasciitilde\StatusProposedSharePct\% of the reference (\ref{sec:annex-recognition}),
 has no equivalent in the prompt's controlled status vocabulary (the
 cohort prompt's status definitions, aligned with Global Energy Monitor
 vocabulary and reproduced in \ref{sec:annex-exp1}, offer
-\texttt{Announced\ /\ Pre-permit\ /\ Permitted\ /\ Construction\ /\ Operating\ /\ Shelved\ /\ Cancelled\ /\ Retired}
-— no ``Proposed''), so a model that correctly recalls a proposed plant
+\texttt{Announced\ /\ Pre-permit\ /\ Permitted\ /\ Construction\ /\ Operating\ /\ Shelved\ /\ Cancelled\ /\ Retired};
+no ``Proposed''), so a model that correctly recalls a proposed plant
 has no admissible label to map it onto, which may mechanically depress
 status accuracy. Consistent with that reading, excluding the proposed
 stratum lifts mean status accuracy on the matched rows to
@@ -632,7 +632,7 @@ and grade each model by its count of good runs out of five.
 Figure~\ref{fig:reliability} plots this grade against reference-based
 accuracy. The cohort splits cleanly: nine models deliver four or five
 good runs and F1 means of 0.41--0.67, while five models deliver at most
-one good run (three of them none at all) and F1 means of 0.02--0.28 —
+one good run (three of them none at all) and F1 means of 0.02--0.28;
 the inaccurate models are also the unreliable ones (Spearman ρ = 0.78
 between the two axes), so the label-free grade screens them out before
 any reference is consulted. The disqualified set is essentially stable
@@ -694,13 +694,13 @@ web\_search inside thinking mode). The fourth slot is
 hypothesis-relevant rather than decorative: Chinese-language investor
 and trade documents on Vietnamese power assets are under-indexed by
 Western search. The experiment runs two arms over the same four agents
-(N=5 each). \textbf{Arm 1 (naive)} — a single-shot Doc-07 prompt,
+(N=5 each). \textbf{Arm 1 (naive)}: a single-shot Doc-07 prompt,
 web on; the null comparator. \textbf{Arm 2
-(optimised, simple-harness multi-turn)} — a multi-turn protocol in
+(optimised, simple-harness multi-turn)}: a multi-turn protocol in
 which each agent first designs its own prompt and settings (Phase A),
 runs once as a smoke gate (Phase B-0), then runs N=5 against a single
 provider under a per-session cap of 50K tokens / \$3 (Phase B); this
-constitutes a simple harness — an LLM orchestrator (DeepSeek
+constitutes a simple harness: an LLM orchestrator (DeepSeek
 classifier) controlling a loop with the tested LLM as the tool. The
 naive-vs-optimised contrast isolates the protocol's contribution over
 raw model capability. The naive arm is an independent sweep, not a
@@ -745,8 +745,8 @@ Values generated from
 \centering
 \includegraphics[width=\linewidth]{../../report/inputs/generated/fig_exp2_arms_comparison.pdf}
 \caption{Web access lifts coverage, but no agent approaches the
-reference — and the multi-turn protocol costs 2--4× more for mixed
-returns. Experiment 2 — naive (arm 1, single-shot) vs optimised (arm
+reference, and the multi-turn protocol costs 2--4× more for mixed
+returns. Experiment 2: naive (arm 1, single-shot) vs optimised (arm
 2, multi-turn) comparison, N=5 per agent. Panel (a): Plants found — TP
 bars (blue, upward, matched against the \NumRefPlants-plant reference) and FP bars
 (red, downward, unmatched plants: extracted but not in the reference),
@@ -798,8 +798,8 @@ analyses of this kind for frontier deep-research agents.
 
 \textbf{Good documents equalise model performance.} The conditions in
 which agents receive a curated document set are unregistered and
-exploratory (\ref{sec:annex-exp2}), so the pattern is read tentatively
-— but it bears directly on where to invest. When agents receive the
+exploratory (\ref{sec:annex-exp2}), so the pattern is read tentatively,
+but it bears directly on where to invest. When agents receive the
 same reference documents in a single query, the two weakest performers
 climb toward the pack: Qwen lifts from F1 0.37 to 0.62 and Mistral from
 0.49 to 0.59, against marginal movement for the already-strong Anthropic
@@ -814,7 +814,7 @@ same documents does not equalise and in fact degrades Anthropic (0.61 to
 §\ref{sec:quality} quality bar; it suggests the binding constraint lies
 in document quality rather than model capability, without resolving it. Extending
 these observations to a wider model set (Sonnet, Mistral Medium/Small,
-DeepSeek) is deferred — no further API calls were made; the finding
+DeepSeek) is deferred: no further API calls were made; the finding
 rests entirely on the four-agent cohort already scored in
 Table~\ref{tbl:exp2-2x2}.
 
@@ -827,9 +827,9 @@ reproducibility. The Q\&A at the conference — ``did you fuse the
 results?'' — points directly to the path forward. A naive union
 already helps: pooling runs across models more than doubles recall
 relative to the single-run mean (\AggUnionGainX×) at no new collection cost
-(aggregation sweep in \ref{sec:annex-fusion}). Full treatment —
-estimating the unobserved share by linear programming against a control
-total, applying capture--recapture estimation for the residual — is
+(aggregation sweep in \ref{sec:annex-fusion}). Full treatment
+(estimating the unobserved share by linear programming against a control
+total, applying capture--recapture estimation for the residual) is
 addressed in a companion paper in preparation (working title:
 \emph{Capture--recapture estimation of under-documented infrastructure
 inventories}).
@@ -895,17 +895,17 @@ remains an assumption, not a measured separation. A third failure mode
 belongs to the measuring instrument rather than the model: plant-name
 matching is itself a named-entity recognition problem, and a true plant
 reported under a name variant the LP matcher does not recognise is
-scored as a false positive plus a false negative — a matcher limit,
-not a metric limit (\ref{sec:annex-exp1}). The converse failure —
-fuzzily merging two distinct plants — appears bounded: a
+scored as a false positive plus a false negative: a matcher limit,
+not a metric limit (\ref{sec:annex-exp1}). The converse failure
+(fuzzily merging two distinct plants) appears bounded: a
 phase-collision audit of the reference name space leaves
 \PhaseCollisionResidualNinety{} of \PhaseCollisionPairsNinety{}
 ambiguous distinct-plant name pairs matchable after the unit-number
 veto, and the scored runs realise \RealisedFuzzyBelowNinety{} such
 false fuzzy matches (Table~\ref{tbl:source-concordance}). The same instrument limit
 arises from reporting-level mismatches: the same asset can be reported
-at three grains — the power center, the power plants it hosts, and
-their generating units — and a model row at one grain matched against
+at three grains (the power center, the power plants it hosts, and
+their generating units), and a model row at one grain matched against
 a reference row at another scores as a false positive plus a false
 negative even when the asset itself is right. The prompt's asset-row
 rule (\ref{sec:annex-exp1}) fixes the intended grain at the plant /
@@ -970,13 +970,13 @@ template-like: near-constant capacity and status columns (one run emits
 variability — the number of distinct capacity values — correlates
 with reference-based F1 at Spearman ρ = 0.92 across the 70 runs. An
 in-sample threshold rule rejects 23 of the 26 weakest runs with no false
-rejection — an existence proof rather than a validated detector, as
+rejection: an existence proof rather than a validated detector, as
 the cutoffs were tuned on the same 70 runs. Notably, the
 internal-coherence indicators we already compute carry no such signal:
 fabricated rows use impeccable controlled vocabulary and plausible
 dates. This points to a two-level scoring design. The run-level screen
 rates one output; above it, a model-level reliability grade aggregates
-the screen across repetitions — a model version whose five repetitions
+the screen across repetitions: a model version whose five repetitions
 all fail is disqualified as a source, independently of any single run.
 In the vocabulary of intelligence evaluation (the NATO ``Admiralty''
 grading of STANAG 2511), the run-level screen rates \emph{information
@@ -1007,10 +1007,10 @@ and capture--recapture estimation. Within-model and across-model
 coherence can be read directly from the row densities (famous plants
 form dense rows, obscure ones sparse), and the operational core
 separates visibly from the project-dominated tail. Fusing such
-incomplete, differently-reliable lists into a single estimate — and
+incomplete, differently-reliable lists into a single estimate (and
 bounding the residual share of plants that no source mentions by linear
 programming against a control total, such as the regulator's installed
-capacity per fuel \citep{HaDuong2005} — is the axis of research these
+capacity per fuel \citep{HaDuong2005}) is the axis of research these
 row densities invite.
 
 \section*{Related Work — Methods}
@@ -1049,7 +1049,7 @@ deeper epistemological requirement: van Fraassen's
 empirical adequacy (model fits observations) and truth (model describes
 unobserved reality). Applied to power-plant inventories, the distinction
 sharpens: a table that ``looks right'' in aggregate may conceal
-systematic coverage gaps for under-documented assets — an inadequacy
+systematic coverage gaps for under-documented assets, an inadequacy
 invisible to F1 scores and visible only through provenance chains that
 reach primary sources.
 
@@ -1187,7 +1187,7 @@ separable temporality criteria for an energy-asset database:
   \textbf{T2 — Historical reconstructability}: the database supports
   queries of the form ``what was the installed fleet as of 2018?'' This
   requires logging the events (commissioning, retirement, capacity
-  revision, status reclassification) that change state over time — the
+  revision, status reclassification) that change state over time, the
   approach taken by Global Energy Monitor rather than the Global
   Powerplant Database snapshot model.
 \end{itemize}
@@ -1322,7 +1322,7 @@ baseline sweep — the earlier cohort in which the GPT-5.5 refusals
 occurred — used the locked composition of two modules from
 \fpath{experiments/prompts/modules/}: \texttt{2\_goal.txt} (task
 declaration) and \texttt{5\_table.txt} (structured table specification).
-These are the implicit ``always'' pair — every sweep includes them;
+These are the implicit ``always'' pair: every sweep includes them;
 ablations opt in to additional modules. The assembled prompt is the
 concatenation in filename lex order, joined by a blank line:
 
@@ -1688,7 +1688,7 @@ opening with ``I can't honestly produce a complete, primary-sourced
 inventory\ldots{}'' and refusing to fabricate URLs or source citations
 from parametric knowledge alone; the \texttt{modelset\_exp1\_batch2}
 re-run reported in the body resolved compliance. We retained the
-declined responses as data — a model viewpoint on the request's
+declined responses as data: a model viewpoint on the request's
 epistemic standard, not extraction noise.
 
 \subsection*{Run parameters}
@@ -1837,7 +1837,7 @@ by criterion, showing \emph{which} dimension each model zeroes.
 \begin{figure}
 \centering
 \includegraphics[width=\linewidth]{../../report/inputs/generated/fig_quality_floor_heatmap_exp1.pdf}
-\caption{Per-criterion breakdown of the quality bar — which dimension
+\caption{Per-criterion breakdown of the quality bar: which dimension
 each model fails. The bar is a conjunction, so a dark-red cell anywhere
 in a column disqualifies that model. Quality-floor heatmap for
 Experiment 1 (parametric arm, 14 models × 5 runs). Columns are the same
@@ -1850,7 +1850,7 @@ sub-scores are shown: a criterion every model clears uniformly carries
 no quality-floor signal and is dropped automatically when its
 across-model spread falls below 0.1 (on the current data this drops
 capacity sanity, core/capacity completeness, source presence,
-dual-source, and as-of presence — and with the latter rows, the whole
+dual-source, and as-of presence; and with the latter rows, the whole
 Field-completeness dimension). The surviving rows span Accuracy,
 Coherence, Provenance, and Temporality. Each cell is the
 \textbf{per-model mean} of that sub-score across the five runs, rendered
@@ -1882,7 +1882,7 @@ accuracy. The outcome barely moves across the grid: five models are
 disqualified under the discriminating and all-reference-free sets at
 every threshold, four (qwen3.6-flash escapes) under the narrower
 coherence-only set, and the correlation stays at ρ = 0.78--0.80
-throughout — the headline reading of Figure~\ref{fig:reliability} does
+throughout; the headline reading of Figure~\ref{fig:reliability} does
 not hinge on the gate's tuning. Source artifact:
 \texttt{experiments/derived/exp1\_reliability\_sensitivity.csv}.
 
@@ -2036,12 +2036,12 @@ receives the baseline prompt
 (\texttt{experiments/prompts/prompt\_complete.txt}), the four
 §\ref{sec:quality} quality-dimension paragraphs verbatim, the task
 statement, a JSON envelope spec, and the per-session budget cap
-(announced upfront — see ``Phase B dialogue policy'' below). The agent
-is asked to return a fully-specified design — \texttt{system\_prompt}
-(threaded into the provider's system field at agent creation),
-\texttt{designed\_prompt} (the user-side prompt sent on turn 1 of Phase
-B), \texttt{settings} (\texttt{thinking}, \texttt{max\_tokens}), and
-\texttt{rationale} — that maximises the quality of the report it will
+(announced upfront; see ``Phase B dialogue policy'' below). The agent
+is asked to return a fully-specified design (\texttt{system\_prompt},
+threaded into the provider's system field at agent creation;
+\texttt{designed\_prompt}, the user-side prompt sent on turn 1 of Phase
+B; \texttt{settings}, \texttt{thinking} and \texttt{max\_tokens}; and
+\texttt{rationale}) that maximises the quality of the report it will
 produce within the dual-axis session cap (below) and an overnight
 wall-clock. Outputs land as
 \texttt{<agent>\_phase\_a.json} with the four
@@ -2076,7 +2076,7 @@ agent response by a one-shot LLM classifier deciding whether the agent
 had ``produced a report'' or not. The classifier's cost was harness
 overhead and was \emph{not} deducted from the SOTA agent's session
 budget. The as-run classifier was \texttt{deepseek/deepseek-v4-pro}; the
-registered — and earlier-run — choice was
+registered (and earlier-run) choice was
 \texttt{nvidia/nemotron-nano-9b-v2}, with \texttt{mistral-small-latest}
 confined to the pilot. DeepSeek is a third-party vendor distinct from
 all four subjects (Anthropic, OpenAI, Mistral, Alibaba), so the
@@ -2145,7 +2145,7 @@ each (40 production sessions):
   isolates the protocol scaffolding's contribution. The file at this
   path was revised after all naive-arm sessions had run (2026-05-24):
   the five anthropic-direct run records archive the as-sent user
-  message — the earlier, shorter version, identical across runs —
+  message (the earlier, shorter version, identical across runs),
   and the three web-product sessions (2026-05-22--23) predate the
   revision, though their session records do not archive the sent
   prompt. The expanded current version is the Experiment 1
@@ -2214,33 +2214,33 @@ This experiment is script-based, not sweep-based. No
 \begin{itemize}
 \tightlist
 \item
-  \texttt{src/aedist/adapter\_mistral.py} — Mistral Agents API adapter
+  \texttt{src/aedist/adapter\_mistral.py}: Mistral Agents API adapter
   (multi-turn continuation + 5xx retry).
 \item
-  \texttt{src/aedist/adapter\_qwen\_dashscope.py} — DashScope adapter
+  \texttt{src/aedist/adapter\_qwen\_dashscope.py}: DashScope adapter
   (multi-turn continuation).
 \item
-  \texttt{src/aedist/adapter\_openai\_responses.py} — OpenAI Responses
+  \texttt{src/aedist/adapter\_openai\_responses.py}: OpenAI Responses
   adapter (multi-turn continuation).
 \item
-  \texttt{src/aedist/query\_anthropic.py} — Anthropic adapter
+  \texttt{src/aedist/query\_anthropic.py}: Anthropic adapter
   (multi-turn continuation).
 \item
-  \texttt{experiments/sota/exp2\_interactive\_smoke.py} — author-side
+  \texttt{experiments/sota/exp2\_interactive\_smoke.py}: author-side
   harness running Phase A + Phase B state machine.
 \item
-  \texttt{experiments/sota/dialogue\_classifier.py} — one-shot LLM
+  \texttt{experiments/sota/dialogue\_classifier.py}: one-shot LLM
   classifier deciding \texttt{report} vs \texttt{no\_report}.
 \item
   \texttt{experiments/outputs/sota\_smoke/} and
-  \texttt{sota\_exp2\_smoke/} — artifact directories. Each Phase B
+  \texttt{sota\_exp2\_smoke/}: artifact directories. Each Phase B
   turn writes seven \fpath{<agent>_turn_NN.*} files: \fpath{user.txt},
   \fpath{raw.json}, \fpath{record.json}, \fpath{cost.json},
   \fpath{classification.json}, \fpath{report.md}, and
   \fpath{citations.json}.
 \item
   \fpath{experiments/derived/tab_exp2_2x2.csv},
-  \fpath{report/inputs/generated/tab_exp2_bib_quality.tex} —
+  \fpath{report/inputs/generated/tab_exp2_bib_quality.tex}:
   as-run derived tables (2×2 F1/cost factorial; per-arm bibliography
   quality). The \fpath{experiments/derived/sota_cross_eval.csv} Phase
   C target is reserved for the deferred cross-evaluation.
@@ -2348,7 +2348,7 @@ under-construction ones); page 3 lists the \ExpOneMatrixFPs{} most frequent fals
 \includepdf[pages=-,pagecommand={\thispagestyle{plain}}]{../../report/inputs/generated/fig_exp1_recognition_matrix_portrait.pdf}
 
 The table below shares the same data derivation as the figure (library
-\texttt{aedist.exp1\_recognition} — common cause, no
+\texttt{aedist.exp1\_recognition}: common cause, no
 producer--consumer chaining) and decomposes the difficulty by status.
 The reference list is dominated by proposed plants — the largest share
 — which parametric memory cannot know; their mean recognition rate is
@@ -2456,8 +2456,8 @@ surface absent.
 \textbf{Two axes absent by construction.} The figure goes quiet after
 mid-2025 because leading labs had filled all eight features, not because
 development stalled: context length, shell-level execution, persistent
-agent scaffolds, and the modality axis — text to vision to real-time
-audio — all continued to advance outside the tool-affordance ladder
+agent scaffolds, and the modality axis (text to vision to real-time
+audio) all continued to advance outside the tool-affordance ladder
 this schema tracks. Two further dimensions are absent by construction.
 The \emph{constraint axis} — refusal training, content policy, and
 red-teaming — shaped which requests these consumer products would
@@ -2480,7 +2480,7 @@ pooling alone. The paragraphs below first draw the design consequence
 of the single-model ceiling, then quantify what run-level fusion
 already delivers.
 
-The single-model ceiling motivates a stateful architecture — one that
+The single-model ceiling motivates a stateful architecture: one that
 keeps an organised memory between runs instead of starting from scratch
 at each prompt. The equalisation result in §\ref{sec:exp2} sharpens the
 target: once the agents share a good document set, single-shot
@@ -2497,7 +2497,7 @@ reproducible, and cost-predictable independent of which model runs it.
 Such a system is stateful: it maintains a sourced narrative knowledge
 base, where each asset record carries its full lifecycle history and
 conflict-resolution record. The statistical table is a derived
-projection — a snapshot at a reference date — from the narrative
+projection (a snapshot at a reference date) from the narrative
 inventory rather than a direct model output. Each cell is a claim,
 recording its source, date, confidence, and conflict-resolution history.
 The narrative layer carries the temporal dimension deferred in
