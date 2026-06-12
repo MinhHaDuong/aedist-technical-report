@@ -138,7 +138,11 @@ benchmark suites that rank today's systems \citep{Hendrycks-Dan2021:mmlu,
 Ni-Shiwen2025:llm-benchmark-survey}; this paper extends the practice to
 national statistical registers. Three results stand out. First, we offer
 a new computable benchmark, scored against a hand-compiled, fully
-sourced reference. Second, the task is hard for today's agents: neither
+sourced reference. We use \emph{benchmark} in the narrow sense of a
+frozen task definition, a public gold reference, and a computable
+metric --- not a suite or a leaderboard --- and the design measures
+training-data contamination, as a parametric ceiling, rather than
+trying to prevent it. Second, the task is hard for today's agents: neither
 model memory nor web access yields a complete, well-sourced register.
 Third, reference-free coherence criteria suffice to screen out the
 weakest models.

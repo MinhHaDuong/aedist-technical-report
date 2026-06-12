@@ -5,6 +5,7 @@ Author: HDMX-coding-agent
 
 --- log ---
 2026-06-11T21:30Z orchestrator created from author question "Is the word Benchmark in the title overpromising?"
+2026-06-12T00:10Z claude note Checked intro for duplication: no existing scoping sentence and no contamination mention near key results (parametric ceiling first appears in conclusion/methods). Added one sentence with the contamination clause after the key-results benchmark claim in main.tex. Adherence suite green (269 passed), tectonic build green.
 
 --- body ---
 ## Context
@@ -43,8 +44,8 @@ weakening the title to "testbed"/"evaluation".
   hand-typed cross-ref numbers introduced).
 
 ## Verification
-- [ ] Sentence present in intro, register-consistent, no duplication.
-- [ ] tectonic build green.
+- [x] Sentence present in intro, register-consistent, no duplication.
+- [x] tectonic build green.
 
 ## Invariants
 - Title unchanged.
@@ -52,6 +53,6 @@ weakening the title to "testbed"/"evaluation".
 - Conclusion and abstract untouched (0532-ratified).
 
 ## Exit criteria
-- [ ] Intro contains the benchmark-sense scoping sentence (or waiver logged
+- [x] Intro contains the benchmark-sense scoping sentence (or waiver logged
       with pointer to equivalent existing prose).
-- [ ] Build + adherence green.
+- [x] Build + adherence green.
