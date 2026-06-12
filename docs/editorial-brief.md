@@ -48,9 +48,11 @@ free.
 
 ## rho-caveat-discussion
 
-**Decision:** If the Discussion cites ρ = 0.92, the existence-proof
-qualification accompanies it ("an existence proof rather than a validated
-detector, as the cutoffs were tuned on the same 70 runs").
+**Decision:** If the Discussion or the screening subsection (label
+`sec:ext-screen`; the screen prose moved there from the Discussion in the
+0562 restructure) cites ρ = 0.92, the existence-proof qualification
+accompanies it ("an existence proof rather than a validated detector, as
+the cutoffs were tuned on the same 70 runs").
 
 **Rationale:** The threshold rule was tuned on the same 70 runs it rejects
 from — presenting it as a validated detector would be an overclaim. CI keeps
@@ -100,9 +102,9 @@ negative: any sentence containing "binding constraint lies" must contain
 ## fusion-hedge
 
 **Decision:** The constraint-shift claim (architecture paragraph in the
-section labelled `sec:annex-fusion`) is hedged — current phrasing "the
-binding constraint appears to shift from model capability to document
-quality".
+subsection labelled `sec:ext-system`, promoted out of `sec:annex-fusion`
+by the 0562 restructure) is hedged — current phrasing "the binding
+constraint appears to shift from model capability to document quality".
 
 **Rationale:** Same scoped-divergence policy as equalisation-hedge; the
 shift is observed in one exploratory condition. CI keeps the sentence-scoped
@@ -149,14 +151,15 @@ labelled `sec:fusion`.
 ## novelty-two-grain
 
 **Decision:** Surviving novelty claim (3): the two-grain scoring design,
-stated in the Discussion — current phrasing "the run-level screen rates
-*information credibility* while the model-level grade rates *source
-reliability*" (STANAG 2511 Admiralty vocabulary).
+stated in the screening subsection (label `sec:ext-screen`; moved out of
+the Discussion by the 0562 restructure) — current phrasing "the run-level
+screen rates *information credibility* while the model-level grade rates
+*source reliability*" (STANAG 2511 Admiralty vocabulary).
 
 **Rationale:** Same kept-three policy. CI keeps the loose anchor that both
 STANAG terms ("information credibility", "source reliability") appear in
-the Discussion — fixed external terminology, not authorial prose; the
-surrounding sentence is free.
+the section labelled `sec:ext-screen` — fixed external terminology, not
+authorial prose; the surrounding sentence is free.
 
 **Ticket:** 0532; demoted from CI by 0557.
 
@@ -282,6 +285,30 @@ identifiers that survive such moves. Label-keyed extraction
 CI-safe without weakening any guard.
 
 **Ticket:** 0560 (contract recorded); anchors re-keyed by 0561.
+
+**Status:** active
+
+## no-companion-paper-promise
+
+**Decision:** The main text promises no future publication: no "companion
+paper", no "follow-on paper", no "planned cross-evaluation". Work not
+reported in this paper is framed as future work in the research programme
+(the numbered Future research section, label `sec:future`) or as
+not-measured-here scoping, never as a commitment to a specific
+forthcoming paper. (The Temporality annex's "subsequent paper" sentence is
+ticket 0563's to strip.)
+
+**Rationale:** Publication promises age badly, bind the authors to titles
+and scopes that drift, and add nothing a "future work" framing does not.
+The 0560 restructure created the Future research section precisely so that
+forward-looking material reads as programme, not promise.
+
+CI negative guard:
+`test_manuscript_0512_structure.py::test_no_companion_paper_promise_in_body`
+bans the promise phrasings in the body, with the Temporality annex carved
+out by label until ticket 0563 strips its sentence.
+
+**Ticket:** 0562 (tracker 0560).
 
 **Status:** active
 

@@ -134,13 +134,15 @@ def test_abstract_register_follows_author_brief():
 
 def test_rho_caveat_wherever_rho_appears():
     """Ticket 0532 round 2, demoted to conditional-negative form (ticket 0557):
-    IF ρ = 0.92 appears in the conclusion or Discussion, the pooled /
-    in-sample qualification must accompany it in that section. The exact
-    caveat phrasings are editorial decisions recorded in
-    docs/editorial-brief.md (rho-caveat-conclusion, rho-caveat-discussion);
-    CI only forbids an unqualified ρ. The annex occurrence (sec:annex-screen)
-    is out of scope: both label-keyed extractions end at the next sectioning
-    command, well before the annexes (ticket 0561)."""
+    IF ρ = 0.92 appears in the conclusion, the Discussion, or the screening
+    subsection (sec:ext-screen — the screen prose moved there from the
+    Discussion in ticket 0562), the pooled / in-sample qualification must
+    accompany it in that section. The exact caveat phrasings are editorial
+    decisions recorded in docs/editorial-brief.md (rho-caveat-conclusion,
+    rho-caveat-discussion); CI only forbids an unqualified ρ. The annex
+    occurrence (sec:annex-screen) is out of scope: the label-keyed
+    extractions end at the next sectioning command, well before the annexes
+    (ticket 0561)."""
     conclusion = section("sec:conclusion")
     if "ρ = 0.92" in conclusion:
         assert "pooled" in conclusion and "in-sample" in conclusion, (
@@ -150,13 +152,15 @@ def test_rho_caveat_wherever_rho_appears():
             "conclusion cites ρ = 0.92 without pointing to the within-model "
             "validation annex"
         )
-    discussion = section("sec:discussion")
-    if "ρ = 0.92" in discussion:
-        assert "existence proof" in discussion, (
-            "Discussion cites ρ = 0.92 without the existence-proof qualification"
+    for label in ("sec:discussion", "sec:ext-screen"):
+        text = section(label)
+        if "ρ = 0.92" not in text:
+            continue
+        assert "existence proof" in text, (
+            f"{label} cites ρ = 0.92 without the existence-proof qualification"
         )
-        assert "in-sample" in discussion or "tuned on the same" in discussion, (
-            "Discussion cites ρ = 0.92 without the in-sample (cutoffs tuned "
+        assert "in-sample" in text or "tuned on the same" in text, (
+            f"{label} cites ρ = 0.92 without the in-sample (cutoffs tuned "
             "on the same runs) caveat"
         )
 
@@ -245,10 +249,12 @@ def test_novelty_claim_demotions_hold():
 
     Positive half, demoted to loose anchors (ticket 0557): the three surviving
     novelty claims — (1) benchmark gap and (2) per-row provenance × temporality,
-    both in §fusion; (3) two-grain credibility/reliability scoring, in the
-    Discussion — are guarded by section-scoped marker presence, not verbatim
-    sentences. §fusion must keep at least two primacy-marker sentences (one per
-    claim); the Discussion must keep the STANAG 2511 two-grain vocabulary
+    both in the subsection labelled sec:fusion; (3) two-grain
+    credibility/reliability scoring, in the screening subsection
+    (sec:ext-screen — moved out of the Discussion by ticket 0562) — are
+    guarded by section-scoped marker presence, not verbatim sentences.
+    §fusion must keep at least two primacy-marker sentences (one per claim);
+    the screening subsection must keep the STANAG 2511 two-grain vocabulary
     ("information credibility" / "source reliability" — fixed external
     terminology, not authorial prose). The verbatim phrasings are recorded in
     docs/editorial-brief.md (novelty-benchmark-gap, novelty-provenance-temporality,
@@ -274,10 +280,11 @@ def test_novelty_claim_demotions_hold():
         f"provenance × temporality) — found {len(marker_sentences)} "
         "primacy-marker sentence(s)"
     )
-    discussion = section("sec:discussion")
-    assert "information credibility" in discussion and "source reliability" in discussion, (
-        "Discussion must keep the two-grain scoring claim (STANAG 2511 "
-        "information-credibility / source-reliability vocabulary)"
+    screen = section("sec:ext-screen")
+    assert "information credibility" in screen and "source reliability" in screen, (
+        "the screening subsection (sec:ext-screen) must keep the two-grain "
+        "scoring claim (STANAG 2511 information-credibility / "
+        "source-reliability vocabulary)"
     )
 
 

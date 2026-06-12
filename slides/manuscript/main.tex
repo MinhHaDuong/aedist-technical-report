@@ -161,12 +161,14 @@ power-plant databases (§\ref{sec:related-empirical}), define a
 four-dimensional quality bar (§\ref{sec:quality}), survey AI
 capabilities from chatbots to agentic systems (§\ref{sec:capability}),
 measure what model memory alone delivers across 14 language models
-(§\ref{sec:exp1}), test the commercial frontier of mid-2026
-(§\ref{sec:exp2}), and show that targeted pipeline design is needed to
-bridge the gap (§\ref{sec:fusion}). The Discussion
-(§\ref{sec:discussion}) examines why a single aggregate score cannot
-certify fitness for use and prefigures a fusion-based research
-programme.
+(§\ref{sec:exp1}), and test the commercial frontier of mid-2026
+(§\ref{sec:exp2}). Post-hoc analyses prompted by the conference
+presentation extend the experiments (§\ref{sec:extensions}): why the
+task is hard, screening runs without a reference, fusing runs, and the
+system the findings imply. The Discussion (§\ref{sec:discussion})
+examines why a single aggregate score cannot certify fitness for use,
+and §\ref{sec:future} turns the lessons of the methods literature into
+a research programme before we conclude.
 
 \section{Related Work — Empirical landscape}\label{sec:related-empirical}
 
@@ -339,7 +341,7 @@ philosophy-of-science empirical adequacy
   changes are flagged. The fuller requirement (supporting queries of
   the form ``what was the installed fleet in 2018?'') applies to
   scenario-projection use cases; it is addressed structurally in
-  §\ref{sec:fusion} and discussed in \ref{sec:annex-temporality}.
+  §\ref{sec:ext-system} and discussed in \ref{sec:annex-temporality}.
 \end{enumerate}
 
 Of the four dimensions, accuracy is the only one whose measurement
@@ -818,7 +820,65 @@ DeepSeek) is deferred: no further API calls were made; the finding
 rests entirely on the four-agent cohort already scored in
 Table~\ref{tbl:exp2-2x2}.
 
-\section{Need and potential for fusion}\label{sec:fusion}
+\section{Extensions}\label{sec:extensions}
+
+The analyses in this section were performed after the two experiments
+were presented at Econom'IA 2026, in response to questions from the
+audience: why is the task hard, can weak runs be screened without a
+reference, can runs be fused, and what system do the findings imply?
+They are exploratory and were not registered in advance; each
+subsection summarises one analysis and points to the annex that
+develops it.
+
+\subsection{Why is the task hard?}\label{sec:ext-difficulty}
+
+The per-plant recognition matrix in \ref{sec:annex-recognition}
+decomposes the difficulty plant by plant: each reference plant becomes
+a row observed by many noisy runs. Within-model and across-model
+coherence can be read directly from the row densities (famous plants
+form dense rows, obscure ones sparse), and the operational core
+separates visibly from the project-dominated tail.
+
+The status composition of the reference list explains why the low
+recognition is structural: the list is dominated by proposed plants,
+which parametric memory cannot know, and their mean recognition rate
+is far below that of operational plants. Low overall recognition is
+therefore a property of the list's composition, not merely a model
+failure. The full matrix and the status-by-status decomposition are in
+\ref{sec:annex-recognition}.
+
+\subsection{Screening without a reference}\label{sec:ext-screen}
+
+Internal coherence rejects the weakest runs without any
+reference. The reference list grades runs from the outside; an
+exploratory analysis of the Experiment 1 outputs suggests the weakest
+runs can be rejected without ground truth at all. Degenerate runs are
+template-like: near-constant capacity and status columns (one run emits
+496 rows, every one 1200 MW and ``Operating''). Within-run capacity
+variability — the number of distinct capacity values — correlates
+with reference-based F1 at Spearman ρ = 0.92 across the 70 runs. An
+in-sample threshold rule rejects 23 of the 26 weakest runs with no false
+rejection: an existence proof rather than a validated detector, as
+the cutoffs were tuned on the same 70 runs. Notably, the
+internal-coherence indicators we already compute carry no such signal:
+fabricated rows use impeccable controlled vocabulary and plausible
+dates.
+
+This points to a two-level scoring design. The run-level screen
+rates one output; above it, a model-level reliability grade aggregates
+the screen across repetitions: a model version whose five repetitions
+all fail is disqualified as a source, independently of any single run.
+In the vocabulary of intelligence evaluation (the NATO ``Admiralty''
+grading of STANAG 2511), the run-level screen rates \emph{information
+credibility} while the model-level grade rates \emph{source
+reliability}. Making these scorers part of the standard pipeline is
+future work (§\ref{sec:future}). \ref{sec:annex-screen} tests whether
+the screen discriminates good from bad runs of the \emph{same} model
+(removing the across-model confound) and reports a model-stratified
+Kendall τ = +\ScreenTauCap{} for cap\_distinct vs F1, positive in
+\ScreenPositiveSpearman/\ScreenNModels{} models.
+
+\subsection{Can runs be fused?}\label{sec:fusion}
 
 The experiments in §\ref{sec:exp1} and §\ref{sec:exp2} establish that
 the gap is real: recall from model memory is incomplete and volatile;
@@ -829,10 +889,8 @@ already helps: pooling runs across models more than doubles recall
 relative to the single-run mean (\AggUnionGainX×) at no new collection cost
 (aggregation sweep in \ref{sec:annex-fusion}). Full treatment
 (estimating the unobserved share by linear programming against a control
-total, applying capture--recapture estimation for the residual) is
-addressed in a companion paper in preparation (working title:
-\emph{Capture--recapture estimation of under-documented infrastructure
-inventories}).
+total, applying capture--recapture estimation for the residual) belongs
+to the research programme (§\ref{sec:future}).
 
 The mirror-image lever buys precision: requiring at least two of the
 four frontier models to agree nearly eliminates false positives — F1
@@ -842,27 +900,61 @@ with \FusionRTwoETwoOneDFP{} on the Experiment 2 naive arm (full results in
 structural answer to the single-model ceiling is a stateful pipeline
 that invests in the corpus rather than the model — a managed,
 auditable knowledge base maintaining a sourced narrative inventory,
-from which the statistical table derives as a dated snapshot. The
-architecture rationale and the full factorial sweep are developed in
-\ref{sec:annex-fusion}. To our knowledge, no published benchmark or
+from which the statistical table derives as a dated snapshot
+(§\ref{sec:ext-system}). To our knowledge, no published benchmark or
 system targets open-world enumeration of a national asset class with
 per-cell provenance at this granularity. Nor did we find a published
 demonstration of the conjunction of per-cell provenance with per-cell
-temporal validity in LLM-augmented inventories; demonstrating it is
-part of the contribution we aim for in the follow-on paper.
+temporal validity in LLM-augmented inventories; demonstrating that
+conjunction remains future work.
+
+\subsection{What system do the findings imply?}\label{sec:ext-system}
+
+The single-model ceiling motivates a stateful architecture: one that
+keeps an organised memory between runs instead of starting from scratch
+at each prompt. The equalisation result in §\ref{sec:exp2} sharpens the
+target: once the agents share a good document set, single-shot
+performance converges and the binding constraint appears to shift from
+model capability to document quality. The value may therefore lie in the corpus
+and the sourcing process — assembling, curating, and resolving the
+documents — rather than in chasing a stronger model. That is precisely
+what a stateful pipeline invests in: a managed, auditable knowledge base
+rather than a one-shot prompt against whatever model is current. The
+§\ref{sec:quality} quality dimensions measure \emph{output}: accuracy,
+coherence, provenance, temporality. A targeted pipeline adds a second
+axis, \emph{method quality}: whether the process is auditable,
+reproducible, and cost-predictable independent of which model runs it.
+Such a system is stateful: it maintains a sourced narrative knowledge
+base, where each asset record carries its full lifecycle history and
+conflict-resolution record. The statistical table is a derived
+projection (a snapshot at a reference date) from the narrative
+inventory rather than a direct model output. Each cell is a claim,
+recording its source, date, confidence, and conflict-resolution history.
+The narrative layer carries the temporal dimension deferred in
+§\ref{sec:quality}: plant lifecycle events, PDP-cycle reclassifications,
+developer changes, and contested status periods are recorded as
+annotated history rather than as overwritten state.
+
+Each cell in a power-plant inventory (one plant, one attribute, one
+value) maps to a knowledge-graph triple: subject, predicate, object.
+Fusing tables from competing sources is therefore the same problem as
+fusing overlapping triple sets, with the same need for conflict
+resolution, source authority, and temporal versioning. Cases that
+rule-based schema-fixed systems cannot handle cleanly — assets
+mid-lifecycle, contested sources, multilingual records, conditional
+projections — are where language-model reasoning adds genuine value.
 
 \section{Discussion}\label{sec:discussion}
 
-The two experiments and the fusion exercise support a consistent
+The two experiments and the post-hoc extensions support a consistent
 reading. Memory alone is incomplete and volatile (§\ref{sec:exp1});
 web access at the commercial frontier buys coverage but not provenance
 or reproducibility, and a curated document set equalises the agents
-(§\ref{sec:exp2}); pooling existing runs recovers coverage, and a
-two-model agreement gate restores precision (§\ref{sec:fusion}). This
-section examines what the measuring instrument can and cannot support
-in that reading — the F1 metric, its variance sources, and the
-single-case design — and closes with the research programme the
-findings open.
+(§\ref{sec:exp2}); a reference-free screen rejects the weakest runs,
+pooling existing runs recovers coverage, and a two-model agreement
+gate restores precision (§\ref{sec:extensions}). This section examines
+what the measuring instrument can and cannot support in that reading:
+the F1 metric, its variance sources, and the single-case design.
 
 \textbf{F1 is a useful but opaque aggregate.} Row-level F1 is the
 primary metric in §\ref{sec:exp1} and §\ref{sec:exp2}: it is the
@@ -961,32 +1053,6 @@ partially engages external coherence, since the judging agents bring
 parametric world knowledge, but does so implicitly and unsystematically.
 A principled external-coherence metric remains future work.
 
-\textbf{Internal coherence rejects the weakest runs without any
-reference.} The reference list grades runs from the outside; an
-exploratory analysis of the Experiment 1 outputs suggests the weakest
-runs can be rejected without ground truth at all. Degenerate runs are
-template-like: near-constant capacity and status columns (one run emits
-496 rows, every one 1200 MW and ``Operating''). Within-run capacity
-variability — the number of distinct capacity values — correlates
-with reference-based F1 at Spearman ρ = 0.92 across the 70 runs. An
-in-sample threshold rule rejects 23 of the 26 weakest runs with no false
-rejection: an existence proof rather than a validated detector, as
-the cutoffs were tuned on the same 70 runs. Notably, the
-internal-coherence indicators we already compute carry no such signal:
-fabricated rows use impeccable controlled vocabulary and plausible
-dates. This points to a two-level scoring design. The run-level screen
-rates one output; above it, a model-level reliability grade aggregates
-the screen across repetitions: a model version whose five repetitions
-all fail is disqualified as a source, independently of any single run.
-In the vocabulary of intelligence evaluation (the NATO ``Admiralty''
-grading of STANAG 2511), the run-level screen rates \emph{information
-credibility} while the model-level grade rates \emph{source
-reliability}. Making these scorers part of the standard pipeline is
-future work. \ref{sec:annex-screen} tests whether the screen
-discriminates good from bad runs of the \emph{same} model (removing the
-across-model confound) and reports a model-stratified Kendall τ =
-+\ScreenTauCap{} for cap\_distinct vs F1, positive in \ScreenPositiveSpearman/\ScreenNModels{} models.
-
 \textbf{One case study, not a benchmark suite.} Every result above is
 measured on a single case: the Vietnam thermal-plant fleet against one
 \NumRefPlants-plant reference list. N = 1 at the dataset level means the findings
@@ -996,25 +1062,15 @@ the agents, a reference-free screen and simple fusion rules work here
 parameters, and the quality bar were all developed against this
 reference; transferring them to another country or asset class is a
 replication study, not a configuration change. That is what makes the
-next paragraph a research programme: each step is open to replication
-and extension.
+agenda of §\ref{sec:future} a research programme: each step is open to
+replication and extension.
 
-\textbf{From noisy runs to fused estimates.} The per-plant recognition
-matrix in \ref{sec:annex-recognition} prefigures the research programme
-this benchmark opens: each reference plant becomes a row observed by
-many noisy runs — precisely the input object of latent-truth discovery
-and capture--recapture estimation. Within-model and across-model
-coherence can be read directly from the row densities (famous plants
-form dense rows, obscure ones sparse), and the operational core
-separates visibly from the project-dominated tail. Fusing such
-incomplete, differently-reliable lists into a single estimate (and
-bounding the residual share of plants that no source mentions by linear
-programming against a control total, such as the regulator's installed
-capacity per fuel \citep{HaDuong2005}) is the axis of research these
-row densities invite.
+\section{Future research}\label{sec:future}
 
-\section*{Related Work — Methods}
-\addcontentsline{toc}{section}{Related Work — Methods}
+The findings open a research programme. Before stating it, we review
+the methods literature it builds on — what is already known about
+parametric recall, data quality, and grounded generation — then turn
+those lessons into the programme's axes.
 
 \textbf{LLM parametric recall for structured extraction.} Petroni et al.
 \citeyearpar{Petroni-Fabio2019:lm-as-kb} established that transformer
@@ -1069,18 +1125,49 @@ parametric memory or a single retrieved passage. This ladder from
 parametric recall through RAG to deep-research agents is the
 architecture ladder the paper traverses.
 
-\textbf{The gap this paper addresses.} The open-energy-database
-literature provides the motivating need but not the construction method
-for under-documented settings. The LLM-grounding literature provides
-tools for source-attributed extraction but has not been applied to
-systematic power-plant inventory construction. The data-quality
-literature provides the evaluation criteria but no application to
-LLM-generated tables. To our knowledge, no published work combines
-agentic structured extraction with explicit per-row provenance against a
-held-out reference inventory for a national power-plant dataset in an
-under-documented jurisdiction — the conjunction of pipeline,
-provenance, reference evaluation, and data-quality framework that this
-paper studies.
+\textbf{From lessons to programme.} Read together, the three
+literatures locate the continuation of this work. The
+open-energy-database literature supplies the motivating need but not
+the construction method for under-documented settings; the
+LLM-grounding literature supplies source-attributed extraction tools
+not yet applied to systematic inventory construction; the data-quality
+literature supplies evaluation criteria not yet applied to
+LLM-generated tables. The programme below combines them, taking the
+benchmark's noisy runs as the raw material for an auditable inventory.
+
+\textbf{Estimation.} The recognition matrix (§\ref{sec:ext-difficulty})
+turns each reference plant into a row observed by many noisy,
+differently-reliable observers — precisely the input object of
+latent-truth discovery and capture--recapture estimation. Fusing such
+incomplete lists into a single estimate, and bounding the residual
+share of plants that no source mentions by linear programming against
+a control total, such as the regulator's installed capacity per fuel
+\citep{HaDuong2005}, is the programme's first axis.
+
+\textbf{A principled external-coherence metric.} The experiments
+measure internal coherence only; checking claims against world
+knowledge requires specifying the reference knowledge pool, the
+checker's capability, and the depth of reasoning required
+(§\ref{sec:discussion}). Making external coherence measurable is the
+second axis.
+
+\textbf{Event-grain temporality.} The paper scopes to snapshot
+currency; scenario-projection use cases need historical
+reconstructability — the event-log representation discussed in
+\ref{sec:annex-temporality}. Upgrading the temporality dimension from
+states to events is the third axis.
+
+\textbf{Industrialising the screen.} The two-grain scoring design
+(§\ref{sec:ext-screen}) is an existence proof tuned in-sample; making
+the run-level credibility screen and the model-level reliability grade
+part of the standard pipeline, validated out-of-sample, is the fourth
+axis.
+
+\textbf{Replication beyond Vietnam.} The prompt templates, the matcher
+parameters, and the quality bar were all developed against one
+reference (§\ref{sec:discussion}); transferring them to another
+country or asset class is a replication study in its own right — the
+fifth axis.
 
 \section{Conclusion}\label{sec:conclusion}
 
@@ -1096,9 +1183,9 @@ fleet and sat in the training corpus for years, yet the models failed to
 retrieve them. At the commercial frontier (§\ref{sec:exp2}), agents with
 web access and extended reasoning enumerate at best around half the
 fleet and fall short on the quality dimensions measured here (row-level
-accuracy, coverage, and citation-based provenance), with the
-rubric-scored dimensions (coherence, provenance support, temporality)
-deferred to a planned cross-evaluation. The conjecture itself rests on
+accuracy, coverage, and citation-based provenance); the rubric-scored
+dimensions (coherence, provenance support, temporality) were not
+measured. The conjecture itself rests on
 the exploratory, unregistered documents condition: handing the same
 agents a curated document set in a single query equalises three of the
 four, though the multi-turn protocol does not replicate the effect
@@ -1195,11 +1282,11 @@ separable temporality criteria for an energy-asset database:
 The present paper scopes to T1. T2 is acknowledged as the stronger
 requirement for IAM and scenario-projection use cases; it is not in
 scope here. A GEM-style event log may become necessary when implementing
-the verified-provenance layer (§\ref{sec:fusion}, future work) — each
+the verified-provenance layer (§\ref{sec:ext-system}, future work) — each
 verification act is itself a timestamped event — but that design
 choice is deferred to a subsequent paper.
 
-The narrative inventory component of §\ref{sec:fusion} handles
+The narrative inventory component of §\ref{sec:ext-system} handles
 longitudinal aspects pragmatically: plant histories, PDP-cycle
 reclassifications, and developer-name changes appear as free-text
 annotations rather than as structured event records. This is a
@@ -2266,8 +2353,8 @@ This experiment tests whether removing the §\ref{sec:exp1} handicaps (no
 web, no tools, no documents), by handing the task to a commercially
 available deep-research surface, clears the §\ref{sec:quality} quality
 bar. It does not test custom workflows or local models; that is
-§\ref{sec:fusion}. It does not test how the four dimensions trade off
-under a fixed budget; that is §\ref{sec:fusion} once the
+§\ref{sec:ext-system}. It does not test how the four dimensions trade off
+under a fixed budget; that is future work (§\ref{sec:future}) once the
 composite-quality scorers exist. It does not test browser-automated
 surfaces (ChatGPT.com, Claude.ai chat UI) — only direct vendor APIs.
 
@@ -2367,8 +2454,8 @@ recognised among plants of that status.}
 
 \section{Run-grain screen validation: within-model accuracy gap}\label{sec:annex-screen}
 
-The §\ref{sec:discussion} Discussion paragraph ``Internal coherence as a
-zero-reference screen'' reports a pooled Spearman ρ = 0.92 between
+The screening subsection (§\ref{sec:ext-screen}) reports a pooled
+Spearman ρ = 0.92 between
 within-run capacity variability and reference-based F1 across 70
 Experiment 1 runs. A potential confound: weak models are weak across the
 board, so the correlation may reflect \emph{model quality} rather than
@@ -2476,43 +2563,9 @@ partial observer of the \NumRefPlants-plant reference: the per-plant recognition
 matrix (\ref{sec:annex-recognition}) shows that the operational core
 forms dense rows while proposed plants form sparse ones, and the
 density profile predicts which plants are structurally recoverable by
-pooling alone. The paragraphs below first draw the design consequence
-of the single-model ceiling, then quantify what run-level fusion
-already delivers.
-
-The single-model ceiling motivates a stateful architecture: one that
-keeps an organised memory between runs instead of starting from scratch
-at each prompt. The equalisation result in §\ref{sec:exp2} sharpens the
-target: once the agents share a good document set, single-shot
-performance converges and the binding constraint appears to shift from
-model capability to document quality. The value is therefore in the corpus
-and the sourcing process — assembling, curating, and resolving the
-documents — rather than in chasing a stronger model. That is precisely
-what a stateful pipeline invests in: a managed, auditable knowledge base
-rather than a one-shot prompt against whatever model is current. The
-§\ref{sec:quality} quality dimensions measure \emph{output}: accuracy,
-coherence, provenance, temporality. A targeted pipeline adds a second
-axis, \emph{method quality}: whether the process is auditable,
-reproducible, and cost-predictable independent of which model runs it.
-Such a system is stateful: it maintains a sourced narrative knowledge
-base, where each asset record carries its full lifecycle history and
-conflict-resolution record. The statistical table is a derived
-projection (a snapshot at a reference date) from the narrative
-inventory rather than a direct model output. Each cell is a claim,
-recording its source, date, confidence, and conflict-resolution history.
-The narrative layer carries the temporal dimension deferred in
-§\ref{sec:quality}: plant lifecycle events, PDP-cycle reclassifications,
-developer changes, and contested status periods are recorded as
-annotated history rather than as overwritten state.
-
-Each cell in a power-plant inventory (one plant, one attribute, one
-value) maps to a knowledge-graph triple: subject, predicate, object.
-Fusing tables from competing sources is therefore the same problem as
-fusing overlapping triple sets, with the same need for conflict
-resolution, source authority, and temporal versioning. Cases that
-rule-based schema-fixed systems cannot handle cleanly — assets
-mid-lifecycle, contested sources, multilingual records, conditional
-projections — are where language-model reasoning adds genuine value.
+pooling alone. The design consequence of the single-model ceiling is
+drawn in §\ref{sec:ext-system}; the paragraphs below quantify what
+run-level fusion already delivers.
 
 \textbf{Pooling runs by simple union more than doubles recall relative
 to the single-run mean (\AggUnionGainX×), at no new collection cost.} The 14-model exp1\_batch2 cohort (a subset of the
