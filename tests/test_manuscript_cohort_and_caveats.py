@@ -273,15 +273,20 @@ def test_status_vocab_mismatch_sentence_present():
         pytest.skip("status difficulty table not generated")
     tex = DIFF_TEX.read_text(encoding="utf-8")
     # Re-derive the Proposed share from the committed table (En projet line).
-    m = re.search(r"En projet & \d+ & (\d+)\.\d+\\%", tex)
+    m = re.search(r"En projet & \d+ & (\d+\.\d+)\\%", tex)
     assert m, "could not parse Proposed share from status-difficulty table"
-    pct_int = int(m.group(1))
-    assert pct_int == 38, f"expected grouped Proposed share ~38%, table says {pct_int}"
+    share = m.group(1)  # e.g. "38.4" — the value \StatusProposedSharePct carries
+    assert int(share.split(".")[0]) == 38, (
+        f"expected grouped Proposed share ~38%, table says {share}"
+    )
     text = body()
     assert "controlled vocabulary" in text and "status accuracy" in text, (
         "status-vocab mismatch sentence missing"
     )
-    assert "38%" in text, "status-vocab sentence must state the ~38% Proposed share"
+    assert f"{share}%" in text, (
+        f"status-vocab sentence must state the {share}% Proposed share "
+        "(via \\StatusProposedSharePct)"
+    )
 
 
 # --- Ticket 0539: prompt transparency (Annex B verbatim Doc-07 prompt) ---
