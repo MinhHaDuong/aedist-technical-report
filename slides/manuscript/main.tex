@@ -87,26 +87,20 @@ Fleet\thanks{Technical report of the communication: ``Beyond RAG: Stateful-Agent
 \maketitle
 
 \begin{abstract}
-Open energy-system models need plant-level data that
-are complete, dated, and traceable to sources, yet across much of the
+Energy policy models need asset-level data that are complete, current, historical and prospective,
+and traceable to authoritative primary sources. Yet across much of the
 world these data arrive late or incomplete.
 We introduce a computable benchmark for this task: reconstruct the
 register of Vietnam's \NumRefPlants{} thermal power plants and score the result
-against a hand-compiled, fully sourced reference. The register spans the
-whole project lifecycle: proposed and planned projects as well as
-operating, cancelled, and retired plants. It is historical, current and prospective.
+against a hand-compiled, comprehensive reference.
 We find that the task is hard for today's AI systems.
-First, fourteen language models answering from memory recovered much less than Wikipedia lists, even if these lists presumably sat in their training corpus for years.
-Second, enabling web access and extended reasoning improved coverage over the memory-only query in only one of the four frontier agents.
-Third, introducing a harness in which agents were given the opportunity to plan and execute multi-step search and reasoning degraded results.
-Finally, handing the agents a curated document set did improve coverage, especially for the initially weaker agents.
-Complementary experiments suggest ways forward. Since the goal is to discover the statistical register, it is necessary to be able to screen out weak models without the ground truth, and we found that scoring the internal coherence of replies allows it. Fusing the lists from multiple runs is effective.
-We conclude that an evergreen statistical-quality register requires more knowledge engineering. We propose that statistical datasets should be derived as dated snapshots from a sourced, auditable knowledge base, mechanically updated to assimilate the evidential corpus harvested periodically. Humans can stay in the loop to vet information sources and resolve the authentic hard statistical questions.
+Fourteen language models answering from memory recovered much less than the Wikipedia lists contain, even though these lists had presumably been in their training corpora for years. We observed that internal coherence metrics correlate with accuracy, allowing us to screen out weak runs without the reference. We then tested the commercial frontier of mid-2026: four agentic systems with web access and extended reasoning. Only one of them improved coverage over the memory-only query, and a harness giving them the opportunity to plan and execute a multi-step reply degraded the results. Handing the agents a curated document set did improve coverage, especially for the initially weaker agents. Fusing the lists from multiple runs more than doubles recall.
+We conclude that an evergreen statistical-quality register requires deliberate knowledge engineering. We propose that datasets should be derived as dated snapshots from a sourced, auditable knowledge base, mechanically updated to assimilate a periodically harvested evidential corpus. Humans can stay in the loop to vet information sources and resolve the tail of hard statistical questions.
 \end{abstract}
 
 \section{Introduction}\label{sec:intro}
 
-Open energy-system models such as PyPSA-ASEAN
+Energy policy models such as PyPSA-ASEAN
 \citep{PyPSAmeetsEarth2025:pypsa-asean} need power-plant
 inventories that are complete, accurately dated, and traceable to
 primary sources — the data infrastructure for quasi-real-time policy
@@ -116,51 +110,51 @@ arrive late, incomplete, or under licences that forbid redistribution,
 even though the underlying information is already public — scattered
 across project documents, master plans, environmental assessments,
 operator reports, and press releases. The general problem behind the
-specific one is older than AI: science needs knowledge, not opinions.
-Statistical work requires facts that are sourced, reproducible, and
-auditable, not fluent output from a plausible-text generator somewhere
-in the cloud.
+specific one is older than AI: statistical work requires facts that
+are sourced, reproducible, and auditable, and fluent but unsourced
+text does not qualify.
 
-This paper addresses a concrete task, building a complete, sourced
-inventory of Vietnam's thermal power plants, as a lens for evaluating
-whether AI systems can yet produce research-grade statistical data.
+This paper uses a concrete task — building a complete, sourced
+inventory of Vietnam's thermal power plants — as a lens for
+evaluating whether AI systems can yet produce research-grade
+statistical data.
 Computable benchmarks, tasks whose success criteria a machine can check,
 are how knowledge engineering and AI research have long measured
 progress, from knowledge-base construction with language models
 \citep{Petroni-Fabio2019:lm-as-kb, Singhania-Sneha2022:lm-kbc} to the
 benchmark suites that rank today's systems \citep{Hendrycks-Dan2021:mmlu,
 Ni-Shiwen2025:llm-benchmark-survey}; this paper extends the practice to
-national statistical registers. Three results stand out. First, we offer
-a new computable benchmark, scored against a hand-compiled, fully
-sourced reference. We use \emph{benchmark} in the narrow sense of a
-frozen task definition, a public gold reference, and a computable
-metric — not a suite or a leaderboard — and the design measures
-training-data contamination, as a parametric ceiling, rather than
-trying to prevent it. Second, the task is hard for today's agents: neither
-model memory nor web access yields a complete, well-sourced register.
-Third, reference-free coherence criteria suffice to screen out the
-weakest models.
+national statistical registers.
 
-\textbf{Contributions.} This paper makes three contributions.
+This paper makes three contributions, each reusable beyond the
+Vietnamese case. The first is the benchmark itself: to our knowledge,
+the first sourced evaluation of AI agents on national power-plant
+inventory construction, scored against a hand-compiled, fully sourced
+reference, with per-row citation coverage and corroboration measured
+(the paper counts and checks the presence of citations; it does not
+verify each cited source against each cell). We use \emph{benchmark}
+in the narrow sense: a frozen task definition, a public gold
+reference, and a computable metric — not a suite or a leaderboard —
+and the design measures training-data contamination as a
+parametric ceiling rather than trying to prevent it. The second is a
+four-dimension quality bar: per-row scoring of LLM-generated
+statistical tables on accuracy, coherence, provenance, and
+temporality. The third is two-grain credibility/reliability scoring:
+a run-level credibility screen and a model-level reliability grade,
+by analogy with the NATO Admiralty grading of STANAG 2511, which
+rates the credibility of each report separately from the reliability
+of its source.
 
-\begin{itemize}
-\tightlist
-\item
-  \emph{Benchmark gap.} To our knowledge, the first sourced evaluation
-  of AI agents on national power-plant inventory construction, scored
-  against a held-out reference, with per-row citation coverage and
-  corroboration measured (the paper counts and checks the presence of
-  citations; it does not verify each cited source against each cell).
-\item
-  \emph{Per-row provenance × temporality scoring.} A four-dimension
-  quality bar (accuracy, coherence, provenance, temporality) applied to
-  LLM-generated statistical tables.
-\item
-  \emph{Two-grain credibility/reliability scoring.} A run-level
-  credibility screen and a model-level reliability grade, by analogy
-  with the NATO Admiralty grading of STANAG 2511 (run-level information
-  credibility versus model-level source reliability).
-\end{itemize}
+Three empirical results stand out. First, the task is hard for
+today's AI systems: neither model memory nor web access yields a
+complete, well-sourced register, and a harness that lets the agents
+plan and execute a multi-step reply degrades rather than improves the
+result. Second, reference-free coherence criteria suffice to screen
+out the weakest runs. Third, targeted pipeline design narrows the
+gap: provisioning the agents with a curated document set improves
+coverage, and fusion reuses existing runs to good effect — pooling
+runs across models more than doubles recall, while requiring
+cross-model agreement nearly eliminates false positives.
 
 We situate the work against the existing open
 power-plant databases (§\ref{sec:related-empirical}), define a
