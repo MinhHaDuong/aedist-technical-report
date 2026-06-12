@@ -108,40 +108,49 @@ def body() -> str:
     return normalized(body_raw())
 
 
-# A sectioning heading: \section or \section*, title with at most one level
-# of brace nesting. Used both to anchor a label to its heading and to find
-# the terminator of a slice (any sectioning command, or \appendix).
-_SECTION_TITLE = r"\\section\*?\{(?:[^{}]|\{[^{}]*\})*\}"
+# A sectioning heading: \section, \subsection, or their starred forms, title
+# with at most one level of brace nesting. Used both to anchor a label to its
+# heading and to find the terminator of a slice.
+_HEADING_TITLE = r"\\(?:sub)?section\*?\{(?:[^{}]|\{[^{}]*\})*\}"
+# Terminators by level: a \section slice ends at the next \section/\section*
+# or \appendix (its subsections are part of it); a \subsection slice ends at
+# the next sectioning command of equal-or-higher level.
 _SECTIONING_RE = re.compile(r"\\section\*?\{|\\appendix(?![A-Za-z])")
-_SECTION_LABELS_RE = re.compile(_SECTION_TITLE + r"\s*\\label\{([^}]*)\}")
+_SUBSECTIONING_RE = re.compile(r"\\(?:sub)?section\*?\{|\\appendix(?![A-Za-z])")
+_SECTION_LABELS_RE = re.compile(_HEADING_TITLE + r"\s*\\label\{([^}]*)\}")
 
 
 def section(label: str) -> str:
-    """Normalized text of the section labelled `label`, heading included.
+    """Normalized text of the (sub)section labelled `label`, heading included.
 
     Label-keyed extraction (ticket 0561; stability contract in ticket 0560):
     the section is located by the ``\\label{...}`` attached to its
-    ``\\section``/``\\section*`` heading and sliced to the NEXT sectioning
-    command of ANY kind (``\\section``, ``\\section*``, ``\\appendix``) or the
-    end of the body. Retitles, reorders, annex-letter changes, and unlabelled
-    neighbours therefore cannot break the extraction — only removing the
-    label can, and that is the contract violation this error reports.
+    ``\\section``/``\\section*``/``\\subsection``/``\\subsection*`` heading
+    and sliced to the NEXT sectioning command of equal-or-higher level (or
+    ``\\appendix``, or the end of the body): a ``\\section`` slice contains
+    its subsections; a ``\\subsection`` slice is the subsection's own content
+    only (ticket 0562 — tests keying on a demoted label such as
+    ``sec:fusion`` get the subsection, not its parent). Retitles, reorders,
+    level demotions, annex-letter changes, and unlabelled neighbours
+    therefore cannot break the extraction — only removing the label can, and
+    that is the contract violation this error reports.
 
-    Only ``\\section``/``\\section*`` headings are searched: a label that
-    moves to a ``\\subsection`` heading (level demotion) is NOT found. A
-    restructure that demotes a labelled section (e.g. 0562 making
-    ``sec:fusion`` a subsection) must extend this helper or re-key the
-    consuming tests in the same PR.
+    ``\\subsubsection`` headings are neither searched nor treated as
+    terminators (the manuscript has none).
     """
     text = body()
-    heading_re = re.compile(_SECTION_TITLE + r"\s*" + re.escape(f"\\label{{{label}}}"))
+    heading_re = re.compile(
+        r"\\(sub)?section\*?\{(?:[^{}]|\{[^{}]*\})*\}\s*"
+        + re.escape(f"\\label{{{label}}}")
+    )
     m = heading_re.search(text)
     assert m is not None, (
-        f"no \\section/\\section* heading labelled {label!r} in the manuscript "
-        f"body (label-stability contract, ticket 0560) — section labels "
-        f"present: {sorted(set(_SECTION_LABELS_RE.findall(text)))}"
+        f"no \\section/\\subsection heading labelled {label!r} in the "
+        f"manuscript body (label-stability contract, ticket 0560) — section "
+        f"labels present: {sorted(set(_SECTION_LABELS_RE.findall(text)))}"
     )
-    nxt = _SECTIONING_RE.search(text, m.end())
+    terminator = _SUBSECTIONING_RE if m.group(1) else _SECTIONING_RE
+    nxt = terminator.search(text, m.end())
     return text[m.start() : nxt.start() if nxt else len(text)]
 
 

@@ -1,11 +1,15 @@
-"""Ticket 0561 — unit tests for the label-keyed section extractor.
+"""Tickets 0561/0562 — unit tests for the label-keyed section extractor.
 
-``manuscript_source.section(label)`` locates a section by the ``\\label{}``
-on its ``\\section``/``\\section*`` heading and slices to the NEXT sectioning
-command of any kind (``\\section``, ``\\section*``, ``\\appendix``) or the end
-of the body. The label-stability contract (ticket 0560) makes the label the
-only structural identifier tests may key on: retitles, reorders, annex-letter
-changes, and unlabelled neighbours must not break extraction.
+``manuscript_source.section(label)`` locates a (sub)section by the
+``\\label{}`` on its ``\\section``/``\\section*``/``\\subsection``/
+``\\subsection*`` heading and slices to the NEXT sectioning command of
+equal-or-higher level (``\\appendix`` always terminates), or the end of the
+body: a ``\\section`` slice contains its subsections; a ``\\subsection``
+slice is the subsection's own content only (ticket 0562, the sec:fusion
+level demotion). The label-stability contract (ticket 0560) makes the label
+the only structural identifier tests may key on: retitles, reorders, level
+demotions, annex-letter changes, and unlabelled neighbours must not break
+extraction.
 
 These are pure unit tests on a synthetic document: ``body()`` is
 monkeypatched, so they exercise the slicing logic without reading main.tex.
@@ -15,12 +19,16 @@ import manuscript_source
 import pytest
 from manuscript_source import section
 
-# A synthetic normalized body: labelled sections, an unlabelled starred
-# section (like the real "Related Work — Methods"), and an \appendix
-# boundary followed by annex sections.
+# A synthetic normalized body: labelled sections, a section with labelled
+# subsections (like the real Extensions section after ticket 0562), an
+# unlabelled starred section, and an \appendix boundary followed by annex
+# sections.
 SYNTHETIC = (
     "\\section{Introduction}\\label{sec:intro} intro prose. "
     "\\section{Results}\\label{sec:results} results prose with 0.92. "
+    "\\section{Extensions}\\label{sec:extensions} framing prose. "
+    "\\subsection{Screenability}\\label{sec:ext-screen} screen prose. "
+    "\\subsection{Fusability}\\label{sec:fusion} fusion prose. "
     "\\section*{Related Work — Methods} methods prose. "
     "\\section{Conclusion}\\label{sec:conclusion} concluding prose. "
     "\\appendix "
@@ -41,12 +49,42 @@ def test_label_found_returns_heading_to_next_section(synthetic_body):
     assert "results prose" not in text
 
 
-def test_slice_ends_at_unlabelled_starred_section(synthetic_body):
-    """An unlabelled \\section* terminator works for free: the slice ends at
-    the next sectioning command of ANY kind, labelled or not."""
+def test_slice_ends_at_next_labelled_section(synthetic_body):
     text = section("sec:results")
     assert "results prose with 0.92." in text
+    assert "framing prose" not in text
+    assert "methods prose" not in text
+
+
+def test_section_slice_contains_its_subsections(synthetic_body):
+    """A \\section slice runs to the next \\section-level command: labelled
+    subsections inside it are part of the slice, and an unlabelled
+    \\section* terminator works for free."""
+    text = section("sec:extensions")
+    assert "framing prose." in text
+    assert "screen prose." in text
+    assert "fusion prose." in text
     assert "Related Work" not in text
+    assert "methods prose" not in text
+
+
+def test_subsection_slice_ends_at_next_subsection(synthetic_body):
+    text = section("sec:ext-screen")
+    assert text.startswith("\\subsection{Screenability}\\label{sec:ext-screen}")
+    assert "screen prose." in text
+    assert "fusion prose" not in text
+    assert "framing prose" not in text
+
+
+def test_demoted_label_found_on_subsection_heading(synthetic_body):
+    """The ticket-0562 scenario: ``sec:fusion`` demoted from a \\section to a
+    \\subsection, label kept. Extraction lands on the subsection's OWN
+    content, terminated by the next equal-or-higher heading (here the
+    starred methods section)."""
+    text = section("sec:fusion")
+    assert text.startswith("\\subsection{Fusability}\\label{sec:fusion}")
+    assert "fusion prose." in text
+    assert "screen prose" not in text
     assert "methods prose" not in text
 
 
