@@ -6,6 +6,7 @@ Author: HDMX-coding-agent
 --- log ---
 2026-06-12T09:29Z HDMX-coding-agent created
 2026-06-12T14:10Z claude note raid-557 Imagine pass — drift verdict clean, inventory + triage table appended
+2026-06-12T14:25Z claude note raid-557 Plan pass — concrete rewrites, day-one guard safety verified, IDH companion is existing ticket 0253
 
 --- body ---
 ## Context
@@ -153,3 +154,66 @@ Approach refinements (exit criteria unchanged):
    three claims can't be silently dropped — the brief is review-time only.
 3. 0557 is independent of the reading-1 wave (test infra, not prose) —
    safe in parallel.
+
+## Plan (raid 2026-06-12)
+
+Ordered actions; apply the triage table above as the lookup record.
+
+1. **`tests/test_manuscript_cohort_and_caveats.py`** — demote per triage:
+   - `test_abstract_register_follows_author_brief`: drop `"lifecycle" in
+     abstract`; add negative `"operating plants" not in abstract and
+     "operating-only" not in abstract` (verified: phrase "operating plants"
+     absent from current abstract — green day one; abstract says
+     "operating, cancelled, and retired plants").
+   - `test_rho_caveat_wherever_rho_appears`: rewrite as conditional
+     negatives — if "ρ = 0.92" in conclusion → "pooled" AND "in-sample"
+     AND `\ref{sec:annex-screen}` must accompany; if in discussion →
+     "existence proof" AND ("in-sample" OR "tuned on the same") must
+     accompany. Exact phrasings → brief.
+   - `test_binding_constraint_framed_as_hypothesis`: keep abstract
+     negative; add conclusion negatives on flat forms ("the binding
+     constraint is the data/model"); body hedge guards as
+     sentence-scoped checks: any sentence containing "binding constraint
+     lies" must contain "suggests"/"appear"; any sentence claiming the
+     constraint shift must be hedged ("appears to"). (Plan antipattern
+     fix A: sentence-scoped hedge check, not str.replace tricks.)
+   - `test_exactly_three_novelty_claims_survive`: keep demoted_phrasings
+     negatives; replace 3 verbatim survivors with per-section
+     primacy-marker presence (markers: "no published", "to our
+     knowledge", "we did not find", "has not been"); verbatim claims →
+     brief. CAUTION: confirm actual section heading strings in main.tex
+     before writing split keys.
+   - `test_status_vocab_mismatch_sentence_present`: keep `{share}%`
+     artifact check; delete "controlled vocabulary"/"status accuracy"
+     anchors → brief (no replacement negative needed).
+   - `test_wikipedia_seeding_date_matches_provenance`: KEEP entirely —
+     "built fleet"/"pipeline tail" resolved as scientific-accuracy
+     coverage caveats (prevent "Wikipedia covers all 177" overclaim),
+     not editorial framing.
+   - `test_annex_baseline_prompt_carries_as_sent_status_vocabulary`:
+     KEEP both `in prompt` and `in quote` — fixed-document verbatim
+     fidelity, same class as Doc-07 anchors.
+2. **`tests/test_manuscript_structure.py`** — no changes (all KEEP).
+3. **`docs/editorial-brief.md`** — new file; one H2 per decision with
+   fields `**Decision:** / **Rationale:** / **Originating ticket:** /
+   **Status:** active`. 13 entries: lifecycle-scope, rho-caveat-conclusion,
+   rho-caveat-discussion, binding-constraint-conjecture,
+   equalisation-hedge, fusion-hedge, 3× novelty claim phrasings,
+   status-vocab-mismatch, frontier-result-abstract, rho-value-static,
+   built-fleet-pipeline-tail (kept in CI but documented).
+4. **`.claude/rules/writing.md`** — append "CI test polarity rule":
+   prose adherence tests pin only negative guards + mechanical checks;
+   positive intent lives in the brief, checked by /review-pr-prose.
+5. **IDH companion** — ticket 0253 already exists in ~/.claude/tickets/
+   (filed 2026-06-12T09:30Z). Add step 2b "Editorial brief check" to
+   review-pr-prose SKILL.md via IDH worktree branch t0253 + PR with
+   `**Ticket:** tickets/0253-...`. Degrade silently when brief absent.
+
+First test (red step): rewrite `test_rho_caveat_wherever_rho_appears`
+to the conditional-negative form FIRST and run it — must be green on
+current text (before/after symmetry proves the demotion safe). Then
+verify ticket criterion (b): "binding constraint is" in abstract still
+fails (existing negative, unchanged).
+
+Scope estimate: 4 durable files, ~+170/−40 LOC. No dependencies; no
+Blocked-by.
