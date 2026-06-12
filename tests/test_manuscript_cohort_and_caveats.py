@@ -34,7 +34,7 @@ import tomllib
 from pathlib import Path
 
 import pytest
-from manuscript_source import body, body_raw, figure_caption, normalized
+from manuscript_source import body, body_raw, figure_caption, normalized, section
 
 pytestmark = pytest.mark.adherence
 
@@ -139,9 +139,9 @@ def test_rho_caveat_wherever_rho_appears():
     caveat phrasings are editorial decisions recorded in
     docs/editorial-brief.md (rho-caveat-conclusion, rho-caveat-discussion);
     CI only forbids an unqualified ρ. The annex occurrence (sec:annex-screen)
-    is out of scope: both extractions are bounded before \\appendix."""
-    text = body()
-    conclusion = text.split("\\section{Conclusion}\\label{sec:conclusion}")[1].split("\\appendix")[0]
+    is out of scope: both label-keyed extractions end at the next sectioning
+    command, well before the annexes (ticket 0561)."""
+    conclusion = section("sec:conclusion")
     if "ρ = 0.92" in conclusion:
         assert "pooled" in conclusion and "in-sample" in conclusion, (
             "conclusion cites ρ = 0.92 without the pooled/in-sample caveat"
@@ -150,9 +150,7 @@ def test_rho_caveat_wherever_rho_appears():
             "conclusion cites ρ = 0.92 without pointing to the within-model "
             "validation annex"
         )
-    discussion = text.split("\\section{Discussion}\\label{sec:discussion}")[1].split(
-        "\\section*{Related Work — Methods}"
-    )[0]
+    discussion = section("sec:discussion")
     if "ρ = 0.92" in discussion:
         assert "existence proof" in discussion, (
             "Discussion cites ρ = 0.92 without the existence-proof qualification"
@@ -217,9 +215,7 @@ def test_intro_does_not_claim_per_cell_provenance_checking():
     """Author brief (reading 1): the paper measures citation presence and
     counts; it does not check/trace per-cell provenance. The Introduction
     (through Contributions) must not claim that it does."""
-    intro = body().split("\\section{Introduction}\\label{sec:intro}")[1].split(
-        "\\section{Related Work — Empirical landscape}"
-    )[0]
+    intro = section("sec:intro")
     assert "per-cell provenance" not in intro, (
         "intro must not claim per-cell provenance checking; scope to per-row "
         "citation coverage and corroboration"
@@ -266,9 +262,7 @@ def test_novelty_claim_demotions_hold():
     ]
     for phrase in demoted_phrasings:
         assert phrase not in text, f"demoted observation still carries primacy framing: {phrase!r}"
-    fusion = text.split("\\section{Need and potential for fusion}\\label{sec:fusion}")[1].split(
-        "\\section{Discussion}\\label{sec:discussion}"
-    )[0]
+    fusion = section("sec:fusion")
     markers = ("no published", "to our knowledge", "did we find", "has not been")
     marker_sentences = [
         s
@@ -280,9 +274,7 @@ def test_novelty_claim_demotions_hold():
         f"provenance × temporality) — found {len(marker_sentences)} "
         "primacy-marker sentence(s)"
     )
-    discussion = text.split("\\section{Discussion}\\label{sec:discussion}")[1].split(
-        "\\section*{Related Work — Methods}"
-    )[0]
+    discussion = section("sec:discussion")
     assert "information credibility" in discussion and "source reliability" in discussion, (
         "Discussion must keep the two-grain scoring claim (STANAG 2511 "
         "information-credibility / source-reliability vocabulary)"

@@ -16,7 +16,7 @@ Guards the prose-quality changes that ticket 0513 lands on
 
 
 import pytest
-from manuscript_source import body
+from manuscript_source import body, section
 
 pytestmark = pytest.mark.adherence
 
@@ -25,12 +25,8 @@ def _md() -> str:
 
 
 def _section_1_body() -> str:
-    """Text of §1, the Introduction (labels are symbolic since 0518/0524)."""
-    md = _md()
-    start = md.find("\\section{Introduction}\\label{sec:intro}")
-    end = md.find("\\section{Related Work — Empirical landscape}\\label{sec:related-empirical}")
-    assert start != -1 and end != -1, "could not locate Introduction / Related Work headings"
-    return md[start:end]
+    """Text of §1, the Introduction (label-keyed since ticket 0561)."""
+    return section("sec:intro")
 
 
 def test_no_contributions_heading() -> None:
