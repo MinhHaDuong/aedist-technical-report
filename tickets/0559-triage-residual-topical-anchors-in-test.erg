@@ -1,0 +1,70 @@
+%erg 0.1
+Title: Triage residual topical anchors in test_manuscript_0512_structure.py under CI polarity rule
+Created: 2026-06-12
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-12T11:17Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Ticket 0557 (merged PR #1020) demoted positive prose-literal adherence
+assertions to negative guards + `docs/editorial-brief.md`, and adopted
+the CI test polarity rule (`.claude/rules/writing.md`): prose tests pin
+only negative guards, mechanical checks, and loose structural anchors
+(fixed *external* vocabulary, never authorial phrasing). The 0557 scope
+covered `test_manuscript_cohort_and_caveats.py` only. A post-merge roar
+sweep found two residual topical anchors of the demoted class in
+`tests/test_manuscript_0512_structure.py`:
+
+- line ~46: `assert "per-cell provenance" in body()` — the paper's own
+  contribution vocabulary, an authorial term, not external terminology.
+- line ~102: `assert "market dispatch" in body().lower()` — topical
+  presence pin on authorial wording.
+
+Other hits in the sweep (section headings, figure filenames, LaTeX
+include paths, ORCID, backmatter section names in
+`test_manuscript_frontmatter.py` and `test_abstract_numbers.py`) are
+mechanical/structural and in-policy — no action.
+
+## Relevant files
+
+- `tests/test_manuscript_0512_structure.py` — the two anchors
+- `docs/editorial-brief.md` — destination for demoted decisions
+- `.claude/rules/writing.md` § CI test polarity rule — the policy
+
+## Actions
+
+1. For each of the two anchors, apply the 0557 triage method: if the
+   underlying decision is "never state X flatly", rewrite as a negative
+   guard; if it is positive editorial intent, move to
+   `docs/editorial-brief.md` (entry format: **Decision:** /
+   **Rationale:** / **Ticket:** / **Status:**) and delete the assertion;
+   if it is genuinely structural (e.g. the term is a fixed concept the
+   whole paper architecture references), document keep-in-CI in the
+   brief like 0557 did for built-fleet-pipeline-tail.
+2. Re-read the rest of the file while there: confirm the remaining
+   assertions are mechanical (headings, labels, includes).
+
+## Test
+
+- Red step: rewording the per-cell-provenance sentence (same meaning,
+  different words) must not fail CI after the change; before the change
+  it does.
+
+## Verification
+
+- [ ] `make check` green
+- [ ] Both anchors dispositioned per the polarity rule
+- [ ] Brief updated if any decision demoted
+
+## Invariants
+
+- Mechanical assertions in the file unchanged
+- Negative guards never weakened
+
+## Exit criteria
+
+- [ ] No authorial-vocabulary positive pin remains in
+  `test_manuscript_0512_structure.py`
