@@ -130,3 +130,15 @@ def test_cli_writes_tex(tmp_path):
     assert "\\begin{table}" in text
     assert "GPT-5.4" in text
     assert "decomposition-fix" in text
+
+
+def test_defaults_point_at_derived_decomp_fix():
+    """Defaults must point at the P2 reconcile-from-archive outputs (0424).
+
+    The archive dirs hold raw model CSVs, not reconciliation CSVs; the
+    score.mk decomp-fix step regenerates reconciliation_*.csv under
+    experiments/derived/decomp_fix/. Source inspection, no subprocess.
+    """
+    src = Path("src/aedist/tabulate_decomposition_fix.py").read_text()
+    assert 'Path("experiments/derived/decomp_fix/rag_per_fuel")' in src
+    assert 'Path("experiments/derived/decomp_fix/rag_per_fuel_v2")' in src

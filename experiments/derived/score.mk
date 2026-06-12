@@ -157,6 +157,7 @@ rebuild-measurements:
 .PHONY: all-outcomes
 all-outcomes:
 	@$(MAKE) --no-print-directory -f $(SCORE_MK_SELF) $(ANALYSIS_MEASUREMENTS)
+	@$(MAKE) --no-print-directory -f $(SCORE_MK_SELF) decomp-fix
 	@$(MAKE) --no-print-directory -f $(SCORE_MK_SELF) $(ANALYSIS_EXP2_MART_JSONL)
 	@$(MAKE) --no-print-directory -f $(SCORE_MK_SELF) $(ANALYSIS_EXP1_CROSS_EVAL_CSV)
 	@$(MAKE) --no-print-directory -f $(SCORE_MK_SELF) $(SCORE_SC_JSON)
@@ -382,3 +383,40 @@ check-mart-parity: exp2-old-path exp2-mart-path
 	uv run python -m aedist.check_exp2_mart_parity \
 	    --left-dir $(ANALYSIS_EXP2_OLD_STAGE) \
 	    --right-dir $(ANALYSIS_EXP2_MART_STAGE)
+
+# === Decomposition-fix reconciliation (archive rag_per_fuel{,_v2} → derived/decomp_fix)
+# Restores tab_decomposition_fix.tex reproducibility (ticket 0424; frozen by
+# 0421): the original reconciliation_*.csv inputs were gitignored (c14136ff)
+# and never archived, but the raw model CSVs survive in archive/outputs/.
+# This step re-runs reconciliation (aedist.evaluate) on those archived raw
+# replies into experiments/derived/decomp_fix/ — gitignored, regenerable P2
+# intermediates (the global **/reconciliation_*.csv ignore applies), fully
+# derivable from the COMMITTED archive + reference, and consumed by
+# render.mk's tab_decomposition_fix.tex rule. The archive is record-only and
+# never written to.
+#
+# DRIFT WARNING (0383): regenerated CSVs reflect the CURRENT scorer and
+# reference, not those in force when the frozen table was generated (e.g.
+# PR #547 fixed Mismatched routing). Any diff on the rendered table must be
+# reviewed by the author before committing — do NOT auto-commit it.
+SCORE_DECOMP_FIX_DIR := $(SCORE_DERIVED)/decomp_fix
+SCORE_DECOMP_RECONS := \
+	$(patsubst $(SCORE_ARCHIVE)/rag_per_fuel/%.csv,$(SCORE_DECOMP_FIX_DIR)/rag_per_fuel/reconciliation_%.csv,$(wildcard $(SCORE_ARCHIVE)/rag_per_fuel/*.csv)) \
+	$(patsubst $(SCORE_ARCHIVE)/rag_per_fuel_v2/%.csv,$(SCORE_DECOMP_FIX_DIR)/rag_per_fuel_v2/reconciliation_%.csv,$(wildcard $(SCORE_ARCHIVE)/rag_per_fuel_v2/*.csv))
+
+# evaluate also writes a {stem}.record.json beside the reconciliation CSV;
+# the canonical record for these runs already lives in the archive dir, so
+# the duplicate is deleted immediately — otherwise the measurements.jsonl
+# assemble `find` would double-count these runs in the mart.
+$(SCORE_DECOMP_FIX_DIR)/rag_per_fuel/reconciliation_%.csv: $(SCORE_ARCHIVE)/rag_per_fuel/%.csv $(SCORE_REFERENCE)
+	@mkdir -p $(dir $@)
+	@$(SCORE_EVAL) evaluate $< --reference $(SCORE_REFERENCE) --output $(dir $@)
+	@rm -f $(dir $@)$*.record.json
+
+$(SCORE_DECOMP_FIX_DIR)/rag_per_fuel_v2/reconciliation_%.csv: $(SCORE_ARCHIVE)/rag_per_fuel_v2/%.csv $(SCORE_REFERENCE)
+	@mkdir -p $(dir $@)
+	@$(SCORE_EVAL) evaluate $< --reference $(SCORE_REFERENCE) --output $(dir $@)
+	@rm -f $(dir $@)$*.record.json
+
+.PHONY: decomp-fix
+decomp-fix: $(SCORE_DECOMP_RECONS)
