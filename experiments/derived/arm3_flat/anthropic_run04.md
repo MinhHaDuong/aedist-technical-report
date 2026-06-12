@@ -1,4 +1,4 @@
-I need to research the current status of many Vietnamese thermal projects to build an accurate inventory. Let me conduct several targeted searches.| Name (Vietnamese) | Name (English) | Province | Fuel | Technology | Units × MW | Total MWe | Status | Status as-of-date | COD | Owner/Developer | Confidence | Source 1 | Source 2 | Notes |
+| Name (Vietnamese) | Name (English) | Province | Fuel | Technology | Units × MW | Total MWe | Status | Status as-of-date | COD | Owner/Developer | Confidence | Source 1 | Source 2 | Notes |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | NĐ Na Dương I | Na Duong I | Lạng Sơn | Coal | Subcritical | 2×55 | 111 | Operating | 2018 | pre-2011 | TKV (Vinacomin) | HIGH | evn_ar_2010_2011_capacities | pdp7a_annex1_table1 | Domestic lignite fuel. Listed 111 MW in EVN 2011 AR. |
 | NĐ Na Dương II | Na Duong II | Lạng Sơn | Coal | Subcritical | 1×110 | 110 | Construction | May 2026 | Target 2026 | TKV | HIGH | pdp8_annex2_table2 | GEM Na Duong wiki (Dec 2024) | Groundbreaking Apr 2024. EPC awarded 2023. Target COD before Nov 2026. |

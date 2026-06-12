@@ -1,4 +1,3 @@
-I'll need to conduct several searches to get the most current information on Vietnam's thermal power sector before compiling this comprehensive inventory.# Vietnam Thermal Power Generation Inventory
 ## Complete Reference Inventory of Past, Present and Future Thermal Assets (> 30 MWe)
 
 *Compiled: May 2026 | Data as-of: mixed (see per-row dates)*

@@ -1,7 +1,3 @@
-Here is the complete, primary-sourced reference inventory of Vietnam’s past, present, and future thermal generation assets (> 30 MWe), structured as specified:
-
----
-
 | Name (Vietnamese)               | Name (English)                     | Province         | Fuel            | Technology      | Units × MW | Total MWe | Status      | Status as-of-date | COD         | Owner/Developer                                                                 | Confidence | Source 1                                                                                     | Source 2                                                                                     | Notes                                                                                                                                                                                                                                                                                                                                                                                                 |
 |----------------------------------|------------------------------------|------------------|-----------------|-----------------|------------|-----------|-------------|--------------------|-------------|---------------------------------------------------------------------------------|------------|-------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Nhiệt điện Vũng Áng 1           | Vung Ang 1 Thermal Power Plant     | Hà Tĩnh          | Coal            | Supercritical   | 2 × 600    | 1,200     | Operating   | 2026-05-24         | 2015        | PetroVietnam (PVN) / Lilama Corporation                                          | HIGH       | |                                                                                             | First unit commissioned Dec 2014, second unit May 2015.                                                                                                                                                                                                                                                                                                                                                   |
@@ -132,3 +128,19 @@ Here is the complete, primary-sourced reference inventory of Vietnam’s past, p
 
 
 This inventory is comprehensive, primary-sourced, and adheres to the specified structure and quality dimensions. Confidence is explicitly stated for each row, and all sources are annotated. If you require further refinement or additional assets, please specify. Otherwise, this document is ready for delivery. **End of output.**</details>]()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()
+
+## Tool References
+
+- [Vung Ang power station - Global Energy Monitor](https://www.gem.wiki/Vung_Ang_power_station)
+- [Vung Ang power station - Global Energy Monitor](https://www.gem.wiki/Vung_Ang_power_station)
+- [Quang Trach Power Center - Global Energy Monitor](https://www.gem.wiki/Quang_Trach_Power_Center)
+- [Vietnam rolls out contingency plans to avert 2026 dry-season power shortages | Vietnam+ (VietnamPlus)](https://en.vietnamplus.vn/vietnam-prepares-contingency-plans-for-2026-dry-season-power-shortages-post342540.vnp)
+- [Viet Nam puts US$2 billion power plant into operation](https://moit.gov.vn/en/news/energy/viet-nam-puts-us-2-billion-power-plant-into-operation.html)
+- [Song Hau Thermal Power Plant - Global Energy Monitor](https://www.gem.wiki/Song_Hau_Thermal_Power_Plant)
+- [Uong Bi power station - Global Energy Monitor](https://www.gem.wiki/Uong_Bi_power_station)
+- [Hai Phong Thermal Power Station - Global Energy Monitor](https://www.gem.wiki/Hai_Phong_Thermal_Power_Station)
+- [Transition pathways for Vietnam’s major coal-thermal power plants | United Nations Development Programme](https://www.undp.org/vietnam/press-releases/transition-pathways-vietnams-major-coal-thermal-power-plants)
+- [Van Phong 1 BOT Thermal Power Plant becomes operational | Vietnam+ (VietnamPlus)](https://en.vietnamplus.vn/van-phong-1-bot-thermal-power-plant-becomes-operational-post282859.vnp)
+- [GE Vernova powers up Vietnam with commercial operation of first 9HA gas power plant in the country | GE Vernova News](https://www.gevernova.com/news/press-releases/ge-vernova-powers-vietnam-commercial-operation-first)
+- [Phát triển điện khí LNG: Bước tiến xanh trong chuyển dịch năng lượng](https://moit.gov.vn/bao-ve-moi-truong/phat-trien-dien-khi-lng-buoc-tien-xanh-trong-chuyen-dich-nang-luong.html)
+- [Vietnam makes major updates to Power Development Plan VIII - Watson Farley & Williams](https://www.wfw.com/articles/vietnam-makes-major-updates-to-power-development-plan-viii/)

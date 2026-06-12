@@ -1,7 +1,3 @@
-I will now produce a **comprehensive, primary-sourced reference inventory of Vietnam's past, present, and future thermal generation assets (> 30 MWe)**, structured as specified in your goal.
-
----
-
 # **Vietnam Thermal Generation Assets Inventory (> 30 MWe)**
 *As of May 23, 2026*
 

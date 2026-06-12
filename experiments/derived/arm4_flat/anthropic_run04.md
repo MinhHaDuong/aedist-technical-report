@@ -1,9 +1,3 @@
-Given budget constraints, I'll do one final search for gas plants, then produce the complete inventory table immediately.**Key update from search:** NT3 received COD on Nov 21, 2025. PM attended inauguration ceremony for commercial operation of Nhon Trach 3 and 4 on December 14, 2025. Total capacity 1,624 MW, using GE 9HA.02 gas turbines.
-
-Switching to **terminal mode** — producing the final inventory table now.
-
----
-
 | Name (Vietnamese) | Name (English) | Province | Fuel | Technology | Units × MW | Total MWe | Status | As-of | COD | Owner/Developer | Confidence | Source 1 | Source 2 | Notes |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | NĐ Phả Lại I | Pha Lai 1 | Hải Dương | Coal | SC | 4×110 | 440 | Operating | 2025-05 | 1983–86 | GENCO 2 | HIGH | evn_ar_2018 | evn_ar_2010_2011 | Soviet-era; retirement by 2030 if no tech upgrade |

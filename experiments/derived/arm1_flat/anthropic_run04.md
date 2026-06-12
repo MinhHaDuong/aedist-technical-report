@@ -1,4 +1,4 @@
-I'll need to conduct extensive research to build this inventory. Let me start with systematic searches for Vietnam's thermal power plants.| Name (Vietnamese) | Name (English) | Province | Fuel | Technology | Units × MW | Total MWe | Status | Status as-of-date | COD | Owner / Developer | Confidence | Source 1 | Source 2 | Notes |
+| Name (Vietnamese) | Name (English) | Province | Fuel | Technology | Units × MW | Total MWe | Status | Status as-of-date | COD | Owner / Developer | Confidence | Source 1 | Source 2 | Notes |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | Nhiệt điện An Khánh | An Khanh TPP | Thái Nguyên | Coal | Subcritical (CFB) | 1 × 50 | 50 | Operating | May 2023 | ~2010 | An Khanh – Nui Hong JSC | LOW | PDP8 (2023) | — | Small mine-mouth plant; unit config estimated; source not found for COD |
 | BOT Hải Dương (JAKS) | BOT Hai Duong TPP | Hải Dương | Coal | Subcritical | 2 × 600 | 1,200 | Operating | Jan 2026 | 2022–2023 | JAKS Resources (Malaysia) / China Energy | MEDIUM | GEM GCPT Jan 2026 | — | BOT project; COD approximate; financed by China Exim Bank |
