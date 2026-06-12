@@ -85,8 +85,12 @@ def test_abstract_numbers_in_body():
     for macro in ("ExpOneFOneMin", "ExpOneFOneMean", "ExpOneFOneMax"):
         val = _parse_macro(macros, macro)
         assert val in text, f"F1 stat {val} ({macro}) missing from manuscript body — update main.tex"
-    # ρ = 0.92 has no generated macro (coherence–F1 Spearman computed in §4); literal guard.
-    assert "0.92" in text, "coherence–F1 correlation ρ = 0.92 missing from manuscript"
+    # The pooled screening ρ flows from macros_screen_validation.tex since
+    # ticket 0566: guard the macro call in the source, not the literal — the
+    # value itself is drift-checked in test_manuscript_macros.py.
+    assert "\\ScreenPooledSpearman" in raw(), (
+        "pooled screening Spearman macro \\ScreenPooledSpearman missing from manuscript"
+    )
 
 
 def test_author_affiliation_present():

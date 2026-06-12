@@ -1,0 +1,36 @@
+%erg 0.1
+Title: Macro-source exp2 cost and row-count medians in the manuscript
+Created: 2026-06-12
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-12T19:55Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Surfaced during ticket 0572 execution (PR #1042): after converting the
+§exp2 F1 literal pairs to generated macros, the §exp2 cost medians
+($0.73/$0.27) and row-count medians remain hand-typed in
+`slides/manuscript/main.tex` — they are not F1 values and not derivable
+from `tab_exp2_2x2.csv`, so they were out of 0572's scope. They are the
+same defect class as ticket 0531 (manuscript numbers through generated
+macros, `.claude/rules/writing.md`).
+
+## Actions
+
+1. Identify the committed artifact that owns these values (cost/row-count
+   source per run); if none exists, extend the appropriate emitter to
+   derive them from `measurements.jsonl` or the exp2 outputs.
+2. Emit macros in the owning fragment (see `MANUSCRIPT_MACRO_FRAGMENTS`
+   in `experiments/render.mk`), replace the inline literals, commit the
+   regenerated fragments together with the consolidated
+   `macros_manuscript.tex`.
+3. Verify each macro value equals the literal it replaces; escalate any
+   drift instead of silently accepting it.
+
+## Exit criteria
+
+- [ ] No hand-typed cost or row-count medians in §exp2; values flow from
+  committed generated macro fragments
+- [ ] `make check` passes

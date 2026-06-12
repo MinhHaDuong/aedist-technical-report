@@ -1,0 +1,35 @@
+%erg 0.1
+Title: Fix tab_exp2_wiki_compliance.csv regeneration drift (parser/artifact mismatch)
+Created: 2026-06-12
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-12T19:55Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Surfaced during ticket 0572 execution (PR #1042): regenerating
+`tab_exp2_wiki_compliance.csv` from the current parser does not reproduce
+the committed artifact — anthropic naive run4 `n_cells_s1s2` flips 0→148
+on re-parse. The artifact was committed by ticket 0452; either the parser
+changed since, or the committed value was produced by a different code
+path. PR #1042 restored the committed version; the mismatch itself is
+unresolved. This breaks the "committed artifacts re-derive from the
+pipeline" reproducibility contract.
+
+## Actions
+
+1. Reproduce: rerun the generating script and diff against the committed
+   CSV; isolate which parse step produces the 0→148 flip.
+2. Decide which value is correct (inspect the raw run output for
+   anthropic naive run4); fix the parser or regenerate the artifact —
+   fix the master, never patch downstream.
+3. Add a regression guard if the defect class is testable.
+
+## Exit criteria
+
+- [ ] Regenerating tab_exp2_wiki_compliance.csv reproduces the committed
+  file byte-identically (or the committed file is updated with a
+  documented correction)
+- [ ] `make check` passes

@@ -12,3 +12,4 @@ within_model_vetoed_mean_f1,0.112,Pooled mean F1 of vetoed runs across mixed mod
 within_model_surviving_mean_f1,0.350,Pooled mean F1 of surviving runs across mixed models (residual cross-model confound)
 pooled_vetoed_mean_f1,0.150,Pooled across-model mean F1 of vetoed runs (tautological baseline)
 pooled_surviving_mean_f1,0.491,Pooled across-model mean F1 of surviving runs (tautological baseline)
+pooled_spearman_cap_distinct,0.917,"Pooled across-model Spearman rho, cap_distinct vs F1 (headline screening correlation; carries the cross-model confound)"

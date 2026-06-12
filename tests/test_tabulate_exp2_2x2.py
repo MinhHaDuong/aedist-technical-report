@@ -7,12 +7,14 @@ anchor the cost contrast.
 """
 
 import math
+from pathlib import Path
 
 from aedist.tabulate_exp2_2x2 import (
     cell_table,
     collapse_runs,
     factor_effects,
     render_tex,
+    write_macros,
 )
 
 
@@ -128,3 +130,68 @@ def test_cell_table_cost_ratio_normalised_to_naive():
     assert math.isclose(cells["arm3"]["cost_ratio"], math.sqrt(6.0))
     assert math.isclose(cells["naive"]["cost_ratio"], 1.0)
     assert math.isclose(cells["arm3"]["f1_mean"], 0.6)  # mean(0.7, 0.5)
+
+
+# --- Manuscript F1 macros (ticket 0572) ----------------------------------------
+
+
+def _full_collapsed():
+    """All four real agents with F1 in all four arms (values arbitrary)."""
+    data = {
+        "anthropic": {"naive": 0.6034, "optimised": 0.5579, "arm3": 0.6148, "arm4": 0.3770},
+        "mistral": {"naive": 0.4870, "optimised": 0.3908, "arm3": 0.5913, "arm4": 0.5325},
+        "openai": {"naive": 0.6254, "optimised": 0.6506, "arm3": 0.7748, "arm4": 0.7385},
+        "qwen": {"naive": 0.3694, "optimised": 0.2664, "arm3": 0.6228, "arm4": 0.5508},
+    }
+    recs = []
+    for agent, arms in data.items():
+        for arm, f1 in arms.items():
+            recs.append(_rec(agent, arm, 1, f1, cost=1.0))
+    return collapse_runs(recs)
+
+
+def test_write_macros_per_agent_arm_values(tmp_path: Path):
+    """One flat 2-dp macro per (agent, arm), plus the Exp1 memory baseline."""
+    out = tmp_path / "macros.tex"
+    write_macros(_full_collapsed(), {"anthropic": 0.6662, "qwen": 0.4078}, out)
+    text = out.read_text(encoding="utf-8")
+    assert "\\newcommand{\\ExpTwoFOneAnthropicNaive}{0.60}" in text
+    assert "\\newcommand{\\ExpTwoFOneAnthropicOptimised}{0.56}" in text
+    assert "\\newcommand{\\ExpTwoFOneAnthropicDocsSingle}{0.61}" in text
+    assert "\\newcommand{\\ExpTwoFOneAnthropicDocsMulti}{0.38}" in text
+    assert "\\newcommand{\\ExpTwoFOneAnthropicMemory}{0.67}" in text
+    assert "\\newcommand{\\ExpTwoFOneQwenMemory}{0.41}" in text
+    # No memory macro for agents absent from the Exp1 flagship means.
+    assert "ExpTwoFOneMistralMemory" not in text
+
+
+def test_write_macros_spread_and_convergence(tmp_path: Path):
+    """Derived prose values: per-arm spread of the rounded per-agent means and
+    the with-docs convergence level (mean over the arm3 agents excluding the
+    top one)."""
+    out = tmp_path / "macros.tex"
+    write_macros(_full_collapsed(), {}, out)
+    text = out.read_text(encoding="utf-8")
+    # naive: 0.63 - 0.37 ; arm3: 0.77 - 0.59 (rounded per-agent means)
+    assert "\\newcommand{\\ExpTwoFOneSpreadNoDocs}{0.26}" in text
+    assert "\\newcommand{\\ExpTwoFOneSpreadDocs}{0.18}" in text
+    # mean of arm3 means excluding openai: (0.6148 + 0.5913 + 0.6228) / 3
+    assert "\\newcommand{\\ExpTwoFOneDocsConvergence}{0.61}" in text
+
+
+def test_write_macros_skips_missing_cells(tmp_path: Path):
+    """An (agent, arm) cell without F1 emits no macro rather than a stale 0."""
+    recs = [_rec("qwen", "naive", 1, 0.42, 1.0), _rec("qwen", "arm3", 1, None, 1.0)]
+    out = tmp_path / "macros.tex"
+    write_macros(collapse_runs(recs), {}, out)
+    text = out.read_text(encoding="utf-8")
+    assert "\\newcommand{\\ExpTwoFOneQwenNaive}{0.42}" in text
+    assert "ExpTwoFOneQwenDocsSingle" not in text
+
+
+def test_macros_cli_flags_present():
+    """--output-macros and --exp1-cross-eval are wired into the entry point."""
+    src = Path(__file__).parent.parent / "src" / "aedist" / "tabulate_exp2_2x2.py"
+    text = src.read_text(encoding="utf-8")
+    assert "--output-macros" in text
+    assert "--exp1-cross-eval" in text

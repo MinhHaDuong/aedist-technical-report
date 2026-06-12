@@ -202,20 +202,21 @@ phrasing.
 
 ## rho-value-static
 
-**Decision:** The ρ = 0.92 value itself is hand-typed in the manuscript
-(not macro-generated). If the screen analysis is re-run and ρ changes, every
-occurrence (Discussion, conclusion, annex-screen) must be updated manually.
+**Decision:** The ρ = 0.92 value was hand-typed in the manuscript until
+ticket 0566 macro-sourced it: every occurrence now flows from
+`\ScreenPooledSpearman` in `macros_screen_validation.tex`, recomputed by
+`screen_validation_within_model.py` from the runs data. A re-run that
+shifts ρ updates the prose through the fragment rebuild; the conditional
+caveat guards keep firing because they assert on macro-expanded text.
 
-**Rationale:** `test_manuscript_structure.py` pins "0.92" as a fixed
-empirical value; the conditional caveat guards in
-`test_manuscript_cohort_and_caveats.py` key on the literal "ρ = 0.92".
-A silent re-derivation would leave stale prose — this entry is the reminder
-the value is static.
+**Rationale:** the hand-typed value was the last manuscript number outside
+the numbers-through-macros rule (ticket 0531). `test_manuscript_structure.py`
+now guards the macro call; `test_manuscript_macros.py` drift-checks the
+macro against the co-generated CSV artifact.
 
-**Ticket:** 0531/0532; recorded here by 0557 (CI checks
-unchanged).
+**Ticket:** 0531/0532; recorded here by 0557; retired by 0566.
 
-**Status:** active
+**Status:** retired (macro-sourced by ticket 0566)
 
 ## built-fleet-pipeline-tail
 

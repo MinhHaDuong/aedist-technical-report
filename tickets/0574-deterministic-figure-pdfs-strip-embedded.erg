@@ -1,0 +1,31 @@
+%erg 0.1
+Title: Deterministic figure PDFs: strip embedded timestamps from matplotlib output
+Created: 2026-06-12
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-12T19:55Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Surfaced during ticket 0566/0572 execution (PR #1042): rebuilding the
+figures churns 8 committed PDFs byte-wise at identical size — embedded
+timestamps (matplotlib `CreationDate` metadata) make the output
+non-deterministic. This is reproducibility noise: a clean-room
+`make world && git diff --exit-code` oracle would flag spurious diffs,
+and every figure-adjacent PR risks committing meaningless churn.
+
+## Actions
+
+1. Set deterministic PDF metadata in the shared plotting helper
+   (e.g. `metadata={"CreationDate": None}` on savefig, or
+   `SOURCE_DATE_EPOCH`) — one fix in the shared code path, not per
+   script.
+2. Rebuild all figures, confirm byte-identical output across two runs.
+3. Commit the one-time regeneration if any PDFs change.
+
+## Exit criteria
+
+- [ ] Two consecutive figure rebuilds produce byte-identical PDFs
+- [ ] `make check` passes

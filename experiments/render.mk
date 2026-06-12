@@ -44,6 +44,7 @@ ANALYSIS_EXP2_2X2_CSV := $(ANALYSIS_DERIVED_DIR)/tab_exp2_2x2.csv
 ANALYSIS_EXP2_2X2_TEX := $(ANALYSIS_GEN)/tab_exp2_2x2.tex
 ANALYSIS_EXP2_2X2_FR_TEX := $(ANALYSIS_GEN)/tab_exp2_2x2_fr.tex
 ANALYSIS_EXP2_2X2_AGENTS_TEX := $(ANALYSIS_GEN)/tab_exp2_2x2_agents.tex
+ANALYSIS_EXP2_FONE_MACROS := $(ANALYSIS_GEN)/macros_exp2_f1.tex
 ANALYSIS_EXP2_COVERAGE_SPLIT := $(ANALYSIS_GEN)/fig_exp2_coverage.pdf
 ANALYSIS_EXP2_COST_SPLIT := $(ANALYSIS_GEN)/fig_exp2_cost.pdf
 ANALYSIS_GROUNDING_LADDER_FIG := $(ANALYSIS_GEN)/fig_grounding_ladder.pdf
@@ -416,9 +417,12 @@ ANALYSIS_EXP2_REPORT_TARGETS := \
 
 # 2x2 factorial table (F1 + cost, query-mode x documents). Co-produces the
 # per-(agent,arm) CSV. Agent is the unit of replication; see the module docstring.
-# Reads the committed cross-eval CSV (P2 source) and the flat arm dirs (P1
-# source); produces nothing under P2 outcome paths.
-$(ANALYSIS_EXP2_2X2_TEX) $(ANALYSIS_EXP2_2X2_AGENTS_TEX) &: $(ANALYSIS_EXP2_CROSS_EVAL_CSV) \
+# Reads the committed cross-eval CSVs (P2 sources; the Exp1 one feeds the
+# memory-baseline macros, ticket 0572) and the flat arm dirs (P1 source);
+# produces nothing under P2 outcome paths.
+$(ANALYSIS_EXP2_2X2_TEX) $(ANALYSIS_EXP2_2X2_AGENTS_TEX) $(ANALYSIS_EXP2_FONE_MACROS) &: \
+		$(ANALYSIS_EXP2_CROSS_EVAL_CSV) \
+		$(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
 		$(ANALYSIS_REPO_ROOT)/src/aedist/tabulate_exp2_2x2.py
 	@mkdir -p $(ANALYSIS_GEN)
 	uv run python -m aedist.tabulate_exp2_2x2 \
@@ -426,7 +430,9 @@ $(ANALYSIS_EXP2_2X2_TEX) $(ANALYSIS_EXP2_2X2_AGENTS_TEX) &: $(ANALYSIS_EXP2_CROS
 	    --flat-root $(ANALYSIS_DERIVED_DIR) \
 	    --output-csv $(ANALYSIS_EXP2_2X2_CSV) \
 	    --output-tex $(ANALYSIS_EXP2_2X2_TEX) \
-	    --output-agents-tex $(ANALYSIS_EXP2_2X2_AGENTS_TEX) --lang en
+	    --output-agents-tex $(ANALYSIS_EXP2_2X2_AGENTS_TEX) \
+	    --exp1-cross-eval $(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
+	    --output-macros $(ANALYSIS_EXP2_FONE_MACROS) --lang en
 
 $(ANALYSIS_EXP2_2X2_FR_TEX): $(ANALYSIS_EXP2_CROSS_EVAL_CSV)
 	@mkdir -p $(dir $@)
@@ -727,6 +733,7 @@ MANUSCRIPT_MACRO_FRAGMENTS := \
 	$(ANALYSIS_GEN)/macros_exp2_matrix_optimised.tex \
 	$(ANALYSIS_GEN)/macros_exp2_matrix_arm3.tex \
 	$(ANALYSIS_GEN)/macros_exp2_matrix_arm4.tex \
+	$(ANALYSIS_EXP2_FONE_MACROS) \
 	$(ANALYSIS_GEN)/macros_p1_base.tex \
 	$(ANALYSIS_FUSION_MVP_MACROS) \
 	$(ANALYSIS_GEN)/macros_longtail.tex \

@@ -1,0 +1,46 @@
+%erg 0.1
+Title: Convert §exp2 inline F1 literal-pair sites to generated macros
+Created: 2026-06-12
+Author: HDMX-coding-agent
+Closed: autoclosed — PR #1042
+
+--- log ---
+2026-06-12T16:49Z HDMX-coding-agent created
+2026-06-12T18:30Z claude note raid imagine: drift guard PASS; one PR with 0566; plan annotated in body
+2026-06-12T18:40Z claude note raid feasibility PASS — emitter gap confirmed, registry and test anchors verified
+2026-06-12T19:53Z claude note executed — PR #1042; all macro values equal the replaced literals, no drift
+
+2026-06-12T20:14Z HDMX-coding-agent closed — autoclosed — PR #1042
+--- body ---
+## Context
+PR #1037 (ticket 0568) added a per-agent memory-vs-web comparison and per-agent multi-turn deltas to §exp2 as inline F1 literals guarded by re-derivation tests (tests/test_manuscript_claims_alignment.py), following the established pattern (tickets 0515/0501/0474). The verify-gate flagged the tension with the numbers-through-macros rule (ticket 0531, .claude/rules/writing.md). Orchestrator ruling 2026-06-12: guard pattern accepted for the PR; strict-macro uniformity deferred here. Related: open ticket 0566 covers the same conversion for the hand-typed ρ = 0.92.
+
+## Actions
+Extend the emitter that owns the exp2 fragment (see MANUSCRIPT_MACRO_FRAGMENTS in experiments/render.mk) to emit macros for all five §exp2 literal-pair sites (the four pre-existing equalization pairs included); replace inline literals with the macros; keep the re-derivation tests as cross-checks; coordinate with 0566 (same emitters) — consider executing both in one PR.
+
+## Raid plan notes (2026-06-12)
+
+- Site count clarified: 4 paragraph-level sites in §exp2 (relocate by grep):
+  (1) per-agent memory-vs-web comparison (~727-730, PR #1037);
+  (2) per-agent multi-turn no-docs deltas (~800-802, PR #1037);
+  (3) documents-equalization paragraph (~827-833, 4 agent pairs + spread
+  values + convergence target, pre-existing);
+  (4) multi-turn-with-docs degradation (~837-838, pre-existing).
+  Convert ALL inline F1 literals in these four paragraphs.
+- No exp2 F1 fragment exists yet. Owner: `tabulate_exp2_2x2.py` (already
+  computes per-agent arm means from committed `tab_exp2_2x2.csv` via
+  `collapse_runs()`). Add `write_macros()` + `--output-macros`, upgrade the
+  Makefile rule (render.mk ~421-437) to a grouped `&:` rule, add the new
+  fragment `macros_exp2_2x2` to `MANUSCRIPT_MACRO_FRAGMENTS`.
+- Cover all four arms (naive, optimised, arm3, arm4) — the equalization
+  paragraph uses documents-arm values.
+- Naming: flat scalar macros, distinct prefix from the existing
+  `\ExpTwo*Matrix*` names, e.g. `\ExpTwoFOneAnthropicNaive`. The
+  duplicate-name guard (render.mk ~749-754) catches collisions at build.
+- `test_manuscript_claims_alignment.py` needs no edits: it checks
+  `normalized()` output, which expands macros. Keep as cross-checks.
+
+## Exit criteria
+- [ ] no inline F1 literal pairs in §exp2
+- [ ] re-derivation tests still green
+- [ ] make check passes
