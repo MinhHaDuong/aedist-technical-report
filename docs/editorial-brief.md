@@ -303,6 +303,11 @@ and scopes that drift, and add nothing a "future work" framing does not.
 The 0560 restructure created the Future research section precisely so that
 forward-looking material reads as programme, not promise.
 
+CI negative guard:
+`test_manuscript_0512_structure.py::test_no_companion_paper_promise_in_body`
+bans the promise phrasings in the body, with the Temporality annex carved
+out by label until ticket 0563 strips its sentence.
+
 **Ticket:** 0562 (tracker 0560).
 
 **Status:** active

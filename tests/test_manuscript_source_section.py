@@ -158,8 +158,11 @@ def test_real_manuscript_sections_extract():
     for label in (
         "sec:intro",
         "sec:exp2",
+        "sec:extensions",
+        "sec:ext-screen",
         "sec:fusion",
         "sec:discussion",
+        "sec:future",
         "sec:conclusion",
         "sec:annex-exp2",
     ):

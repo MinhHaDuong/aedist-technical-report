@@ -53,10 +53,30 @@ def test_future_research_section_absorbs_methods_review():
         "Future research must absorb the methods review (lessons from the "
         "field) — Petroni et al. citation missing from the section"
     )
-    assert "capture–recapture" in future, (
-        "Future research must state the research programme — the "
-        "capture–recapture estimation axis is missing"
-    )
+
+
+def test_no_companion_paper_promise_in_body():
+    """Negative guard for the no-companion-paper-promise brief entry
+    (ticket 0562): the main text body frames forward-looking work as
+    programme (sec:future) or not-measured-here scoping, never as a
+    commitment to a specific forthcoming publication. The Temporality
+    annex's "subsequent paper" sentence is ticket 0563's to strip; until
+    then it is carved out by label rather than left unguarded."""
+    text = body()
+    carved_out = section("sec:annex-temporality")
+    guarded = text.replace(carved_out, " ")
+    for promise in (
+        "companion paper",
+        "follow-on paper",
+        "planned cross-evaluation",
+        "subsequent paper",
+        "in preparation",
+        "working title",
+    ):
+        assert promise not in guarded, (
+            f"publication promise {promise!r} found in the manuscript body "
+            "(no-companion-paper-promise, docs/editorial-brief.md, ticket 0562)"
+        )
 
 
 def test_why_we_redo_gem_paragraph_present():
