@@ -194,19 +194,23 @@ layers in Figure~\ref{fig:longtail}.
 
 \textbf{Why we re-compile rather than reuse.} Global Energy Monitor is
 the closest external inventory to ours, and one might ask why the
-reference is built afresh rather than adopted from GEM. Let us admit
-it: analysis-oriented research or consulting should start from GEM. But
-this paper is research on the compilation method itself. The purpose is
+reference is built afresh rather than adopted from GEM. For
+analysis-oriented research or consulting, GEM is indeed the right
+starting point.
+
+But this paper is research on the compilation method itself. The purpose is
 to improve how such inventories are built, not just to produce one more
 table. A cheaper method matters because manual inventories die when the
 resources behind them dry up, as WRI's global database illustrates,
-while an automated pipeline can stay evergreen and capture data GEM
+while an automated method can stay evergreen and capture data GEM
 does not carry. Beyond cost, the
 method is groundwork for information fusion across sources, for better
 energy-transition modelling, and for keeping statistical practice
 abreast of research automation. Two ancillary payoffs: the task doubles
 as a benchmark for AI information retrieval, and the build validates AI
-engineering patterns on a concrete case study. The hand-compiled
+engineering patterns on a concrete case study.
+
+The hand-compiled
 reference that anchors this programme also stands on its own merits:
 per-cell provenance to primary sources, as the research-grade bar
 (§\ref{sec:quality}) demands; coverage of under-documented sites —
@@ -456,7 +460,7 @@ a model that retrieves the correct fact but words it in a form the
 extractor does not recognise produces a missing value indistinguishable
 from a genuine coverage gap (developed in §\ref{sec:discussion}). The
 experiments exercise articulation through structured prompts
-(§\ref{sec:exp1} and §\ref{sec:exp2}); the verbatim prompts are
+(§\ref{sec:exp1} and §\ref{sec:exp2}); the prompts are
 reproduced verbatim in \ref{sec:annex-exp1} and
 \ref{sec:annex-exp2}.
 
@@ -535,7 +539,9 @@ was split off on 5 July 2019 (provenance and diff in
 model cohort by roughly six and a half years (comfortably before any
 plausible training cutoff), so the bar's validity is not in doubt for
 the cohort; we report the comparison directionally because the project
-does not record per-model cutoff dates. One caveat on coverage: the
+does not record per-model cutoff dates.
+
+One caveat on coverage: the
 built fleet (operating, retired) has been on these pages since mid-2019
 and is firmly inside every cutoff, while much of the forward-looking
 pipeline is PDP8-era (post-2019) content added after the June 2019
@@ -561,6 +567,7 @@ usable tables, but row-level F1 ranges from \ExpOneFOneMin{} to \ExpOneFOneMax{}
 \ExpOneFOneMean{}. Asking the same model the same question does not return the same
 plants: DeepSeek V4-Flash ranges from F1 0.07 to 0.52 across 5 identical
 runs, a spread wider than the gap between many adjacent model means.
+
 Even for correctly matched plants, attribute classification is uneven:
 province accuracy is high (mean \ExpOneProvinceAcc{}) — unsurprising, since Vietnamese
 plants are typically named after the places that host them, so the name
@@ -577,7 +584,9 @@ no ``Proposed''), so a model that correctly recalls a proposed plant
 has no admissible label to map it onto, which may mechanically depress
 status accuracy. Consistent with that reading, excluding the proposed
 stratum lifts mean status accuracy on the matched rows to
-\ExpOneStatusAccExclProposed{}. Paying more does not reliably buy a better inventory:
+\ExpOneStatusAccExclProposed{}.
+
+Paying more does not reliably buy a better inventory:
 Claude Opus 4.6 at \$1.23 total achieves mean F1 = 0.66, while
 GPT-OSS-20B at \$0.01 reaches mean F1 = 0.02, but no monotonic
 relationship between API cost and F1 holds across the lineup. The total
@@ -636,7 +645,9 @@ good runs and F1 means of 0.41--0.67, while five models deliver at most
 one good run (three of them none at all) and F1 means of 0.02--0.28;
 the inaccurate models are also the unreliable ones (Spearman ρ = 0.78
 between the two axes), so the label-free grade screens them out before
-any reference is consulted. The disqualified set is essentially stable
+any reference is consulted.
+
+The disqualified set is essentially stable
 under the gate's tuning choices — indicator set and pass threshold —
 as the sensitivity sweep in \ref{sec:annex-exp1} shows; the
 per-criterion breakdown behind the grade (which dimension each model
@@ -705,7 +716,9 @@ provider under a per-session cap of 50K tokens / \$3 (Phase B); this
 constitutes a simple harness: an LLM orchestrator (DeepSeek
 classifier) controlling a loop with the tested LLM as the tool. The
 naive-vs-optimised contrast isolates the protocol's contribution over
-raw model capability. The naive arm is an independent sweep, not a
+raw model capability.
+
+The naive arm is an independent sweep, not a
 re-run of the §\ref{sec:exp1} parametric protocol, so its scores are not
 directly comparable to §\ref{sec:exp1}'s per-model numbers;
 within-Experiment-2 comparisons all use this common arm-1 sweep as their
@@ -817,7 +830,9 @@ climb toward the pack: Qwen lifts from F1 0.37 to 0.62 and Mistral from
 0.26 without documents to 0.18 with them — three of the four now
 converge near F1 0.61, with only OpenAI keeping headroom (0.77). This is
 equalisation, not rescue: with a shared document set, which model runs
-the query matters less than which documents it is handed. The effect is
+the query matters less than which documents it is handed.
+
+The effect is
 specific to single-query prompting — the multi-turn protocol with the
 same documents does not equalise and in fact degrades Anthropic (0.61 to
 0.38). Equalising at F1 ≈ 0.61 still leaves the cohort short of the
@@ -865,7 +880,7 @@ variability — the number of distinct capacity values — correlates
 with reference-based F1 at Spearman ρ = 0.92 across the 70 runs. An
 in-sample threshold rule rejects 23 of the 26 weakest runs with no false
 rejection: an existence proof rather than a validated detector, as
-the cutoffs were tuned on the same 70 runs. Notably, the
+the cutoffs were tuned on the same 70 runs. The
 internal-coherence indicators we already compute carry no such signal:
 fabricated rows use impeccable controlled vocabulary and plausible
 dates.
@@ -918,21 +933,23 @@ The single-model ceiling motivates a stateful architecture: one that
 keeps an organised memory between runs instead of starting from scratch
 at each prompt. Once the agents share a good document set, single-shot
 performance converges (§\ref{sec:exp2}) and the binding constraint
-appears to shift from model capability to document quality. The value
-may therefore lie in the corpus and the sourcing process — assembling,
-curating, and resolving the documents — rather than in chasing a
-stronger model. That is precisely
-what a stateful pipeline invests in: a managed, auditable knowledge base
-rather than a one-shot prompt against whatever model is current. The
+appears to shift from model capability to document quality. Effort
+may therefore be better spent on the corpus and the sourcing process
+— assembling, curating, and resolving the documents — than on a
+stronger model. That is the investment a stateful pipeline makes: a
+managed, auditable knowledge base
+rather than a one-shot prompt against whatever model is current.
+
+The
 §\ref{sec:quality} quality dimensions measure \emph{output}: accuracy,
-coherence, provenance, temporality. A targeted pipeline adds a second
+coherence, provenance, temporality. Such a system adds a second
 axis, \emph{method quality}: whether the process is auditable,
 reproducible, and cost-predictable independent of which model runs it.
-Such a system is stateful: it maintains a sourced narrative knowledge
+It is stateful: it maintains a sourced narrative knowledge
 base, where each asset record carries its full lifecycle history and
-conflict-resolution record. The statistical table is a derived
-projection (a snapshot at a reference date) from the narrative
-inventory rather than a direct model output. Each cell is a claim,
+conflict-resolution record. The statistical table is a snapshot drawn
+from the narrative inventory at a reference date, not a direct model
+output. Each cell is a claim,
 recording its source, date, confidence, and conflict-resolution history.
 The narrative layer carries the temporal dimension deferred in
 §\ref{sec:quality}: plant lifecycle events, PDP-cycle reclassifications,
@@ -941,12 +958,12 @@ annotated history rather than as overwritten state.
 
 Each cell in a power-plant inventory (one plant, one attribute, one
 value) maps to a knowledge-graph triple: subject, predicate, object.
-Fusing tables from competing sources is therefore the same problem as
-fusing overlapping triple sets, with the same need for conflict
+Fusing tables from competing sources thus resembles fusing
+overlapping triple sets, and the same methods apply: conflict
 resolution, source authority, and temporal versioning. Cases that
 rule-based schema-fixed systems cannot handle cleanly — assets
 mid-lifecycle, contested sources, multilingual records, conditional
-projections — are where language-model reasoning adds genuine value.
+projections — are where language-model reasoning is most useful.
 
 \section{Discussion}\label{sec:discussion}
 
@@ -983,7 +1000,9 @@ model found but failed to express in extractable form. The structured
 four-section prompt in §\ref{sec:exp1} is designed to close the
 articulation gap; the residual F1 deficit is more likely to reflect true
 coverage and freshness limits than articulation failures. But this
-remains an assumption, not a measured separation. A third failure mode
+remains an assumption, not a measured separation.
+
+A third failure mode
 belongs to the measuring instrument rather than the model: plant-name
 matching is itself a named-entity recognition problem, and a true plant
 reported under a name variant the LP matcher does not recognise is
@@ -1006,9 +1025,9 @@ false-positive and false-negative counts likely reflects such grain
 disagreements rather than genuine errors.
 
 \textbf{Interday drift is an unquantified variance source.} Beyond the
-5-rep within-session spread, provider-side silent movement — routing
-changes, checkpoint updates — shifts scores at fixed call shape and
-seed: the top-up canary observed shifts up to \(\Delta\)F1 = 0.289 over
+5-rep within-session spread, provider-side silent movement (routing
+changes, checkpoint updates) shifts scores at fixed call shape and
+seed. The top-up canary observed shifts up to \(\Delta\)F1 = 0.289 over
 a 24-hour window (qwen3.6-27b, \ref{sec:annex-exp1}), an interday
 variance the design observes but does not quantify.
 
@@ -1020,7 +1039,9 @@ memory-only reps, opening with ``I can't honestly produce a complete,
 primary-sourced inventory\ldots{}'' and refusing to fabricate URLs or
 source citations from parametric knowledge alone; of the two completing
 reps, one scored F1 = 0.64 and the other returned a single-row,
-near-empty table (F1 = 0.00). The \texttt{modelset\_exp1\_batch2} re-run
+near-empty table (F1 = 0.00).
+
+The \texttt{modelset\_exp1\_batch2} re-run
 reported in §\ref{sec:exp1} resolved compliance (all five reps
 completed, F1 between 0.61 and 0.65), yet the declined responses are not
 a missing data point to be imputed — they are a signal about the bar
@@ -1033,7 +1054,7 @@ system that declines rather than fabricates is clearing, not failing,
 the auditability test the benchmark is built to measure. The other
 models' fluent but unsourced tables are the contrasting failure mode.
 
-\textbf{External coherence is harder to measure, for three compounding
+\textbf{External coherence is harder to measure, for three
 reasons.} The §\ref{sec:quality} coherence criterion distinguishes
 internal consistency (within the dataset) from external consistency
 (against world knowledge). The experiments in this paper measure
@@ -1042,13 +1063,16 @@ checking whether a stated capacity is plausible requires specifying
 which knowledge pool to check against (the RAG corpus, the model's
 parametric memory, official statistics, or physical engineering
 constraints), and these pools overlap imperfectly and carry different
-reliability. Second, the checker's capability matters: a small model
+reliability.
+
+Second, the checker's capability matters: a small model
 used as evaluator has poor recall of world knowledge and will miss
 genuine inconsistencies; a large frontier model has better recall but
 may introduce its own confabulations as apparent corrections. Third, the
 depth of reasoning required varies by claim: detecting that a 6000 MW
 gas plant in a province with no pipeline access is incoherent requires
-multi-step inference, not lookup. Phase C cross-evaluation (Exp 2)
+multi-step inference, not lookup. Phase C cross-evaluation (the
+cross-model judging deferred in §\ref{sec:exp2})
 partially engages external coherence, since the judging agents bring
 parametric world knowledge, but does so implicitly and unsystematically.
 A principled external-coherence metric remains future work.
@@ -1125,8 +1149,7 @@ parametric memory or a single retrieved passage. This ladder from
 parametric recall through RAG to deep-research agents is the
 architecture ladder the paper traverses.
 
-\textbf{From lessons to programme.} Read together, the three
-literatures locate the continuation of this work. The
+\textbf{From lessons to programme.} The
 open-energy-database literature supplies the motivating need but not
 the construction method for under-documented settings; the
 LLM-grounding literature supplies source-attributed extraction tools
@@ -1155,9 +1178,9 @@ second axis.
 currency; scenario-projection use cases need historical
 reconstructability — the event-log representation discussed in
 \ref{sec:annex-temporality}. Concretely, that is a bitemporal claim
-log (recording both when a fact held and when it was asserted) whose
-modality layer covers plans, forecasts, and scenario projections:
-completed events fold into the actual state, while scenario claims
+log (each claim records both when the fact held and when it was
+asserted) that also covers plans, forecasts, and scenario projections:
+completed events become settled facts, while scenario claims
 stay qualified by issuing institution, scenario, and vintage.
 Upgrading the temporality dimension from states to events is the
 third axis.
@@ -1178,13 +1201,14 @@ fifth axis.
 sketched in §\ref{sec:ext-system} leaves open which representation is
 canonical (the narrative asset page, the knowledge graph, or an
 append-only claim log of which both are projections), a question this
-benchmark can arbitrate: build both representations from the same
+benchmark can settle: build both representations from the same
 corpus, derive a table from each, score both with the same matcher
 against the same reference. The articulation findings
 (§\ref{sec:discussion}) already support one design principle:
 extracting structure from text is the measured lossy direction while
-rendering text from structure is cheap, so the extraction happens once
-at ingest and the rendering at every output — the sixth axis.
+rendering text from structure is cheap. This suggests extracting
+structure once, at ingest, and rendering text at every output — the
+sixth axis.
 
 \section{Conclusion}\label{sec:conclusion}
 
@@ -1206,7 +1230,9 @@ measured. The conjecture itself rests on
 the documents condition: handing the same
 agents a curated document set in a single query equalises three of the
 four, though the multi-turn protocol does not replicate the effect
-(§\ref{sec:exp2}). Two levers already deliver without any new data
+(§\ref{sec:exp2}).
+
+Two levers already deliver without any new data
 collection. The reference-free screen rejects the weakest outputs
 without ground truth (Spearman ρ = 0.92 against reference-based F1,
 pooled across models and in-sample; within-model signal positive but
