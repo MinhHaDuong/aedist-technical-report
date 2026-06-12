@@ -2,10 +2,12 @@
 Title: Derived-artifact drift: arm1_flat mistral runs + sota_cross_eval.csv regenerate differently
 Created: 2026-06-12
 Author: HDMX-coding-agent
+Closed: drift diagnosed code-vintage deterministic; extractor fixes + data refresh merged in #1007
 
 --- log ---
 2026-06-12T08:30Z orchestrator created from #990 observation (0530 raid rebuild)
 
+2026-06-12T07:54Z HDMX-coding-agent closed — drift diagnosed code-vintage deterministic; extractor fixes + data refresh merged in #1007
 --- body ---
 ## Context
 While finishing ticket 0530 (PR #990), regenerating with the corrected
