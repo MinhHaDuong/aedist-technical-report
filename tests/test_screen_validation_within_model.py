@@ -124,6 +124,57 @@ def test_is_within_model_flag():
     assert stat.is_within_model is True
 
 
+def test_pooled_spearman_cap_monotone():
+    """Pooled Spearman over ALL runs (across models): perfectly monotone
+    cap_distinct vs F1 → ρ = +1.0 (ticket 0566 — the manuscript's headline
+    reference-free screening correlation)."""
+    rows = [
+        _make_run("model-A", 1, cap_distinct=2, status_distinct=2, f1=0.05),
+        _make_run("model-A", 2, cap_distinct=8, status_distinct=4, f1=0.40),
+        _make_run("model-B", 1, cap_distinct=5, status_distinct=3, f1=0.20),
+        _make_run("model-B", 2, cap_distinct=12, status_distinct=5, f1=0.60),
+    ]
+    stat = within_model_accuracy_gap(rows)
+    assert stat.pooled_spearman_cap == pytest.approx(1.0)
+
+
+def test_pooled_spearman_cap_ignores_unscored_runs():
+    """Runs with f1=None are excluded; an anti-monotone scored set → ρ = -1.0."""
+    rows = [
+        _make_run("m", 1, cap_distinct=10, status_distinct=5, f1=0.10),
+        _make_run("m", 2, cap_distinct=5, status_distinct=3, f1=0.30),
+        _make_run("m", 3, cap_distinct=2, status_distinct=2, f1=0.50),
+        _make_run("m", 4, cap_distinct=20, status_distinct=9, f1=None),
+    ]
+    stat = within_model_accuracy_gap(rows)
+    assert stat.pooled_spearman_cap == pytest.approx(-1.0)
+
+
+def test_pooled_spearman_cap_none_when_undefined():
+    """Fewer than two scored runs → no pooled correlation."""
+    stat = within_model_accuracy_gap(
+        [_make_run("m", 1, cap_distinct=5, status_distinct=3, f1=0.4)]
+    )
+    assert stat.pooled_spearman_cap is None
+
+
+def test_write_macros_emits_pooled_spearman(tmp_path: Path):
+    """write_macros emits \\ScreenPooledSpearman at the manuscript's 2-dp
+    precision (ticket 0566)."""
+    from aedist.screen_validation_within_model import write_macros
+
+    rows = [
+        _make_run("model-A", 1, cap_distinct=2, status_distinct=2, f1=0.05),
+        _make_run("model-A", 2, cap_distinct=8, status_distinct=4, f1=0.40),
+        _make_run("model-B", 1, cap_distinct=5, status_distinct=3, f1=0.20),
+        _make_run("model-B", 2, cap_distinct=12, status_distinct=5, f1=0.60),
+    ]
+    stat = within_model_accuracy_gap(rows)
+    out = tmp_path / "macros.tex"
+    write_macros(stat, rows, out)
+    assert "\\newcommand{\\ScreenPooledSpearman}{1.00}" in out.read_text(encoding="utf-8")
+
+
 @pytest.mark.adherence
 def test_within_model_script_has_argparse():
     """screen_validation_within_model.py must expose --exp1-dir, --cross-eval, --output."""

@@ -80,6 +80,11 @@ class WithinModelAccuracyGap:
         pooled_vetoed_mean_f1: Across-model pooled mean F1 of vetoed runs
             (tautological baseline; included to quantify the confound removed).
         pooled_surviving_mean_f1: Across-model pooled mean F1 of surviving runs.
+        pooled_spearman_cap: Pooled (across-model) Spearman rho of
+            cap_distinct vs F1 over all scored runs — the manuscript's
+            headline reference-free screening correlation (ticket 0566).
+            Carries the cross-model confound by construction; the
+            within-model statistics above are its confound-free companions.
         per_model_gaps_detail: ``(model, surviving_mean - vetoed_mean)`` pair
             per mixed model, in model-name order — the per-model decomposition
             of ``per_model_binary_gap`` (kept for the manuscript macros).
@@ -100,6 +105,7 @@ class WithinModelAccuracyGap:
     n_models_total: int
     pooled_vetoed_mean_f1: float
     pooled_surviving_mean_f1: float
+    pooled_spearman_cap: float | None
     per_model_gaps_detail: list[tuple[str, float]] = field(default_factory=list)
 
 
@@ -284,6 +290,11 @@ def within_model_accuracy_gap(rows: list[dict]) -> WithinModelAccuracyGap:
     pooled_v = sum(all_vetoed) / len(all_vetoed) if all_vetoed else 0.0
     pooled_s = sum(all_surv) / len(all_surv) if all_surv else 0.0
 
+    # Pooled Spearman over ALL scored runs (ticket 0566) — the manuscript's
+    # headline screening correlation; same _spearman as the per-model loop.
+    pooled_pairs = [(float(r["cap_distinct"]), r["f1"]) for r in rows if r["f1"] is not None]
+    pooled_rho = _spearman([c for c, _ in pooled_pairs], [f for _, f in pooled_pairs])
+
     return WithinModelAccuracyGap(
         is_within_model=True,
         vetoed_mean_f1=vetoed_mean,
@@ -300,6 +311,7 @@ def within_model_accuracy_gap(rows: list[dict]) -> WithinModelAccuracyGap:
         n_models_total=n_tot,
         pooled_vetoed_mean_f1=pooled_v,
         pooled_surviving_mean_f1=pooled_s,
+        pooled_spearman_cap=pooled_rho,
         per_model_gaps_detail=per_model_gaps,
     )
 
@@ -352,6 +364,12 @@ def write_macros(result: WithinModelAccuracyGap, runs: list[dict], output: Path)
         f"\\newcommand{{\\ScreenPooledSurvivingMeanFOne}}{{{result.pooled_surviving_mean_f1:.3f}}}",
         f"\\newcommand{{\\ScreenPooledGap}}{{{pooled_gap:.3f}}}",
     ]
+    if result.pooled_spearman_cap is not None:
+        # 2 dp: the precision at which the manuscript quotes the headline
+        # screening correlation (ticket 0566).
+        lines.append(
+            f"\\newcommand{{\\ScreenPooledSpearman}}{{{result.pooled_spearman_cap:.2f}}}"
+        )
     if result.per_model_binary_gap is not None:
         lines.append(f"\\newcommand{{\\ScreenBinaryGap}}{{{result.per_model_binary_gap:.3f}}}")
     if result.vetoed_mean_f1 is not None:
@@ -468,6 +486,12 @@ def run_analysis(
                     "value": f"{result.pooled_surviving_mean_f1:.3f}",
                     "note": "Pooled across-model mean F1 of surviving runs (tautological baseline)",
                 },
+                {
+                    "metric": "pooled_spearman_cap_distinct",
+                    "value": f"{result.pooled_spearman_cap:.3f}" if result.pooled_spearman_cap is not None else "",
+                    "note": "Pooled across-model Spearman rho, cap_distinct vs F1 "
+                    "(headline screening correlation; carries the cross-model confound)",
+                },
             ]
         )
     log.info("Wrote summary to %s", output)
@@ -533,6 +557,11 @@ def main(argv: list[str] | None = None) -> None:
         result.pooled_vetoed_mean_f1,
         result.pooled_surviving_mean_f1,
     )
+    if result.pooled_spearman_cap is not None:
+        log.info(
+            "Pooled Spearman rho(cap_distinct, F1) = %.4f (across all scored runs)",
+            result.pooled_spearman_cap,
+        )
 
 
 if __name__ == "__main__":
