@@ -1,0 +1,84 @@
+%erg 0.1
+Title: Demote positive prose-literal adherence tests to negative guards + editorial brief
+Created: 2026-06-12
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-12T09:29Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Adherence tests that pin *positive* prose literals ("abstract must contain
+'point toward a working hypothesis'") break on every legitimate authorial
+rewrite and force test-chasing edits (bit on PR #1014, the 2026-06-12
+abstract rewrite: two tests pinned sentences of the superseded draft).
+The asymmetry: pinning what must be said requires NLP; forbidding what
+must NOT be said works with literals, because defects (overclaim
+signature phrases, hand-typed numbers, hardcoded refs) are lexically
+stable while prose is not.
+
+Policy decided with the author (2026-06-12 session):
+1. CI keeps only mechanical guards + *negative* guards (forbidden-phrasing
+   ratchets for claims reviews ruled overclaimed).
+2. Positive semantic intent moves to review-time: an editorial-brief file
+   listing standing editorial decisions (claim X stays hedged, abstract
+   leads with the difficulty result, ...) that the /review-pr-prose panel
+   checks each manuscript diff against.
+
+## Relevant files
+
+- `tests/test_manuscript_cohort_and_caveats.py` — mixed: hedging guards on
+  conclusion/body still pin positive literals ("suggests the binding
+  constraint lies", "appears to shift from model capability", "the
+  evidence points toward a conjecture about why", ...)
+- `tests/test_manuscript_structure.py` — structure (keep) + frontier
+  framing (already loosened on PR #1014; demote further or keep as-is)
+- `tests/test_manuscript_crossref.py`, `tests/test_manuscript_macros.py`,
+  `tests/test_abstract_numbers*.py`, `tests/test_no_inline_plots.py` —
+  mechanical, KEEP unchanged
+- `.claude/skills/review-pr-prose/` (user-level IDH skill: check
+  `~/.claude/skills/review-pr-prose/SKILL.md`) — add brief-check step
+- New: `docs/editorial-brief.md` — the standing-decisions list
+
+## Actions
+
+1. Inventory every assertion in the manuscript prose test files; classify
+   mechanical / negative / positive-literal.
+2. For each positive literal: rewrite as a negative guard where the
+   underlying decision was "never state X flatly"; otherwise move the
+   decision into `docs/editorial-brief.md` (cite the originating ticket:
+   0532, 0541, author briefs) and delete the assertion.
+3. Create `docs/editorial-brief.md`; each entry = decision + rationale +
+   originating ticket.
+4. Wire the brief into the prose review path so manuscript PRs are checked
+   against it (skill edit may need an IDH-side PR; if so, file a companion
+   ticket there and reference it here).
+
+## Test
+
+- Adherence meta-test: grep the prose test files for `in abstract`/`in
+  conclusion`-style *positive* literal assertions and fail if any remain
+  outside an allowlist (the red step: write it first, watch it list the
+  current offenders).
+
+## Verification
+
+- [ ] `make check` green
+- [ ] A trial rewording of a hedged sentence (same meaning, different
+  words) no longer fails CI
+- [ ] Reintroducing "the binding constraint is the documents" flatly in
+  the abstract DOES fail CI
+
+## Invariants
+
+- Mechanical guards (crossref, macros, numbers-from-artifacts, inline
+  plots, JSON EOF) unchanged.
+- Negative guards never weakened — each existing overclaim ratchet maps to
+  a negative guard or a brief entry, none silently dropped.
+
+## Exit criteria
+
+- [ ] No positive prose-literal assertion remains in CI
+- [ ] `docs/editorial-brief.md` exists and carries every demoted decision
+- [ ] Prose review path references the brief
