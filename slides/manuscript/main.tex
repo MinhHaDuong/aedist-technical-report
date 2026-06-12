@@ -902,7 +902,13 @@ belongs to the measuring instrument rather than the model: plant-name
 matching is itself a named-entity recognition problem, and a true plant
 reported under a name variant the LP matcher does not recognise is
 scored as a false positive plus a false negative --- a matcher limit,
-not a metric limit (\ref{sec:annex-exp1}). The same instrument limit
+not a metric limit (\ref{sec:annex-exp1}). The converse failure ---
+fuzzily merging two distinct plants --- appears bounded: a
+phase-collision audit of the reference name space leaves
+\PhaseCollisionResidualNinety{} of \PhaseCollisionPairsNinety{}
+ambiguous distinct-plant name pairs matchable after the unit-number
+veto, and the scored runs realise \RealisedFuzzyBelowNinety{} such
+false fuzzy matches (Table~\ref{tbl:source-concordance}). The same instrument limit
 arises from reporting-level mismatches: the same asset can be reported
 at three grains --- the power center, the power plants it hosts, and
 their generating units --- and a model row at one grain matched against
