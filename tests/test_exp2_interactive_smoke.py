@@ -1058,7 +1058,7 @@ def test_run_anthropic_call_turn1_sends_system_and_messages(monkeypatch, tmp_pat
         {
             "type": "text",
             "text": "you are an analyst",
-            "cache_control": {"type": "ephemeral"},
+            "cache_control": {"type": "ephemeral", "ttl": "1h"},
         }
     ]
     assert captured["messages"] == [
@@ -1068,7 +1068,7 @@ def test_run_anthropic_call_turn1_sends_system_and_messages(monkeypatch, tmp_pat
                 {
                     "type": "text",
                     "text": "the prompt",
-                    "cache_control": {"type": "ephemeral"},
+                    "cache_control": {"type": "ephemeral", "ttl": "1h"},
                 }
             ],
         }
@@ -1126,7 +1126,7 @@ def test_run_anthropic_call_turn2_replays_full_history(monkeypatch, tmp_path):
                 {
                     "type": "text",
                     "text": "first assistant reply",
-                    "cache_control": {"type": "ephemeral"},
+                    "cache_control": {"type": "ephemeral", "ttl": "1h"},
                 }
             ],
         },
@@ -1138,7 +1138,7 @@ def test_run_anthropic_call_turn2_replays_full_history(monkeypatch, tmp_path):
         {
             "type": "text",
             "text": "you are an analyst",
-            "cache_control": {"type": "ephemeral"},
+            "cache_control": {"type": "ephemeral", "ttl": "1h"},
         }
     ]
 
@@ -1723,7 +1723,7 @@ class TestSlideFollowupCacheBreakpoint:
         out = mod._slide_followup_cache_breakpoint(history)
         last = out[-1]
         assert last["role"] == "assistant"
-        assert last["content"][0]["cache_control"] == {"type": "ephemeral"}
+        assert last["content"][0]["cache_control"] == {"type": "ephemeral", "ttl": "1h"}
         assert last["content"][0]["text"] == "reply 1"
 
     def test_strips_stale_breakpoint_from_earlier_assistant(self):
@@ -1737,7 +1737,7 @@ class TestSlideFollowupCacheBreakpoint:
         ]
         out = mod._slide_followup_cache_breakpoint(history)
         assert "cache_control" not in out[1]["content"][0]
-        assert out[3]["content"][0]["cache_control"] == {"type": "ephemeral"}
+        assert out[3]["content"][0]["cache_control"] == {"type": "ephemeral", "ttl": "1h"}
 
     def test_turn1_user_breakpoint_preserved(self):
         mod = self._mod()
