@@ -1,0 +1,45 @@
+%erg 0.1
+Title: Macro-source the pooled Spearman rho 0.92 in the manuscript
+Created: 2026-06-12
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-12T13:15Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Pre-existing defect surfaced during the 0562 restructure feasibility
+check: the pooled Spearman ρ = 0.92 (within-run capacity variability vs
+reference-based F1, 70 Experiment 1 runs) is hand-typed at 4 sites in
+`slides/manuscript/main.tex` (screening subsection `sec:ext-screen`,
+Conclusion, Experiment 1 annex, `sec:annex-screen`) instead of coming
+from a generated macro, violating the manuscript-numbers-through-macros
+rule (ticket 0531, `.claude/rules/writing.md`). CI is green today only
+because `test_manuscript_structure.py` pins the literal "0.92" and the
+caveat guards key on the literal "ρ = 0.92". The editorial-brief entry
+`rho-value-static` documents the hand-typed status as a reminder; this
+ticket retires that workaround.
+
+Out of 0562's scope (verbatim prose moves only); filed as the follow-up.
+
+## Actions
+
+1. Extend the emitter that owns the screen statistics fragment (see
+   `MANUSCRIPT_MACRO_FRAGMENTS` in `experiments/render.mk`; the
+   within-model stats come from
+   `src/aedist/screen_validation_within_model.py`) to emit a
+   `\ScreenPooledSpearman`-style macro re-derived from the runs data.
+2. Replace the 4 hand-typed occurrences with the macro.
+3. Re-key the literal-based guards (`test_manuscript_structure.py`,
+   `test_manuscript_cohort_and_caveats.py` rho-caveat conditionals) on
+   the macro-expanded value via `manuscript_source.normalized()`.
+4. Update the `rho-value-static` editorial-brief entry to
+   `retired (macro-sourced by this ticket)`.
+
+## Exit criteria
+
+- [ ] No hand-typed `0.92` for the pooled Spearman in main.tex; value
+  flows from a committed generated macros fragment
+- [ ] Caveat guards still fire on an unqualified ρ citation
+- [ ] `make check` passes
