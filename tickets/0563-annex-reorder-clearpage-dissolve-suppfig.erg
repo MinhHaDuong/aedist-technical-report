@@ -1,0 +1,95 @@
+%erg 0.1
+Title: Annex reorder (method / investigation / support), \clearpage per annex, dissolve Supplementary-figures annex
+Created: 2026-06-12
+Author: HDMX-coding-agent
+Blocked-by: 0562
+
+--- log ---
+2026-06-12T13:30Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Child of tracker 0560. Current annex order leads with a conceptual scoping
+note (Temporality), buries the investigation annexes, and carries a
+"Supplementary figures" annex that is two unanchored floats with no prose —
+as typeset, the heading can sit orphaned on an empty section. Target order
+(approved, grouping method → investigation → support):
+
+- A. Experiment 1: technical specification        (sec:annex-exp1)
+- B. Experiment 2: technical specification        (sec:annex-exp2)
+- C. Recognition matrix and status composition    (sec:annex-recognition)
+- D. Aggregation sweep and vote gate              (sec:annex-fusion)
+- E. Run-grain screen validation                  (sec:annex-screen)
+- F. Capability rollout: per-lab shipping order   (sec:annex-rollout)
+- G. Temporality: state vs. event representations (sec:annex-temporality)
+
+Labels stay; only block order changes (0561 made tests order-agnostic).
+Every annex starts on a new page.
+
+## Relevant files
+
+- `slides/manuscript/main.tex` — annex block reorder after `\appendix`;
+  `\clearpage` insertions; suppfigs dissolution; body \ref retargeting
+- `tests/test_manuscript_figure_style.py` (and crossref test) — should
+  pass unchanged; check for suppfigs references
+
+## Actions
+
+1. Reorder the annex `\section` blocks to the target order (move whole
+   blocks; content untouched except as below).
+2. Insert `\clearpage` immediately before each annex `\section` (the
+   recognition annex's `\includepdf` already page-breaks internally;
+   still give the section heading its own `\clearpage`).
+3. Dissolve `\section{Supplementary figures}` (sec:annex-suppfigs):
+   - `fig:coverage-certainty` figure block → Experiment 2 annex
+     (Evaluation or Arms subsection, nearest to its discussion); retarget
+     the two §exp2 body refs (`\ref{sec:annex-suppfigs}` at ~684, ~793)
+     to `\ref{sec:annex-exp2}` or directly to
+     `Figure~\ref{fig:coverage-certainty}` where the sentence reads
+     better.
+   - `fig:capability-dag` figure block → Capability rollout annex; it is
+     referenced NOWHERE in the body — add one referencing sentence in the
+     rollout annex ("Figure~\ref{fig:capability-dag} aggregates these
+     transitions...") tying it to the existing transition-matrix prose.
+   - Delete the empty section and the `sec:annex-suppfigs` label; grep to
+     confirm zero remaining references.
+4. Strip the Annex Temporality companion-paper promise ("that design
+   choice is deferred to a subsequent paper" → "that design choice is out
+   of scope here" or equivalent); also re-check its §-refs (it cites
+   sec:fusion and sec:exp2) still read correctly post-0562.
+5. Rebuild and eyeball the PDF: each annex opens on a fresh page; S-series
+   figure numbering re-flows consistently; recognition-matrix
+   `\refstepcounter`+`\includepdf` block intact.
+
+## Test
+
+- Red step: adherence test (extend an existing manuscript-structure test
+  file) asserting (a) `sec:annex-suppfigs` absent, (b) every annex
+  `\section` after `\appendix` is immediately preceded by `\clearpage`,
+  (c) `fig:capability-dag` is `\ref`'d at least once. Red on current file,
+  green after.
+
+## Verification
+
+- [ ] `make check` green (crossref: all \ref resolve; figure-style test)
+- [ ] Manuscript builds; visual check of annex page starts and the
+  three-page recognition matrix
+- [ ] No reference to sec:annex-suppfigs anywhere
+- [ ] Annex letters in the PDF match the target table above
+
+## Invariants
+
+- All `sec:annex-*` labels preserved (suppfigs deleted by design)
+- Annex CONTENT unchanged except the two figure relocations, the one new
+  referencing sentence, and the promise strip
+- The `\theHfigure`/S-counter preamble block after `\appendix` intact
+
+## Exit criteria
+
+- [ ] Annex order = method / investigation / support as listed
+- [ ] Each annex starts on a new page
+- [ ] Supplementary-figures annex gone, both figures live in their
+  natural annexes, DAG figure referenced
+- [ ] No companion-paper promise remains anywhere in the manuscript
+- [ ] `make check` passes

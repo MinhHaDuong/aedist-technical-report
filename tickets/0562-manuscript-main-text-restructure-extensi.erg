@@ -1,0 +1,138 @@
+%erg 0.1
+Title: Manuscript main-text restructure — Extensions section, slimmed Discussion, Future research absorbs Related Work — Methods
+Created: 2026-06-12
+Author: HDMX-coding-agent
+Blocked-by: 0561
+
+--- log ---
+2026-06-12T13:30Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Child of tracker 0560 (target structure recorded there; author-approved).
+This ticket reshapes the main text after §6. Core moves: §7 "Need and
+potential for fusion" (a two-paragraph trailer) is replaced by an
+**Extensions** section gathering the post-hoc analyses prompted by the
+conference; the reference-free screen — contribution #3 in the intro, yet
+currently a Discussion paragraph — is promoted into it; "Related Work —
+Methods" (unnumbered, a sore thumb) merges into a numbered **Future
+research** section as its "lessons from the field" opening; the Conclusion
+slims; all companion-paper promises go.
+
+Label-stability contract (0560): moved content KEEPS its existing labels
+(`sec:fusion` stays on the fusion subsection, `sec:discussion`,
+`sec:conclusion` stay). New subsections get new labels. Tests are
+label-keyed after 0561, so prose moves do not break extraction; only the
+decision pins listed below change, in this same PR.
+
+## Relevant files
+
+- `slides/manuscript/main.tex` — all prose moves (single file)
+- `tests/test_manuscript_0512_structure.py` — decision pins on the OLD
+  structure (unnumbered RW—Methods before Conclusion): update to pin the
+  NEW decision (numbered Future research section exists; no unnumbered
+  `\section*{Related Work` remains in the body)
+- `docs/editorial-brief.md` — update fusion-hedge / novelty entries if
+  their conditional-negative guards reference the fusion *section* role;
+  add entry for the no-companion-paper-promise decision
+- `.claude/rules/writing.md` § CI polarity — no change, but the §fusion
+  loose guard (≥2 primacy-marker sentences) must keep counting inside the
+  moved `sec:fusion` subsection
+
+## Actions
+
+1. **§7 Extensions** (`\section{Extensions}\label{sec:extensions}`), one
+   framing paragraph: these analyses were performed after the conference
+   presentation, responding to audience questions; exploratory, not
+   registered. Conference named once here (and in Acknowledgements), not
+   in any heading. Four subsections:
+   a. *Why is the task hard?* `\label{sec:ext-difficulty}` — 2–3 ¶ from
+      the Discussion paragraph "From noisy runs to fused estimates"'s
+      recognition-matrix half + Annex recognition summary: status
+      composition makes low recognition structural (proposed plants
+      dominate the list; parametric memory cannot know them). Pointer to
+      the recognition annex.
+   b. *Screening without a reference* — keep/move `\label` usage
+      consistent: reuse existing screen prose from Discussion ("Internal
+      coherence rejects the weakest runs...", ρ = 0.92, in-sample caveat
+      REQUIRED next to ρ per brief entry, Admiralty two-grain framing).
+      Pointer to screen-validation annex.
+   c. *Can runs be fused?* `\label{sec:fusion}` (label preserved) —
+      current §7 content minus promises: union gain, vote gate, numbers
+      via existing macros. Pointer to fusion annex.
+   d. *What system do the findings imply?* `\label{sec:ext-system}` —
+      promote Annex H architecture prose (stateful pipeline, managed
+      auditable KB, narrative inventory → dated-snapshot projection; cell
+      = KG triple, table fusion = triple-set fusion with conflict
+      resolution/source authority/temporal versioning; LLM value at the
+      hard cases). Demonstrating per-cell provenance × temporal validity
+      stays *future work*, no paper promised.
+2. **§8 Discussion** — remove the promoted screen paragraphs and the
+   research-programme tail ("From noisy runs to fused estimates" moves:
+   difficulty half to 1a, estimation half to Future research). Keep:
+   opening reading (rewire its §-refs), F1 aggregate/conflation, matcher
+   + grain limits, interday drift, refusal-as-evidence, external
+   coherence, N=1. Rewrite the N=1 paragraph's last sentence ("the next
+   paragraph") to point at the Future research section.
+3. **§9 Future research** (`\section{Future research}\label{sec:future}`)
+   — absorb the four "Related Work — Methods" review paragraphs as the
+   opening ("lessons from the field"; keep all citations, strict budget
+   per writing rules); REWRITE the closing gap paragraph from
+   backward-looking ("the gap this paper addresses") into the bridge
+   ("how we will use these lessons"); then the programme: estimation
+   (capture–recapture, LP bounds vs control totals \citep{HaDuong2005}),
+   principled external-coherence metric, T2 event-log temporality,
+   screen industrialisation (two-grain scoring in the standard pipeline),
+   replication beyond Vietnam. Delete `\section*{Related Work — Methods}`
+   and its `\addcontentsline`.
+4. **§10 Conclusion** — slim: verdict (task hard, twice established),
+   conjecture (constraint is the data), the two levers in one or two
+   sentences each (keep the ρ = 0.92 in-sample caveat if ρ is kept —
+   conditional guard), investment claim. Strip "deferred to a planned
+   cross-evaluation" promise (rephrase as not-measured-here scoping).
+5. **Roadmap paragraph** (§1, last ¶) — rewrite to narrate the new arc:
+   ... measure (§exp1), test frontier (§exp2), extend with post-hoc
+   analyses (§extensions), discuss instrument limits (§discussion),
+   programme (§future), conclude. Symbolic \ref only.
+6. **Promise strip (body)**: delete/rephrase the §fusion "companion paper
+   in preparation (working title ...)" sentence and the "follow-on paper"
+   contribution sentence; Conclusion per action 4. (Annex A's "subsequent
+   paper" sentence belongs to 0563.)
+7. Update `test_manuscript_0512_structure.py` decision pins (same PR);
+   sweep `\ref{sec:fusion}` call sites — §quality line ~348 and
+   Conclusion — still read correctly now that sec:fusion is a subsection.
+
+## Test
+
+- Red step: extend `test_manuscript_0512_structure.py` — assert a numbered
+  `\section{Future research}` exists containing both a methods-review
+  citation (e.g. `Petroni-Fabio2019:lm-as-kb`) and a programme keyword,
+  and assert no `\section*{Related Work` remains in the body. Red on
+  current main.tex, green after the restructure.
+
+## Verification
+
+- [ ] `make check` green (incl. crossref test: every \ref resolves)
+- [ ] Manuscript builds (tectonic via the manuscript Makefile rule)
+- [ ] No `companion paper`, `follow-on paper`, `planned cross-evaluation`
+  match in the body (grep)
+- [ ] §fusion loose guard still counts ≥2 primacy markers inside the moved
+  subsection
+- [ ] Roadmap paragraph mentions no dead section
+
+## Invariants
+
+- All empirical numbers stay macro-sourced (no hand-typed values)
+- Existing labels preserved on moved content; no orphaned \label
+- Negative guards and the in-sample-caveat conditional guard untouched
+- §1–§6 prose unchanged except the roadmap paragraph
+
+## Exit criteria
+
+- [ ] New arc in place: Extensions (4 subsections incl. promoted screen) →
+  Discussion (instrument critique only) → Future research (numbered,
+  lessons + programme, RW—Methods gone) → slim Conclusion
+- [ ] No unnumbered section between §6 and the backmatter
+- [ ] No companion-paper promise in the main text
+- [ ] `make check` passes
