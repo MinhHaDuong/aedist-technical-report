@@ -11,7 +11,7 @@ import csv
 from pathlib import Path
 
 import pytest
-from manuscript_source import body, longtable_rows, raw, title
+from manuscript_source import body, raw, title
 
 pytestmark = pytest.mark.adherence
 
@@ -93,15 +93,33 @@ def _csv_lookup() -> dict[tuple[str, str, str], tuple[float, float]]:
     return out
 
 
+AGENTS_TABLE_TEX = REPO_ROOT / "report" / "inputs" / "generated" / "tab_exp2_2x2_agents.tex"
+
+
 def _parse_table_rows() -> list[tuple[str, str, str, float, float]]:
-    """Parse Table 1 longtable rows: (agent_label, mode, docs, f1, cost)."""
+    """Parse Table 1 rows from the generated include (ticket 0547):
+    (agent_label, mode, docs, f1, cost)."""
     rows: list[tuple[str, str, str, float, float]] = []
-    for cells in longtable_rows("F1 (mean)"):
+    for line in AGENTS_TABLE_TEX.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line.endswith("\\\\"):
+            continue
+        cells = [c.strip() for c in line[:-2].split("&")]
         if len(cells) < 5 or cells[0] == "Agent":
             continue
         agent, mode, docs, f1, cost = cells[:5]
         rows.append((agent, mode, docs, float(f1), float(cost)))
     return rows
+
+
+def test_table1_is_generated_include():
+    """Table 1 is a generated include, not a hand-typed longtable (ticket 0547)."""
+    assert AGENTS_TABLE_TEX.exists(), (
+        f"{AGENTS_TABLE_TEX} not generated — run: make -f experiments/render.mk exp2-analysis-report"
+    )
+    assert "\\input{../../report/inputs/generated/tab_exp2_2x2_agents.tex}" in raw(), (
+        "main.tex must \\input the generated 2x2 agents table, not hand-type it"
+    )
 
 
 def test_table1_values_match_source_csv():

@@ -68,8 +68,12 @@ def test_difficulty_table_total_rate_matches_artifact():
     m = re.search(r"Ensemble\s*&\s*\d+\s*&\s*[\d.]+\\%\s*&\s*([\d.]+)\\%", tex)
     assert m, "could not parse the Ensemble row recognition rate from the artifact"
     rate = m.group(1)  # e.g. "26.6"
-    assert f"{rate}%" in _md(), (
-        f"§7 difficulty-table overall recognition rate should be {rate}% (from {DIFF_TEX.name})"
+    # Since ticket 0547 the difficulty table is a generated include; the rate
+    # literal lives in the EN body artifact that main.tex \inputs.
+    en_body = DIFF_TEX.with_name("tab_status_difficulty_en.tex")
+    assert en_body.exists(), f"{en_body} not generated"
+    assert f"\\textbf{{{rate}\\%}}" in en_body.read_text(encoding="utf-8"), (
+        f"difficulty-table overall recognition rate should be {rate}% (from {DIFF_TEX.name})"
     )
 
 

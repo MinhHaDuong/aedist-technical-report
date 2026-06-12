@@ -43,6 +43,7 @@ ANALYSIS_EXP2_SPIRE_FIG := $(ANALYSIS_GEN)/fig_quality_spider.pdf
 ANALYSIS_EXP2_2X2_CSV := $(ANALYSIS_DERIVED_DIR)/tab_exp2_2x2.csv
 ANALYSIS_EXP2_2X2_TEX := $(ANALYSIS_GEN)/tab_exp2_2x2.tex
 ANALYSIS_EXP2_2X2_FR_TEX := $(ANALYSIS_GEN)/tab_exp2_2x2_fr.tex
+ANALYSIS_EXP2_2X2_AGENTS_TEX := $(ANALYSIS_GEN)/tab_exp2_2x2_agents.tex
 ANALYSIS_EXP2_COVERAGE_SPLIT := $(ANALYSIS_GEN)/fig_exp2_coverage.pdf
 ANALYSIS_EXP2_COST_SPLIT := $(ANALYSIS_GEN)/fig_exp2_cost.pdf
 ANALYSIS_GROUNDING_LADDER_FIG := $(ANALYSIS_GEN)/fig_grounding_ladder.pdf
@@ -417,13 +418,15 @@ ANALYSIS_EXP2_REPORT_TARGETS := \
 # per-(agent,arm) CSV. Agent is the unit of replication; see the module docstring.
 # Reads the committed cross-eval CSV (P2 source) and the flat arm dirs (P1
 # source); produces nothing under P2 outcome paths.
-$(ANALYSIS_EXP2_2X2_TEX): $(ANALYSIS_EXP2_CROSS_EVAL_CSV)
-	@mkdir -p $(dir $@)
+$(ANALYSIS_EXP2_2X2_TEX) $(ANALYSIS_EXP2_2X2_AGENTS_TEX) &: $(ANALYSIS_EXP2_CROSS_EVAL_CSV) \
+		$(ANALYSIS_REPO_ROOT)/src/aedist/tabulate_exp2_2x2.py
+	@mkdir -p $(ANALYSIS_GEN)
 	uv run python -m aedist.tabulate_exp2_2x2 \
 	    --cross-eval-csv $(ANALYSIS_EXP2_CROSS_EVAL_CSV) \
 	    --flat-root $(ANALYSIS_DERIVED_DIR) \
 	    --output-csv $(ANALYSIS_EXP2_2X2_CSV) \
-	    --output-tex $@ --lang en
+	    --output-tex $(ANALYSIS_EXP2_2X2_TEX) \
+	    --output-agents-tex $(ANALYSIS_EXP2_2X2_AGENTS_TEX) --lang en
 
 $(ANALYSIS_EXP2_2X2_FR_TEX): $(ANALYSIS_EXP2_CROSS_EVAL_CSV)
 	@mkdir -p $(dir $@)
@@ -490,6 +493,7 @@ $(ANALYSIS_EXP2_WIKI_CSV) $(ANALYSIS_EXP2_WIKI_MACROS) &: \
 RENDER_EXP2_ANALYSIS_REPORT := \
 	$(ANALYSIS_EXP2_REPORT_TARGETS) \
 	$(ANALYSIS_EXP2_2X2_TEX) $(ANALYSIS_EXP2_2X2_FR_TEX) \
+	$(ANALYSIS_EXP2_2X2_AGENTS_TEX) \
 	$(ANALYSIS_EXP2_COVERAGE_SPLIT) $(ANALYSIS_EXP2_COST_SPLIT) \
 	$(ANALYSIS_SLIDE_MACROS) \
 	$(ANALYSIS_GEN)/stat_tests_arm1_vs_arm2.txt
@@ -777,6 +781,7 @@ RENDER_REPORT_TABLES := \
 	$(ANALYSIS_GEN)/tab_converter_benchmark.tex \
 	$(ANALYSIS_GEN)/tab_source_grounding.tex \
 	$(ANALYSIS_GEN)/tab_status_difficulty.tex \
+	$(ANALYSIS_GEN)/tab_status_difficulty_en.tex \
 	$(ANALYSIS_GEN)/macros_source_concordance.tex \
 	$(ANALYSIS_GEN)/tab_source_concordance.tex \
 	$(ANALYSIS_GEN)/macros_phase_collisions.tex \
@@ -970,12 +975,13 @@ $(ANALYSIS_GEN)/fig_exp2_recognition_matrix_arm4.pdf $(ANALYSIS_GEN)/macros_exp2
 # status group order is shared with the matrix's column bands. The manuscript
 # macros (proposed share/rate, overall rate, status accuracy excluding the
 # proposed stratum) come from the same single pass (grouped &: rule, 0531).
-$(ANALYSIS_GEN)/tab_status_difficulty.tex $(ANALYSIS_STATUS_DIFFICULTY_MACROS) &: $(ANALYSIS_EXP1_BATCH2_RECORDS) $(ANALYSIS_EXPERT_REF) $(ANALYSIS_REPO_ROOT)/src/aedist/tabulate_status_difficulty.py $(ANALYSIS_REPO_ROOT)/src/aedist/exp1_recognition.py
+$(ANALYSIS_GEN)/tab_status_difficulty.tex $(ANALYSIS_GEN)/tab_status_difficulty_en.tex $(ANALYSIS_STATUS_DIFFICULTY_MACROS) &: $(ANALYSIS_EXP1_BATCH2_RECORDS) $(ANALYSIS_EXPERT_REF) $(ANALYSIS_REPO_ROOT)/src/aedist/tabulate_status_difficulty.py $(ANALYSIS_REPO_ROOT)/src/aedist/exp1_recognition.py
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.tabulate_status_difficulty \
 	    --records-glob "$(ANALYSIS_EXPERIMENTS_DIR)/outputs/exp1_batch2/*.record.json" \
 	    --reference $(ANALYSIS_EXPERT_REF) \
 	    --output $(ANALYSIS_GEN)/tab_status_difficulty.tex \
+	    --output-body-en $(ANALYSIS_GEN)/tab_status_difficulty_en.tex \
 	    --output-macros $(ANALYSIS_STATUS_DIFFICULTY_MACROS)
 
 # Source concordance (ticket 0486): reference vs GEM + Wikipedia, bidirectional
