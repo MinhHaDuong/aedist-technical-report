@@ -1,0 +1,107 @@
+%erg 0.1
+Title: Drop the registration discussion — present Experiment 2 as a plain 2×2 four-arm design
+Created: 2026-06-12
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-12T15:55Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Author decision (2026-06-12): the paper no longer discusses
+pre-registration. Experiment 2 is presented as a plain 2×2 factorial —
+query mode (naive / optimised) × documents (no / yes), four agents, N=5
+per cell, 80 sessions — all arms on equal footing. No "registered vs
+unregistered", no "exploratory because unregistered", no "as-run
+deviations from the registration". Real facts carried by those sentences
+(sequencing of the two batches, the judge-vendor change, exclusions,
+Phase C deferral) survive as plain design description.
+
+Reviewer line numbers below were verified on main 79d3cba3 — re-locate
+by grep/label before editing (line hints die fast across merges).
+
+## Relevant files
+
+- `slides/manuscript/main.tex` — all sites below
+- `tests/test_manuscript_exp2_annex_as_run.py` — pins the old vocabulary
+- `docs/editorial-brief.md` — sweep for registration vocabulary in
+  entries; update wording (decisions themselves unchanged)
+
+## Actions (per-site plan; quotes abbreviated, grep to relocate)
+
+1. ~L736-739 table caption `tbl:exp2-2x2`: drop the bolded
+   "registered"/"unregistered, exploratory" sentences → "The
+   §\ref{sec:exp2} narrative focuses on the two no-documents arms (naive
+   vs optimised). The two documents = yes rows per agent complete the
+   2×2 factorial (\ref{sec:annex-exp2})."
+2. ~L802 equalisation paragraph: keep the tentativeness, re-anchor it on
+   design (N=4 agents, directional evidence), drop "unregistered and
+   exploratory".
+3. ~L829 Extensions opener: keep exploratory-as-post-hoc, drop the
+   registration clause → "They are exploratory — performed after the
+   experiments were presented; each ..."
+4. ~L1206 Conclusion: "the exploratory, unregistered documents
+   condition" → "the documents condition".
+5. ~L1970-1984 exp2-annex italic opener: rewrite registration-free —
+   four agents, N=5/cell, 2×2 factorial, 80 sessions; no-documents arms
+   (40) ran first, documents arms (40) completed the factorial, reported
+   jointly; F1 scored for all 80; Phase C deferred; inferential analysis
+   lives in the technical report's Experiment 2 chapter. Drop the
+   "registered-report write-up — registration, the H1--H6 analysis
+   plan" sentence.
+6. ~L2101-2107 classifier paragraph: "the registered (and earlier-run)
+   choice" → "the earlier-run choice"; "the cross-vendor independence
+   the registration sought when it moved off" → "the cross-vendor
+   independence goal that drove the switch away from".
+7. ~L2154: "The registered design has two arms" → "The no-documents
+   design has two arms".
+8. ~L2190-2227: retitle subsection "As-run deviations from the
+   registration" → "Design notes" (`\subsection*` + matching
+   \addcontentsline). Keep the three facts as plain design decisions:
+   documents axis added (40→80 sessions, never aggregated with
+   no-documents arms in the F1 analysis), Claude optimised-arm 0/5
+   bibliography-parsability exclusion (still F1-scorable), Phase C
+   deferred. Final sentence loses "registered-report treatment" and
+   "locked H1--H6 plan": "The inferential analysis, per-arm validity
+   criteria, and the descriptive F1/cost statistics are in the technical
+   report's Experiment 2 chapter."
+9. ~L2318: "all 40 registered runs" → "all 40 no-documents runs".
+10. Tests: in `tests/test_manuscript_exp2_annex_as_run.py` DELETE
+    `test_preregistration_named` entirely; in
+    `test_factorial_framing_present` delete the "exploratory" assertion
+    (keep the 2×2 check); update the `test_references_report_chapter`
+    docstring ("for the registered analysis" → neutral). Same PR as the
+    prose change.
+11. Sweep: `grep -n -i 'regist' slides/manuscript/main.tex` must return
+    only "statistical register"-family hits afterwards; sweep
+    `docs/editorial-brief.md` likewise and reword entry text that says
+    "unregistered/exploratory condition" to "documents condition".
+
+## Test
+
+- Red step: add to the exp2-annex test file a negative guard
+  `test_no_registration_vocabulary`: none of "pre-registered",
+  "registration", "registered arm", "unregistered" appear in the
+  manuscript body (allow "register" as noun for the statistical
+  register — match case-sensitively on the listed forms). Red before
+  the rewrite, green after.
+
+## Verification
+
+- [ ] `make check` green; manuscript builds
+- [ ] Sweep grep (action 11) clean
+- [ ] The three Design-notes facts still present (documents axis,
+  0/5 parsability exclusion, Phase C deferral)
+
+## Invariants
+
+- All empirical numbers stay macro-sourced; no claim strength changes
+  (claims alignment is ticket 0568's job)
+- Labels unchanged; em-dash ratchet not exceeded
+
+## Exit criteria
+
+- [ ] Experiment 2 reads as a plain 2×2 four-arm design throughout
+- [ ] Zero registration vocabulary outside "statistical register"
+- [ ] `make check` passes

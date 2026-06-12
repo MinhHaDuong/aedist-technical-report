@@ -1,0 +1,77 @@
+%erg 0.1
+Title: Repetition compression across the restructure seams
+Created: 2026-06-12
+Author: HDMX-coding-agent
+Blocked-by: 0568
+
+--- log ---
+2026-06-12T15:55Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Child of sweep tracker 0566. The restructure moved prose between
+sections and left the same content stated 2-3 times. Reviewer findings
+below (main 79d3cba3; relocate by grep — 0567/0568 will have shifted
+lines). Principle: keep the structurally-primary occurrence, compress
+others to a clause + \ref pointer. Do NOT delete content that does
+different work in different places — compress only true repetition.
+
+## Actions (MAJOR first)
+
+1. ρ = 0.92 with identical gloss in §7.2 (~L858) and Conclusion
+   (~L1211): keep both numbers (the Conclusion needs it) but vary the
+   Conclusion to the compressed form already mandated by the brief
+   (value + in-sample caveat + \ref), no re-explanation of the
+   mechanism.
+2. "Curated documents equalise the agents" fully developed three times
+   (~L801-821 §6, ~L913-920 §7.4, ~L1205-1209 Conclusion): §6 is
+   primary. In §7.4 compress the re-narration to one citing sentence
+   ("Once the agents share a good document set, single-shot performance
+   converges (§\ref{sec:exp2})"). Conclusion keeps its one-sentence
+   version.
+3. Discussion opener (~L949-956) re-narrates all three results already
+   summarised in the intro (~L148-157) and §7: compress to one
+   orienting sentence + the section's actual scope statement (what the
+   instrument can and cannot support).
+4. "Managed, auditable knowledge base ... dated snapshot" formula
+   near-verbatim in §7.3 (~L899) and §7.4 (~L921): keep §7.4 (the
+   system subsection); in §7.3 reduce to a forward-reference clause.
+5. Intro roadmap (~L165-168) vs §7 opener (~L825-831) near-duplicate
+   enumeration of the four extensions: trim the intro roadmap to "extend
+   with post-hoc analyses (§\ref{sec:extensions})" without enumerating
+   the four.
+
+## Actions (MINOR — tighten if cheap)
+
+6. Status-composition conclusion near-verbatim in §7.1 (~L843-848) and
+   recognition annex (~L2361-2366): acceptable summary/full split —
+   vary the annex sentence wording so it is not verbatim.
+7. GPT-5.5 refusal episode told three times (~L588 §5, ~L1015
+   Discussion, ~L1704 exp1 annex): §5 reports the event, Discussion
+   interprets it — both stay. The annex occurrence drops the quote and
+   becomes a pointer to the Discussion paragraph.
+8. "Single-model ceiling" echo across §7.3/§7.4/Conclusion: functional
+   echoes; reword to avoid identical phrasing, no structural change.
+
+## Test
+
+- Red step: none mechanical (semantic repetition is not CI-testable
+  under the polarity rule). Verification is by the PR reviewer reading
+  the four seams; note this explicitly in the PR body.
+
+## Verification
+
+- [ ] Each MAJOR item: primary occurrence intact, secondaries compressed
+- [ ] No information lost (every fact still stated somewhere)
+- [ ] `make check` green; manuscript builds; em-dash ratchet respected
+
+## Invariants
+
+- Claim strength and hedges unchanged (0568 settled them)
+- Macros untouched; labels untouched
+
+## Exit criteria
+
+- [ ] The five MAJOR repetitions resolved
+- [ ] `make check` passes
