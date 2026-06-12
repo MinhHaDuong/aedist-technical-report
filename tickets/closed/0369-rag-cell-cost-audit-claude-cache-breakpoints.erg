@@ -2,6 +2,7 @@
 Title: Audit RAG-cell costs (arms 3 & 4) — confirm full-convo resend, then add cache breakpoints
 Created: 2026-05-28
 Author: claude
+Closed: live smoke PASS (1h-bucket write 7749 tok, full prefix read-back); wiring merged in #1004
 
 --- log ---
 2026-05-28T00:00Z claude created — Claude costs on arm4 (5D) and possibly arm3 (1D) look high; hypothesis is mid-conversation tail not cached
@@ -11,6 +12,7 @@ Author: claude
 2026-06-12T11:05Z claude note Correction: live-smoke script is COMMITTED at scripts/verify_anthropic_cache_live.py (not job tmp). Review fixes on PR #1004: models.yaml cache_write 6.25->10.0 (1h rate) + test fixture, constant renamed ANTHROPIC_CACHE_CONTROL.
 2026-06-12T11:40Z claude note LIVE SMOKE PASSED (author-approved spend, total ~$0.38): scripts/verify_anthropic_cache_live.py on production run_anthropic_call path. Turn 1: cache_creation.ephemeral_1h_input_tokens=7749 (5m bucket=0 — 1h TTL live on the wire), input_tokens=13. Turn 2: cache_read_input_tokens=7749 (full prefix read back), +5 written for sliding breakpoint 3. Also confirms under-4096 system prompt is harmless: cumulative system+user prefix caches as one unit. All exit work done — ticket closable at PR #1004 merge (author to confirm).
 
+2026-06-12T07:23Z HDMX-coding-agent closed — live smoke PASS (1h-bucket write 7749 tok, full prefix read-back); wiring merged in #1004
 --- body ---
 ## Context
 
