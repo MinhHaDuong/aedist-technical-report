@@ -1,0 +1,39 @@
+%erg 0.1
+Title: CI ratchet: manuscript and report builds must emit zero Overfull warnings
+Created: 2026-06-12
+Author: HDMX-coding-agent
+Blocked-by: 0555
+
+--- log ---
+2026-06-12T09:20Z HDMX-coding-agent created
+
+--- body ---
+## Context
+The overfull-\hbox defect class regenerates: any prose edit can
+reintroduce a long unbreakable `\texttt{}` path. PR #1010 zeroed the
+manuscript; ticket 0555 will zero the report. Without a standing guard,
+the count silently creeps back — /gaze is per-PR and won't grep build
+logs for an unrelated future PR.
+
+## Relevant files
+- `slides/Makefile`, `report/Makefile` — build entry points
+- `tests/` — adherence-test home (`@pytest.mark.adherence`, but this one
+  needs tectonic + network bundle, so mark `slow` too)
+
+## Actions
+1. Add a test (or Make target wired into CI) that builds the document(s)
+   and asserts the log contains zero `Overfull \\hbox` lines.
+2. Start with `slides/manuscript/main.tex` (already at zero); extend to
+   `report.tex` once 0555 lands (hence Blocked-by).
+
+## Test
+- The ratchet itself: inject a deliberately overlong \texttt path in a
+  temp copy → test goes red.
+
+## Invariants
+- `make check-fast` stays <30s — the build ratchet runs in the slow/CI
+  tier only.
+
+## Exit criteria
+- CI fails when a PR reintroduces an Overfull \hbox in manuscript or
+  report builds.

@@ -53,6 +53,17 @@ macro).
   workaround.
 - Asset paths are relative to `slides/manuscript/` (tectonic resolves against
   the input file's directory): `../../report/inputs/generated/…`.
+- File paths, config keys, and other long monospaced identifiers in prose use
+  `\fpath{experiments/…}` (breakable, no underscore escaping; defined in the
+  preamble via xurl), never `\texttt{}` — long `\texttt` tokens cannot wrap
+  and are the dominant source of overfull \hbox warnings (PR #1010 removed
+  14 of them, worst 453pt). Keep `\texttt` for short literals (flag names,
+  single filenames) only. Brace-expansion shorthands like
+  `\{a.json,b.json\}` are unbreakable too — enumerate the files instead.
+- Tectonic's rerun detector trips on the byte-identical bibtex `.bbl` rewrite
+  ("internal consistency problem"); the manuscript Makefile rule caps passes
+  with `tectonic -r 2` (convergence verified). Don't chase the warning in
+  the document.
 
 ## Related Work sections
 

@@ -1,0 +1,47 @@
+%erg 0.1
+Title: Report build: 139 overfull hboxes and tectonic 6-pass bbl loop
+Created: 2026-06-12
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-12T09:20Z HDMX-coding-agent created
+
+--- body ---
+## Context
+PR #1010/#1011 cleaned `slides/manuscript/main.tex` to zero overfull
+\hboxes and capped tectonic at 3 passes. The /roar sweep found the same
+defect class in the French report: `tectonic report.tex` emits 139
+Overfull \hbox warnings and the same spurious "internal consistency
+problem when checking if report.bbl changed" 6-pass loop.
+
+## Relevant files
+- `report/report.tex` — the prose; expect long unbreakable `\texttt{}` paths
+- `report/Makefile` (line ~19) — plain `tectonic $<` invocation
+- `slides/manuscript/main.tex` — reference implementation: `\fpath`
+  (`\DeclareUrlCommand\fpath{\urlstyle{tt}}` via xurl), brace-list rewrite,
+  `{\small\setlength{\tabcolsep}{4pt} …}` around over-wide generated tables
+
+## Actions
+1. Add the `\fpath` preamble command to `report.tex` (load `xurl` if absent).
+2. Convert the offending long `\texttt{}` paths; shrink over-wide tables
+   locally; rewrite any unbreakable brace-expansion token.
+3. Verify convergence (stable .aux/.bbl hashes across runs, zero
+   `undefined` in the log), then cap the Makefile rule with `tectonic -r 2`
+   mirroring the slides/Makefile comment.
+
+## Test
+- Build log grep: `tectonic report.tex 2>&1 | grep -c Overfull` → 0
+  (red first: currently 139).
+
+## Verification
+- [ ] 0 Overfull warnings on a clean rebuild
+- [ ] No "internal consistency"/"rerun seems needed" warnings
+- [ ] PDF page count and references unchanged (spot-check)
+
+## Invariants
+- No prose meaning changes; layout-only edits
+- Generated artifacts untouched (wrap at the `\input` site, not the emitters)
+
+## Exit criteria
+- `make -C report` (or the root target) builds report.pdf with zero
+  Overfull and zero tectonic consistency warnings.
