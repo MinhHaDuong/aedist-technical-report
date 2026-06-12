@@ -3,7 +3,8 @@
 Pins the phase-collision analysis on the real reference: Vũng Áng 1/2 must
 appear in the structural false-match set at threshold 90 (partial_ratio is
 structurally high across phases), and must be flagged veto_blocked=True
-(digit tokens differ, so the LP unit-number veto fires — lp.py:203–208).
+(digit tokens differ, so the LP unit-number veto fires — ``digit_veto`` in
+matching/lp.py).
 """
 
 import pytest
