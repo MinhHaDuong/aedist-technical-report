@@ -73,6 +73,14 @@ def test_screen_binary_gap_matches_artifact():
     assert _macro("ScreenBinaryGap") == _screen_metric("per_model_binary_gap")
 
 
+def test_screen_pooled_spearman_matches_artifact():
+    """Ticket 0566: the manuscript's headline ρ (2 dp) tracks the pooled
+    Spearman in the co-generated CSV (3 dp) — same drift-guard caveat as
+    the two checks above."""
+    csv_val = float(_screen_metric("pooled_spearman_cap_distinct"))
+    assert _macro("ScreenPooledSpearman") == f"{csv_val:.2f}"
+
+
 def test_exp1_f1_mean_matches_artifact():
     rows = list(csv.DictReader(XEVAL_CSV.open(encoding="utf-8")))
     mean = statistics.mean(float(r["accuracy_f1"]) for r in rows if r.get("accuracy_f1"))
@@ -177,7 +185,7 @@ def test_consolidated_contains_every_fragment_verbatim():
     if not CONSOLIDATED.exists():
         pytest.skip(f"{CONSOLIDATED} not generated")
     fragments = _fragment_paths()
-    assert len(fragments) == 16, f"expected 16 fragments, got {len(fragments)}"
+    assert len(fragments) == 17, f"expected 17 fragments, got {len(fragments)}"
     consolidated = CONSOLIDATED.read_text(encoding="utf-8")
     for frag in fragments:
         assert frag.exists(), f"fragment {frag.name} missing on disk"
@@ -220,3 +228,17 @@ def test_stale_review_literals_gone():
     text = _unexpanded_body()
     for needle in ("+0.215", "\\$2.85", "0.146", "(65 concordant"):
         assert needle not in text, f"stale literal {needle!r} back in main.tex"
+
+
+def test_exp2_no_handtyped_f1_pairs():
+    """Ticket 0572: §exp2 F1 value pairs flow from macros_exp2_f1.tex — a
+    hand-typed '0.xx to 0.yy' pair in the UNexpanded source is a literal
+    revert (negative guard per the 0557 polarity rule; the positive value
+    checks live in test_manuscript_claims_alignment.py on expanded text)."""
+    text = _unexpanded_body()
+    start = text.find("\\label{sec:exp2}")
+    assert start != -1, "no \\label{sec:exp2} in main.tex body"
+    nxt = re.search(r"\\section\*?\{", text[start:])
+    sec = text[start : start + nxt.start()] if nxt else text[start:]
+    pairs = re.findall(r"0\.\d{2} to 0\.\d{2}", sec)
+    assert not pairs, f"hand-typed F1 pairs back in §exp2: {pairs}"

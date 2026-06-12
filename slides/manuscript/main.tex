@@ -724,9 +724,12 @@ directly comparable to §\ref{sec:exp1}'s per-model numbers;
 within-Experiment-2 comparisons all use this common arm-1 sweep as their
 baseline. Read with that caveat, setting each agent's naive-arm mean F1
 (Table~\ref{tbl:exp2-2x2}) against the same lab's flagship in the
-§\ref{sec:exp1} parametric sweep, only Mistral improved (0.41 to 0.49):
-Anthropic declined (0.67 to 0.60), Qwen declined (0.41 to 0.37), and
-OpenAI stayed flat (0.63 to 0.63), so web access and extended reasoning
+§\ref{sec:exp1} parametric sweep, only Mistral improved
+(\ExpTwoFOneMistralMemory{} to \ExpTwoFOneMistralNaive): Anthropic
+declined (\ExpTwoFOneAnthropicMemory{} to \ExpTwoFOneAnthropicNaive),
+Qwen declined (\ExpTwoFOneQwenMemory{} to \ExpTwoFOneQwenNaive), and
+OpenAI stayed flat (\ExpTwoFOneOpenAIMemory{} to
+\ExpTwoFOneOpenAINaive), so web access and extended reasoning
 improved on the memory-only baseline for only one of the four agents.
 Row-level F1 against the \NumRefPlants-plant reference is
 now scored for all four arms (Table~\ref{tbl:exp2-2x2}); cross-model
@@ -797,9 +800,12 @@ constrains coverage from Turn 1). The optimised protocol costs 2--4×
 more per run than naive across all agents; OpenAI's ratio is most
 extreme (median \$0.73 optimised vs \$0.27 naive). On row-level F1
 (Table~\ref{tbl:exp2-2x2}, no-documents rows), the multi-turn protocol
-degraded three of the four agents (Anthropic 0.60 to 0.56, Mistral 0.49
-to 0.39, Qwen 0.37 to 0.27) and gave OpenAI a marginal gain (0.63 to
-0.65). We did not find published comparisons of frontier deep-research
+degraded three of the four agents (Anthropic \ExpTwoFOneAnthropicNaive{}
+to \ExpTwoFOneAnthropicOptimised, Mistral \ExpTwoFOneMistralNaive{} to
+\ExpTwoFOneMistralOptimised, Qwen \ExpTwoFOneQwenNaive{} to
+\ExpTwoFOneQwenOptimised) and gave OpenAI a marginal gain
+(\ExpTwoFOneOpenAINaive{} to \ExpTwoFOneOpenAIOptimised). We did not
+find published comparisons of frontier deep-research
 agents on structured-output coverage at this granularity.
 
 \textbf{Provenance: corroboration by a second source is the exception.}
@@ -824,18 +830,23 @@ per cell (\ref{sec:annex-exp2}), directional evidence rather than a
 significance test, so the pattern is read tentatively, but it bears
 directly on where to invest. When agents receive the
 same reference documents in a single query, the two weakest performers
-climb toward the pack: Qwen lifts from F1 0.37 to 0.62 and Mistral from
-0.49 to 0.59, against marginal movement for the already-strong Anthropic
-(0.60 to 0.61). The spread across agents (max − min F1) narrows from
-0.26 without documents to 0.18 with them — three of the four now
-converge near F1 0.61, with only OpenAI keeping headroom (0.77). This is
+climb toward the pack: Qwen lifts from F1 \ExpTwoFOneQwenNaive{} to
+\ExpTwoFOneQwenDocsSingle{} and Mistral from \ExpTwoFOneMistralNaive{} to
+\ExpTwoFOneMistralDocsSingle, against marginal movement for the
+already-strong Anthropic (\ExpTwoFOneAnthropicNaive{} to
+\ExpTwoFOneAnthropicDocsSingle). The spread across agents (max − min F1)
+narrows from \ExpTwoFOneSpreadNoDocs{} without documents to
+\ExpTwoFOneSpreadDocs{} with them — three of the four now
+converge near F1 \ExpTwoFOneDocsConvergence, with only OpenAI keeping
+headroom (\ExpTwoFOneOpenAIDocsSingle). This is
 equalisation, not rescue: with a shared document set, which model runs
 the query matters less than which documents it is handed.
 
 The effect is
 specific to single-query prompting — the multi-turn protocol with the
-same documents does not equalise and in fact degrades Anthropic (0.61 to
-0.38). Equalising at F1 ≈ 0.61 still leaves the cohort short of the
+same documents does not equalise and in fact degrades Anthropic
+(\ExpTwoFOneAnthropicDocsSingle{} to \ExpTwoFOneAnthropicDocsMulti).
+Equalising at F1 ≈ \ExpTwoFOneDocsConvergence{} still leaves the cohort short of the
 §\ref{sec:quality} quality bar; it suggests the binding constraint lies
 in document quality rather than model capability, without resolving it. Extending
 these observations to a wider model set (Sonnet, Mistral Medium/Small,
@@ -877,7 +888,7 @@ runs can be rejected without ground truth at all. Degenerate runs are
 template-like: near-constant capacity and status columns (one run emits
 496 rows, every one 1200 MW and ``Operating''). Within-run capacity
 variability — the number of distinct capacity values — correlates
-with reference-based F1 at Spearman ρ = 0.92 across the 70 runs. An
+with reference-based F1 at Spearman ρ = \ScreenPooledSpearman{} across the 70 runs. An
 in-sample threshold rule rejects 23 of the 26 weakest runs with no false
 rejection: an existence proof rather than a validated detector, as
 the cutoffs were tuned on the same 70 runs. The
@@ -1234,7 +1245,7 @@ four, though the multi-turn protocol does not replicate the effect
 
 Two levers already deliver without any new data
 collection. The reference-free screen rejects the weakest outputs
-without ground truth (Spearman ρ = 0.92 against reference-based F1,
+without ground truth (Spearman ρ = \ScreenPooledSpearman{} against reference-based F1,
 pooled across models and in-sample; within-model signal positive but
 modest, \ref{sec:annex-screen}). Fusion recovers coverage: pooling runs across
 models finds plants no single model reliably finds, and requiring two
@@ -1902,8 +1913,8 @@ on a continuous red→green scale (0 = every run fails the criterion, 1 =
 every run clears it); the simple mean suffices because a model that
 systematically zeros a free criterion averages to ≈0 and reads dark red,
 the §\ref{sec:quality} ``too weak to clear the bar'' signal. The
-§\ref{sec:exp1} internal-coherence screen (the reference-free ρ=0.92
-veto, \texttt{cap\_distinct\ ≤\ 4\ OR\ status\_distinct\ ≤\ 1}) is
+§\ref{sec:exp1} internal-coherence screen (the reference-free
+ρ=\ScreenPooledSpearman{} veto, \texttt{cap\_distinct\ ≤\ 4\ OR\ status\_distinct\ ≤\ 1}) is
 \textbf{merged into the Coherence dimension} as its positive complement
 (\texttt{1\ −\ veto}, the ``Internal coherence'' row), so higher is
 better in lockstep with every other sub-score rather than occupying a
@@ -2472,7 +2483,7 @@ reference). Under ≥2-models in E1: F1=\FusionRTwoEOneFFrac{}, TP=\FusionRTwoEO
 \section{Run-grain screen validation: within-model accuracy gap}\label{sec:annex-screen}
 
 The screening subsection (§\ref{sec:ext-screen}) reports a pooled
-Spearman ρ = 0.92 between
+Spearman ρ = \ScreenPooledSpearman{} between
 within-run capacity variability and reference-based F1 across 70
 Experiment 1 runs. A potential confound: weak models are weak across the
 board, so the correlation may reflect \emph{model quality} rather than
