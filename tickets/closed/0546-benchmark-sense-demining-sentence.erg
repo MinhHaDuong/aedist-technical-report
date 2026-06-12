@@ -2,11 +2,13 @@
 Title: De-mine the title's "Benchmark" claim: one intro sentence defining the sense claimed
 Created: 2026-06-11
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1000
 
 --- log ---
 2026-06-11T21:30Z orchestrator created from author question "Is the word Benchmark in the title overpromising?"
 2026-06-12T00:10Z claude note Checked intro for duplication: no existing scoping sentence and no contamination mention near key results (parametric ceiling first appears in conclusion/methods). Added one sentence with the contamination clause after the key-results benchmark claim in main.tex. Adherence suite green (269 passed), tectonic build green.
 
+2026-06-12T05:21Z HDMX-coding-agent closed — autoclosed — PR #1000
 --- body ---
 ## Context
 The title claims "A Benchmark and Research Programme". The claim is earned —
