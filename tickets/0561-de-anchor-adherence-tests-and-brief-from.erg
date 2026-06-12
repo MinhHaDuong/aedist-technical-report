@@ -5,6 +5,7 @@ Author: HDMX-coding-agent
 
 --- log ---
 2026-06-12T13:30Z HDMX-coding-agent created
+2026-06-12T12:17Z claude note raid feasibility PASS — see Feasibility notes section
 
 --- body ---
 ## Context
@@ -90,6 +91,28 @@ assertions intact.
 - No assertion weakened or deleted; negative guards untouched
 - `slides/manuscript/main.tex` untouched
 - Decision pins in `test_manuscript_0512_structure.py` intact
+
+## Feasibility notes (raid 2026-06-12)
+
+Verified against origin/main b8f054e1. Plan adjustments, exit criteria unchanged:
+
+- `\section*{Related Work — Methods}` (terminator in
+  test_manuscript_cohort_and_caveats.py ~L284) has NO label — the helper
+  cannot key on it. Slice to the next sectioning command of any kind
+  (`\section`, `\section*`, `\appendix`, `\end{document}`), so unlabelled
+  terminators work for free.
+- The editorial-brief entry named `novelty-conjunction-claim` in this ticket
+  is actually slugged `novelty-provenance-temporality` (brief L132).
+- Action-5 sweep must also catch `tests/test_manuscript_framing_0513.py:30-31`
+  (Introduction→Related Work Empirical title-anchored slice).
+- `tests/test_manuscript_exp2_equalization.py::_section6` start is already
+  label-keyed; only its terminator (full title of §7) needs the helper.
+- `test_manuscript_0512_structure.py` has no extraction to re-key (direct
+  string presence checks) — leave the file untouched here.
+- `test_manuscript_structure.py:101,108,119` heading presence checks ARE the
+  assertion target — stay as-is per the exception rule.
+- All target labels confirmed present in main.tex (sec:fusion L821,
+  sec:discussion L854, sec:annex-exp2 L1946).
 
 ## Exit criteria
 

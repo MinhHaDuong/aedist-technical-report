@@ -6,6 +6,7 @@ Blocked-by: 0562
 
 --- log ---
 2026-06-12T13:30Z HDMX-coding-agent created
+2026-06-12T12:17Z claude note raid feasibility PASS conditional on 0561 — see Feasibility notes section
 
 --- body ---
 ## Context
@@ -84,6 +85,32 @@ Every annex starts on a new page.
 - Annex CONTENT unchanged except the two figure relocations, the one new
   referencing sentence, and the promise strip
 - The `\theHfigure`/S-counter preamble block after `\appendix` intact
+
+## Feasibility notes (raid 2026-06-12)
+
+Verified against origin/main b8f054e1. Exit criteria unchanged:
+
+- The "tests should pass unchanged" claim holds ONLY after 0561 lands: the
+  current `test_manuscript_annex_c_as_run.py:43` hardcodes the suppfigs
+  heading as the `_annex_c()` terminator and would ValueError on
+  dissolution. 0561 re-keys it. Before starting, confirm 0561 is merged and
+  the sentinel is gone.
+- Corrected line numbers: body refs to sec:annex-suppfigs are L678 and L787
+  (not ~684/~793). Temporality "subsequent paper" promise: L1200.
+- Current annex order after \appendix (L1148): temporality L1156, exp1
+  L1242, exp2 L1946, suppfigs L2288, recognition L2320, screen L2368,
+  rollout L2424, fusion L2470. Suppfigs holds exactly two figure blocks
+  (fig:capability-dag L2301, fig:coverage-certainty L2317), no prose.
+- No annex section currently has a preceding \clearpage (only one exists in
+  the file, L483, body). All 7 post-dissolution annexes need insertion.
+- fig:coverage-certainty's natural landing: `\subsection*{Evaluation}`
+  (L2249) of the exp2 annex.
+- Red-step test: do NOT pin "immediately preceded by \clearpage" (handcuff —
+  a blank/comment line would fail it). Assert instead that a \clearpage
+  occurs between consecutive annex \section blocks (or count ≥ number of
+  annex sections after \appendix).
+- S-counter preamble block L1148–1154 and recognition \refstepcounter +
+  \includepdf block L2337–2348 confirmed intact — preserve byte-identical.
 
 ## Exit criteria
 

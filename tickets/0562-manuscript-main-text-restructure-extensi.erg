@@ -6,6 +6,7 @@ Blocked-by: 0561
 
 --- log ---
 2026-06-12T13:30Z HDMX-coding-agent created
+2026-06-12T12:17Z claude note raid feasibility PASS — see Feasibility notes section
 
 --- body ---
 ## Context
@@ -127,6 +128,33 @@ decision pins listed below change, in this same PR.
 - Existing labels preserved on moved content; no orphaned \label
 - Negative guards and the in-sample-caveat conditional guard untouched
 - §1–§6 prose unchanged except the roadmap paragraph
+
+## Feasibility notes (raid 2026-06-12)
+
+Verified against origin/main b8f054e1. Corrected source locations in
+slides/manuscript/main.tex; exit criteria unchanged:
+
+- "Annex H" does not exist in the current file. The architecture prose for
+  action 1d (stateful pipeline, KG triple, dated-snapshot projection) lives
+  in `sec:annex-fusion`, L2483–2515 — promote from there.
+- §7 trailer: L821–852 (two paragraphs, confirmed). Screen prose to promote:
+  L964–988. "From noisy runs to fused estimates": L1002–1014.
+- RW—Methods: L1016 (+\addcontentsline L1017); 3 review ¶ + 1 gap ¶
+  (L1019–1083); Petroni-Fabio2019:lm-as-kb at L1021.
+- Promise occurrences in 0562 scope: L833 (companion paper), L852 (follow-on
+  paper), L1101 (planned cross-evaluation, Conclusion). L1200 (subsequent
+  paper, Temporality annex) is 0563's.
+- Roadmap ¶: L159–169. §quality \ref{sec:fusion} call site is L342 (not ~348).
+- Decision-pin flip: only `test_methods_related_work_before_conclusion`
+  changes; `test_empirical_related_work_section_exists` stays.
+- ρ = 0.92 is hand-typed at L971, L1108, L1861, L2371 — PRE-EXISTING macro
+  violation, CI-green today. Do NOT fix in this PR (verbatim moves only);
+  file a follow-up ticket (`tickets/erg new`) on the PR branch and reference
+  it as `Related follow-up:` in the PR body.
+- Brief: add the no-companion-paper-promise entry (ticket already says so)
+  AND refresh `fusion-hedge` (L100) whose "annex-fusion architecture
+  paragraph" location reference goes stale when that prose moves to
+  `sec:ext-system`.
 
 ## Exit criteria
 
