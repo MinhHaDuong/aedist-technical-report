@@ -1,0 +1,100 @@
+%erg 0.1
+Title: De-anchor adherence tests and editorial brief from manuscript section structure (label-keyed extraction)
+Created: 2026-06-12
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-12T13:30Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Tracking ticket 0560 restructures the manuscript back half. Several
+adherence tests slice manuscript sections with full
+`\section{Title}\label{label}` string matches AND terminate the slice at
+the heading of whichever section happens to follow (e.g.
+`test_manuscript_annex_c_as_run.py::_annex_c` ends at the "Supplementary
+figures" heading — a section 0563 deletes). Any retitle, reorder, or
+deletion breaks them, so the restructure PRs would be CI-blocked or forced
+to bundle test rewrites with prose moves.
+
+This ticket makes extraction label-keyed BEFORE the restructure: a section
+is found by its `\label{}` (stable identifier contract, recorded in 0560)
+and sliced to the next `\section` command, whatever it is. Titles, annex
+letters, and adjacency become free to change. This is mechanical re-keying
+only — no assertion is weakened, no manuscript change, no new structure
+pre-implemented. Distinct from ticket 0559 (polarity triage of two
+vocabulary pins in the same file family — no overlap).
+
+Known exception: `test_manuscript_0512_structure.py` asserts the OLD
+decision ("Related Work — Methods" unnumbered, before Conclusion). That is
+a decision pin, not an anchor; it cannot be de-anchored without changing
+the decision. It is updated in 0562's PR together with the prose change.
+Here, only re-key its *extraction* mechanics if any; leave its decision
+assertions intact.
+
+## Relevant files
+
+- `tests/manuscript_source.py` — add `section(label: str) -> str` helper:
+  locate `\label{<label>}` on a `\section`/`\section*` line, slice to the
+  next sectioning command (or `\appendix`/`\end{document}`)
+- `tests/test_manuscript_annex_c_as_run.py` — re-key `_annex_c()` to
+  `section("sec:annex-exp2")`; rename file to
+  `test_manuscript_exp2_annex_as_run.py` (its name encodes the letter C;
+  docstring records two previous letter-churn renames — this ends that)
+- `tests/test_manuscript_cohort_and_caveats.py` — lines ~149–290: replace
+  title+adjacency splits (`sec:fusion`, `sec:discussion`, Conclusion) with
+  the helper
+- `tests/test_manuscript_exp2_equalization.py` — same re-keying
+- `tests/test_manuscript_0512_structure.py` — extraction mechanics only
+- `docs/editorial-brief.md` — entries fusion-hedge, novelty-benchmark-gap,
+  novelty-conjunction-claim: reword section references to label form
+  ("the section labelled `sec:fusion`") so they survive the move; add a
+  brief entry recording the label-stability contract from 0560
+
+## Actions
+
+1. Implement `section(label)` in `tests/manuscript_source.py` with a clear
+   error message when the label is absent.
+2. Re-key each listed test to the helper; delete local slicing code.
+3. `git mv tests/test_manuscript_annex_c_as_run.py
+   tests/test_manuscript_exp2_annex_as_run.py`; update docstring (letters
+   out, labels in).
+4. Update `docs/editorial-brief.md` section references to label form; add
+   the label-stability-contract entry (**Decision:** / **Rationale:** /
+   **Ticket:** 0560 / **Status:** active).
+5. Sweep remaining `tests/test_manuscript_*.py` for other
+   title/adjacency/letter anchors; re-key any found (mechanical checks on
+   headings that ARE the assertion target, e.g. frontmatter/backmatter
+   presence, stay as-is).
+
+## Test
+
+- Red step first: in a scratch copy of `main.tex`, swap the order of two
+  annexes and retitle one section (labels unchanged) — current
+  `_annex_c()`-style extraction fails; after re-keying, the same
+  perturbation applied via monkeypatched `body()` passes extraction. Write
+  this as `tests/test_manuscript_source_section.py` unit tests of the
+  helper (label found, label absent, last-section slice, robustness to
+  retitle/reorder of a synthetic document).
+
+## Verification
+
+- [ ] `make check` green before and after (no manuscript change in this PR)
+- [ ] Grep proof: no `\section{` full-title split remains in the re-keyed
+  tests except where the heading itself is the assertion target
+- [ ] Brief entries reference labels, not section numbers/letters
+
+## Invariants
+
+- No assertion weakened or deleted; negative guards untouched
+- `slides/manuscript/main.tex` untouched
+- Decision pins in `test_manuscript_0512_structure.py` intact
+
+## Exit criteria
+
+- [ ] All manuscript section/annex extraction in tests goes through the
+  label-keyed helper
+- [ ] Reordering or retitling sections (labels kept) cannot break any
+  adherence test except intentional decision pins
+- [ ] `make check` passes

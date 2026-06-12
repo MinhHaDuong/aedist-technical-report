@@ -1,0 +1,68 @@
+%erg 0.1
+Title: Restructure manuscript back half — tracking ticket (Extensions / Discussion / Future research / Conclusion + annex reorder)
+Created: 2026-06-12
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-12T13:30Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+The narrative arc of `slides/manuscript/main.tex` breaks at §7: "Need and
+potential for fusion" is a two-paragraph trailer for Annex H; the Discussion
+mixes instrument critique, a smuggled result (the reference-free screen,
+contribution #3 of the intro), and the research programme; "Related Work —
+Methods" sits unnumbered between Discussion and Conclusion ending on a
+backward-looking gap statement; the conference questions (why is it hard,
+fusion, role of the knowledge graph) are scattered or annex-only.
+
+Author approved (2026-06-12 session) the following target structure:
+
+Main text, §1–§6 unchanged, then:
+- §7 **Extensions** — framing paragraph marking these as post-hoc analyses
+  prompted by the conference, then four subsections:
+  1. Why is the task hard? (recognition matrix + status composition)
+  2. Screening without a reference (screen promoted out of Discussion)
+  3. Can runs be fused? (union recall gain, two-model vote gate)
+  4. What system do the findings imply? (cell = KG triple, fusion =
+     triple-set merging, narrative KB → dated-snapshot projection;
+     promoted from Annex H prose)
+- §8 **Discussion** — instrument critique only (F1 limits, matcher limits,
+  interday drift, refusal-as-evidence, external coherence, N=1)
+- §9 **Future research** — numbered; absorbs "Related Work — Methods" as its
+  opening ("lessons from the field"), then the programme ("how we will use
+  them"): capture–recapture + LP bounds, external-coherence metric, T2 event
+  log, screen industrialisation, replication. No unnumbered section remains.
+- §10 **Conclusion** — slimmed to verdict + investment claim
+- No companion-paper promises anywhere (4 occurrences stripped)
+
+Annexes, each behind a `\clearpage`, grouped method / investigation / support:
+- A. Experiment 1: technical specification
+- B. Experiment 2: technical specification (absorbs fig coverage-certainty)
+- C. Recognition matrix and status composition
+- D. Aggregation sweep and vote gate
+- E. Run-grain screen validation
+- F. Capability rollout (absorbs fig capability-dag + referencing sentence)
+- G. Temporality: state vs. event representations
+- "Supplementary figures" annex dissolved.
+
+Label-stability contract: all existing `\label{}` names (sec:fusion,
+sec:discussion, sec:annex-*) stay attached to their content as it moves;
+tests and the editorial brief anchor on labels, never on letters, numbers,
+titles, or adjacency.
+
+## Children
+
+- 0561 — de-anchor adherence tests + editorial brief from section structure
+  (lands FIRST; makes the restructure CI-safe)
+- 0562 — main-text restructure (Blocked-by: 0561)
+- 0563 — annex reorder, page breaks, suppfigs dissolution (Blocked-by: 0562)
+
+## Exit criteria
+
+- [ ] All three children closed
+- [ ] Integration review (/roar step 8): re-read child diffs together, full
+  `make check`, manuscript builds, arc reads results → extensions →
+  discussion → future research → conclusion
+- [ ] No companion-paper promise and no unnumbered mid-paper section remains
