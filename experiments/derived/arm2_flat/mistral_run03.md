@@ -1,7 +1,3 @@
-Here is the **final, verified, and polished inventory** of Vietnam’s thermal generation assets (> 30 MWe) in Markdown format:
-
----
-
 ## **Inventory Table**
 
 | Name (Vietnamese)               | Name (English)                     | Province         | Fuel               | Technology      | Units × MW | Total MWe | Status         | Status as-of-date | COD         | Owner/Developer                                                                 | Confidence | Source 1                                                                                     | Source 2                                                                                     | Notes                                                                                                                                                                                                 |

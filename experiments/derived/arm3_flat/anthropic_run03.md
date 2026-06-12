@@ -1,4 +1,4 @@
-I need to research the current status of Vietnam's major thermal projects to supplement the evidence pack. Let me conduct several targeted searches.| Name (Vietnamese) | Name (English) | Province | Fuel | Technology | Units × MW | Total MWe | Status | Status as-of-date | COD | Owner/Developer | Confidence | Source 1 | Source 2 | Notes |
+| Name (Vietnamese) | Name (English) | Province | Fuel | Technology | Units × MW | Total MWe | Status | Status as-of-date | COD | Owner/Developer | Confidence | Source 1 | Source 2 | Notes |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | Nhiệt điện Ninh Bình | Ninh Binh TPP | Ninh Bình | Coal | Subcritical | 4 × 25 | 100 | Operating | 2018 | 1974 | GENCO 3 (EVN) | MEDIUM | EVN AR 2018 | EVN AR 2017 | Domestic anthracite. PDP7 planned retirement 2021; status unconfirmed since |
 | Nhiệt điện Uông Bí | Uong Bi TPP (original) | Quảng Ninh | Coal | Subcritical | — | 105 | Retired | 2021-est | 1960s–1970s | EVN | MEDIUM | EVN AR 2011 | PDP7A Table 2 | PDP7A listed retirement 2021; no post-2021 EVN report confirms ongoing operation. Gross/net unspecified |

@@ -205,10 +205,19 @@ def strip_preamble(markdown: str) -> str:
     row, whichever comes first. Conservative by design: headings, tables, and
     everything after them are preserved verbatim. Returns the input unchanged
     when no heading or table exists.
+
+    Salvage case: some frozen raw records glue the table header onto the last
+    preamble sentence with no newline ("...searches.| Name | ..."). When a
+    preamble line contains a ``|`` and the NEXT line is a table separator row
+    (``|---|...``), the fused header is kept from its first ``|`` onward.
     """
     lines = markdown.splitlines(keepends=True)
     for i, line in enumerate(lines):
         stripped = line.lstrip()
         if stripped.startswith(("#", "|")):
             return "".join(lines[i:])
+        if "|" in stripped and i + 1 < len(lines):
+            next_stripped = lines[i + 1].strip()
+            if next_stripped.startswith("|") and _SEPARATOR_ROW_RE.match(next_stripped):
+                return stripped[stripped.index("|") :] + "".join(lines[i + 1 :])
     return markdown

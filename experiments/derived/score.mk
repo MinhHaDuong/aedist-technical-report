@@ -261,6 +261,12 @@ $(ANALYSIS_DERIVED_DIR)/arm4_flat/.done: $(ANALYSIS_EXPERIMENTS_DIR)/outputs/sot
 	touch $@
 
 # --- Cross-eval CSV (scored per-run, both arms) ----------------------------
+# The per-arm loops glob *.json, which also matches the *_source_audit.json
+# sidecars emitted by the extractors (PR #994). Sidecars carry no model/run
+# keys; d.get() makes them print "None None" and hit the skip guard quietly.
+# Silent-loss guard: tests/test_cross_eval_completeness.py asserts the
+# committed CSV holds exactly one row per (arm, model, run) — the `|| true`
+# on score_mechanical otherwise hides any parse failure as a missing row.
 
 $(ANALYSIS_EXP2_CROSS_EVAL_CSV): $(ANALYSIS_DERIVED_DIR)/arm1_flat/.done \
 		$(ANALYSIS_DERIVED_DIR)/arm2_flat/.done \
@@ -270,28 +276,28 @@ $(ANALYSIS_EXP2_CROSS_EVAL_CSV): $(ANALYSIS_DERIVED_DIR)/arm1_flat/.done \
 	@mkdir -p $(dir $@)
 	rm -f $@
 	@for f in $(ANALYSIS_EXP2_NAIVE_DIR)/*.json; do \
-		read m r < <(python3 -c "import json,sys; d=json.load(open('$$f')); print(d['model'], d['run'])"); \
+		read m r < <(python3 -c "import json,sys; d=json.load(open('$$f')); print(d.get('model'), d.get('run'))"); \
 		[ "$$m" = "None" ] && { echo "skip (model=None): $$f"; continue; }; \
 		uv run python -m aedist.score_mechanical --arm naive --model "$$m" --run "$$r" \
 		    --naive-dir $(ANALYSIS_EXP2_NAIVE_DIR) --optimised-dir $(ANALYSIS_EXP2_OPTIMISED_DIR) \
 		    --output-csv $@ || true; \
 	done
 	@for f in $(ANALYSIS_EXP2_OPTIMISED_DIR)/*.json; do \
-		read m r < <(python3 -c "import json,sys; d=json.load(open('$$f')); print(d['model'], d['run'])"); \
+		read m r < <(python3 -c "import json,sys; d=json.load(open('$$f')); print(d.get('model'), d.get('run'))"); \
 		[ "$$m" = "None" ] && { echo "skip (model=None): $$f"; continue; }; \
 		uv run python -m aedist.score_mechanical --arm optimised --model "$$m" --run "$$r" \
 		    --naive-dir $(ANALYSIS_EXP2_NAIVE_DIR) --optimised-dir $(ANALYSIS_EXP2_OPTIMISED_DIR) \
 		    --output-csv $@ || true; \
 	done
 	@for f in $(ANALYSIS_EXP2_ARM3_DIR)/*.json; do \
-		read m r < <(python3 -c "import json,sys; d=json.load(open('$$f')); print(d['model'], d['run'])"); \
+		read m r < <(python3 -c "import json,sys; d=json.load(open('$$f')); print(d.get('model'), d.get('run'))"); \
 		[ "$$m" = "None" ] && { echo "skip (model=None): $$f"; continue; }; \
 		uv run python -m aedist.score_mechanical --arm arm3 --model "$$m" --run "$$r" \
 		    --arm3-dir $(ANALYSIS_EXP2_ARM3_DIR) --arm4-dir $(ANALYSIS_EXP2_ARM4_DIR) \
 		    --output-csv $@ || true; \
 	done
 	@for f in $(ANALYSIS_EXP2_ARM4_DIR)/*.json; do \
-		read m r < <(python3 -c "import json,sys; d=json.load(open('$$f')); print(d['model'], d['run'])"); \
+		read m r < <(python3 -c "import json,sys; d=json.load(open('$$f')); print(d.get('model'), d.get('run'))"); \
 		[ "$$m" = "None" ] && { echo "skip (model=None): $$f"; continue; }; \
 		uv run python -m aedist.score_mechanical --arm arm4 --model "$$m" --run "$$r" \
 		    --arm3-dir $(ANALYSIS_EXP2_ARM3_DIR) --arm4-dir $(ANALYSIS_EXP2_ARM4_DIR) \

@@ -1,4 +1,4 @@
-I need to research current statuses of Vietnam's thermal projects extensively. Let me start with multiple searches.| Name (Vietnamese) | Name (English) | Province | Fuel | Technology | Units × MW | Total MWe | Status | Status as-of-date | COD | Owner/Developer | Confidence | Source 1 | Source 2 | Notes |
+| Name (Vietnamese) | Name (English) | Province | Fuel | Technology | Units × MW | Total MWe | Status | Status as-of-date | COD | Owner/Developer | Confidence | Source 1 | Source 2 | Notes |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | Uông Bí (gốc) | Uong Bi (original) | Quảng Ninh | Coal | Subcritical | 2 × ~50 | 105 | Retired | 2018-12-31 | ~1960s | EVN → GENCO 1 | MEDIUM | EVN AR 2010-2011 | EVN AR 2017 | Present in 2017 AR at 105 MW but absent from 2018 AR, suggesting retirement ca. 2017-2018. PDP7A scheduled retirement for 2021. Technology inferred from era. |
 | Uông Bí mở rộng I | Uong Bi Extension 1 | Quảng Ninh | Coal | Subcritical | 1 × 300 | 300 | Operating | 2018-12-31 | ~2009 | GENCO 1 | HIGH | EVN AR 2017 | EVN AR 2018 | Listed under GENCO 1 in both 2017 and 2018 ARs at 300 MW. |
