@@ -108,6 +108,62 @@ INTRO + §4 + ANNEX F
 29. Annex F (capability rollout): also note the emerging capability to
     swarm, orchestrate, and act as a team.
 
+## Findings (batch 2, author's words preserved)
+
+§3 (QUALITY DIMENSIONS)
+31. "Defining good as scoring zero on none of the twelve dimensions" is a
+    double negative. Rephrase: define bad runs as those with at least one
+    zero score in any dimension.
+32. Float Figure 3 two pages earlier, on its own page (as Figure 4 is).
+33. "solidly and firmly" in the same paragraph = AI English — delete.
+34. The paper keeps referencing "a bar" that is never defined. Define
+    clearly or drop.
+35. "A seeded recall bar" paragraphs verbose and obscure — use plain term
+    "answer key" instead.
+
+TABLE 1 + FIGURE 6
+36. Table 1 (Exp 2): repeats data visible in Figure 6 — move Table 1 to
+    an annex.
+37. Figure 6 is hard to read — split the two panels into two separate
+    figures.
+38. Sweep noise phrases: "now scored for all runs", "minimum attainable
+    p…", "bear evidence", "we don't do statistical tests", "We defer more
+    observations with more models" (the last is a promise — delete).
+
+§7.2 (SCREENING WITHOUT REFERENCE)
+39. §7.2 should refer to Figure 5, not Annex E (to be dropped). Message:
+    scores without reference correlate with precision → we can detect bad
+    models and screen them out. Then introduce the Admiralty grading:
+    consider models as information sources, runs as information packages.
+    Note that model quality scoring could be useful for fusion.
+
+§8 (DISCUSSION)
+40. "A consistent reading summarized in introduction" = how to NOT say a
+    thing — drop the sentence. Opening: say this section examines limits
+    and potential of the offered benchmark. Condense to 1.5 pages. Include
+    a discussion of method quality scoring (time & money resources vs
+    quality of results) vs table quality scoring (=run) vs model scoring
+    (see docs/ discussion note).
+
+§9 (FUTURE RESEARCH)
+41. Condense to 1.5 pages. State: we will continue towards a method that
+    scores all green on Table S1 — finds all the projects, only the
+    projects, each justified by 2 primary sources, with correct attributes.
+    That method requires research on 6 axes: information fusion, external
+    coherence scoring, tracking both events and states, knowledge base
+    architecture, replication on country and sectors. Reorder the axes;
+    weave the literature review with the 6 axes instead of juxtaposing.
+    (Author invites pushback on ordering.)
+
+CONCLUSION / OVERARCHING CLAIMS
+42. "and the evidence points toward a conjecture about why: the binding
+    constraint is the data, not the model. Each claim in that sentence
+    rests on a measured result." — sounds like meaningless vague
+    generality. Drop. Replace with evidence: with data, Mistral large
+    works as well as Opus → we may hope to solve this task without an
+    arms race, via a sourcing pipeline ("On n'a pas de GPU mais on a des
+    idées").
+
 ## Exit criteria
 
 - [ ] Author says "finished"; all batches recorded here
