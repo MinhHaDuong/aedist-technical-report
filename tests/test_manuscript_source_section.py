@@ -113,7 +113,8 @@ def test_robust_to_retitle_and_reorder(monkeypatch):
     assert spec.endswith("annex spec prose.")
 
 
-def test_real_manuscript_sections_extract(tmp_path):
+@pytest.mark.adherence
+def test_real_manuscript_sections_extract():
     """Smoke test on the real main.tex: every body/annex label the adherence
     tests key on is extractable and non-empty."""
     for label in (

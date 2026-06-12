@@ -126,6 +126,12 @@ def section(label: str) -> str:
     end of the body. Retitles, reorders, annex-letter changes, and unlabelled
     neighbours therefore cannot break the extraction — only removing the
     label can, and that is the contract violation this error reports.
+
+    Only ``\\section``/``\\section*`` headings are searched: a label that
+    moves to a ``\\subsection`` heading (level demotion) is NOT found. A
+    restructure that demotes a labelled section (e.g. 0562 making
+    ``sec:fusion`` a subsection) must extend this helper or re-key the
+    consuming tests in the same PR.
     """
     text = body()
     heading_re = re.compile(_SECTION_TITLE + r"\s*" + re.escape(f"\\label{{{label}}}"))
