@@ -7,6 +7,7 @@ Author: HDMX-coding-agent
 2026-06-12T09:29Z HDMX-coding-agent created
 2026-06-12T14:10Z claude note raid-557 Imagine pass — drift verdict clean, inventory + triage table appended
 2026-06-12T14:25Z claude note raid-557 Plan pass — concrete rewrites, day-one guard safety verified, IDH companion is existing ticket 0253
+2026-06-12T14:40Z claude note raid-557 Feasibility PASS — all paths/headings/phrases verified, baseline 22 passed; WARN: PR #1017 also touches .claude/rules/writing.md (rebase before merge)
 
 --- body ---
 ## Context
@@ -217,3 +218,32 @@ fails (existing negative, unchanged).
 
 Scope estimate: 4 durable files, ~+170/−40 LOC. No dependencies; no
 Blocked-by.
+
+## Feasibility (raid 2026-06-12): PASS
+
+Verified against the tree (commit a442dc24 base):
+
+- All 15 test functions present in test_manuscript_cohort_and_caveats.py.
+- Section headings exact: `\section{Need and potential for fusion}
+  \label{sec:fusion}` (827), `\section{Discussion}\label{sec:discussion}`
+  (860), `\section{Conclusion}\label{sec:conclusion}` (1091). NOTE:
+  Discussion PRECEDES Conclusion in this manuscript.
+- ρ = 0.92 at lines 977 (Discussion), 1114 (Conclusion, already carries
+  "pooled across models and"), 2377 (annex — out of guard scope; scope
+  the conditional guards to Discussion/Conclusion extraction only).
+- "operating plants" absent from abstract block — new negative guard
+  green day one. Hedge phrases present (820, 2493).
+- "no published benchmark or" present in fusion section.
+- docs/editorial-brief.md absent; .claude/rules/writing.md present.
+- IDH ticket 0253 exists, open, title matches; review-pr-prose
+  SKILL.md ## Setup step 2 = "Read the diff of the merge request." —
+  insert the brief check as step 2b after it.
+- Baseline: both prose test files → 22 passed.
+
+WARN (cross-PR): open PR #1017 (t0558 em-dash sweep) touches
+.claude/rules/writing.md, slides/manuscript/main.tex, and adds
+tests/test_manuscript_em_dash.py. Only 2 PRs share writing.md → no
+coordination PR; rebase onto origin/main before opening and again
+before merging. Note 1017 converts prose "---" to Unicode "—"; the
+abstract em-dash negative guard in this ticket's file is KEEP-unchanged
+and the abstract currently has no em-dash, so no interaction expected.
