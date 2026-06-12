@@ -86,7 +86,7 @@ Open energy-system models need plant-level data that
 are complete, dated, and traceable to sources, yet across much of the
 world these data arrive late or incomplete.
 We introduce a computable benchmark for this task: reconstruct the
-register of Vietnam's 177 thermal power plants and score the result
+register of Vietnam's \NumRefPlants{} thermal power plants and score the result
 against a hand-compiled, fully sourced reference. The register spans the
 whole project lifecycle: proposed and planned projects as well as
 operating, cancelled, and retired plants. The task is hard for today's
@@ -225,7 +225,7 @@ version-locked with per-row source priority; and a CC BY 4.0 licence
 free of the redistribution constraints that encumber several upstream
 sources. The long-tail figure makes the documented-head /
 under-documented-tail split concrete (Figure~\ref{fig:longtail}): the
-177 reference plants, sorted by visibility, are checked against four
+\NumRefPlants{} reference plants, sorted by visibility, are checked against four
 recognition layers, and the speculative tail thins out from layer to
 layer.
 
@@ -233,10 +233,10 @@ layer.
 \centering
 \includegraphics[width=\linewidth]{../../report/inputs/generated/fig_longtail_recognition.pdf}
 \caption{The reference inventory covers plants that no other public
-source holds. The 177 plants, sorted by descending visibility, are
+source holds. The \LongtailReference{} plants, sorted by descending visibility, are
 checked against four recognition layers: the hand-compiled reference
-itself (all 177), the Global Energy Monitor tracker (157), Wikipedia
-coverage (130), and OpenStreetMap coverage (49 plants --- existing,
+itself (all \LongtailReference{}), the Global Energy Monitor tracker (\LongtailGem{}), Wikipedia
+coverage (\LongtailWiki{}), and OpenStreetMap coverage (\LongtailOsm{} plants --- existing,
 physically built infrastructure only). Well-documented operating plants
 appear in every layer; the under-documented tail --- proposed and
 planned projects from the PDP8 pipeline --- thins out layer by layer.
@@ -515,7 +515,7 @@ prompt (the full Doc-07 naive prompt,
 verbatim in \ref{sec:annex-exp1}). No documents are
 provided; models draw exclusively on parametric knowledge and receive a
 system instruction forbidding web search. Each model is queried five
-times at temperature zero, yielding 70 runs against a 177-plant
+times at temperature zero, yielding \ExpOneNRuns{} runs against a \NumRefPlants-plant
 reference inventory of Vietnamese thermal power plants (coal and gas,
 all lifecycle statuses). Runs are evaluated by matching extracted plant
 names against the reference using fuzzy string matching, yielding
@@ -563,30 +563,32 @@ barely carries, is the reference's unique contribution; no parametric
 source holds it.
 
 \textbf{Results: model memory alone yields incomplete, unstable
-inventories.} Across 70 runs (14 models × 5 repeats), all produced
-usable tables, but row-level F1 ranges from 0.00 to 0.68, with a mean of
-0.38. Asking the same model the same question does not return the same
+inventories.} Across \ExpOneNRuns{} runs (\ExpOneNModels{} models × 5 repeats), all produced
+usable tables, but row-level F1 ranges from \ExpOneFOneMin{} to \ExpOneFOneMax{}, with a mean of
+\ExpOneFOneMean{}. Asking the same model the same question does not return the same
 plants: DeepSeek V4-Flash ranges from F1 0.07 to 0.52 across 5 identical
 runs --- a spread wider than the gap between many adjacent model means.
 Even for correctly matched plants, attribute classification is uneven:
-province accuracy is high (mean 0.89) --- unsurprising, since Vietnamese
+province accuracy is high (mean \ExpOneProvinceAcc{}) --- unsurprising, since Vietnamese
 plants are typically named after the places that host them, so the name
-itself usually gives away the province --- but fuel (0.54) and status
-(0.57) remain mediocre, reflecting the finer coal-versus-gas and
+itself usually gives away the province --- but fuel (\ExpOneFuelAcc{}) and status
+(\ExpOneStatusAcc{}) remain mediocre, reflecting the finer coal-versus-gas and
 lifecycle distinctions the models conflate. The status figure is partly
 an artefact of vocabulary: ``Proposed'' --- the grouped status of
-\textasciitilde38\% of the reference (\ref{sec:annex-recognition}) ---
+\textasciitilde\StatusProposedSharePct\% of the reference (\ref{sec:annex-recognition}) ---
 has no equivalent in the prompt's controlled status vocabulary (the
 cohort prompt's status definitions, aligned with Global Energy Monitor
 vocabulary and reproduced in \ref{sec:annex-exp1}, offer
 \texttt{Announced\ /\ Pre-permit\ /\ Permitted\ /\ Construction\ /\ Operating\ /\ Shelved\ /\ Cancelled\ /\ Retired}
 --- no ``Proposed''), so a model that correctly recalls a proposed plant
 has no admissible label to map it onto, which may mechanically depress
-status accuracy. Paying more does not reliably buy a better inventory:
+status accuracy. Consistent with that reading, excluding the proposed
+stratum lifts mean status accuracy on the matched rows to
+\ExpOneStatusAccExclProposed{}. Paying more does not reliably buy a better inventory:
 Claude Opus 4.6 at \$1.23 total achieves mean F1 = 0.66, while
 GPT-OSS-20B at \$0.01 reaches mean F1 = 0.02, but no monotonic
 relationship between API cost and F1 holds across the lineup. The total
-experiment cost is \$2.85.
+experiment cost is \$\CensusCostTotal{}.
 
 An earlier sweep surfaced refusals rather than scores: in the archived
 baseline sweep, GPT-5.5 declined the task on 3 of its 5 reps before the
@@ -600,13 +602,13 @@ in the Discussion.
 \includegraphics[width=\linewidth]{../../report/inputs/generated/fig_direct_p1_base.pdf}
 \caption{No model approaches the full inventory from memory, and
 repeated identical queries return different plants. Direct-query
-performance across 14 models and 70 runs on the 177-plant Vietnam
+performance across \NumCensusModels{} models and \CensusNumRuns{} runs on the \NumRefPlants-plant Vietnam
 thermal reference: each bar is one run; family-coloured segments to the
 right are correctly identified plants (TP), red segments to the left are
 unmatched plants (FP: extracted but not in the reference). The dashed
-green line marks the 177-plant reference; the light-grey dotted line
-marks Wikipedia's light-reviewed coverage of all 177 reference plants
-(73\%, 130/177) ---
+green line marks the \NumRefPlants-plant reference; the light-grey dotted line
+marks Wikipedia's light-reviewed coverage of all \NumRefPlants{} reference plants
+(\WikiReviewedPct\%, \WikiReviewed/\NumRefPlants) ---
 the seeded recall bar every model should clear, since that content sat
 in the training corpus. Models grouped on the vertical
 axis.}\label{fig:direct-base}
@@ -623,7 +625,7 @@ with shared axes: \textbf{panel (a)} Claude, GPT, Mistral; \textbf{panel
 \texttt{modelset\_exp1\_batch2} models contributes a filled square at
 its pooled median true-positive count and a marker at every individual
 rep, plotted at the rep's own per-call cost (cents USD, log scale); the
-dashed line at 177 marks the full Vietnam thermal inventory. Marker
+dashed line at \NumRefPlants{} marks the full Vietnam thermal inventory. Marker
 shapes, colour palette, the per-rep cohort split, and the audit artifact
 (\texttt{report/inputs/generated/cost\_quality.csv}) are detailed in
 \ref{sec:annex-exp1}.}\label{fig:cost-quality}
@@ -656,7 +658,7 @@ Experiment 1 (14 models × 5 runs). X axis: reliability, the count of
 good runs out of five, where a good run scores zero on none of the
 twelve reference-free quality dimensions --- computable without any
 reference data. Y axis: accuracy, the mean row-level F1 against the
-177-plant reference over the good runs; for the three models with zero
+\NumRefPlants-plant reference over the good runs; for the three models with zero
 good runs (claude-haiku-4.5, gpt-oss-20b, qwen3.6-35b-a3b), no good run
 exists, so the mean is taken over \textbf{all} five runs. Source
 artifact: \texttt{experiments/derived/exp1\_cross\_eval.csv}; gate
@@ -674,7 +676,7 @@ reasoning, web search, document ingestion, and tool use into a single
 ``deep research'' surface. The question is whether removing the
 §\ref{sec:exp1} handicaps suffices to clear the §\ref{sec:quality}
 quality bar. Even the best independent public tracker, Global Energy
-Monitor, covers only 89\% of the reference after light review
+Monitor, covers only \GemReviewedPct\% of the reference after light review
 (\ref{sec:annex-exp1}); the frontier agents are therefore measured
 against an inventory no single open database fully reproduces.
 
@@ -713,7 +715,7 @@ raw model capability. The naive arm is an independent sweep, not a
 re-run of the §\ref{sec:exp1} parametric protocol, so its scores are not
 directly comparable to §\ref{sec:exp1}'s per-model numbers;
 within-Experiment-2 comparisons all use this common arm-1 sweep as their
-baseline. Row-level F1 against the 177-plant reference is
+baseline. Row-level F1 against the \NumRefPlants-plant reference is
 now scored for all four arms (Table~\ref{tbl:exp2-2x2}); cross-model
 judging on the four §\ref{sec:quality} dimensions remains reserved for
 post-conference analysis (Phase C).
@@ -777,15 +779,15 @@ Qwen & optimised (multi-turn) & yes & 0.55 & 0.76 \\
 reference --- and the multi-turn protocol costs 2--4× more for mixed
 returns. Experiment 2 --- naive (arm 1, single-shot) vs optimised (arm
 2, multi-turn) comparison, N=5 per agent. Panel (a): Plants found --- TP
-bars (blue, upward, matched against the 177-plant reference) and FP bars
+bars (blue, upward, matched against the \NumRefPlants-plant reference) and FP bars
 (red, downward, unmatched plants: extracted but not in the reference),
 median over runs with scored outputs; left bar = arm 1, right bar = arm
 2 per agent group. Grey bars indicate runs with no matched-row scores
 available. Panel (b): API cost per run (USD), individual runs as scatter
-points. Dashed green line marks the 177-plant reference count; the
-light-grey dotted line marks GEM's light-reviewed coverage (89\%), the
+points. Dashed green line marks the \NumRefPlants-plant reference count; the
+light-grey dotted line marks GEM's light-reviewed coverage (\GemReviewedPct\%), the
 best independent external database (\ref{sec:annex-exp1}). Row-level F1
-against the 177-plant reference is now scored for all 80 runs; the 2×2
+against the \NumRefPlants-plant reference is now scored for all 80 runs; the 2×2
 factorial analysis of F1 and cost (query mode × documents) is given in
 Table~\ref{tbl:exp2-2x2} and detailed in \ref{sec:annex-exp2}. With N=4
 agents as the blocking factor, effects are reported as directional
@@ -798,7 +800,7 @@ tests, since the minimum attainable p at n=4 is 1/2⁴ =
 agents in the naive arm (arm 1): Anthropic median 77 rows (4/5 usable,
 one zero-row run); Mistral median 57 rows (range 48--74); OpenAI median
 83 rows (range 76--90); Qwen median 42 rows (range 33--45) --- all
-against the 177-plant reference. The optimised arm (arm 2) does not
+against the \NumRefPlants-plant reference. The optimised arm (arm 2) does not
 change the picture: OpenAI median 86 rows versus arm 1 median 83 rows
 (modest improvement; individual runs 79--96 vs 76--90); Qwen median 25
 rows versus arm 1 median 42 rows (regression; Qwen's self-designed
@@ -855,7 +857,7 @@ frontier agents with web access improve coverage but not provenance or
 reproducibility. The Q\&A at the conference --- ``did you fuse the
 results?'' --- points directly to the path forward. A naive union
 already helps: pooling runs across models more than doubles recall
-relative to the single-run mean (2.4×) at no new collection cost
+relative to the single-run mean (\AggUnionGainX×) at no new collection cost
 (aggregation sweep in \ref{sec:annex-fusion}). Full treatment ---
 estimating the unobserved share by linear programming against a control
 total, applying capture--recapture estimation for the residual --- is
@@ -865,8 +867,8 @@ inventories}).
 
 The mirror-image lever buys precision: requiring at least two of the
 four frontier models to agree nearly eliminates false positives --- F1
-= 0.750 with two false positives on the Experiment 1 cohort, F1 = 0.813
-with five on the Experiment 2 naive arm (full results in
+= \FusionRTwoEOneFFrac{} with \FusionRTwoEOneFP{} false positives on the Experiment 1 cohort, F1 = \FusionRTwoETwoOneDFFrac{}
+with \FusionRTwoETwoOneDFP{} on the Experiment 2 naive arm (full results in
 \ref{sec:annex-fusion}). Both levers reuse existing runs; the
 structural answer to the single-model ceiling is a stateful pipeline
 that invests in the corpus rather than the model --- a managed,
@@ -999,11 +1001,11 @@ reliability}. Making these scorers part of the standard pipeline is
 future work. \ref{sec:annex-screen} tests whether the screen
 discriminates good from bad runs of the \emph{same} model (removing the
 across-model confound) and reports a model-stratified Kendall τ =
-+0.215 for cap\_distinct vs F1, positive in 10/14 models.
++\ScreenTauCap{} for cap\_distinct vs F1, positive in \ScreenPositiveSpearman/\ScreenNModels{} models.
 
 \textbf{One case study, not a benchmark suite.} Every result above is
 measured on a single case: the Vietnam thermal-plant fleet against one
-177-plant reference list. N = 1 at the dataset level means the findings
+\NumRefPlants-plant reference list. N = 1 at the dataset level means the findings
 are existence proofs --- the task is hard, a curated corpus equalises
 the agents, a reference-free screen and simple fusion rules work here
 --- not generalisable benchmarks. The prompt templates, the LP matcher
@@ -1104,7 +1106,7 @@ evidence points toward a conjecture about why: the binding constraint is
 the data, not the model. Each claim in that sentence rests on a measured
 result. That the task is hard is established twice. In the memory-only
 baseline (§\ref{sec:exp1}), fourteen models score row-level F1 between
-0.00 and 0.68 with high within-model variance, below an available
+\ExpOneFOneMin{} and \ExpOneFOneMax{} with high within-model variance, below an available
 ceiling: group-seeded Wikipedia lists alone cover 92\% of the built
 fleet and sat in the training corpus for years, yet the models failed to
 retrieve them. At the commercial frontier (§\ref{sec:exp2}), agents with
@@ -1147,7 +1149,7 @@ https://github.com/MinhHaDuong/aedist-technical-report (CC BY 4.0).
 \textbf{Funding.} This work was supported by CNRS/CIRED.
 
 \textbf{Author contributions and conflicts of interest.} The author
-compiled the 177-plant reference list, and an intern in the author's
+compiled the \NumRefPlants-plant reference list, and an intern in the author's
 group, working under the author's supervision, seeded reference-derived
 content into the relevant Wikipedia pages in June 2019; the author also
 made minor edits to those pages directly (§\ref{sec:exp1}; provenance in
@@ -1262,7 +1264,7 @@ Identify all thermal power plants in Vietnam from parametric model
 knowledge alone. The target population is defined by the reference
 inventory
 \texttt{data/reference/vietnam\_thermal\_plants\_v2\_classified.csv}:
-177 plant-level records covering coal (85) and gas/gas-oil (92), across
+\NumRefPlants{} plant-level records covering coal (\RefCoalCount) and gas/gas-oil (\RefGasOilCount), across
 all lifecycle statuses (operational, under construction, proposed,
 planned, cancelled, retired). The reference was compiled by the author
 from primary sources (PDP7, PDP7A, PDP8 annexes, EVN annual reports,
@@ -1291,18 +1293,18 @@ Tĩnh (6000 MWe), and Dung Quat SEZ J-Power Phase I (Quảng Ngãi, 2400 MWe
 coal). To our knowledge, no independent per-plant audit-trail dataset
 exists for Vietnam's thermal fleet, and we did not find a second
 human-curated reference at comparable granularity; the closest available
-external check is Global Energy Monitor (GEM, 119 distinct plants;
+external check is Global Energy Monitor (GEM, \GemDistinct{} distinct plants;
 snapshot exported no later than 2026-04-02, the date it entered version
 control), against which we report a light-reviewed concordance in
 Table~\ref{tbl:source-concordance}.
 
 \textbf{Source concordance (reference vs GEM and Wikipedia).} GEM covers
-157 of the 177 reference plants (89\%) after light review --- more
-matches than GEM's 119 distinct plants because matching operates at the
+\GemReviewed{} of the \NumRefPlants{} reference plants (\GemReviewedPct\%) after light review --- more
+matches than GEM's \GemDistinct{} distinct plants because matching operates at the
 reference's phase grain: one GEM plant row can match several reference
 phase rows (e.g.~successive phases of the same site ---
-\texttt{gem\_thermal.csv} has 153 rows under 119 distinct plant names).
-Wikipedia (coal list + general-page gas section) covers 130 (73\%).
+\texttt{gem\_thermal.csv} has 153 rows under \GemDistinct{} distinct plant names).
+Wikipedia (coal list + general-page gas section) covers \WikiReviewed{} (\WikiReviewedPct\%).
 Neither is a superset: GEM retains 12 cancelled or announced plants the
 reference excludes, while the reference adds the PDP8 LNG pipeline GEM
 lacks (the 20 reference-only rows, concentrated in ``proposed''). The
@@ -1617,7 +1619,7 @@ inventory table'', it lacks a forced-prefix instruction (e.g.~start your
 answer with \texttt{|\ Name}) that would constrain the first generated
 tokens and simplify downstream parsing. Second, its status vocabulary
 follows Global Energy Monitor and offers no label for the reference's
-``Proposed'' stratum (\textasciitilde38\% of rows) nor for ``Planned''
+``Proposed'' stratum (\textasciitilde\StatusProposedSharePct\% of rows) nor for ``Planned''
 --- mechanically depressing measured status accuracy, as discussed in
 §\ref{sec:exp1}. Both are grounds for a revised-prompt rerun in the
 journal version.
@@ -1978,7 +1980,7 @@ specification and references that chapter for the inferential analysis.}
 
 Identify all thermal power plants in Vietnam using four state-of-the-art
 cloud agents with extended reasoning and web access. Same target
-population as Experiment 1: the 177-plant version-locked reference
+population as Experiment 1: the \NumRefPlants-plant version-locked reference
 inventory at
 \texttt{data/reference/vietnam\_thermal\_plants\_v2\_classified.csv}.
 
@@ -2259,7 +2261,7 @@ This experiment is script-based, not sweep-based. No
 \subsection*{Evaluation}
 \addcontentsline{toc}{subsection}{Evaluation}
 
-Phase B outputs are evaluated against the 177-plant reference using the
+Phase B outputs are evaluated against the \NumRefPlants-plant reference using the
 same \texttt{src/aedist/evaluate.py} machinery as §\ref{sec:exp1} (LP
 matcher, ADR-2/3, \texttt{similarity\_threshold\ =\ 90},
 \texttt{capacity\_weight\ =\ 0.001}), yielding row-level F1 and
@@ -2329,14 +2331,14 @@ volume.}\label{fig:coverage-certainty}
 
 \section{Experiment 1: per-plant recognition matrix and the status composition of task difficulty}\label{sec:annex-recognition}
 
-Figure~\ref{fig:recognition-matrix} places each of the 177 reference
+Figure~\ref{fig:recognition-matrix} places each of the \ExpOneMatrixPlants{} reference
 plants on its own row (names read left-to-right, no rotation) against
-the 70 Experiment 1 runs (14 models × 5 repetitions) as columns. A blue
+the \ExpOneMatrixRuns{} Experiment 1 runs (14 models × 5 repetitions) as columns. A blue
 cell marks a recognised plant (true positive); an empty cell, a miss.
 Rows are grouped by status, then by decreasing capacity, using the same
 status categories as the difficulty table below. To keep plant names
 legible at print scale, the matrix is split across pages by lifecycle
-stage. A final page lists the 40 most frequent false positives across
+stage. A final page lists the \ExpOneMatrixFPs{} most frequent false positives across
 all runs, sorted by decreasing occurrence, in red --- the paper's
 false-positive convention (unmatched: extracted but not in the
 reference; possibly real, not necessarily fabricated). Unlike
@@ -2346,14 +2348,14 @@ misses: famous plants form dense rows, obscure ones sparse rows.
 
 \refstepcounter{figure}\label{fig:recognition-matrix}
 \noindent\emph{Figure \thefigure. (Next three pages.) Experiment 1 recognition
-matrix, transposed to portrait so plant names stay legible: the 177 reference
+matrix, transposed to portrait so plant names stay legible: the \ExpOneMatrixPlants{} reference
 plants are rows (grouped by status, then by decreasing capacity, with the status
-bands labelled in the right margin) and the 70 runs (14 models × 5 repetitions)
+bands labelled in the right margin) and the \ExpOneMatrixRuns{} runs (14 models × 5 repetitions)
 are columns under a three-level family / version / repetition header, in
 Figure~\ref{fig:direct-base}'s order: family, then decreasing effective parameter
 count. Blue = plant recognised. Pages 1--2 split the plants by lifecycle stage
 (operational, retired, and cancelled plants, then proposed, planned, and
-under-construction ones); page 3 lists the 40 most frequent false positives
+under-construction ones); page 3 lists the \ExpOneMatrixFPs{} most frequent false positives
 (red).}
 \includepdf[pages=-,pagecommand={\thispagestyle{plain}}]{../../report/inputs/generated/fig_exp1_recognition_matrix_portrait.pdf}
 
@@ -2373,13 +2375,13 @@ Status & n & Share of list & Recognition rate \\
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-Proposed & 68 & 38.4\% & 8.1\% \\
+Proposed & \StatusProposedCount & \StatusProposedSharePct\% & \StatusProposedRatePct\% \\
 Planned & 21 & 11.9\% & 30.3\% \\
 Under construction & 10 & 5.6\% & 45.3\% \\
 Operational & 56 & 31.6\% & 46.6\% \\
 Retired & 2 & 1.1\% & 63.6\% \\
 Cancelled & 20 & 11.3\% & 16.9\% \\
-\textbf{All} & \textbf{177} & \textbf{100.0\%} & \textbf{26.6\%} \\
+\textbf{All} & \textbf{\NumRefPlants} & \textbf{100.0\%} & \textbf{\StatusOverallRatePct\%} \\
 \end{longtable}
 
 \emph{Table: composition of the reference list by status, and mean
@@ -2412,28 +2414,27 @@ then sums the counts across all 14 models --- an exact removal of the
 across-model confound.
 
 \textbf{Results.} The model-stratified Kendall τ of cap\_distinct
-vs F1 is \textbf{+0.215} (65 concordant, 42 discordant pairs across 14
-models; 10/14 models show a positive within-model Spearman ρ). For
-status\_distinct vs F1 the stratified τ is \textbf{+0.312} (61
-concordant, 32 discordant). Across-model pooled statistics (tautological
-baseline): mean F1 of vetoed runs = 0.146, surviving = 0.481, gap =
-+0.335. Within-model binary gap (only the 3 models with both vetoed and
-surviving runs): mean of per-model gaps = \textbf{+0.162} (deepseek:
-+0.384, gpt-oss-120b: +0.078, qwen3.6-flash: +0.022). The reduction from
-the pooled gap (+0.335) to the within-model gap (+0.162) shows that
+vs F1 is \textbf{+\ScreenTauCap} (\ScreenTauCapConcordant{} concordant, \ScreenTauCapDiscordant{} discordant pairs across \ScreenNModels{}
+models; \ScreenPositiveSpearman/\ScreenNModels{} models show a positive within-model Spearman ρ). For
+status\_distinct vs F1 the stratified τ is \textbf{+\ScreenTauStatus} (\ScreenTauStatusConcordant{}
+concordant, \ScreenTauStatusDiscordant{} discordant). Across-model pooled statistics (tautological
+baseline): mean F1 of vetoed runs = \ScreenPooledVetoedMeanFOne{}, surviving = \ScreenPooledSurvivingMeanFOne{}, gap =
++\ScreenPooledGap{}. Within-model binary gap (only the \ScreenNMixed{} models with both vetoed and
+surviving runs): mean of per-model gaps = \textbf{+\ScreenBinaryGap} (\ScreenPerModelGaps). The reduction from
+the pooled gap (+\ScreenPooledGap) to the within-model gap (+\ScreenBinaryGap) shows that
 roughly half the pooled signal was attributable to the across-model
-confound; the residual within-model effect (+0.162) is the honest lower
+confound; the residual within-model effect (+\ScreenBinaryGap) is the honest lower
 bound.
 
 \textbf{Interpretation and limitations.} The within-model directional
 signal is positive and consistent across a clear majority of models
-(10/14), supporting the claim that the screen earns its keep at the run
-grain. However, the statistic is modest, and only 3 of the 14 models
+(\ScreenPositiveSpearman/\ScreenNModels), supporting the claim that the screen earns its keep at the run
+grain. However, the statistic is modest, and only \ScreenNMixed{} of the \ScreenNModels{} models
 have both vetoed and surviving runs --- the binary within-model
 comparison is therefore underpowered for formal significance testing.
-One false-veto case exists: qwen3.6-flash run 1 (F1 = 0.212, the model's
-best run) is vetoed by the cap\_distinct threshold while two
-lower-scoring runs survive. These limitations are acknowledged; the
+One false-veto case exists: \ScreenFalseVetoModel{} run \ScreenFalseVetoRun{} (F1 = \ScreenFalseVetoFOne)
+is vetoed by the cap\_distinct threshold yet outscores one of the
+model's two surviving runs. These limitations are acknowledged; the
 screen is presented as an existence proof validated within-model, not as
 a fully calibrated detector. The cutoff thresholds were tuned in-sample
 on the same 70 runs --- cross-validation against Experiment 2 or
@@ -2493,9 +2494,9 @@ commercial-product framing does not capture and does not claim to.
 \section{Aggregation sweep and vote gate}\label{sec:annex-fusion}
 
 This annex develops the fusion material summarised in
-§\ref{sec:fusion}. Pooling the 70 parametric-baseline runs from
-§\ref{sec:exp1} (14 models × 5 repetitions) treats each run as a noisy
-partial observer of the 177-plant reference: the per-plant recognition
+§\ref{sec:fusion}. Pooling the \ExpOneNRuns{} parametric-baseline runs from
+§\ref{sec:exp1} (\ExpOneNModels{} models × 5 repetitions) treats each run as a noisy
+partial observer of the \NumRefPlants-plant reference: the per-plant recognition
 matrix (\ref{sec:annex-recognition}) shows that the operational core
 forms dense rows while proposed plants form sparse ones, and the
 density profile predicts which plants are structurally recoverable by
@@ -2538,7 +2539,7 @@ mid-lifecycle, contested sources, multilingual records, conditional
 projections --- are where language-model reasoning adds genuine value.
 
 \textbf{Pooling runs by simple union more than doubles recall relative
-to the single-run mean (2.4×), at no new collection cost.} The 14-model exp1\_batch2 cohort (a subset of the
+to the single-run mean (\AggUnionGainX×), at no new collection cost.} The 14-model exp1\_batch2 cohort (a subset of the
 16-model Experiment 1 sweep, dropping \texttt{qwen3.6-27b} and
 \texttt{qwen3.6-plus}; see the cohort note in §\ref{sec:exp1}) allows a
 controlled evaluation of pooling recipes without any new API calls: a 4
@@ -2546,24 +2547,24 @@ controlled evaluation of pooling recipes without any new API calls: a 4
 majority at \(k\)=2 and \(k\)=3; confidence-weighted), three pool sizes
 (2, 3, 4), and four diversity rules (intra-model; cross-model selecting
 the cheapest, most expensive, or alternating models by run cost),
-scoring each aggregated list against the 177-plant reference using the
+scoring each aggregated list against the \NumRefPlants-plant reference using the
 same LP matcher as §\ref{sec:exp1}. Union aggregation dominates as a
 \textbf{recall} lever across all diversity rules and pool sizes: the
 best union recipe, three runs from the three most expensive models,
-achieves recall = 0.644 at a combined cost of \$0.94, compared to a
-single-run mean recall of 0.266. This is a 2.4× improvement over the
-mean, though it remains below the best individual run's recall (0.672
+achieves recall = \AggBestUnionRecall{} at a combined cost of \$\AggBestUnionCost{}, compared to a
+single-run mean recall of \AggSingleRunMeanRecall{}. This is a \AggUnionGainX× improvement over the
+mean, though it remains below the best individual run's recall (\AggBestSingleRecall{}
 for claude-sonnet-4.6) because precision falls as the union list grows
-(166 candidate plants for 177 reference plants). F1 for the best union
-cell (0.665) is slightly below the best single-run F1 (0.679); union
+(\AggBestUnionCandidates{} candidate plants for \NumRefPlants{} reference plants). F1 for the best union
+cell (\AggBestUnionFOne) is slightly below the best single-run F1 (\AggBestSingleFOne); union
 buys coverage breadth at a precision cost, not a free F1 gain. Majority
 voting and confidence-weighting both reduce recall relative to union at
 every pool size, because the Experiment 1 vocabulary is rich enough that
 most true plants appear in at most one run in any given pool; a majority
 gate filters them out. Intra-model pooling (averaging over the 14
-models) reaches recall = 0.397 at pool size 3 for \$0.25, a practical
+models) reaches recall = \AggIntraPoolThreeRecall{} at pool size 3 for \$\AggIntraPoolThreeCost{}, a practical
 option when budget constrains the model set. The cross-model-low recipe
-(cheapest models only) performs poorly (recall ≈ 0.26--0.42), confirming
+(cheapest models only) performs poorly (recall ≈ \AggLowRecallMin--\AggLowRecallMax), confirming
 that marginal plant recall is concentrated in the frontier models. These
 results do not update the headline F1 from §\ref{sec:exp1}, which
 reports per-model single-run performance for comparability with existing
@@ -2579,23 +2580,23 @@ least two of the four models name it --- sharpens the precision/recall
 trade-off in both experiments (Figure~\ref{fig:fusion-mvp}). Applying the rule separately to
 Experiment 1 (the same four models, answering from memory, × 5 repeats)
 and the Experiment 2 naive arm (E1 vs E2) gives: under ≥2-models in E1,
-F1 = 0.750 (TP = 105, FP = 2); under ≥2-models in the E2 naive arm, F1
-= 0.813 (TP = 122, FP = 5). The vote gate trades a little recall for a
+F1 = \FusionRTwoEOneFFrac{} (TP = \FusionRTwoEOneTP, FP = \FusionRTwoEOneFP); under ≥2-models in the E2 naive arm, F1
+= \FusionRTwoETwoOneDFFrac{} (TP = \FusionRTwoETwoOneDTP, FP = \FusionRTwoETwoOneDFP). The vote gate trades a little recall for a
 large precision gain, the mirror image of the union recipe above.
 Source artifact: \texttt{report/inputs/generated/fusion\_mvp.csv}.
 
 \begin{figure}
 \centering
 \includegraphics[width=\linewidth]{../../report/inputs/generated/fig_fusion_mvp.pdf}
-\caption{A two-model agreement rule buys precision cheaply: 105--122
-confirmed plants against 2--5 false positives, with no new API calls.
+\caption{A two-model agreement rule buys precision cheaply: \FusionRTwoEOneTP--\FusionRTwoETwoOneDTP
+confirmed plants against \FusionRTwoEOneFP--\FusionRTwoETwoOneDFP false positives, with no new API calls.
 Naive presence fusion across the 4-frontier-model Experiment 1 cohort
 and Experiment 2 naive arm (N=20 runs each: 4 models × 5 repeats). Top
 panel (E1 parametric): UNION and ≥2-models fusion rules vs best single
 model. Bottom panel (E2 naive arm): same rules. TP = plants matched
 against the reference; FP = unmatched plants (extracted but not in the
-reference). Under ≥2-models in E1: F1=0.750, TP=105, FP=2. Under
-≥2-models in E2-1D: F1=0.813, TP=122, FP=5.}\label{fig:fusion-mvp}
+reference). Under ≥2-models in E1: F1=\FusionRTwoEOneFFrac{}, TP=\FusionRTwoEOneTP, FP=\FusionRTwoEOneFP. Under
+≥2-models in E2-1D: F1=\FusionRTwoETwoOneDFFrac{}, TP=\FusionRTwoETwoOneDTP, FP=\FusionRTwoETwoOneDFP.}\label{fig:fusion-mvp}
 \end{figure}
 
 \end{document}
