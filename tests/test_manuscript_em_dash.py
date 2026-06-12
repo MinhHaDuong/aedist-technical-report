@@ -47,6 +47,16 @@ _QUOTED_ENV_RE = re.compile(
 )
 # Display-quoted verbatim strings (as-sent protocol text quoted in prose).
 _INLINE_QUOTED_RE = re.compile(r"\\emph\{``.*?''\}", re.DOTALL)
+# Anchor for the exclusion above: the as-sent Phase B reply strings. A new
+# match would silently evade every guard, so the count is pinned (see
+# test_inline_quoted_exclusion_anchor).
+INLINE_QUOTED_SPAN_COUNT = 5
+# Heading commands form their own block in _paragraphs(): a heading and its
+# \addcontentsline twin both carry the title's em dash, which would otherwise
+# consume the surrounding prose paragraph's whole cap budget.
+_HEADING_LINE_RE = re.compile(
+    r"\s*\\(section|subsection|subsubsection|paragraph|addcontentsline)\b"
+)
 
 
 def _blank(match: re.Match) -> str:
@@ -77,7 +87,12 @@ def _paragraphs() -> list[tuple[int, str]]:
     block: list[str] = []
     start = 0
     for n, line in _prose_lines():
-        if line.strip():
+        if _HEADING_LINE_RE.match(line):
+            if block:
+                paras.append((start, "\n".join(block)))
+                block = []
+            paras.append((n, line))
+        elif line.strip():
             if not block:
                 start = n
             block.append(line)
@@ -87,6 +102,19 @@ def _paragraphs() -> list[tuple[int, str]]:
     if block:
         paras.append((start, "\n".join(block)))
     return paras
+
+
+def test_inline_quoted_exclusion_anchor():
+    """The \\emph{``…''} exclusion blanks exactly the known as-sent protocol
+    spans. A new match means a prose quote would silently evade every em-dash
+    guard — acknowledge it deliberately by updating the pinned count."""
+    spans = list(_INLINE_QUOTED_RE.finditer(strip_comments(raw())))
+    assert len(spans) == INLINE_QUOTED_SPAN_COUNT, (
+        f"{len(spans)} \\emph{{``…''}} spans found, expected "
+        f"{INLINE_QUOTED_SPAN_COUNT}. These spans are excluded from all "
+        "em-dash guards; if the new span is genuinely frozen as-sent text, "
+        "update INLINE_QUOTED_SPAN_COUNT — otherwise unwrap the prose quote."
+    )
 
 
 def test_no_tex_em_dash_ligature_in_prose():
