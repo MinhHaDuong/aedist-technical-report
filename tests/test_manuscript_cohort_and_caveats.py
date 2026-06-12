@@ -18,6 +18,13 @@ wherever it still appears (conclusion, Discussion). The cost-savings claim and
 the cost-F1 non-monotonicity novelty claim must be gone. The status-vocabulary
 mismatch sentence must cite the grouped ~38% from the committed
 status-difficulty table.
+
+Ticket 0557 (CI test polarity rule, see .claude/rules/writing.md): assertions
+here are mechanical (re-derived from artifacts), content-fidelity (verbatim
+quotes of fixed external documents), or *negative/conditional* guards on
+forbidden phrasings. Positive authorial-wording pins are banned — the standing
+editorial decisions they encoded live in docs/editorial-brief.md, checked at
+review time by /review-pr-prose.
 """
 
 import csv
@@ -100,7 +107,9 @@ def test_abstract_register_follows_author_brief():
     """Ticket 0532 round 2 (author reading-1 brief): the abstract is written
     for the general reader — no statistics (no F1 scores, no ρ/τ), no
     em-dashes, no literature-review closing, no fusion sentence — and the
-    177-plant register is disambiguated as spanning the whole lifecycle."""
+    177-plant register must not be misstated as operating-only (ticket 0557:
+    the positive 'lifecycle' wording pin moved to docs/editorial-brief.md,
+    entry lifecycle-scope)."""
     abstract = _abstract_paragraph()
     assert "F1" not in abstract, "author brief: no F1 detail in the abstract"
     assert "ρ" not in abstract and "τ" not in abstract and "\\tau" not in abstract, (
@@ -113,9 +122,9 @@ def test_abstract_register_follows_author_brief():
     assert "Pooling" not in abstract and "pooling" not in abstract, (
         "author brief: the fusion/pooling sentence leaves the abstract"
     )
-    assert "lifecycle" in abstract, (
-        "author brief: 177 plants must read as the full-lifecycle register, "
-        "not 177 operating plants"
+    assert "operating plants" not in abstract and "operating-only" not in abstract, (
+        "author brief: the 177-plant register must not read as operating-only "
+        "— it spans the whole project lifecycle (see docs/editorial-brief.md)"
     )
     assert len(abstract.split()) < 300, (
         "author brief: the abstract must stay markedly shorter than the "
@@ -124,61 +133,84 @@ def test_abstract_register_follows_author_brief():
 
 
 def test_rho_caveat_wherever_rho_appears():
-    """Ticket 0532 round 2: ρ=0.92 left the abstract; wherever it still
-    appears in the narrative (conclusion, Discussion), the pooled /
-    across-model / in-sample qualification must accompany it."""
+    """Ticket 0532 round 2, demoted to conditional-negative form (ticket 0557):
+    IF ρ = 0.92 appears in the conclusion or Discussion, the pooled /
+    in-sample qualification must accompany it in that section. The exact
+    caveat phrasings are editorial decisions recorded in
+    docs/editorial-brief.md (rho-caveat-conclusion, rho-caveat-discussion);
+    CI only forbids an unqualified ρ. The annex occurrence (sec:annex-screen)
+    is out of scope: both extractions are bounded before \\appendix."""
     text = body()
     conclusion = text.split("\\section{Conclusion}\\label{sec:conclusion}")[1].split("\\appendix")[0]
-    assert "ρ = 0.92, pooled across models and in-sample" in conclusion, (
-        "conclusion ρ=0.92 must carry the pooled/in-sample caveat"
-    )
-    assert "within-model signal positive but modest, \\ref{sec:annex-screen}" in conclusion, (
-        "conclusion ρ=0.92 must point to the within-model validation annex"
-    )
+    if "ρ = 0.92" in conclusion:
+        assert "pooled" in conclusion and "in-sample" in conclusion, (
+            "conclusion cites ρ = 0.92 without the pooled/in-sample caveat"
+        )
+        assert "\\ref{sec:annex-screen}" in conclusion, (
+            "conclusion cites ρ = 0.92 without pointing to the within-model "
+            "validation annex"
+        )
     discussion = text.split("\\section{Discussion}\\label{sec:discussion}")[1].split(
         "\\section*{Related Work — Methods}"
     )[0]
-    assert "ρ = 0.92" in discussion and "existence proof rather than a validated detector" in discussion, (
-        "Discussion ρ=0.92 must keep the existence-proof qualification"
-    )
-    assert "tuned on the same 70 runs" in discussion, (
-        "Discussion must keep the in-sample (cutoffs tuned on the same runs) caveat"
-    )
+    if "ρ = 0.92" in discussion:
+        assert "existence proof" in discussion, (
+            "Discussion cites ρ = 0.92 without the existence-proof qualification"
+        )
+        assert "in-sample" in discussion or "tuned on the same" in discussion, (
+            "Discussion cites ρ = 0.92 without the in-sample (cutoffs tuned "
+            "on the same runs) caveat"
+        )
+
+
+def _sentences_containing(text: str, phrase: str) -> list[str]:
+    """Sentences of the normalized text that contain `phrase` (sentence =
+    split at .!? followed by whitespace; decimals like 0.92 survive intact)."""
+    return [s for s in re.split(r"(?<=[.!?])\s+", text) if phrase in s]
 
 
 def test_binding_constraint_framed_as_hypothesis():
-    """Ticket 0532: abstract and conclusion frame the binding-constraint claim
-    as a hypothesis, not a finding.
+    """Tickets 0532/0541, demoted to negative/sentence-scoped form (ticket
+    0557): the binding-constraint claim is never stated as a flat finding,
+    anywhere.
 
-    Round 2 (author brief) literals: the conclusion's "conjecture about why"
-    opener and the conditional recommendation. The 2026-06-12 abstract rewrite
-    dropped the binding-constraint claim from the abstract altogether —
-    absence satisfies the no-overclaim intent by construction; the abstract
-    guard now only forbids reintroducing it as a flat finding.
+    - Abstract: the claim must not appear at all (unchanged negative; the
+      2026-06-12 rewrite dropped it — absence satisfies the no-overclaim
+      intent by construction).
+    - Body-wide: every sentence asserting "binding constraint is ..." must
+      carry conjecture/conditional framing; every sentence relocating the
+      constraint ("binding constraint lies") or claiming the constraint
+      shifts must carry an epistemic hedge.
 
-    Ticket 0541 (scoped divergence): the body speaks within-experiment with
-    light epistemic markers — "suggests" in the equalisation paragraph,
-    "appears to" in the fusion section — so a later edit cannot silently
-    revert the body to a flat factual register.
+    The exact hedged phrasings ("the evidence points toward a conjecture
+    about why", "If the constraint is indeed the documents", "suggests the
+    binding constraint lies", "appears to shift from model capability") are
+    editorial decisions recorded in docs/editorial-brief.md
+    (binding-constraint-conjecture, equalisation-hedge, fusion-hedge).
     """
     abstract = _abstract_paragraph()
     text = body()
-    conclusion = text.split("\\section{Conclusion}\\label{sec:conclusion}")[1].split("\\appendix")[0]
     assert "binding constraint is" not in abstract, (
         "abstract must not state the binding-constraint claim as a flat finding"
     )
-    assert "the evidence points toward a conjecture about why" in conclusion, (
-        "conclusion must frame the binding-constraint claim as a conjecture"
-    )
-    assert "If the constraint is indeed the documents" in conclusion, (
-        "conclusion recommendation must stay conditional on the hypothesis"
-    )
-    assert "suggests the binding constraint lies" in text, (
-        "equalisation paragraph must hedge the relocation claim with 'suggests'"
-    )
-    assert "appears to shift from model capability" in text, (
-        "fusion section must hedge the constraint-shift claim with 'appears to'"
-    )
+    hedges = ("conjectur", "hypothes", "suggest", "appear", "If ", "if the constraint")
+    for sentence in _sentences_containing(text, "binding constraint is"):
+        assert any(h in sentence for h in hedges), (
+            f"flat binding-constraint finding (no conjecture/conditional "
+            f"framing in sentence): {sentence!r}"
+        )
+    for sentence in _sentences_containing(text, "binding constraint lies"):
+        assert "suggest" in sentence or "appear" in sentence, (
+            f"unhedged constraint-relocation claim: {sentence!r}"
+        )
+    for sentence in _sentences_containing(text, "binding constraint"):
+        if "shift" not in sentence:
+            continue
+        # A hedged claim ("appears to shift") or an explicit negation
+        # ("did not shift") is fine; only the flat positive claim is banned.
+        assert any(h in sentence for h in ("appear", "may", "suggest", "not")), (
+            f"unhedged constraint-shift claim: {sentence!r}"
+        )
 
 
 def test_intro_does_not_claim_per_cell_provenance_checking():
@@ -208,17 +240,23 @@ def test_cost_f1_nonmonotonicity_novelty_dropped():
     )
 
 
-def test_exactly_three_novelty_claims_survive():
-    """Exactly three explicit primacy claims survive; demoted observations lose framing.
+def test_novelty_claim_demotions_hold():
+    """Demoted primacy claims stay demoted; surviving claims keep loose anchors.
 
-    Counts the manuscript-level primacy assertions of the form
-    'to our knowledge ... has not been / no published / no prior'. The three
-    kept are: (1) benchmark gap, (2) per-row provenance × temporality, and
-    (3) two-grain credibility/reliability scoring. The MoE-non-determinism and
-    day-scale-drift assertions are demoted to plain observations; the cost-F1
-    claim is dropped. 'we did not find' epistemic hedges are NOT primacy claims.
-    Round 2 (author brief): the abstract's copy of claim (1) is removed (no
-    literature review in the abstract); the claim survives in §fusion.
+    Negative half (unchanged ratchet): the MoE-non-determinism, day-scale-drift
+    and per-row-provenance primacy phrasings were demoted to plain observations
+    (ticket 0532) and must not return.
+
+    Positive half, demoted to loose anchors (ticket 0557): the three surviving
+    novelty claims — (1) benchmark gap and (2) per-row provenance × temporality,
+    both in §fusion; (3) two-grain credibility/reliability scoring, in the
+    Discussion — are guarded by section-scoped marker presence, not verbatim
+    sentences. §fusion must keep at least two primacy-marker sentences (one per
+    claim); the Discussion must keep the STANAG 2511 two-grain vocabulary
+    ("information credibility" / "source reliability" — fixed external
+    terminology, not authorial prose). The verbatim phrasings are recorded in
+    docs/editorial-brief.md (novelty-benchmark-gap, novelty-provenance-temporality,
+    novelty-two-grain).
     """
     text = body()
     demoted_phrasings = [
@@ -228,14 +266,27 @@ def test_exactly_three_novelty_claims_survive():
     ]
     for phrase in demoted_phrasings:
         assert phrase not in text, f"demoted observation still carries primacy framing: {phrase!r}"
-    # The three surviving novelty claims (verbatim anchors).
-    survivors = [
-        "no published benchmark or system targets open-world enumeration",  # (1) benchmark gap
-        "conjunction of per-cell provenance with per-cell temporal validity",  # (2)
-        "run-level screen rates \\emph{information credibility} while the model-level grade rates \\emph{source reliability}",  # (3) two-grain
+    fusion = text.split("\\section{Need and potential for fusion}\\label{sec:fusion}")[1].split(
+        "\\section{Discussion}\\label{sec:discussion}"
+    )[0]
+    markers = ("no published", "to our knowledge", "did we find", "has not been")
+    marker_sentences = [
+        s
+        for s in re.split(r"(?<=[.!?])\s+", fusion)
+        if any(m in s.lower() for m in markers)
     ]
-    for s in survivors:
-        assert s in text, f"surviving novelty claim missing: {s!r}"
+    assert len(marker_sentences) >= 2, (
+        "§fusion must keep both surviving primacy claims (benchmark gap; "
+        f"provenance × temporality) — found {len(marker_sentences)} "
+        "primacy-marker sentence(s)"
+    )
+    discussion = text.split("\\section{Discussion}\\label{sec:discussion}")[1].split(
+        "\\section*{Related Work — Methods}"
+    )[0]
+    assert "information credibility" in discussion and "source reliability" in discussion, (
+        "Discussion must keep the two-grain scoring claim (STANAG 2511 "
+        "information-credibility / source-reliability vocabulary)"
+    )
 
 
 def test_wikipedia_seeding_date_matches_provenance():
@@ -265,8 +316,11 @@ def test_wikipedia_seeding_date_matches_provenance():
     )
 
 
-def test_status_vocab_mismatch_sentence_present():
-    """The status-vocabulary mismatch sentence cites the grouped ~38% from the table."""
+def test_status_vocab_mismatch_share_matches_artifact():
+    """The manuscript cites the grouped ~38% Proposed share from the committed
+    status-difficulty table (mechanical artifact check). The "controlled
+    vocabulary" / "status accuracy" phrase anchors were demoted to
+    docs/editorial-brief.md (status-vocab-mismatch) by ticket 0557."""
     if not DIFF_TEX.exists():
         pytest.skip("status difficulty table not generated")
     tex = DIFF_TEX.read_text(encoding="utf-8")
@@ -277,11 +331,7 @@ def test_status_vocab_mismatch_sentence_present():
     assert int(share.split(".")[0]) == 38, (
         f"expected grouped Proposed share ~38%, table says {share}"
     )
-    text = body()
-    assert "controlled vocabulary" in text and "status accuracy" in text, (
-        "status-vocab mismatch sentence missing"
-    )
-    assert f"{share}%" in text, (
+    assert f"{share}%" in body(), (
         f"status-vocab sentence must state the {share}% Proposed share "
         "(via \\StatusProposedSharePct)"
     )

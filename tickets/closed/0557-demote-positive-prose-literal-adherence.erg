@@ -1,0 +1,253 @@
+%erg 0.1
+Title: Demote positive prose-literal adherence tests to negative guards + editorial brief
+Created: 2026-06-12
+Author: HDMX-coding-agent
+Closed: autoclosed — PR #1020
+
+--- log ---
+2026-06-12T09:29Z HDMX-coding-agent created
+2026-06-12T14:10Z claude note raid-557 Imagine pass — drift verdict clean, inventory + triage table appended
+2026-06-12T14:25Z claude note raid-557 Plan pass — concrete rewrites, day-one guard safety verified, IDH companion is existing ticket 0253
+2026-06-12T14:40Z claude note raid-557 Feasibility PASS — all paths/headings/phrases verified, baseline 22 passed; WARN: PR #1017 also touches .claude/rules/writing.md (rebase before merge)
+2026-06-12T15:00Z claude note executed — demotions per triage, brief 13 entries, polarity rule appended; gates a/b + fang verified on scratch copies; IDH companion already merged upstream (IDH PR #393, ticket 0253 closed there)
+2026-06-12T15:55Z claude note raid-557 review round 1 — brief field renamed to Ticket: (skill schema), 14th entry annex-quote-anchor, polarity rule third category, constraint-shift guard rescoped to binding-constraint + negation-tolerant, executed-log timestamp corrected (was 10:42Z stale clock)
+
+2026-06-12T11:08Z HDMX-coding-agent closed — autoclosed — PR #1020
+--- body ---
+## Context
+
+Adherence tests that pin *positive* prose literals ("abstract must contain
+'point toward a working hypothesis'") break on every legitimate authorial
+rewrite and force test-chasing edits (bit on PR #1014, the 2026-06-12
+abstract rewrite: two tests pinned sentences of the superseded draft).
+The asymmetry: pinning what must be said requires NLP; forbidding what
+must NOT be said works with literals, because defects (overclaim
+signature phrases, hand-typed numbers, hardcoded refs) are lexically
+stable while prose is not.
+
+Policy decided with the author (2026-06-12 session):
+1. CI keeps only mechanical guards + *negative* guards (forbidden-phrasing
+   ratchets for claims reviews ruled overclaimed).
+2. Positive semantic intent moves to review-time: an editorial-brief file
+   listing standing editorial decisions (claim X stays hedged, abstract
+   leads with the difficulty result, ...) that the /review-pr-prose panel
+   checks each manuscript diff against.
+
+## Relevant files
+
+- `tests/test_manuscript_cohort_and_caveats.py` — mixed: hedging guards on
+  conclusion/body still pin positive literals ("suggests the binding
+  constraint lies", "appears to shift from model capability", "the
+  evidence points toward a conjecture about why", ...)
+- `tests/test_manuscript_structure.py` — structure (keep) + frontier
+  framing (already loosened on PR #1014; demote further or keep as-is)
+- `tests/test_manuscript_crossref.py`, `tests/test_manuscript_macros.py`,
+  `tests/test_abstract_numbers*.py`, `tests/test_no_inline_plots.py` —
+  mechanical, KEEP unchanged
+- `.claude/skills/review-pr-prose/` (user-level IDH skill: check
+  `~/.claude/skills/review-pr-prose/SKILL.md`) — add brief-check step
+- New: `docs/editorial-brief.md` — the standing-decisions list
+
+## Actions
+
+1. Inventory every assertion in the manuscript prose test files; classify
+   mechanical / negative / positive-literal.
+2. For each positive literal: rewrite as a negative guard where the
+   underlying decision was "never state X flatly"; otherwise move the
+   decision into `docs/editorial-brief.md` (cite the originating ticket:
+   0532, 0541, author briefs) and delete the assertion.
+3. Create `docs/editorial-brief.md`; each entry = decision + rationale +
+   originating ticket.
+4. Wire the brief into the prose review path so manuscript PRs are checked
+   against it (skill edit may need an IDH-side PR; if so, file a companion
+   ticket there and reference it here).
+
+## Test
+
+- Adherence meta-test: grep the prose test files for `in abstract`/`in
+  conclusion`-style *positive* literal assertions and fail if any remain
+  outside an allowlist (the red step: write it first, watch it list the
+  current offenders).
+
+## Verification
+
+- [x] `make check` green
+- [x] A trial rewording of a hedged sentence (same meaning, different
+  words) no longer fails CI
+- [x] Reintroducing "the binding constraint is the documents" flatly in
+  the abstract DOES fail CI
+
+## Invariants
+
+- Mechanical guards (crossref, macros, numbers-from-artifacts, inline
+  plots, JSON EOF) unchanged.
+- Negative guards never weakened — each existing overclaim ratchet maps to
+  a negative guard or a brief entry, none silently dropped.
+
+## Exit criteria
+
+- [x] No positive prose-literal assertion remains in CI
+- [x] `docs/editorial-brief.md` exists and carries every demoted decision
+- [x] Prose review path references the brief
+
+## Reimagined (raid 2026-06-12)
+
+Approach refinements (exit criteria unchanged):
+
+- **Drop the meta-test allowlist** (YAGNI). A grep meta-test can't
+  distinguish polarity (`assert X in` vs `assert X not in`) without complex
+  regex, and the allowlist needs maintenance on every legitimate addition.
+  Instead: state the policy in a project rule and let the verify-adherence
+  grep ratchet flag `assert .* in (abstract|conclusion|discussion|...)`
+  positives for review.
+- **The triage table below is the lookup record** — Execute applies it
+  inline; do not build per-assertion triage machinery.
+- **Content-fidelity anchors are mechanical, not prose pins**: assertions
+  that quote a *fixed external document* (Doc-07 prompt verbatim in annex)
+  or a structurally derived value verify content faithfulness, not
+  authorial wording — they stay.
+
+### Triage table — test_manuscript_cohort_and_caveats.py
+
+| Assertion | Class | Disposition |
+|---|---|---|
+| cohort counts 16/14 from TOML+CSV | mechanical | KEEP |
+| zero-good-run set from artifact | mechanical | KEEP |
+| abstract: no F1/ρ/τ/em-dash/"To our knowledge"/pooling | negative | KEEP |
+| abstract: `"lifecycle" in` | positive | demote: negative guard or brief ("177 plants = full-lifecycle register, not operating-only") |
+| abstract word cap <300 | mechanical | KEEP |
+| conclusion: exact "ρ = 0.92, pooled across models and in-sample" | positive | demote: negative form — if "ρ = 0.92" present, "pooled" + "in-sample" must accompany; exact phrasing → brief |
+| conclusion: exact "within-model signal positive but modest, \ref" | positive | demote: if ρ cited, annex-screen ref must appear; phrasing → brief |
+| discussion: "existence proof rather than a validated detector" | positive | demote: caveat-accompanies-ρ negative; phrasing → brief |
+| discussion: "tuned on the same 70 runs" | positive | demote: in-sample qualification must accompany ρ; phrasing → brief |
+| abstract: "binding constraint is" not in | negative | KEEP |
+| conclusion: "the evidence points toward a conjecture about why" | positive | demote → brief |
+| conclusion: "If the constraint is indeed the documents" | positive | demote → brief |
+| body: "suggests the binding constraint lies" | positive | demote: negative guard — flat-claim register banned in equalisation paragraph |
+| body: "appears to shift from model capability" | positive | demote: same negative guard |
+| intro per-cell provenance, cost-savings cut, nonmonotonicity dropped, demoted_phrasings loop | negative | KEEP |
+| novelty `survivors` loop (3 verbatim claims) | positive | demote: loose primacy-marker presence check (e.g. "no published") per section; verbatim claims → brief |
+| wikipedia seeding dates/revisions from PROVENANCE.md | mechanical | KEEP |
+| "built fleet"/"pipeline tail" | positive (low-risk factual) | borderline — keep OR demote; Plan decides, bias to keep (data-structure descriptors, not editorial framing) |
+| status-vocab: `{share}%` artifact check | mechanical | KEEP |
+| status-vocab: "controlled vocabulary"/"status accuracy" anchors | positive | demote phrase anchors → brief; keep share-% check |
+| analysis-cohort prompt matches shipped record | mechanical | KEEP |
+| body no longer attributes modules prompt to cohort | negative | KEEP |
+| annex statuses loop (re-derived from record) | mechanical | KEEP |
+| annex GEM-only negatives | negative | KEEP |
+| annex quote anchor ("primary-sourced reference inventory", …) | mixed | keep record-derivation check; demote annex quote anchor → brief |
+| annex Doc-07 verbatim anchors | content-fidelity | KEEP (quotes a fixed document, not prose) |
+
+### Triage table — test_manuscript_structure.py
+
+| Assertion | Class | Disposition |
+|---|---|---|
+| no-synopsis framing | negative | KEEP |
+| `\begin{abstract}` present | mechanical | KEEP |
+| "frontier"/"sota" in abstract | positive (loose topical) | KEEP — the frontier result is the paper's lead claim; note in brief |
+| has_hard_result 4-way OR | positive (already loosened) | KEEP — OR-pattern acts structural |
+| F1 stats from macros | mechanical | KEEP |
+| "0.92" in text | positive (fixed empirical value) | KEEP — note in brief: update manually if ρ changes |
+| affiliation / intro / conclusion / related-work present | mechanical | KEEP |
+
+### Risks carried forward
+
+1. IDH companion: review-pr-prose SKILL.md lives in `~/.claude` (IDH repo).
+   Exit criterion (c) needs at minimum the brief-check step added there via
+   IDH PR; file the companion ticket AND add the section, don't just note it.
+2. Novelty survivors: keep a weakened primacy-marker check in CI so the
+   three claims can't be silently dropped — the brief is review-time only.
+3. 0557 is independent of the reading-1 wave (test infra, not prose) —
+   safe in parallel.
+
+## Plan (raid 2026-06-12)
+
+Ordered actions; apply the triage table above as the lookup record.
+
+1. **`tests/test_manuscript_cohort_and_caveats.py`** — demote per triage:
+   - `test_abstract_register_follows_author_brief`: drop `"lifecycle" in
+     abstract`; add negative `"operating plants" not in abstract and
+     "operating-only" not in abstract` (verified: phrase "operating plants"
+     absent from current abstract — green day one; abstract says
+     "operating, cancelled, and retired plants").
+   - `test_rho_caveat_wherever_rho_appears`: rewrite as conditional
+     negatives — if "ρ = 0.92" in conclusion → "pooled" AND "in-sample"
+     AND `\ref{sec:annex-screen}` must accompany; if in discussion →
+     "existence proof" AND ("in-sample" OR "tuned on the same") must
+     accompany. Exact phrasings → brief.
+   - `test_binding_constraint_framed_as_hypothesis`: keep abstract
+     negative; add conclusion negatives on flat forms ("the binding
+     constraint is the data/model"); body hedge guards as
+     sentence-scoped checks: any sentence containing "binding constraint
+     lies" must contain "suggests"/"appear"; any sentence claiming the
+     constraint shift must be hedged ("appears to"). (Plan antipattern
+     fix A: sentence-scoped hedge check, not str.replace tricks.)
+   - `test_exactly_three_novelty_claims_survive`: keep demoted_phrasings
+     negatives; replace 3 verbatim survivors with per-section
+     primacy-marker presence (markers: "no published", "to our
+     knowledge", "we did not find", "has not been"); verbatim claims →
+     brief. CAUTION: confirm actual section heading strings in main.tex
+     before writing split keys.
+   - `test_status_vocab_mismatch_sentence_present`: keep `{share}%`
+     artifact check; delete "controlled vocabulary"/"status accuracy"
+     anchors → brief (no replacement negative needed).
+   - `test_wikipedia_seeding_date_matches_provenance`: KEEP entirely —
+     "built fleet"/"pipeline tail" resolved as scientific-accuracy
+     coverage caveats (prevent "Wikipedia covers all 177" overclaim),
+     not editorial framing.
+   - `test_annex_baseline_prompt_carries_as_sent_status_vocabulary`:
+     KEEP both `in prompt` and `in quote` — fixed-document verbatim
+     fidelity, same class as Doc-07 anchors.
+2. **`tests/test_manuscript_structure.py`** — no changes (all KEEP).
+3. **`docs/editorial-brief.md`** — new file; one H2 per decision with
+   fields `**Decision:** / **Rationale:** / **Originating ticket:** /
+   **Status:** active`. 13 entries: lifecycle-scope, rho-caveat-conclusion,
+   rho-caveat-discussion, binding-constraint-conjecture,
+   equalisation-hedge, fusion-hedge, 3× novelty claim phrasings,
+   status-vocab-mismatch, frontier-result-abstract, rho-value-static,
+   built-fleet-pipeline-tail (kept in CI but documented).
+4. **`.claude/rules/writing.md`** — append "CI test polarity rule":
+   prose adherence tests pin only negative guards + mechanical checks;
+   positive intent lives in the brief, checked by /review-pr-prose.
+5. **IDH companion** — ticket 0253 already exists in ~/.claude/tickets/
+   (filed 2026-06-12T09:30Z). Add step 2b "Editorial brief check" to
+   review-pr-prose SKILL.md via IDH worktree branch t0253 + PR with
+   `**Ticket:** tickets/0253-...`. Degrade silently when brief absent.
+
+First test (red step): rewrite `test_rho_caveat_wherever_rho_appears`
+to the conditional-negative form FIRST and run it — must be green on
+current text (before/after symmetry proves the demotion safe). Then
+verify ticket criterion (b): "binding constraint is" in abstract still
+fails (existing negative, unchanged).
+
+Scope estimate: 4 durable files, ~+170/−40 LOC. No dependencies; no
+Blocked-by.
+
+## Feasibility (raid 2026-06-12): PASS
+
+Verified against the tree (commit a442dc24 base):
+
+- All 15 test functions present in test_manuscript_cohort_and_caveats.py.
+- Section headings exact: `\section{Need and potential for fusion}
+  \label{sec:fusion}` (827), `\section{Discussion}\label{sec:discussion}`
+  (860), `\section{Conclusion}\label{sec:conclusion}` (1091). NOTE:
+  Discussion PRECEDES Conclusion in this manuscript.
+- ρ = 0.92 at lines 977 (Discussion), 1114 (Conclusion, already carries
+  "pooled across models and"), 2377 (annex — out of guard scope; scope
+  the conditional guards to Discussion/Conclusion extraction only).
+- "operating plants" absent from abstract block — new negative guard
+  green day one. Hedge phrases present (820, 2493).
+- "no published benchmark or" present in fusion section.
+- docs/editorial-brief.md absent; .claude/rules/writing.md present.
+- IDH ticket 0253 exists, open, title matches; review-pr-prose
+  SKILL.md ## Setup step 2 = "Read the diff of the merge request." —
+  insert the brief check as step 2b after it.
+- Baseline: both prose test files → 22 passed.
+
+WARN (cross-PR): open PR #1017 (t0558 em-dash sweep) touches
+.claude/rules/writing.md, slides/manuscript/main.tex, and adds
+tests/test_manuscript_em_dash.py. Only 2 PRs share writing.md → no
+coordination PR; rebase onto origin/main before opening and again
+before merging. Note 1017 converts prose "---" to Unicode "—"; the
+abstract em-dash negative guard in this ticket's file is KEEP-unchanged
+and the abstract currently has no em-dash, so no interaction expected.
