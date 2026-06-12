@@ -1,0 +1,99 @@
+%erg 0.1
+Title: Tone polish to the author's prose style + split overlong paragraphs
+Created: 2026-06-12
+Author: HDMX-coding-agent
+Blocked-by: 0569
+
+--- log ---
+2026-06-12T15:55Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Child of sweep tracker 0571; runs LAST so the polish covers final
+content. Style exemplar: the author-polished abstract + introduction
+(PR #1023) and the de-jargon precedent (PR #1033 review: "de-jargon
+occurrents/bitemporal, drop arrow notation"). Standing decisions:
+docs/editorial-brief.md. HARD CONSTRAINT: the em-dash ratchet
+(tests/test_manuscript_em_dash.py, ceiling in
+tests/data/emdash_ceiling.txt) — net em-dash count must not increase;
+prefer reducing it when restructuring flagged sentences.
+
+Line hints from main 79d3cba3 — relocate by quoted snippet, three PRs
+will have landed since.
+
+## Actions — tone (reviewer findings, verify in place)
+
+1. Drop assistant tics: "Notably," opener (~L862); "That is precisely
+   what" (~L921); "Let us admit it:" oratory (~L196-224 GEM paragraph)
+   → plain statement.
+2. De-jargon the system subsection §7.4 (~L913-946), worst cluster:
+   "stateful pipeline" echoes (×5 "pipeline" in ~20 lines — keep the
+   term once, then "such a system"/"that investment"); "sharpens the
+   target"; "derived projection" → "snapshot drawn from the narrative
+   inventory at a reference date"; develop-or-trim the two-sentence
+   knowledge-graph-triple analogy (give it its one-clause payoff,
+   drop "therefore the same problem as" identity overclaim).
+3. De-jargon Future research (~L1155-1185): spell out "bitemporal claim
+   log" for a statistics/energy reader ("each claim records both when
+   the fact held and when it was asserted"); drop "modality layer" and
+   "fold into the actual state" vocabulary; "arbitrate" → "settle";
+   future-system assertions in present tense → proposal mood ("This
+   suggests extracting structure once at ingest...").
+4. Discussion: "Phase C cross-evaluation" used cold (~L1051) → gloss or
+   drop; "for three compounding reasons" → plainer; "Read together, the
+   three literatures locate the continuation" meta-sentence (~L1128) →
+   delete, start with the content.
+5. "pipeline" outside architecture sections (~L204 "automated pipeline"
+   → "automated method"); "reproduced verbatim" after "verbatim
+   prompts" (~L459-461) → single verbatim.
+6. Em-dash-dense sentences flagged (~L1008-1013 interday drift, 3
+   dashes): restructure into two sentences, NET dash reduction.
+7. Sweep the rest of the body for the same classes (the list above is
+   seed, not bound): empty intensifiers, agent hedge-speak ("The value
+   may therefore lie in"), CS idiom in prose.
+
+## Actions — paragraph splits (>170 words; split at the quoted turn)
+
+| Paragraph (grep the lead) | Split before |
+|---|---|
+| "Why we re-compile rather than reuse" | "But this paper is research on the compilation method itself." |
+| articulation/Type-III (~L445) | "A failure of the first link is the \emph{Type-III error}" |
+| seeded recall bar (~L520) | "One caveat on coverage: the built fleet" |
+| attribute classification (~L559) | "Even for correctly matched plants, attribute classification is uneven:" |
+| reliability gate (~L628) | "The disqualified set is essentially stable under the gate's tuning" |
+| Exp2 design (~L688) | "The naive arm is an independent sweep, not a re-run" |
+| documents equalise (~L801) | "The effect is specific to single-query prompting" (NOTE: 0569 may have compressed this paragraph — split only if still long) |
+| system subsection (~L913) | "Each cell in a power-plant inventory" |
+| F1 conflation (~L975) | "A third failure mode belongs to the measuring instrument" |
+| refusal paragraph (~L1015) | "The \texttt{modelset\_exp1\_batch2} re-run reported in" |
+| external coherence (~L1036) | "Second, the checker's capability matters:" |
+| conclusion mega-paragraph (~L1191) | "Two levers already deliver without any new data collection." |
+
+Skip any that 0568/0569 already shortened below ~170 words.
+
+## Test
+
+- Mechanical guard candidate (optional): max-paragraph-word-count
+  ratchet over the body — only add if trivially robust to LaTeX
+  environments; otherwise verify by build + reviewer read.
+- The em-dash ratchet test is the binding red/green for action 6.
+
+## Verification
+
+- [ ] `make check` green (em-dash ratchet included); manuscript builds
+- [ ] Spot-read: §7.4 and §9 read in the abstract/intro register
+- [ ] No meaning change anywhere — tone-only diff (claim wording from
+  0568 untouched in substance)
+
+## Invariants
+
+- Claim strength, hedges, numbers, labels untouched
+- Em-dash count ≤ ceiling (prefer reduction)
+- No new jargon introduced
+
+## Exit criteria
+
+- [ ] Tone findings dispositioned (fixed or argued-no in PR body)
+- [ ] All >170-word paragraphs split or justified KEEP
+- [ ] `make check` passes

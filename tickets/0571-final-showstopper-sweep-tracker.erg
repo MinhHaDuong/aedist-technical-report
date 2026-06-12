@@ -1,0 +1,36 @@
+%erg 0.1
+Title: Final showstopper sweep — tracking ticket (registration drop, claims alignment, repetitions, tone polish)
+Created: 2026-06-12
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-12T15:55Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Author-ordered final check before release (2026-06-12, autonomous mode).
+Five parallel reviewer agents swept slides/manuscript/main.tex on
+post-restructure main (79d3cba3): registration framing, repetitions,
+tone + paragraph length, claims-vs-findings, and a red-team showstopper
+pass. Findings are dispositioned into four sequenced children (one PR
+each, same-file edits, strict Blocked-by chain; polish goes last so it
+runs over final content).
+
+## Children
+
+- 0567 — drop registration framing; present Exp 2 as a plain 2×2
+  four-arm design (lands first)
+- 0568 — claims/findings alignment + showstopper fixes (Blocked-by: 0567)
+- 0569 — repetition compression across the restructure seams
+  (Blocked-by: 0568)
+- 0570 — tone polish + paragraph splits, em-dash ratchet respected
+  (Blocked-by: 0569)
+
+## Exit criteria
+
+- [ ] All four children closed
+- [ ] Integration review: full `make check`, manuscript builds, one
+  end-to-end read confirms a single consistent story (abstract = body =
+  conclusion), no registration vocabulary, no major repetition
+- [ ] Tracker closes only after that review

@@ -1,0 +1,104 @@
+%erg 0.1
+Title: Claims/findings alignment — abstract coverage claim, degraded-vs-mixed, scaffolding strip, small fixes
+Created: 2026-06-12
+Author: HDMX-coding-agent
+Blocked-by: 0567
+
+--- log ---
+2026-06-12T15:55Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Child of sweep tracker 0571. The claims-verification and red-team
+reviewers agree on most numbers (all macro-sourced values exact) but
+found one showstopper-grade instability and several substantive nits.
+Every change here must be re-derived from the committed artifacts
+(tab_exp2_2x2_agents.tex, macros_manuscript.tex, exp1_cross_eval.csv) —
+reviewer numbers are hypotheses, not sources. Line hints from main
+79d3cba3; relocate by grep.
+
+## The showstopper (S1): abstract coverage claim vs body
+
+Abstract (~L97): "enabling web access and extended reasoning improved
+coverage over the memory-only query in only one of the four frontier
+agents." Two reviewers read it against two baselines:
+- per-agent memory-only baseline (Exp1 same-lab parametric mean F1 vs
+  Exp2 naive arm): Mistral improved (≈0.41→0.49), Anthropic declined
+  (≈0.67→0.60), Qwen declined (≈0.41→0.37), OpenAI ≈flat (0.63→0.63) —
+  claim holds;
+- "vs Exp1 best run" baseline: nobody improves — claim fails.
+AND the body (~L709-710) explicitly says the Exp2 naive arm "is an
+independent sweep, not a re-run of the §exp1 parametric protocol" —
+i.e. the cross-experiment comparison the abstract rests on is
+disavowed where the data live.
+
+Fix direction (executor verifies numbers first): make the three places
+tell ONE story. Keep the abstract sentence only if §exp2 body carries
+the per-agent memory-vs-web comparison explicitly, with the
+independent-sweep caveat in the same breath (e.g. one sentence + the
+caveat clause). Otherwise weaken the abstract to what the body
+supports. The abstract is author-polished prose — change the minimum,
+and flag the final wording prominently in the PR body for the author.
+
+## Other actions
+
+1. "Degraded vs mixed" (M1): abstract ~L97 and intro ~L150 say the
+   multi-step harness "degraded results"; §exp2 body ~L783 says "mixed"
+   and omits the per-agent regressions. From tab_exp2_2x2_agents.tex
+   (no-docs: Anthropic −0.04, Mistral −0.10, Qwen −0.10, OpenAI +0.02):
+   3/4 declined supports "degraded for three of the four agents".
+   Align: body states the per-agent deltas; abstract/intro keep
+   "degraded" only with the 3-of-4 qualification if the derived table
+   supports it.
+2. Good-models F1 floor (E2): Discussion states means "0.41–0.67";
+   actual floor 0.406. Either reword ("0.40–0.67") or re-derive and use
+   whichever 2-dp rounding is honest; prefer extending the emitter to a
+   macro if touch-cost is low, else minimal text fix.
+3. Scaffolding strip (M3): ~L1631 "revised-prompt rerun in the journal
+   version" — an author note promising future work in annex prose.
+   Delete or rephrase as scoping without promising a venue (consistent
+   with no-promise brief entry).
+4. Extensions opener over-promise (M2): ~L830 says each subsection
+   "points to the annex that..." but subsection 7.4 (ext-system) has no
+   annex. Reword the opener ("most point to an annex" is weak — better:
+   drop the universal claim, let each subsection's own pointer do the
+   work).
+5. Small fixes: ~L677 self-reference "§\ref{sec:exp2}" rendered inside
+   §exp2 itself → "this section"; ~L2139 truncated status string
+   "Verify ." in the Phase B description → complete or quote verbatim
+   if it IS the as-sent string (check the source prompt file; if
+   verbatim, mark it as quoted); ~L1076/wherever `fig:coverage-certainty`
+   is cited from §exp2 body, the figure now lives in the annex and
+   renders as "Figure S2" — add "(annex)" or "Figure~\ref{...} in
+   \ref{sec:annex-exp2}" so the S-number doesn't surprise.
+6. OPTIONAL nits: orphaned labels sec:intro, sec:conclusion,
+   tbl:status-difficulty — harmless; remove only if zero-cost.
+
+## Test
+
+- Red step for the showstopper: a conditional adherence guard — IF the
+  abstract contains "in only one of the four" THEN §exp2 body must
+  contain a per-agent comparison sentence (presence of the four agent
+  names within the comparing paragraph). Polarity-compliant
+  (conditional structural check, no authorial wording pinned).
+
+## Verification
+
+- [ ] Every changed number re-derived from committed artifacts (cite
+  artifact + value in the PR body)
+- [ ] Abstract, intro, §exp2 body, Conclusion tell the same
+  coverage/degradation story
+- [ ] `make check` green; manuscript builds
+
+## Invariants
+
+- No new claim stronger than the artifacts support; hedges from
+  docs/editorial-brief.md preserved (ρ caveats, conjecture framing)
+- Macro-sourced numbers stay macros; em-dash ratchet not exceeded
+
+## Exit criteria
+
+- [ ] S1 resolved: one consistent coverage story, baseline explicit
+- [ ] M1-M3 + small fixes landed
+- [ ] `make check` passes
