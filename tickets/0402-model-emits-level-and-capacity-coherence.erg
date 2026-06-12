@@ -8,6 +8,7 @@ Author: claude
 
 2026-06-08T20:57Z HDMX-coding-agent note blocker 0401 closed — Blocked-by removed.
 2026-06-08T00:00Z claude note split — Part B (scorers) landed in PR ticket/0402-model-emits-level; Part A (prompt+audit+backfill) split into child ticket 0480. This is now a tracking ticket; stays open until 0480 closes.
+2026-06-12T09:30Z orchestrator note empirical motivation strengthened: 0374 triage (PR #993, exp3_fn_triage.csv) shows ~all 16 comparateur FNs are aggregate-vs-sub-unit grain mismatches (site row vs unit/phase reference rows) — exactly the level-conditioned matching this ticket adds; 40% of the Exp3 recall gap is recoverable here
 --- body ---
 ## Context
 

@@ -8,6 +8,7 @@ Label: deferred
 2026-05-25T00:00Z HDMX-coding-agent created
 2026-05-25T00:00Z HDMX-coding-agent note Spawned from ticket 0302 after surgical Mismatched fix landed (PR #t302)
 
+2026-06-12T09:30Z orchestrator note fixture source ready: experiments/derived/exp3_fn_triage.csv (PR #993, ticket 0374) — its 16 bucket=comparateur rows are real matcher failures with per-row rationales naming the unlinked model row; use them as the fixture collection
 --- body ---
 ## Context
 
