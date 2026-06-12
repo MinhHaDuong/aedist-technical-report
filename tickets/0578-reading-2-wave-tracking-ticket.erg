@@ -1,0 +1,116 @@
+%erg 0.1
+Title: Reading-2 wave — tracking ticket (findings collection IN PROGRESS, do not start)
+Created: 2026-06-12
+Author: HDMX-coding-agent
+Label: needs-human
+
+--- log ---
+2026-06-12T20:29Z HDMX-coding-agent created
+2026-06-12T20:32Z HDMX-coding-agent note author reading-2 in progress — findings parked verbatim below; organize into children ONLY when the author says finished
+
+--- body ---
+## Context
+
+Author reading-2 of the rebuilt manuscript PDF (post-restructure 0560,
+post-sweep 0571). Findings are being collected live; this ticket parks
+them so nothing is lost. DO NOT START WORK: the author is still reading;
+more findings will be appended. When the author says "finished", the
+orchestrator turns this into a tracker with sequenced children
+(figure-code work parallel; main.tex chain sequential; global sweeps
+last) and coordinates with the in-flight 0572+0566 macro raid (same
+§exp2 region).
+
+## Findings (batch 1, author's words preserved)
+
+EXP 2 PRESENTATION
+1. Exp 2 must be presented as a 4-arm 2×2 protocol FROM THE START — text
+   still says "The experiment runs two arms" somewhere despite 0567.
+2. Annex B agents table: colwidth auto; drop Country column.
+3. Qwen version is wrong in the text — author recalls 3.7 was used.
+   Verify against artifacts (models.yaml / outputs), fix per ground truth.
+4. The 2025-05-20 compose decision is noise — delete.
+5. "Test before blasting policy" mention = noise — delete.
+6. Phase A is underexplained. Rework: clear crossref to the base prompt
+   (sans-serif, boxed); then the metaprompt verbatim (same formatting).
+   The text MUST describe the protocol validation by the models
+   themselves — how we iterated, e.g. accommodated their request that
+   the harness not be one of the four tested. (Sources: the synopsys
+   comment files in slides/manuscript/, experiments/ docs.)
+7. Phase C must not be mentioned anywhere — it does not exist.
+8. Doc-07 is noise for the reader — remove the codename.
+
+ANNEX A (EXP 1 SPEC)
+9. Delete the whole "Archived baseline prompt" subsubsection — useless
+   coding archeology, we don't present its results. (Tests pin its
+   quote: test_annex_baseline_prompt_carries_as_sent_status_vocabulary,
+   verbatim-anchor tests, brief entry annex-quote-anchor — update.)
+10. Format the (analysis-cohort) prompt in sans serif.
+11. "Trailing newline strip by the worker" = too much detail — delete.
+12. Drop the language-family considerations entirely — irrelevant, false
+    (models are natively multilingual), and removes the ridiculous claim
+    of multiple representatives for all three languages.
+
+ANNEX C (RECOGNITION MATRIX) + §7.1
+13. Drop "names read left to right, no rotation" — leftover generation
+    instruction. Sweep for this cruft class (instructions surviving as
+    prose).
+14. Drop the parenthesis about "common cause, no producer–consumer
+    chaining" — data-flow organization detail.
+15. Annex C intro: shorten much more — it repeats the caption.
+16. Table status-difficulty "recognition rate" definition is obscure.
+    Rework: "the column shows the average probability of being found by
+    an Exp 1 model run" AND move the composition table into §7.1 as the
+    justification — or drop the table. Author prefers rework + move.
+17. §7.1 (and many passages) tone overly complicated, not the author's.
+    Author's intended message: "The task is hard because it is a
+    long-tail distribution. As explained in the intro, it is easy to
+    know the existing power plants, but there are many abandoned or
+    recently proposed projects which have low visibility [composition
+    table goes here]."
+
+ANNEX E (SCREEN VALIDATION)
+18. Consider dropping Annex E and its references — repeats with weak
+    statistical power what Figure 5 shows better. (Brief
+    rho-caveat-conclusion requires \ref{sec:annex-screen} next to ρ in
+    the Conclusion; tests key on it — retarget to the figure, keep the
+    in-sample caveat.)
+
+FIGURE 5
+19. Figure 5 lost the model colors — regression; fix plot script,
+    regenerate.
+20. Figure 5: Deepseek-v4-flash label should be to the left.
+
+STRUCTURE / STYLE GLOBAL
+21. §7 has NUMBERED subsection headings while all other sections respect
+    the writing guide (no numbered subsections). Convert (mind
+    \ref{sec:fusion} call sites and label-keyed tests).
+22. Main text must not refer to code — only annexes may. Figure captions
+    refer to annexes for details. Sweep.
+23. The matching algorithm has a name (flow) — use it.
+24. ADR-3 reference is noise like Doc-07 — sweep all internal codenames.
+25. Sweep for promises (again): e.g. any "deferred to post-conference
+    analysis" phrasing.
+26. Sweep register: this is a technical report, not a lab journal.
+
+§5 (EXP 1)
+30. Cohort presentation: just say the models are listed on Figure 5 and
+    include Claude, DeepSeek, Mistral and Qwen at various sizes from
+    workstation to frontier.
+
+INTRO + §4 + ANNEX F
+27. Intro rework: do NOT enumerate three contributions + three results.
+    Contribute THE BENCHMARK, which includes the four-dimension quality
+    score as the computable metric. Drop two-grain and STANAG from the
+    intro. "Reference-free criteria suffice to screen out weakest runs
+    and models." Drop the "targeted pipeline design narrows the gap"
+    charabia. Intro target length: one page.
+28. §4 too long: drop the paragraph "Each integration... \ref annex F".
+29. Annex F (capability rollout): also note the emerging capability to
+    swarm, orchestrate, and act as a team.
+
+## Exit criteria
+
+- [ ] Author says "finished"; all batches recorded here
+- [ ] Children filed (sequenced; figure-code parallel; sweeps last),
+  coordinated with the 0572+0566 raid
+- [ ] This tracker closes after the wave's integration review
