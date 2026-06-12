@@ -71,8 +71,9 @@ experiments/jobs/
 report/inputs/documents/*
 report/inputs/feeds/*
 
-# Attic (old manual experiments, legacy results)
-attic/
+# Attic (old manual experiments, legacy results) — top-level only;
+# tracked archive dirs elsewhere (e.g. slides/manuscript/attic/) stay in git
+/attic/
 
 # Migration backups
 *.jsonl.bak-*
