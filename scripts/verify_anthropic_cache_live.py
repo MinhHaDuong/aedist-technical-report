@@ -1,12 +1,12 @@
 """Live verification for ticket 0369: Anthropic 1h prompt-cache wiring fires.
 
 Drives run_anthropic_call (the production code path) over two turns with a
-synthetic ~8K-token turn-1 prompt (above the 4096-token Opus cache minimum)
+synthetic ~6K-token turn-1 prompt (above the 4096-token Opus cache minimum)
 and checks usage counters:
   turn 1 -> cache_creation ephemeral_1h_input_tokens > 0  (breakpoints 1+2 write)
   turn 2 -> cache_read_input_tokens > 0                   (prefix read back)
 
-Cost: ~$0.10-0.30. Run from the t0369 worktree:
+Cost: ~$0.10 expected, $0.50 hard ceiling (cap_usd=0.25 per call). Run from the t0369 worktree:
   PYTHONPATH=. uv run --env-file .env python scripts/verify_anthropic_cache_live.py --outdir /tmp/cache_smoke
 
 Spends real money (~$0.10-0.30); not part of any test suite or Make target.
@@ -32,7 +32,7 @@ def main() -> None:
 
     nonce = secrets.token_hex(8)  # defeat any pre-existing cache entry
     filler = " ".join(
-        f"register entry {i} token {nonce} capacity {i * 7 % 991} MW" for i in range(1200)
+        f"register entry {i} token {nonce} capacity {i * 7 % 991} MW" for i in range(250)
     )
     turn1_prompt = (
         f"Synthetic cache-verification payload {nonce}.\n{filler}\n"
@@ -42,10 +42,10 @@ def main() -> None:
 
     r1 = run_anthropic_call(
         turn1_prompt,
-        cap_usd=1.0,
+        cap_usd=0.25,
         agent_mode="cache_smoke",
         raw_output_path=args.outdir / "turn1.raw.json",
-        max_tokens=2048,
+        max_tokens=256,
         system_prompt=system_prompt,
     )
     u1 = json.loads((args.outdir / "turn1.raw.json").read_text())["usage"]
@@ -54,10 +54,10 @@ def main() -> None:
     reply1 = (r1.justification or {}).get("output_text") or "ACK"
     r2 = run_anthropic_call(
         "Reply with exactly: ACK2",
-        cap_usd=1.0,
+        cap_usd=0.25,
         agent_mode="cache_smoke",
         raw_output_path=args.outdir / "turn2.raw.json",
-        max_tokens=2048,
+        max_tokens=256,
         continuation={
             "messages": [
                 {"role": "user", "content": turn1_prompt},
