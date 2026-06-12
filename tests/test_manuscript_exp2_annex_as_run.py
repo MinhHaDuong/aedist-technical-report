@@ -1,11 +1,12 @@
-"""Ticket 0433 — manuscript Annex C (Exp2 tech spec) rewritten to the as-run story.
+"""Ticket 0433 — the manuscript's Exp2 tech-spec annex rewritten to the as-run story.
 
-Annex C of the preprint (slides/manuscript/main.tex since ticket 0524) holds
-the Experiment 2 technical specification. Naming history:
-- Originally Annex C (Exp2 tech spec).
-- Renamed to Annex B in ticket 0469 restructure (Annex A moved to Related Work).
-- Renamed back to Annex C in ticket 0482 section reorder (Temporality became
-  Annex A, Exp1-tech became Annex B, Exp2-tech became Annex C).
+The annex labelled ``sec:annex-exp2`` of the preprint
+(slides/manuscript/main.tex since ticket 0524) holds the Experiment 2
+technical specification. Its annex letter churned with every restructure
+(C originally, B after the 0469 restructure, C again after the 0482
+reorder), so this file, its tests, and its extraction are keyed on the
+stable label — never the letter, the title, or the neighbouring section
+(ticket 0561; label-stability contract recorded in ticket 0560).
 
 The annex was a PRE-RUN spec snapshot: it claimed Phase B at N=3, a $10/call
 dollar cap, and carried a "not yet executed" bracketed status note. That
@@ -15,8 +16,8 @@ two arms, N=5, a 2×2 factorial) and the committed artifacts
 
 This adherence test pins the rewrite's load-bearing invariants:
 
-1. No stale pre-run marker survives in Annex C: "N=3", the "not yet executed"
-   note, the "$10.00" status cap, "≤$10" / "≤$31" budget figures.
+1. No stale pre-run marker survives in the annex: "N=3", the "not yet
+   executed" note, the "$10.00" status cap, "≤$10" / "≤$31" budget figures.
 2. The as-run facts are present: two named arms (naive/optimised), N=5, the
    dual-axis cap (50K tokens + $3 guard), and the 2×2 / four-arm framing the
    body's Figure 3 caption forward-references.
@@ -30,27 +31,23 @@ stays fast and offline. It runs on the normalized body (line-wraps joined,
 """
 
 import pytest
-from manuscript_source import body
+from manuscript_source import section
 
 pytestmark = pytest.mark.adherence
 
 
-def _annex_c() -> str:
-    """The normalized text of Annex C (Experiment 2) — heading to next \\section."""
-    text = body()
-    start = text.index("\\section{Experiment 2: Technical specification}\\label{sec:annex-exp2}")
-    rest = text[start:]
-    nxt = rest.index("\\section{Supplementary figures}\\label{sec:annex-suppfigs}", 1)
-    return rest[:nxt]
+def _exp2_annex() -> str:
+    """The normalized text of the Exp2 tech-spec annex (label-keyed, 0561)."""
+    return section("sec:annex-exp2")
 
 
-def test_annex_c_exists_and_nonempty():
-    annex = _annex_c()
-    assert len(annex.strip()) > 1000, "Annex C is missing or truncated"
+def test_exp2_annex_exists_and_nonempty():
+    annex = _exp2_annex()
+    assert len(annex.strip()) > 1000, "the Exp2 annex is missing or truncated"
 
 
 def test_no_stale_pre_run_markers():
-    annex = _annex_c()
+    annex = _exp2_annex()
     stale = [
         "N=3",
         "not yet executed",
@@ -61,18 +58,18 @@ def test_no_stale_pre_run_markers():
         "Δ to N=3",
     ]
     found = [marker for marker in stale if marker in annex]
-    assert not found, f"stale pre-run markers still in Annex C: {found}"
+    assert not found, f"stale pre-run markers still in the Exp2 annex: {found}"
 
 
 def test_as_run_two_arms_and_n5():
-    annex = _annex_c().lower()
+    annex = _exp2_annex().lower()
     assert "naive" in annex, "naive arm not named"
     assert "optimised" in annex or "optimized" in annex, "optimised arm not named"
     assert "n=5" in annex, "as-run N=5 not stated"
 
 
 def test_dual_axis_cap_present():
-    annex = _annex_c()
+    annex = _exp2_annex()
     assert "dual-axis" in annex.lower(), "dual-axis cap framing absent"
     # The two axes, traced to protocol_05: 50K tokens + $3 guard.
     assert "50 000 tokens" in annex or "50000 tokens" in annex or "50K tokens" in annex, (
@@ -82,23 +79,23 @@ def test_dual_axis_cap_present():
 
 
 def test_factorial_framing_present():
-    annex = _annex_c().lower()
-    # The body's Figure 3 caption forward-references Annex C for the 2x2.
+    annex = _exp2_annex().lower()
+    # The body's Figure 3 caption forward-references this annex for the 2x2.
     assert "2×2" in annex or "2x2" in annex, "2×2 factorial framing absent"
     assert "exploratory" in annex, "the unregistered with-docs arms not labelled exploratory"
 
 
 def test_preregistration_named():
-    annex = _annex_c().lower()
+    annex = _exp2_annex().lower()
     assert "pre-registered" in annex or "registration" in annex or "registered" in annex, (
-        "Annex C does not disclose the preregistration"
+        "the Exp2 annex does not disclose the preregistration"
     )
 
 
 def test_claude_0_of_5_names_the_parse_dimension():
-    annex = _annex_c()
+    annex = _exp2_annex()
     if "0 of 5" not in annex and "0/5" not in annex:
-        pytest.skip("Claude 0/5 exclusion not mentioned in Annex C")
+        pytest.skip("Claude 0/5 exclusion not mentioned in the Exp2 annex")
     lowered = annex.lower()
     # Must name the dimension (bibliography parsability), not a flat exclusion.
     assert "parseable" in lowered or "parsab" in lowered or "bibliography-parsab" in lowered, (
@@ -118,23 +115,23 @@ def test_classifier_named_as_run_not_pilot():
     Guard: the as-run classifier is named, and mistral-small no longer stands
     as the classifier.
     """
-    annex = _annex_c()
+    annex = _exp2_annex()
     lowered = annex.lower()
     assert "deepseek-v4-pro" in lowered, (
-        "Annex C must name the as-run dialogue classifier (deepseek-v4-pro)"
+        "the Exp2 annex must name the as-run dialogue classifier (deepseek-v4-pro)"
     )
     # mistral-small may appear only as the pilot footnote, never as THE classifier.
     # The false same-vendor-Mistral disclosure must be gone.
     assert "both mistral models" not in lowered, (
-        "stale same-vendor-Mistral classifier disclosure still in Annex C"
+        "stale same-vendor-Mistral classifier disclosure still in the Exp2 annex"
     )
     assert "same-vendor pair" not in lowered, (
-        "stale same-vendor classifier framing still in Annex C"
+        "stale same-vendor classifier framing still in the Exp2 annex"
     )
 
 
 def test_references_report_chapter():
-    annex = _annex_c().lower()
+    annex = _exp2_annex().lower()
     assert "technical report" in annex and "chapter" in annex, (
-        "Annex C must reference the technical report's Exp2 chapter for the registered analysis"
+        "the Exp2 annex must reference the technical report's Exp2 chapter for the registered analysis"
     )

@@ -99,9 +99,10 @@ negative: any sentence containing "binding constraint lies" must contain
 
 ## fusion-hedge
 
-**Decision:** The constraint-shift claim (annex-fusion architecture
-paragraph) is hedged — current phrasing "the binding constraint appears to
-shift from model capability to document quality".
+**Decision:** The constraint-shift claim (architecture paragraph in the
+section labelled `sec:annex-fusion`) is hedged — current phrasing "the
+binding constraint appears to shift from model capability to document
+quality".
 
 **Rationale:** Same scoped-divergence policy as equalisation-hedge; the
 shift is observed in one exploratory condition. CI keeps the sentence-scoped
@@ -115,15 +116,15 @@ negative: any sentence claiming a constraint shift must carry
 ## novelty-benchmark-gap
 
 **Decision:** Surviving novelty claim (1): the benchmark gap, stated in
-§fusion — current phrasing "To our knowledge, no published benchmark or
-system targets open-world enumeration of a national asset class with
-per-cell provenance at this granularity."
+the section labelled `sec:fusion` — current phrasing "To our knowledge, no
+published benchmark or system targets open-world enumeration of a national
+asset class with per-cell provenance at this granularity."
 
 **Rationale:** One of exactly three primacy claims the author kept (ticket
 0532 demoted the MoE-non-determinism, day-scale-drift, and cost-F1 claims).
 Epistemic-humility register mandatory ("to our knowledge", never "nobody
-has done"). CI keeps a loose guard (≥2 primacy-marker sentences in §fusion);
-the wording is free.
+has done"). CI keeps a loose guard (≥2 primacy-marker sentences in the
+section labelled `sec:fusion`); the wording is free.
 
 **Ticket:** 0532; demoted from CI by 0557.
 
@@ -132,13 +133,14 @@ the wording is free.
 ## novelty-provenance-temporality
 
 **Decision:** Surviving novelty claim (2): the conjunction of per-cell
-provenance with per-cell temporal validity, stated in §fusion — current
-phrasing "Nor did we find a published demonstration of the conjunction of
-per-cell provenance with per-cell temporal validity in LLM-augmented
-inventories".
+provenance with per-cell temporal validity, stated in the section labelled
+`sec:fusion` — current phrasing "Nor did we find a published demonstration
+of the conjunction of per-cell provenance with per-cell temporal validity
+in LLM-augmented inventories".
 
 **Rationale:** Same kept-three policy and humility register as
-novelty-benchmark-gap; counted by the same §fusion loose guard.
+novelty-benchmark-gap; counted by the same loose guard on the section
+labelled `sec:fusion`.
 
 **Ticket:** 0532; demoted from CI by 0557.
 
@@ -261,6 +263,25 @@ not in a test.
 
 **Ticket:** 0513; demoted during PR #1023 gate (residual missed by 0559
 sweep, which covered test_manuscript_0512_structure.py only).
+
+**Status:** active
+
+## label-stability-contract
+
+**Decision:** Every `\label{}` name in `slides/manuscript/main.tex`
+(`sec:intro`, `sec:fusion`, `sec:discussion`, `sec:annex-*`, …) stays
+attached to its content as that content moves through restructures. Tests
+and this brief anchor on labels — never on section numbers, annex letters,
+titles, or adjacency. Renaming or dropping a label is a contract change
+that must update every anchored test and brief entry in the same PR.
+
+**Rationale:** The back-half restructure (tracking ticket 0560) retitles,
+renumbers, and reorders sections; labels are the only structural
+identifiers that survive such moves. Label-keyed extraction
+(`manuscript_source.section()`, ticket 0561) makes the restructure PRs
+CI-safe without weakening any guard.
+
+**Ticket:** 0560 (contract recorded); anchors re-keyed by 0561.
 
 **Status:** active
 

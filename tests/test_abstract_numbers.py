@@ -18,7 +18,7 @@ import re
 from pathlib import Path
 
 import pytest
-from manuscript_source import body, body_raw, normalized
+from manuscript_source import body_raw, normalized, section
 
 pytestmark = pytest.mark.adherence
 
@@ -36,11 +36,8 @@ def _exp1_results_paragraph() -> str:
 
 
 def _conclusion() -> str:
-    text = body()
-    heading = "\\section{Conclusion}\\label{sec:conclusion}"
-    if heading not in text:
-        pytest.skip("conclusion section not found in main.tex")
-    return text.split(heading)[1].split("\\appendix")[0]
+    """The Conclusion section, label-keyed (ticket 0561)."""
+    return section("sec:conclusion")
 
 
 def _parse_macro(tex: str, name: str) -> str:

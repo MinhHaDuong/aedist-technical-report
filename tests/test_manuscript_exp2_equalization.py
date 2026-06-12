@@ -18,7 +18,7 @@ import csv
 from pathlib import Path
 
 import pytest
-from manuscript_source import body
+from manuscript_source import section
 
 pytestmark = pytest.mark.adherence
 
@@ -26,15 +26,9 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 CSV_2X2 = REPO_ROOT / "experiments" / "derived" / "tab_exp2_2x2.csv"
 
 
-def _md() -> str:
-    return body()
-
-
-def _section6(md: str) -> str:
-    # Tickets 0518/0524: section numbers are symbolic \label anchors.
-    start = md.index("\\label{sec:exp2}")
-    end = md.index("\\section{Need and potential for fusion}\\label{sec:fusion}", start)
-    return md[start:end]
+def _section6() -> str:
+    # Label-keyed, terminator-free extraction (tickets 0518/0524/0561).
+    return section("sec:exp2")
 
 
 def _f1_by_arm() -> tuple[dict[str, float], dict[str, float]]:
@@ -47,8 +41,7 @@ def _f1_by_arm() -> tuple[dict[str, float], dict[str, float]]:
 
 
 def test_section6_equalization_numbers_match_artifact():
-    md = _md()
-    sec = _section6(md)
+    sec = _section6()
     naive, arm3 = _f1_by_arm()
 
     # The two weakest naive agents (qwen, mistral) and their arm-1D recovery.
@@ -73,7 +66,7 @@ def test_section6_equalization_numbers_match_artifact():
 def test_section6_equalization_is_scoped_to_single_shot_docs():
     """Multi-turn+docs (arm4) hurts (e.g. Anthropic 0.61->0.38), so the claim
     must name the single-shot/documents (1D) condition, not 'docs' in general."""
-    sec = _section6(_md())
+    sec = _section6()
     lowered = sec.lower()
     assert "equalis" in lowered or "converg" in lowered, "no equalization framing in §6"
     assert "1d" in lowered or "single-shot" in lowered, "equalization not scoped to 1D"
