@@ -108,3 +108,27 @@ the prose or into the macros file.
 The ≤3-values inline rule above still applies to slides/report one-offs;
 manuscript numbers always go through the consolidated file. The defect class
 is guarded by `tests/test_manuscript_macros.py` (`@pytest.mark.adherence`).
+
+## CI test polarity rule (ticket 0557)
+
+Prose adherence tests pin only **negative guards** (forbidden phrasings —
+overclaim signatures, banned registers) and **mechanical checks** (values
+re-derived from committed artifacts, verbatim quotes of fixed external
+documents, structural presence). Tests must never assert that a specific
+*positive* authorial phrasing appears in the prose: positive pins break on
+every legitimate rewrite and force test-chasing edits (bit on PR #1014,
+the 2026-06-12 abstract rewrite).
+
+The asymmetry that makes this work: defects are lexically stable (an
+overclaim reads "the binding constraint is …" in any draft), while good
+prose is not — pinning what must be said requires NLP; forbidding what
+must NOT be said works with literals.
+
+Positive editorial intent (claim X stays hedged, the abstract leads with
+the difficulty result, …) lives in `docs/editorial-brief.md` — one entry
+per standing decision with **Decision:** / **Rationale:** /
+**Originating ticket:** / **Status:** — and is checked at review time by
+the `/review-pr-prose` panel against each manuscript diff. Conditional
+negatives are the CI-side bridge: "IF ρ = 0.92 appears in the conclusion,
+the in-sample caveat must accompany it" guards the decision without
+pinning its wording.
