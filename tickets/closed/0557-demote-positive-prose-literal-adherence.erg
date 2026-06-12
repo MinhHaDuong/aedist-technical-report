@@ -2,6 +2,7 @@
 Title: Demote positive prose-literal adherence tests to negative guards + editorial brief
 Created: 2026-06-12
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1020
 
 --- log ---
 2026-06-12T09:29Z HDMX-coding-agent created
@@ -11,6 +12,7 @@ Author: HDMX-coding-agent
 2026-06-12T15:00Z claude note executed — demotions per triage, brief 13 entries, polarity rule appended; gates a/b + fang verified on scratch copies; IDH companion already merged upstream (IDH PR #393, ticket 0253 closed there)
 2026-06-12T15:55Z claude note raid-557 review round 1 — brief field renamed to Ticket: (skill schema), 14th entry annex-quote-anchor, polarity rule third category, constraint-shift guard rescoped to binding-constraint + negation-tolerant, executed-log timestamp corrected (was 10:42Z stale clock)
 
+2026-06-12T11:08Z HDMX-coding-agent closed — autoclosed — PR #1020
 --- body ---
 ## Context
 
