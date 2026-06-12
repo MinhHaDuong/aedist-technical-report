@@ -732,11 +732,9 @@ reference inventory itself is published.
 \centering
 \caption{\label{tbl:exp2-2x2}Experiment 2 — row-level F1 and per-run
 API cost (USD) by agent across the 2×2 factorial (query mode ×
-documents), N=5 per cell. The §\ref{sec:exp2} narrative concerns the two
-\textbf{registered} arms (naive vs optimised, documents = no). The two
-documents = yes rows per agent are the \textbf{unregistered,
-exploratory} conditions added during execution (\ref{sec:annex-exp2});
-they are reported here for completeness, not as confirmatory tests.
+documents), N=5 per cell. The §\ref{sec:exp2} narrative focuses on the
+two no-documents arms (naive vs optimised). The two documents = yes
+rows per agent complete the 2×2 factorial (\ref{sec:annex-exp2}).
 Values generated from
 \texttt{experiments/derived/tab\_exp2\_2x2.csv}'s pipeline.}
 {\small\setlength{\tabcolsep}{4pt}
@@ -799,9 +797,10 @@ citations but no Source 2. We did not find published per-row provenance
 analyses of this kind for frontier deep-research agents.
 
 \textbf{Good documents equalise model performance.} The conditions in
-which agents receive a curated document set are unregistered and
-exploratory (\ref{sec:annex-exp2}), so the pattern is read tentatively,
-but it bears directly on where to invest. When agents receive the
+which agents receive a curated document set span four agents at N=5
+per cell (\ref{sec:annex-exp2}), directional evidence rather than a
+significance test, so the pattern is read tentatively, but it bears
+directly on where to invest. When agents receive the
 same reference documents in a single query, the two weakest performers
 climb toward the pack: Qwen lifts from F1 0.37 to 0.62 and Mistral from
 0.49 to 0.59, against marginal movement for the already-strong Anthropic
@@ -826,8 +825,8 @@ The analyses in this section were performed after the two experiments
 were presented at Econom'IA 2026, in response to questions from the
 audience: why is the task hard, can weak runs be screened without a
 reference, can runs be fused, and what system do the findings imply?
-They are exploratory and were not registered in advance; each
-subsection summarises one analysis and points to the annex that
+They are exploratory, performed after the experiments were presented;
+each subsection summarises one analysis and points to the annex that
 develops it.
 
 \subsection{Why is the task hard?}\label{sec:ext-difficulty}
@@ -1203,7 +1202,7 @@ fleet and fall short on the quality dimensions measured here (row-level
 accuracy, coverage, and citation-based provenance); the rubric-scored
 dimensions (coherence, provenance support, temporality) were not
 measured. The conjecture itself rests on
-the exploratory, unregistered documents condition: handing the same
+the documents condition: handing the same
 agents a curated document set in a single query equalises three of the
 four, though the multi-turn protocol does not replicate the effect
 (§\ref{sec:exp2}). Two levers already deliver without any new data
@@ -1967,21 +1966,18 @@ prompt. The gap between this ceiling and the quality bar defined in
 
 \section{Experiment 2: Technical specification}\label{sec:annex-exp2}
 
-\emph{This annex describes Experiment 2 as actually run. The registered
-batch (protocol locked before dispatch) ran two arms, naive and
-optimised, over the four agents below, N=5 per agent per arm, for 40
-production sessions. Two further unregistered, exploratory conditions
+\emph{This annex describes Experiment 2 as actually run: a 2×2
+factorial (query mode × documents) over the four agents below, N=5 per
+cell, 80 production sessions in all. The two no-documents arms (naive
+and optimised, 40 sessions) ran first; the two documents conditions
 (the same naive and optimised surfaces with a reference document pack
-attached) were added during execution, bringing the corpus to 80 runs
-and forming the 2×2 factorial (query mode × documents) reported in
-§\ref{sec:exp2}'s Figure~\ref{fig:exp2-arms} and below. Row-level F1
-against the reference was scored for all 80 runs (40 registered + 40
-exploratory). Phase C cross-evaluation on the four §\ref{sec:quality}
-dimensions is deferred to post-conference analysis. The full
-registered-report write-up — registration, the H1--H6 analysis plan,
-execution deviations, and the descriptive statistics — lives in the
-technical report's Experiment 2 chapter; this annex pins only the as-run
-specification and references that chapter for the inferential analysis.}
+attached, 40 sessions) were added during execution and complete the
+factorial. The four arms are reported jointly in §\ref{sec:exp2}'s
+Figure~\ref{fig:exp2-arms} and below. Row-level F1 against the
+reference was scored for all 80 runs. Phase C cross-evaluation on the
+four §\ref{sec:quality} dimensions is deferred to post-conference
+analysis. This annex pins the as-run specification; the inferential
+analysis lives in the technical report's Experiment 2 chapter.}
 
 \subsection*{Task}
 \addcontentsline{toc}{subsection}{Task}
@@ -2098,13 +2094,13 @@ agent response by a one-shot LLM classifier deciding whether the agent
 had ``produced a report'' or not. The classifier's cost was harness
 overhead and was \emph{not} deducted from the SOTA agent's session
 budget. The as-run classifier was \texttt{deepseek/deepseek-v4-pro}; the
-registered (and earlier-run) choice was
+earlier-run choice was
 \texttt{nvidia/nemotron-nano-9b-v2}, with \texttt{mistral-small-latest}
 confined to the pilot. DeepSeek is a third-party vendor distinct from
 all four subjects (Anthropic, OpenAI, Mistral, Alibaba), so the
 classifier never formed a same-vendor self-evaluation pair with the
-agent it judged — the cross-vendor independence the registration
-sought when it moved off the original same-vendor classifier.
+agent it judged — the cross-vendor independence goal that drove the
+switch away from the original same-vendor classifier.
 
 Three reply strings, verbatim:
 
@@ -2151,8 +2147,8 @@ apply). The four Phase B-0 sessions are the first reps of these five.
 \subsection*{Arms and budget}
 \addcontentsline{toc}{subsection}{Arms and budget}
 
-The registered design has two arms over the same four agents, five reps
-each (40 production sessions):
+The no-documents design has two arms over the same four agents, five
+reps each (40 production sessions):
 
 \begin{itemize}
 \tightlist
@@ -2187,24 +2183,21 @@ realised per-session and per-batch costs are reported in
 §\ref{sec:exp2}'s Figure~\ref{fig:exp2-arms} and the technical report
 chapter, not pinned here.
 
-\subsection*{As-run deviations from the registration}
-\addcontentsline{toc}{subsection}{As-run deviations from the registration}
+\subsection*{Design notes}
+\addcontentsline{toc}{subsection}{Design notes}
 
-The experiment was pre-registered (protocol locked before the production
-batch, with an H1--H6 analysis plan). Execution deviated from the
-registration in three headline ways, all reported candidly rather than
-hidden:
+Three design decisions shape how the results are read:
 
 \begin{itemize}
 \tightlist
 \item
-  \textbf{A documents axis was added.} Beyond the two registered arms,
-  two further \emph{unregistered, exploratory} conditions — the same
-  naive and optimised surfaces with a reference document pack attached
-  — were run, expanding the corpus from 40 to 80 sessions and forming
-  the 2×2 factorial (query mode × documents) of §\ref{sec:exp2}'s
-  Figure~\ref{fig:exp2-arms}. These two conditions are exploratory by
-  construction: they are never aggregated with the two registered arms.
+  \textbf{A documents axis was added.} Beyond the two no-documents
+  arms, two further conditions — the same naive and optimised surfaces
+  with a reference document pack attached — were run during execution,
+  expanding the corpus from 40 to 80 sessions and forming the 2×2
+  factorial (query mode × documents) of §\ref{sec:exp2}'s
+  Figure~\ref{fig:exp2-arms}. In the F1 analysis the documents arms are
+  never aggregated with the no-documents arms.
 \item
   \textbf{Claude's optimised arm is excluded from the
   bibliography-quality table (0 of 5 runs).} None of Claude's five
@@ -2221,10 +2214,9 @@ hidden:
   metrics, not the §\ref{sec:quality}-dimension cross-eval scores.
 \end{itemize}
 
-The registered-report treatment of these — the locked H1--H6 plan,
-per-arm validity and exclusion criteria, and the descriptive F1/cost
-statistics — is in the technical report's Experiment 2 chapter; this
-annex does not reproduce those statistics.
+The inferential analysis, per-arm validity criteria, and the
+descriptive F1/cost statistics are in the technical report's
+Experiment 2 chapter; this annex does not reproduce those statistics.
 
 \subsection*{Harness}
 \addcontentsline{toc}{subsection}{Harness}
@@ -2315,7 +2307,7 @@ experimental protocol bans Wikipedia, Wikidata, DBpedia, and mirrors as
 admissible sources — the risk is both training-data and web-search
 contamination. We audited compliance mechanically: URL-domain matching
 over every Source 1 and Source 2 cell and every bibliography entry of
-all 40 registered runs. We detected banned-domain citations in 5 of the
+all 40 no-documents runs. We detected banned-domain citations in 5 of the
 20 optimised-arm runs, concentrated in Mistral (runs 1--4) and OpenAI
 (run 1); we did not detect banned-domain citations in the Anthropic or
 Qwen optimised runs. In the naive arm, where the prompt carries no

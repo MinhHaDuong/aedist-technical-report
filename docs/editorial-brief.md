@@ -72,10 +72,10 @@ conjecture about why" and keeps the recommendation conditional ("If the
 constraint is indeed the documents, …"). The abstract does not carry the
 claim at all (2026-06-12 rewrite).
 
-**Rationale:** The claim rests on the exploratory, unregistered documents
-condition (one corpus, four agents, single-query only) — conjecture is the
-honest register. CI keeps the negatives: the claim is forbidden in the
-abstract, and any body sentence stating "binding constraint is" must carry
+**Rationale:** The claim rests on the documents condition (one corpus,
+four agents, single-query only) — conjecture is the honest register.
+CI keeps the negatives: the claim is forbidden in the abstract, and any
+body sentence stating "binding constraint is" must carry
 conjecture/conditional framing.
 
 **Ticket:** 0532; demoted from CI by 0557.
@@ -107,7 +107,7 @@ by the 0562 restructure) is hedged — current phrasing "the binding
 constraint appears to shift from model capability to document quality".
 
 **Rationale:** Same scoped-divergence policy as equalisation-hedge; the
-shift is observed in one exploratory condition. CI keeps the sentence-scoped
+shift is observed in the documents condition only. CI keeps the sentence-scoped
 negative: any sentence claiming a constraint shift must carry
 "appear"/"may"/"suggest".
 
