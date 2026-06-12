@@ -1,0 +1,85 @@
+%erg 0.1
+Title: Future research §: insert the three knowledge-base design items (docs/kb-design-note.md §7)
+Created: 2026-06-12
+Author: HDMX-coding-agent
+Blocked-by: 0562
+
+--- log ---
+2026-06-12T13:15Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+The 2026-06-12 Imagine session (author + agent) produced
+`docs/kb-design-note.md`: information-flow topologies between corpus,
+claims/KG, asset pages, and the statistical table, plus a temporal-modal
+claim model covering plans, forecasts, and scenario projections. Its §7
+lists the two–three sentences that belong in the manuscript's Future
+research programme.
+
+Ticket 0562 (which builds the numbered Future research section) was
+already in execution when this discussion concluded, so the items were
+NOT added to its scope — mid-flight scope changes break the
+ticket-as-contract. This follow-up inserts them once 0562 has merged.
+
+## Relevant files
+
+- `docs/kb-design-note.md` §7 — the three items, with the full argument
+  in §§2–5 of the note
+- `slides/manuscript/main.tex` — Future research section
+  (`\label{sec:future}` per 0562)
+- `docs/editorial-brief.md` — positive editorial intent lives here, not
+  in CI (polarity rule)
+
+## Actions
+
+1. In the programme part of the Future research section (after the
+   estimation / external-coherence / screen / replication items 0562
+   lands), insert two–three sentences covering:
+   (i) the authority question — asset page, knowledge graph, or an
+   append-only claim log of which both are projections; page⇄graph edge
+   direction open; this benchmark arbitrates (same corpus → both
+   representations → same matcher and reference);
+   (ii) the extract-once/render-many asymmetry principle —
+   text→structure is the measured lossy direction (articulation
+   conflation), structure→text is cheap; structure at ingest, render at
+   output;
+   (iii) the T2 temporality item recast as a bitemporal claim log whose
+   modality layer covers plans, forecasts, and scenario projections
+   (occurrents fold into actual state; scenario claims stay
+   context-qualified by institution, scenario, vintage).
+   Wording is the executor's: derive from the note's §7, respect the
+   epistemic-humility and no-promise rules; if the T2 sentence 0562
+   wrote already covers part of (iii), merge rather than duplicate.
+2. No new citations required (citation budget); no new \section or
+   \label; no figure.
+3. Add an editorial-brief entry `kb-programme-items` (**Decision:** the
+   programme names the representation-authority tension, the asymmetry
+   principle, and the bitemporal/modal claim log; **Rationale:** 0560
+   restructure discussion + kb-design-note; **Ticket:**
+   tickets/0565-...; **Status:** active). Per the CI polarity rule this
+   is review-panel-checked intent — do NOT add a positive CI assertion
+   pinning the wording.
+
+## Test
+
+- None in CI by design (polarity rule: positive authorial phrasing is
+  never pinned). The brief entry is the guard; `/review-pr-prose`
+  validates it against the diff.
+
+## Verification
+
+- [ ] `make check` green; manuscript builds
+- [ ] The three items present in the Future research programme, no
+  duplication with 0562's T2 sentence
+- [ ] Brief entry added; no new CI positive pin
+
+## Invariants
+
+- No change outside the Future research section + editorial brief
+- No companion-paper promise reintroduced; no hand-typed numbers
+
+## Exit criteria
+
+- [ ] Programme contains the three KB design items at no-spoiler altitude
+- [ ] `make check` passes
