@@ -7,9 +7,11 @@ time by the `/review-pr-prose` panel against every manuscript diff (CI test
 polarity rule, `.claude/rules/writing.md`, ticket 0557).
 
 Entry format: one H2 per decision, slug-style heading, with
-**Decision:** / **Rationale:** / **Originating ticket:** / **Status:**.
-A decision is retired by flipping **Status:** to `retired (reason)`,
-never by deleting the entry.
+**Decision:** / **Rationale:** / **Ticket:** / **Status:**. The first
+three fields are the schema the `/review-pr-prose` brief auditor
+consumes; **Status:** is bookkeeping local to this file. A decision is
+retired by flipping **Status:** to `retired (reason)`, never by
+deleting the entry.
 
 ## lifecycle-scope
 
@@ -22,7 +24,7 @@ with operating-fleet counts (~50–60 plants) and makes the benchmark look
 inflated. CI keeps the negative guard ("operating plants" /
 "operating-only" forbidden in the abstract); the positive wording is free.
 
-**Originating ticket:** 0532 (round 2, author reading-1 brief); demoted from
+**Ticket:** 0532 (round 2, author reading-1 brief); demoted from
 CI by 0557.
 
 **Status:** active
@@ -40,7 +42,7 @@ signal is positive but modest. CI keeps the conditional-negative guard
 (unqualified ρ = 0.92 in the conclusion fails); the exact caveat wording is
 free.
 
-**Originating ticket:** 0532 (round 2); demoted from CI by 0557.
+**Ticket:** 0532 (round 2); demoted from CI by 0557.
 
 **Status:** active
 
@@ -55,7 +57,7 @@ from — presenting it as a validated detector would be an overclaim. CI keeps
 the conditional-negative guard ("existence proof" and an in-sample marker
 must accompany ρ = 0.92 in the Discussion); the phrasing is free.
 
-**Originating ticket:** 0532 (round 2); demoted from CI by 0557.
+**Ticket:** 0532 (round 2); demoted from CI by 0557.
 
 **Status:** active
 
@@ -74,7 +76,7 @@ honest register. CI keeps the negatives: the claim is forbidden in the
 abstract, and any body sentence stating "binding constraint is" must carry
 conjecture/conditional framing.
 
-**Originating ticket:** 0532; demoted from CI by 0557.
+**Ticket:** 0532; demoted from CI by 0557.
 
 **Status:** active
 
@@ -91,7 +93,7 @@ silently revert to a flat factual register. CI keeps the sentence-scoped
 negative: any sentence containing "binding constraint lies" must contain
 "suggest"/"appear".
 
-**Originating ticket:** 0541; demoted from CI by 0557.
+**Ticket:** 0541; demoted from CI by 0557.
 
 **Status:** active
 
@@ -106,7 +108,7 @@ shift is observed in one exploratory condition. CI keeps the sentence-scoped
 negative: any sentence claiming a constraint shift must carry
 "appear"/"may"/"suggest".
 
-**Originating ticket:** 0541; demoted from CI by 0557.
+**Ticket:** 0541; demoted from CI by 0557.
 
 **Status:** active
 
@@ -123,7 +125,7 @@ Epistemic-humility register mandatory ("to our knowledge", never "nobody
 has done"). CI keeps a loose guard (≥2 primacy-marker sentences in §fusion);
 the wording is free.
 
-**Originating ticket:** 0532; demoted from CI by 0557.
+**Ticket:** 0532; demoted from CI by 0557.
 
 **Status:** active
 
@@ -138,7 +140,7 @@ inventories".
 **Rationale:** Same kept-three policy and humility register as
 novelty-benchmark-gap; counted by the same §fusion loose guard.
 
-**Originating ticket:** 0532; demoted from CI by 0557.
+**Ticket:** 0532; demoted from CI by 0557.
 
 **Status:** active
 
@@ -154,7 +156,7 @@ STANAG terms ("information credibility", "source reliability") appear in
 the Discussion — fixed external terminology, not authorial prose; the
 surrounding sentence is free.
 
-**Originating ticket:** 0532; demoted from CI by 0557.
+**Ticket:** 0532; demoted from CI by 0557.
 
 **Status:** active
 
@@ -172,7 +174,7 @@ CI keeps only the mechanical check (the ~38% share re-derived from
 `tab_status_difficulty.tex` must appear in the body); the explanatory
 phrasing is free.
 
-**Originating ticket:** 0532 round 2 (table citation), 0511; phrase anchors
+**Ticket:** 0532 round 2 (table citation), 0511; phrase anchors
 demoted from CI by 0557.
 
 **Status:** active
@@ -189,7 +191,7 @@ general reader takes away. CI keeps a loose topical check
 in CI as a loose positive because the lead claim is structural, not
 phrasing.
 
-**Originating ticket:** 0532; recorded here by 0557 (CI check unchanged).
+**Ticket:** 0532; recorded here by 0557 (CI check unchanged).
 
 **Status:** active
 
@@ -205,7 +207,7 @@ empirical value; the conditional caveat guards in
 A silent re-derivation would leave stale prose — this entry is the reminder
 the value is static.
 
-**Originating ticket:** 0531/0532; recorded here by 0557 (CI checks
+**Ticket:** 0531/0532; recorded here by 0557 (CI checks
 unchanged).
 
 **Status:** active
@@ -223,6 +225,24 @@ visible to every model.
 descriptor pair; recorded here so the review panel knows the phrase pair is
 load-bearing.
 
-**Originating ticket:** 0511; triaged keep-in-CI by 0557.
+**Ticket:** 0511; triaged keep-in-CI by 0557.
+
+**Status:** active
+
+## annex-quote-anchor
+
+**Decision:** The Annex baseline-prompt quote reproduces the as-sent
+Doc-07 prompt faithfully, including the sentences "primary-sourced
+reference inventory" and "Actual or expected commercial operation date".
+
+**Rationale:** Content fidelity of a fixed external document, not
+authorial prose — the annex quotes what was actually sent to the models,
+so the verbatim anchors are KEPT in CI
+(`test_annex_baseline_prompt_carries_as_sent_status_vocabulary`,
+`test_annex_carries_doc07_prompt_verbatim_anchors`). Recorded here so a
+reviewer rewording the annex framing knows the quoted block itself is
+immutable.
+
+**Ticket:** 0511; triaged keep-in-CI by 0557.
 
 **Status:** active

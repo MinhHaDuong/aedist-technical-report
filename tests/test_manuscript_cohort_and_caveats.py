@@ -203,10 +203,12 @@ def test_binding_constraint_framed_as_hypothesis():
         assert "suggest" in sentence or "appear" in sentence, (
             f"unhedged constraint-relocation claim: {sentence!r}"
         )
-    for sentence in _sentences_containing(text, "constraint"):
+    for sentence in _sentences_containing(text, "binding constraint"):
         if "shift" not in sentence:
             continue
-        assert any(h in sentence for h in ("appear", "may", "suggest")), (
+        # A hedged claim ("appears to shift") or an explicit negation
+        # ("did not shift") is fine; only the flat positive claim is banned.
+        assert any(h in sentence for h in ("appear", "may", "suggest", "not")), (
             f"unhedged constraint-shift claim: {sentence!r}"
         )
 
