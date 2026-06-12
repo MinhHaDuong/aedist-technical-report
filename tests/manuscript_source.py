@@ -108,6 +108,37 @@ def body() -> str:
     return normalized(body_raw())
 
 
+# A sectioning heading: \section or \section*, title with at most one level
+# of brace nesting. Used both to anchor a label to its heading and to find
+# the terminator of a slice (any sectioning command, or \appendix).
+_SECTION_TITLE = r"\\section\*?\{(?:[^{}]|\{[^{}]*\})*\}"
+_SECTIONING_RE = re.compile(r"\\section\*?\{|\\appendix(?![A-Za-z])")
+_SECTION_LABELS_RE = re.compile(_SECTION_TITLE + r"\s*\\label\{([^}]*)\}")
+
+
+def section(label: str) -> str:
+    """Normalized text of the section labelled `label`, heading included.
+
+    Label-keyed extraction (ticket 0561; stability contract in ticket 0560):
+    the section is located by the ``\\label{...}`` attached to its
+    ``\\section``/``\\section*`` heading and sliced to the NEXT sectioning
+    command of ANY kind (``\\section``, ``\\section*``, ``\\appendix``) or the
+    end of the body. Retitles, reorders, annex-letter changes, and unlabelled
+    neighbours therefore cannot break the extraction — only removing the
+    label can, and that is the contract violation this error reports.
+    """
+    text = body()
+    heading_re = re.compile(_SECTION_TITLE + r"\s*" + re.escape(f"\\label{{{label}}}"))
+    m = heading_re.search(text)
+    assert m is not None, (
+        f"no \\section/\\section* heading labelled {label!r} in the manuscript "
+        f"body (label-stability contract, ticket 0560) — section labels "
+        f"present: {sorted(set(_SECTION_LABELS_RE.findall(text)))}"
+    )
+    nxt = _SECTIONING_RE.search(text, m.end())
+    return text[m.start() : nxt.start() if nxt else len(text)]
+
+
 def figure_caption(label: str) -> str:
     """Normalized \\caption text of the figure environment labelled `label`."""
     text = body_raw()
