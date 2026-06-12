@@ -66,10 +66,22 @@ ANALYSIS_EXP1_QUALITY_HEATMAP := $(ANALYSIS_GEN)/fig_quality_floor_heatmap_exp1.
 ANALYSIS_EXP1_RELIABILITY_FIG := $(ANALYSIS_GEN)/fig_exp1_reliability.pdf
 ANALYSIS_EXP1_RELIABILITY_SENS_CSV := $(ANALYSIS_DERIVED_DIR)/exp1_reliability_sensitivity.csv
 ANALYSIS_EXP1_RELIABILITY_SENS_TEX := $(ANALYSIS_GEN)/tab_exp1_reliability_sensitivity.tex
-# Within-model screen validation summary CSV (ticket 0467).
+# Within-model screen validation summary CSV (ticket 0467) and the annex
+# macros fragment derived from the same single analysis pass (ticket 0531).
 ANALYSIS_EXP1_SCREEN_VALID_CSV := $(ANALYSIS_GEN)/tab_screen_validation_within_model.csv
+ANALYSIS_EXP1_SCREEN_MACROS := $(ANALYSIS_GEN)/macros_screen_validation.tex
 # Exp1 run-stats macros: F1 min/mean/max/n_runs/n_models (ticket 0474).
 ANALYSIS_EXP1_RUN_STATS_MACROS := $(ANALYSIS_GEN)/macros_exp1_run_stats.tex
+# Status difficulty macros (proposed share/rate, overall rate, status accuracy
+# excluding the proposed stratum — tickets 0531/0534).
+ANALYSIS_STATUS_DIFFICULTY_MACROS := $(ANALYSIS_GEN)/macros_status_difficulty.tex
+# Aggregation-sweep fusion-annex macros (ticket 0531).
+ANALYSIS_AGG_SWEEP_MACROS := $(ANALYSIS_GEN)/macros_aggregation_sweep.tex
+# Reference-register macros: count + fuel split (tickets 0501/0531).
+ANALYSIS_REFERENCE_MACROS := $(ANALYSIS_GEN)/macros_reference.tex
+# Consolidated manuscript macros file: concatenation of the curated fragments
+# below; the manuscript preamble \inputs this single file (ticket 0531).
+ANALYSIS_MANUSCRIPT_MACROS := $(ANALYSIS_GEN)/macros_manuscript.tex
 # Reference-count anchoring analysis CSV (ticket 0293 — one-time exploration).
 ANALYSIS_REF_COUNT_CSV := $(ANALYSIS_GEN)/ref_count_anchoring_analysis.csv
 # Fusion MVP outputs (ticket 0473): §5 discovery gain figure + CSV + macros.
@@ -121,11 +133,13 @@ ANALYSIS_LONGTAIL_CSV  := $(ANALYSIS_REPO_ROOT)/data/reference/tab_longtail_laye
 # OSM power=plant extract (Overpass fetch) — the OSM recognition layer
 # (ticket 0537). The directory name contains a space; escape it for Make.
 ANALYSIS_OSM_CSV       := $(ANALYSIS_REPO_ROOT)/data/reference/OSM\ fetch/vn_power_plants.csv
-# Fusion MVP uses the v2.1 locked reference (173 plants, ticket 0485) so that
-# Fig 5 is consistent with all other Exp1/2 manuscript sections.  The live
-# ANALYSIS_EXPERT_REF has grown to v2.3 (180 plants) which post-dates the
-# Exp1/2 cohort; using it would inflate n_reference and deflate recall/F1.
-ANALYSIS_FUSION_MVP_REF := $(ANALYSIS_REPO_ROOT)/data/reference/vietnam_thermal_plants_v2_1_locked.csv
+# Fusion MVP scores against the live adopted reference (v2.4, 177 plants),
+# like every other Exp1/2 manuscript artifact. It was pinned to the v2.1
+# locked CSV (173 plants, ticket 0485) while the manuscript still carried the
+# v2.1 vintage; #906 (ticket 0497) adopted v2.4 and ticket 0531 reconciles
+# the manuscript to it, so the pin is retired (author decision 2026-06-09:
+# ship the preprint at 177).
+ANALYSIS_FUSION_MVP_REF := $(ANALYSIS_EXPERT_REF)
 
 ANALYSIS_CONVERTER_TEST := $(ANALYSIS_EXPERIMENTS_DIR)/data/converter_test
 ANALYSIS_CONVERTER_META := $(ANALYSIS_CONVERTER_TEST)/benchmark_meta.yaml
@@ -282,17 +296,20 @@ $(ANALYSIS_EXP1_RELIABILITY_SENS_CSV) $(ANALYSIS_EXP1_RELIABILITY_SENS_TEX) &: \
 	    --sensitivity-csv $(ANALYSIS_EXP1_RELIABILITY_SENS_CSV) \
 	    --annex-table $(ANALYSIS_EXP1_RELIABILITY_SENS_TEX)
 
-# Within-model screen validation (ticket 0467): Annex F supporting CSV.
+# Within-model screen validation (ticket 0467): Annex F supporting CSV, plus
+# the manuscript macros fragment from the same pass (grouped &: rule, 0531).
 # Consumes raw exp1_batch2 CSVs (cap_distinct/status_distinct) + cross-eval F1.
 # Two-source prereq: the cross-eval CSV (P2) and the raw run outputs (P1).
-$(ANALYSIS_EXP1_SCREEN_VALID_CSV): $(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
+$(ANALYSIS_EXP1_SCREEN_VALID_CSV) $(ANALYSIS_EXP1_SCREEN_MACROS) &: \
+		$(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
 		$(ANALYSIS_EXP1_INPUT_CSVS) \
 		$(ANALYSIS_REPO_ROOT)/src/aedist/screen_validation_within_model.py
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.screen_validation_within_model \
 	    --exp1-dir $(ANALYSIS_EXPERIMENTS_DIR)/outputs/exp1_batch2 \
 	    --cross-eval $(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
-	    --output $@
+	    --output $(ANALYSIS_EXP1_SCREEN_VALID_CSV) \
+	    --output-macros $(ANALYSIS_EXP1_SCREEN_MACROS)
 
 # Exp1 run-stats macros: F1 min/mean/max, n_runs, n_models (ticket 0474).
 # Consumes only the canonical cross-eval CSV (P2 committed source).
@@ -654,16 +671,76 @@ $(ANALYSIS_AGG_SWEEP_CSV): $(ANALYSIS_REPO_ROOT)/src/aedist/sweep_aggregations.p
 .PHONY: aggregation-sweep-csv
 aggregation-sweep-csv: $(ANALYSIS_AGG_SWEEP_CSV)
 
-# Step 2: render LaTeX table (fast, clean-room safe).
-$(ANALYSIS_AGG_SWEEP_TEX): $(ANALYSIS_AGG_SWEEP_CSV) \
+# Step 2: render LaTeX table + fusion-annex macros (fast, clean-room safe).
+# The macros also read the Exp1 cross-eval CSV (P2 committed source) for the
+# single-run baseline — grouped &: rule, one invocation (ticket 0531).
+$(ANALYSIS_AGG_SWEEP_TEX) $(ANALYSIS_AGG_SWEEP_MACROS) &: $(ANALYSIS_AGG_SWEEP_CSV) \
+		$(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
 		$(ANALYSIS_REPO_ROOT)/src/aedist/tabulate_aggregation_sweep.py
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.tabulate_aggregation_sweep \
 	    --input $(ANALYSIS_AGG_SWEEP_CSV) \
-	    --output $@
+	    --cross-eval $(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
+	    --output $(ANALYSIS_AGG_SWEEP_TEX) \
+	    --output-macros $(ANALYSIS_AGG_SWEEP_MACROS)
 
 .PHONY: aggregation-sweep
 aggregation-sweep: $(ANALYSIS_AGG_SWEEP_TEX)
+
+# --- Reference-register macros (tickets 0501/0531) ---------------------------
+# Count via reference_plant_count() + fuel split from the adopted reference
+# CSV; evaluate.py is a prerequisite because it owns the count derivation.
+$(ANALYSIS_REFERENCE_MACROS): $(ANALYSIS_EXPERT_REF) \
+		$(ANALYSIS_REPO_ROOT)/src/aedist/tabulate_reference_macros.py \
+		$(ANALYSIS_REPO_ROOT)/src/aedist/evaluate.py
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.tabulate_reference_macros \
+	    --reference $(ANALYSIS_EXPERT_REF) \
+	    --output $@
+
+# --- Consolidated manuscript macros (ticket 0531) ----------------------------
+# Concatenates the curated per-script fragments into the single file the
+# manuscript preamble \inputs. Deliberately EXCLUDED: macros.tex,
+# macros_slides.tex, macros_census.tex — they serve report.tex/slides.tex and
+# reuse names defined here with different cohort values (\NumRefPlants,
+# \NumCensusModels, \Census*); pulling them in would trip the duplicate guard
+# and break slides.tex, which still \inputs them directly.
+MANUSCRIPT_MACRO_FRAGMENTS := \
+	$(ANALYSIS_GEN)/macros_phase_collisions.tex \
+	$(ANALYSIS_EXP1_RUN_STATS_MACROS) \
+	$(ANALYSIS_GEN)/macros_exp1_matrix.tex \
+	$(ANALYSIS_GEN)/macros_exp2_matrix_naive.tex \
+	$(ANALYSIS_GEN)/macros_exp2_matrix_optimised.tex \
+	$(ANALYSIS_GEN)/macros_exp2_matrix_arm3.tex \
+	$(ANALYSIS_GEN)/macros_exp2_matrix_arm4.tex \
+	$(ANALYSIS_GEN)/macros_p1_base.tex \
+	$(ANALYSIS_FUSION_MVP_MACROS) \
+	$(ANALYSIS_GEN)/macros_longtail.tex \
+	$(ANALYSIS_GEN)/macros_source_concordance.tex \
+	$(ANALYSIS_EXP2_WIKI_MACROS) \
+	$(ANALYSIS_EXP1_SCREEN_MACROS) \
+	$(ANALYSIS_STATUS_DIFFICULTY_MACROS) \
+	$(ANALYSIS_AGG_SWEEP_MACROS) \
+	$(ANALYSIS_REFERENCE_MACROS)
+
+# Duplicate-name guard: two fragments defining the same \newcommand would make
+# tectonic fail with "Command \X already defined" — fail fast here instead,
+# naming the duplicates. .DELETE_ON_ERROR (paths.mk) removes the partial file.
+$(ANALYSIS_MANUSCRIPT_MACROS): $(MANUSCRIPT_MACRO_FRAGMENTS)
+	@mkdir -p $(dir $@)
+	{ echo '% Consolidated manuscript macros — generated by experiments/render.mk (ticket 0531).'; \
+	  echo '% DO NOT EDIT — concatenation of the per-script fragments in MANUSCRIPT_MACRO_FRAGMENTS.'; \
+	  echo '% Regenerate with: make -f experiments/render.mk report-tables'; \
+	  cat $^; } > $@
+	@dups=$$(grep -ho '\\newcommand{\\[A-Za-z]*}' $@ | sort | uniq -d); \
+	if [ -n "$$dups" ]; then \
+	  echo "ERROR: duplicate macro definitions in $@:"; \
+	  echo "$$dups"; \
+	  exit 1; \
+	fi
+
+.PHONY: manuscript-macros
+manuscript-macros: $(ANALYSIS_MANUSCRIPT_MACROS)
 
 # Grouping targets — drive end-to-end regeneration of report-side handoff
 # artifacts. tab_self_consistency.tex and tab_per_run.tex are produced by the
@@ -694,7 +771,11 @@ RENDER_REPORT_TABLES := \
 	$(ANALYSIS_GEN)/macros_phase_collisions.tex \
 	$(ANALYSIS_WIKI_BAR_CSV) \
 	$(ANALYSIS_EXP2_WIKI_CSV) \
-	$(ANALYSIS_AGG_SWEEP_TEX)
+	$(ANALYSIS_AGG_SWEEP_TEX) \
+	$(ANALYSIS_AGG_SWEEP_MACROS) \
+	$(ANALYSIS_STATUS_DIFFICULTY_MACROS) \
+	$(ANALYSIS_REFERENCE_MACROS) \
+	$(ANALYSIS_MANUSCRIPT_MACROS)
 
 report-tables: $(RENDER_REPORT_TABLES)
 
@@ -705,6 +786,7 @@ RENDER_REPORT_FIGURES := \
 	$(ANALYSIS_EXP1_RELIABILITY_SENS_CSV) \
 	$(ANALYSIS_EXP1_RELIABILITY_SENS_TEX) \
 	$(ANALYSIS_EXP1_SCREEN_VALID_CSV) \
+	$(ANALYSIS_EXP1_SCREEN_MACROS) \
 	$(ANALYSIS_EXP1_RUN_STATS_MACROS)
 
 report-figures: $(RENDER_REPORT_FIGURES)
@@ -874,13 +956,16 @@ $(ANALYSIS_GEN)/fig_exp2_recognition_matrix_arm4.pdf $(ANALYSIS_GEN)/macros_exp2
 # status vs mean recognition rate. Annex companion to the matrix figure above;
 # derives the same per-(run x plant) recognition independently from the records
 # + reference via aedist.exp1_recognition (shared library, no side-output). The
-# status group order is shared with the matrix's column bands.
-$(ANALYSIS_GEN)/tab_status_difficulty.tex: $(ANALYSIS_EXP1_BATCH2_RECORDS) $(ANALYSIS_EXPERT_REF) $(ANALYSIS_REPO_ROOT)/src/aedist/tabulate_status_difficulty.py $(ANALYSIS_REPO_ROOT)/src/aedist/exp1_recognition.py
+# status group order is shared with the matrix's column bands. The manuscript
+# macros (proposed share/rate, overall rate, status accuracy excluding the
+# proposed stratum) come from the same single pass (grouped &: rule, 0531).
+$(ANALYSIS_GEN)/tab_status_difficulty.tex $(ANALYSIS_STATUS_DIFFICULTY_MACROS) &: $(ANALYSIS_EXP1_BATCH2_RECORDS) $(ANALYSIS_EXPERT_REF) $(ANALYSIS_REPO_ROOT)/src/aedist/tabulate_status_difficulty.py $(ANALYSIS_REPO_ROOT)/src/aedist/exp1_recognition.py
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.tabulate_status_difficulty \
 	    --records-glob "$(ANALYSIS_EXPERIMENTS_DIR)/outputs/exp1_batch2/*.record.json" \
 	    --reference $(ANALYSIS_EXPERT_REF) \
-	    --output $(ANALYSIS_GEN)/tab_status_difficulty.tex
+	    --output $(ANALYSIS_GEN)/tab_status_difficulty.tex \
+	    --output-macros $(ANALYSIS_STATUS_DIFFICULTY_MACROS)
 
 # Source concordance (ticket 0486): reference vs GEM + Wikipedia, bidirectional
 # by status. One invocation co-produces the headline macros (this target), the

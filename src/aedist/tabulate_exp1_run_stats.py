@@ -11,6 +11,9 @@ scoring CSV, 14 models × 5 repetitions = 70 runs) and emits
 - ``\\ExpOneFOneMax``   — maximum F1 across all usable runs (2 d.p.)
 - ``\\ExpOneNRuns``     — total number of usable runs (integer)
 - ``\\ExpOneNModels``   — number of distinct models (integer)
+- ``\\ExpOneFuelAcc`` / ``\\ExpOneStatusAcc`` / ``\\ExpOneProvinceAcc`` —
+  matched-row attribute accuracies, mean over runs with a non-empty value
+  (2 d.p., ticket 0531)
 
 The ticket-0474 adherence test (``test_abstract_numbers.py``) re-parses this
 file independently and asserts that the manuscript abstract's numeric literals
@@ -43,12 +46,22 @@ def _load_f1_stats(cross_eval: Path) -> dict:
     if not f1_vals:
         raise ValueError(f"No F1 values found in {cross_eval}")
     n_models = len({r["model"] for r in rows if r.get("model")})
+
+    def _attr_mean(col: str) -> float:
+        vals = [float(r[col]) for r in rows if r.get(col) not in (None, "", "nan")]
+        if not vals:
+            raise ValueError(f"No {col} values found in {cross_eval}")
+        return sum(vals) / len(vals)
+
     return {
         "f1_min": min(f1_vals),
         "f1_mean": sum(f1_vals) / len(f1_vals),
         "f1_max": max(f1_vals),
         "n_runs": len(f1_vals),
         "n_models": n_models,
+        "fuel_acc": _attr_mean("accuracy_fuel"),
+        "status_acc": _attr_mean("accuracy_status"),
+        "province_acc": _attr_mean("accuracy_province"),
     }
 
 
@@ -61,7 +74,10 @@ def _write_macros(stats: dict, output: Path) -> None:
         f"\\newcommand{{\\ExpOneFOneMean}}{{{stats['f1_mean']:.2f}}}\n"
         f"\\newcommand{{\\ExpOneFOneMax}}{{{stats['f1_max']:.2f}}}\n"
         f"\\newcommand{{\\ExpOneNRuns}}{{{stats['n_runs']}}}\n"
-        f"\\newcommand{{\\ExpOneNModels}}{{{stats['n_models']}}}\n",
+        f"\\newcommand{{\\ExpOneNModels}}{{{stats['n_models']}}}\n"
+        f"\\newcommand{{\\ExpOneFuelAcc}}{{{stats['fuel_acc']:.2f}}}\n"
+        f"\\newcommand{{\\ExpOneStatusAcc}}{{{stats['status_acc']:.2f}}}\n"
+        f"\\newcommand{{\\ExpOneProvinceAcc}}{{{stats['province_acc']:.2f}}}\n",
         encoding="utf-8",
     )
     log.info("Wrote %s", output)

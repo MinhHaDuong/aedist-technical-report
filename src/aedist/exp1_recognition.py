@@ -124,6 +124,11 @@ class MatchDetail:
     similarity_score: float | None = None
     capacity_diff_pct: float | None = None
 
+    # Cell-level status agreement from the reconciliation entry (None for FN
+    # cells and for matched cells where either side lacks a status) — feeds
+    # the status-accuracy-excluding-proposed macro (tickets 0531/0534).
+    status_match: bool | None = None
+
 
 @dataclass
 class FPCandidate:
@@ -280,6 +285,7 @@ def load_exp1_recognition(
                     match_type=entry.match_type.value if entry else None,
                     similarity_score=entry.similarity_score if entry else None,
                     capacity_diff_pct=entry.capacity_diff_pct if entry else None,
+                    status_match=entry.status_match if entry else None,
                 )
                 data.match_details[(model, run, plant_id)] = detail
 

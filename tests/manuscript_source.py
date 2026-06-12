@@ -6,16 +6,22 @@ tectonic-built (the pandoc/pandoc-crossref `main.md` was retired by ticket
 *normalized* view of the source where LaTeX-isms that would break a plain
 substring match are folded back to the characters the prose means:
 
+- generated value macros (`\\NumRefPlants`, `\\ExpOneFOneMean`, …) are expanded
+  to their values, read from the macros files the preamble `\\input`s (ticket
+  0531) — so prose assertions keep matching the literal numbers after the
+  macros-everywhere conversion;
 - hard-wrapped lines are joined (whitespace runs collapse to single spaces);
 - TeX ligatures `---`/`--` become the em/en dashes they typeset to;
 - non-breaking ties `~` become plain spaces;
 - escaped specials `\\$ \\% \\& \\_ \\#` become the bare character.
 
-Macro calls (`\\emph{…}`, `\\textbf{…}`, `\\ref{…}`) are left intact: tests
-anchor on them explicitly. Comment lines are dropped from the body so that
-source-maintenance notes (ticket numbers, etc.) are not scanned as prose.
+Structural macro calls (`\\emph{…}`, `\\textbf{…}`, `\\ref{…}`) are left
+intact: tests anchor on them explicitly. Comment lines are dropped from the
+body so that source-maintenance notes (ticket numbers, etc.) are not scanned
+as prose.
 """
 
+import functools
 import re
 from pathlib import Path
 
@@ -25,6 +31,44 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 MANUSCRIPT = REPO_ROOT / "slides" / "manuscript" / "main.tex"
 
 _COMMENT_RE = re.compile(r"(?<!\\)%.*$", re.MULTILINE)
+# Any macros file the preamble \inputs (no hardcoded path: the preamble is the
+# source of truth for which file(s) carry the generated values).
+_MACRO_INPUT_RE = re.compile(r"\\input\{([^}]*macros[^}]*\.tex)\}")
+_NEWCOMMAND_RE = re.compile(r"^\\newcommand\{\\([A-Za-z]+)\}\{(.*)\}\s*$")
+
+
+@functools.lru_cache(maxsize=1)
+def _macro_table() -> dict[str, str]:
+    """name -> value for every \\newcommand in the preamble's macros inputs."""
+    if not MANUSCRIPT.exists():
+        return {}
+    preamble = MANUSCRIPT.read_text(encoding="utf-8").split("\\begin{document}", 1)[0]
+    table: dict[str, str] = {}
+    for m in _MACRO_INPUT_RE.finditer(strip_comments(preamble)):
+        macros_path = (MANUSCRIPT.parent / m.group(1)).resolve()
+        if not macros_path.exists():
+            continue
+        for line in macros_path.read_text(encoding="utf-8").splitlines():
+            mm = _NEWCOMMAND_RE.match(line)
+            if mm:
+                table[mm.group(1)] = mm.group(2)
+    return table
+
+
+def _expand_macros(text: str) -> str:
+    """Substitute generated value macros with their values.
+
+    Longest name first, so ``\\ExpOneFOneMean`` is never half-eaten by a
+    shorter prefix. Both the bare ``\\Name`` call and the argument-stopped
+    ``\\Name{}`` form are recognised; a trailing letter means a different
+    macro and is left alone. Replacement goes through a lambda so backslashes
+    in values (e.g. ``75.0\\%``) are taken literally.
+    """
+    table = _macro_table()
+    for name in sorted(table, key=len, reverse=True):
+        value = table[name]
+        text = re.sub(rf"\\{name}(\{{\}})?(?![A-Za-z])", lambda _m, v=value: v, text)
+    return text
 
 
 def raw() -> str:
@@ -47,6 +91,9 @@ def body_raw() -> str:
 
 def normalized(text: str) -> str:
     """Fold LaTeX surface syntax back to prose for substring assertions."""
+    # Expand generated value macros FIRST, so a value like `75.0\%` then folds
+    # through the escape handling below exactly like hand-typed prose.
+    text = _expand_macros(text)
     text = strip_comments(text)
     text = text.replace("---", "—").replace("--", "–")
     for esc, ch in (("\\$", "$"), ("\\%", "%"), ("\\&", "&"), ("\\_", "_"), ("\\#", "#")):
