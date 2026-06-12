@@ -1,10 +1,12 @@
 """Ticket 0512 — structural revisions to the manuscript (now main.tex, 0524).
 
-Adherence tests pinning the §3-review restructuring:
+Adherence tests pinning the §3-review restructuring (decision pins updated
+by ticket 0562, back-half restructure):
 
 1. A numbered "Related Work — Empirical landscape" section exists.
-2. An unnumbered "Related Work — Methods" section appears *before* the
-   Conclusion (the theoretical/methods RW was relocated out of the front).
+2. The methods review lives in a numbered "Future research" section
+   (lessons from the field + programme, ticket 0562); no unnumbered
+   "Related Work — Methods" section remains in the body.
 3. No internal scaffolding remains in the body: PR refs (``#NNN``), bare
    four-digit ticket refs (``0NNN``, modulo legitimate ORCID digits),
    ``palette.toml``, and commit-hash references.
@@ -17,7 +19,7 @@ import re
 from pathlib import Path
 
 import pytest
-from manuscript_source import body
+from manuscript_source import body, section
 
 pytestmark = pytest.mark.adherence
 
@@ -31,14 +33,29 @@ def test_empirical_related_work_section_exists():
     )
 
 
-def test_methods_related_work_before_conclusion():
+def test_future_research_section_absorbs_methods_review():
+    """Ticket 0562 (tracker 0560): the methods review is the opening of a
+    numbered Future research section ("lessons from the field"), followed by
+    the research programme; the unnumbered 'Related Work — Methods' section
+    is gone. This replaces the 0512 pin (unnumbered methods RW before the
+    Conclusion) with the new author-approved decision."""
     text = body()
-    methods = text.find("\\section*{Related Work — Methods}")
-    assert methods != -1, "unnumbered 'Related Work — Methods' section missing"
-    conclusion = text.find("\\section{Conclusion}\\label{sec:conclusion}")
-    assert conclusion != -1, "Conclusion heading missing"
-    assert methods < conclusion, (
-        "'Related Work — Methods' must appear before the Conclusion"
+    assert "\\section*{Related Work" not in text, (
+        "unnumbered 'Related Work — Methods' section must be gone: the "
+        "methods review now opens the numbered Future research section "
+        "(ticket 0562)"
+    )
+    assert "\\section{Future research}\\label{sec:future}" in text, (
+        "numbered, labelled Future research section missing (ticket 0562)"
+    )
+    future = section("sec:future")
+    assert "Petroni-Fabio2019:lm-as-kb" in future, (
+        "Future research must absorb the methods review (lessons from the "
+        "field) — Petroni et al. citation missing from the section"
+    )
+    assert "capture–recapture" in future, (
+        "Future research must state the research programme — the "
+        "capture–recapture estimation axis is missing"
     )
 
 

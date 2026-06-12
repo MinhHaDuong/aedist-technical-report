@@ -39,9 +39,11 @@ macro).
   (`\renewcommand{\thefigure}{S\arabic{figure}}`, plus the matching
   `\theHfigure` for hyperref anchors); the recognition matrix is a
   `\refstepcounter{figure}\label{…}` + `\includepdf` block — keep both.
-- Unnumbered sections (the methods Related-Work section, Acknowledgements,
-  Bibliography, annex subsections) use the starred forms `\section*` /
-  `\subsection*`, with `\addcontentsline` for the PDF bookmarks.
+- Unnumbered sections (backmatter — Acknowledgements, Bibliography — and
+  annex subsections) use the starred forms `\section*` / `\subsection*`,
+  with `\addcontentsline` for the PDF bookmarks. No unnumbered section sits
+  between §1 and the backmatter (ticket 0562 merged the former unnumbered
+  Related Work — Methods section into the numbered Future research section).
 - The abstract is the article-class `\begin{abstract}…\end{abstract}`
   environment (ticket 0542), not a styled `\textbf{Abstract.}` paragraph.
 - Backmatter order: Acknowledgements, Data & Code Availability, Funding,
