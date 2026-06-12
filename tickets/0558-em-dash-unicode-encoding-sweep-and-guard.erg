@@ -5,6 +5,7 @@ Author: orchestrator
 
 --- log ---
 2026-06-12T10:30Z orchestrator created — author decided 0552 aspect 1 (encoding): canonical em-dash encoding in manuscript prose is the literal Unicode glyph, not the --- TeX ligature
+2026-06-12T10:15Z claude bump verify-reroll — gate REROLL round 1: branch conflicted with upstream 7b1790e6 (main.tex caveat edit); rebased onto origin/main, conflict resolved with em-dash conversion applied to new prose, guard green
 
 --- body ---
 ## Context
