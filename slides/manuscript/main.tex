@@ -61,6 +61,9 @@
 \usepackage{bookmark}
 \usepackage{xurl}
 \urlstyle{same}
+% Breakable monospaced file paths: xurl lets these wrap at any character,
+% killing the overfull \hbox warnings long \texttt paths used to cause.
+\DeclareUrlCommand\fpath{\urlstyle{tt}}
 \hypersetup{
   pdftitle={Can Frontier AI Build a Statistical Register? A Benchmark and Research Programme on Vietnam's Thermal Power Fleet},
   hidelinks}
@@ -749,7 +752,8 @@ exploratory} conditions added during execution (\ref{sec:annex-exp2});
 they are reported here for completeness, not as confirmatory tests.
 Values generated from
 \texttt{experiments/derived/tab\_exp2\_2x2.csv}'s pipeline.}
-\input{../../report/inputs/generated/tab_exp2_2x2_agents.tex}
+{\small\setlength{\tabcolsep}{4pt}
+\input{../../report/inputs/generated/tab_exp2_2x2_agents.tex}}
 \end{table}
 
 \begin{figure}
@@ -927,7 +931,7 @@ variance the design observes but does not quantify.
 
 \textbf{Refusal is evidence about the standard.} In the archived
 baseline sweep (prompt \texttt{p1\_base}; runs preserved in
-\texttt{experiments/archive/outputs/exp1/baseline/},
+\fpath{experiments/archive/outputs/exp1/baseline/},
 \ref{sec:annex-exp1}), GPT-5.5 declined the task on 3 of its 5
 memory-only reps, opening with ``I can't honestly produce a complete,
 primary-sourced inventory\ldots{}'' and refusing to fabricate URLs or
@@ -1315,7 +1319,8 @@ distinct-plant name pairs, the unit-number veto leaves
 realise \RealisedFuzzyBelowNinety{} fuzzy matches below the threshold.
 Full per-plant human
 reconciliation is deferred (post-arXiv).}
-\input{../../report/inputs/generated/tab_source_concordance.tex}
+{\small\setlength{\tabcolsep}{4pt}
+\input{../../report/inputs/generated/tab_source_concordance.tex}}
 \end{table}
 
 \subsection*{Prompts}
@@ -1324,7 +1329,7 @@ reconciliation is deferred (post-arXiv).}
 \textbf{Archived baseline prompt (2026-05-20 cohort).} The archived
 baseline sweep --- the earlier cohort in which the GPT-5.5 refusals
 occurred --- used the locked composition of two modules from
-\texttt{experiments/prompts/modules/}: \texttt{2\_goal.txt} (task
+\fpath{experiments/prompts/modules/}: \texttt{2\_goal.txt} (task
 declaration) and \texttt{5\_table.txt} (structured table specification).
 These are the implicit ``always'' pair --- every sweep includes them;
 ablations opt in to additional modules. The assembled prompt is the
@@ -1365,7 +1370,7 @@ after this cohort ran, which the analysis-cohort prompt below reflects.
 \textbf{Analysis-cohort prompt (Doc-07).} The fourteen-model analysis
 cohort (\texttt{modelset\_exp1\_batch2}, the cohort behind every
 per-model number in §\ref{sec:exp1}) received the full Doc-07 naive
-prompt --- \texttt{experiments/sota/protocol\_07\_naive\_prompt.md} ---
+prompt --- \fpath{experiments/sota/protocol_07_naive_prompt.md} ---
 verbatim as the sole user message (trailing newline stripped by the
 worker), at temperature 0, seed 42, \texttt{max\_tokens} 65536, web
 access off; this was verified against the archived per-run records. The
@@ -1475,7 +1480,8 @@ Not admissible sources:
 \begin{itemize}
 \tightlist
 \item
-  Tertiary compilations (encyclopedias, Wikipedia/Wikidata/DBpedia,
+  Tertiary compilations (encyclopedias,
+  Wikipedia/\allowbreak Wikidata/\allowbreak DBpedia,
   mirrors, aggregators re-syndicating without independent verification).
 \item
   Any deposited dataset that does NOT expose, per value, the primary
@@ -1622,8 +1628,8 @@ Answer from parametric knowledge only.''}
 \subsection*{Models}
 \addcontentsline{toc}{subsection}{Models}
 
-Sixteen models from \texttt{modelset\_exp1\_journal} (v2, defined in
-\texttt{experiments/experiments.toml}), organised around three language
+Sixteen models from \fpath{modelset_exp1_journal} (v2, defined in
+\fpath{experiments/experiments.toml}), organised around three language
 families with multiple labs per family:
 
 \begin{longtable}[]{@{}lllll@{}}
@@ -1911,15 +1917,15 @@ DeepSeek (orange). Per-model numbers backing the figure are written to
 \subsection*{Sweep configuration}
 \addcontentsline{toc}{subsection}{Sweep configuration}
 
-The sweep is defined in \texttt{experiments/experiments.toml} as
+The sweep is defined in \fpath{experiments/experiments.toml} as
 \texttt{sweep\_exp1\_baseline} (model\_set =
 \texttt{modelset\_exp1\_journal}, repeat = 5, T = 0, seed = 42,
 budget\_usd = 15, max\_tokens = 32768, prompt\_modules = []). These
 match the Run-parameters table above and the as-run records in
 \texttt{measurements.jsonl}
-(\texttt{method\_params.max\_tokens\ =\ 32768}); an earlier draft quoted
+(\fpath{method_params.max_tokens} = 32768); an earlier draft quoted
 the pilot's 8192-token / \$10 cap, which the journal sweep superseded.
-Outputs land in \texttt{experiments/outputs/exp1/baseline/}; the prior
+Outputs land in \fpath{experiments/outputs/exp1/baseline/}; the prior
 pilot runs are preserved under \texttt{baseline.pilot/}, kept separate
 from the journal data. Results are ingested into
 \texttt{measurements.jsonl} via \texttt{make\ rebuild-measurements}.
@@ -1927,7 +1933,7 @@ from the journal data. Results are ingested into
 Experiment 1 was run as 5 reps per model on 2026-05-20 and topped up
 with 3 additional reps per model on 2026-05-21 after a harness fix
 restored capture of \texttt{reasoning\_tokens}. The top-up reps land in
-\texttt{experiments/outputs/exp1/baseline.topup\_canary/} and
+\fpath{experiments/outputs/exp1/baseline.topup_canary/} and
 \texttt{baseline.topup/}; we pool them with the original five
 unconditionally --- no canary gate. Intra-day variability across the two
 acquisition windows is absorbed into the reported within-model spread
@@ -2009,7 +2015,7 @@ thinking mode \\
 3 & OpenAI & GPT-5.5 & US & Responses API + \texttt{web\_search} +
 reasoning \\
 4 & Anthropic & Claude Opus 4.6 & US & Anthropic API +
-\texttt{web\_search\_20250305} + adaptive thinking \\
+\fpath{web_search_20250305} + adaptive thinking \\
 \end{longtable}
 
 Anthropic is pinned to Opus 4.6 (not 4.7) per the 2026-05-20 compose
@@ -2026,9 +2032,9 @@ Vietnamese power assets are under-indexed by Western search.
 
 The naive one-shot baseline that §\ref{sec:exp2} compares against is
 \textbf{not} §\ref{sec:exp1}'s \texttt{modelset\_exp1\_journal} sweep.
-It is the pre-existing \texttt{experiments/outputs/direct\_complete/}
-artifact from \texttt{sweep\_direct\_complete} over
-\texttt{modelset\_frontier\_10labs} --- a wider lab survey at a single
+It is the pre-existing \fpath{experiments/outputs/direct_complete/}
+artifact from \fpath{sweep_direct_complete} over
+\fpath{modelset_frontier_10labs} --- a wider lab survey at a single
 rep per model. Phase C will read from it directly; it is not re-run.
 
 \subsection*{Phase structure}
@@ -2139,7 +2145,7 @@ each (40 production sessions):
 \tightlist
 \item
   \textbf{Naive arm} --- Doc-07
-  (\texttt{experiments/sota/protocol\_07\_naive\_prompt.md}) sent
+  (\fpath{experiments/sota/protocol_07_naive_prompt.md}) sent
   verbatim as the sole user message, no system prompt, web search on,
   one model response per session. This carries the v2 task statement and
   quality criteria but none of the optimised arm's methodology (budget
@@ -2237,13 +2243,15 @@ This experiment is script-based, not sweep-based. No
 \item
   \texttt{experiments/outputs/sota\_smoke/} and
   \texttt{sota\_exp2\_smoke/} --- artifact directories. Each Phase B
-  turn writes
-  \texttt{<agent>\_turn\_NN.\{user.txt,raw.json,record.json,cost.json,classification.json,report.md,citations.json\}}.
+  turn writes seven \fpath{<agent>_turn_NN.*} files: \fpath{user.txt},
+  \fpath{raw.json}, \fpath{record.json}, \fpath{cost.json},
+  \fpath{classification.json}, \fpath{report.md}, and
+  \fpath{citations.json}.
 \item
-  \texttt{experiments/derived/tab\_exp2\_2x2.csv},
-  \texttt{report/inputs/generated/tab\_exp2\_bib\_quality.tex} ---
+  \fpath{experiments/derived/tab_exp2_2x2.csv},
+  \fpath{report/inputs/generated/tab_exp2_bib_quality.tex} ---
   as-run derived tables (2×2 F1/cost factorial; per-arm bibliography
-  quality). The \texttt{experiments/derived/sota\_cross\_eval.csv} Phase
+  quality). The \fpath{experiments/derived/sota_cross_eval.csv} Phase
   C target is reserved for the deferred cross-evaluation.
 \end{itemize}
 
@@ -2418,9 +2426,9 @@ on the same 70 runs --- cross-validation against Experiment 2 or
 held-out runs is future work.
 
 \emph{Supporting data:
-\texttt{report/inputs/generated/tab\_screen\_validation\_within\_model.csv}
-(produced by \texttt{src/aedist/screen\_validation\_within\_model.py},
-wired in \texttt{experiments/render.mk}).}
+\fpath{report/inputs/generated/tab_screen_validation_within_model.csv}
+(produced by \fpath{src/aedist/screen_validation_within_model.py},
+wired in \fpath{experiments/render.mk}).}
 
 \section{Capability rollout: per-lab shipping order}\label{sec:annex-rollout}
 
