@@ -1,0 +1,77 @@
+%erg 0.1
+Title: Annex A prompts cleanup: delete archived-baseline block, sans-serif the analysis-cohort prompt
+Created: 2026-06-12
+Author: HDMX-coding-agent
+Blocked-by: 0589
+
+--- log ---
+2026-06-12T21:52Z HDMX-coding-agent created child of 0578 (findings 9–11); test+brief coupling mapped
+
+--- body ---
+## Context
+
+Reading-2 findings 9–11 (tracker 0578), Annex A (sec:annex-exp1,
+main.tex L1298):
+
+- (9) Delete the whole "Archived baseline prompt (2026-05-20 cohort)"
+  block (bold-run paragraph at L1376 inside `\subsection*{Prompts}`,
+  L1373) — useless coding archeology; we don't present its results.
+- (10) Format the analysis-cohort prompt (currently a
+  `\begin{quote}\small` at L1426) in sans serif — reuse the boxed
+  `promptbox` environment introduced by ticket 0582 (Blocked-by chain
+  guarantees it exists).
+- (11) Delete "(trailing newline stripped by the worker)" (L1421) —
+  too much implementation detail.
+
+## Relevant files
+
+- `slides/manuscript/main.tex` — L1373–1430 region (re-grep after the
+  chain's earlier edits shift lines)
+- `tests/test_manuscript_cohort_and_caveats.py:388` —
+  test_annex_baseline_prompt_carries_as_sent_status_vocabulary pins
+  the deleted block against an archived run record: DELETE this test
+  with the block (its subject ceases to exist)
+- `tests/test_manuscript_cohort_and_caveats.py:428` —
+  test_annex_carries_doc07_prompt_verbatim_anchors pins 3 verbatim
+  sentences of the KEPT analysis-cohort prompt: must stay green — the
+  sans-serif reformat must not alter one character of the prompt text
+- `docs/editorial-brief.md` — `annex-quote-anchor`: retarget the entry
+  at the kept analysis-cohort prompt (verbatim-anchor CI continues),
+  note the baseline block's deletion in its Status
+- `experiments/sota/protocol_07_naive_prompt.md` — verbatim source of
+  the kept prompt, for the must-not-drift check
+
+## Actions
+
+1. Delete the archived-baseline block and its test; update the brief
+   entry — all in the same PR.
+2. Reformat the analysis-cohort prompt into the shared sans-serif
+   promptbox; prompt text byte-identical (verbatim anchors green).
+3. Drop the trailing-newline parenthesis.
+4. While in the region: residual language-family or Doc-07 codename
+   text may appear here — language-family drops belong to 0581's
+   sweep, codenames to 0591; remove locally only what the rewritten
+   sentences would otherwise carry.
+
+## Test
+
+- Red first: negative guard asserting "Archived baseline prompt" does
+  not appear in main.tex — red now, green after.
+
+## Verification
+
+- [ ] Block gone; orphaned test deleted; brief entry retargeted
+- [ ] Analysis-cohort prompt renders sans-serif boxed; verbatim-anchor
+  test green untouched
+- [ ] `make check` passes; crossref test green (no dangling refs into
+  the deleted block)
+
+## Invariants
+
+- Kept prompt text verbatim (anchor test is the proof)
+- No other Annex A content changes beyond findings 9–11
+
+## Exit criteria
+
+- [ ] Findings 9, 10, 11 addressed; test + brief updated in same PR
+- [ ] `make check` passes

@@ -1,0 +1,82 @@
+%erg 0.1
+Title: §7.1 + Annex C rework: plain difficulty story, move composition table into §7.1, drop cruft
+Created: 2026-06-12
+Author: HDMX-coding-agent
+Blocked-by: 0584
+
+--- log ---
+2026-06-12T21:52Z HDMX-coding-agent created child of 0578 (findings 13–17)
+
+--- body ---
+## Context
+
+Reading-2 findings 13–17 (tracker 0578). §7.1 ("Why is the task
+hard?", sec:ext-difficulty, main.tex L865) and Annex C
+(sec:annex-recognition, L2357) tell the difficulty story in an
+overcomplicated tone that is not the author's. The author's intended
+message for §7.1, verbatim from the tracker:
+
+  "The task is hard because it is a long-tail distribution. As
+  explained in the intro, it is easy to know the existing power
+  plants, but there are many abandoned or recently proposed projects
+  which have low visibility [composition table goes here]."
+
+## Relevant files
+
+- `slides/manuscript/main.tex` — sec:ext-difficulty (L865–882);
+  sec:annex-recognition (L2357–2407): "names read left-to-right, no
+  rotation" L2360, "producer--consumer chaining" parenthesis L2389,
+  tbl:status-difficulty L2398 with
+  `\input{../../report/inputs/generated/tab_status_difficulty_en.tex}`
+  L2402
+- `experiments/render.mk` — confirm the tab_status_difficulty rule;
+  the `\input` path stays valid wherever the table sits (tectonic
+  resolves relative to main.tex)
+
+## Actions
+
+1. (17) Rewrite §7.1 around the author's message above — plain tone,
+   long-tail framing, pointer back to the intro.
+2. (16) Move tbl:status-difficulty (envelope + `\input`) from Annex C
+   into §7.1 as the justification, and rework the obscure "recognition
+   rate" definition in the caption/prose to: "the column shows the
+   average probability of being found by an Exp 1 model run".
+3. (13) Drop "names read left-to-right, no rotation" (L2360) — a
+   generation instruction surviving as prose. (The class-sweep for
+   such cruft is ticket 0592.)
+4. (14) Drop the parenthesis "(… producer--consumer chaining)"
+   (L2389) — data-flow organization detail.
+5. (15) Shorten the Annex C intro substantially — it currently repeats
+   the caption. After the table moves, the annex keeps the recognition
+   matrix (fig:recognition-matrix includepdf block + its
+   refstepcounter/label — keep both, per writing.md house rules).
+6. Update every `\ref{tbl:status-difficulty}` call site's wording
+   (annex table → main-text table number).
+
+## Test
+
+- Red first: negative guards for the two cruft literals ("read
+  left-to-right, no rotation"; "producer--consumer chaining") — red
+  now, green after.
+
+## Verification
+
+- [ ] §7.1 reads as the author's plain message with the composition
+  table in place
+- [ ] Annex C intro short; matrix block intact; caption no longer
+  duplicated by prose
+- [ ] `make check` passes; manuscript builds; table/figure numbering
+  tests updated and green
+
+## Invariants
+
+- tbl:status-difficulty label stays attached to the table
+  (label-stability-contract); generated fragment untouched (display
+  move only)
+- Crossref + macros adherence tests green
+
+## Exit criteria
+
+- [ ] Findings 13–17 addressed (16 as rework+move, the author's stated
+  preference)
+- [ ] `make check` passes

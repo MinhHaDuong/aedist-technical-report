@@ -1,0 +1,72 @@
+%erg 0.1
+Title: Exp 2 results display: split Figure 6 into two figures, move Table 1 to the annex
+Created: 2026-06-12
+Author: HDMX-coding-agent
+Blocked-by: 0582
+
+--- log ---
+2026-06-12T21:52Z HDMX-coding-agent created child of 0578 (findings 36, 37)
+
+--- body ---
+## Context
+
+Reading-2 findings 36–37 (tracker 0578). "Table 1" in the rendered PDF
+is tbl:exp2-2x2 (main.tex L755, sec:exp2): it repeats data visible in
+Figure 6 (fig:exp2-arms, L766) — move it to the Exp 2 annex
+(sec:annex-exp2). Figure 6 is hard to read — split its two panels into
+two separate figures, each with its own caption and label.
+
+## Relevant files
+
+- `slides/manuscript/main.tex` — tbl:exp2-2x2 (L755), fig:exp2-arms
+  (L766, `\includegraphics` of `fig_exp2_arms_comparison.pdf`),
+  sec:annex-exp2 (L2003+); all `\ref{tbl:exp2-2x2}` and
+  `\ref{fig:exp2-arms}` call sites (grep)
+- `src/aedist/plot_exp2_arms_comparison.py` — currently emits one
+  two-panel PDF; split into two single-panel outputs (one script, two
+  `--panel`-style invocations, or two output paths — keep one output
+  per Makefile rule)
+- `experiments/render.mk:37, 172–176` — `$(ANALYSIS_EXP2_ARM_FIG)`
+  rule; split into two artifact rules (one output per rule)
+- `report/inputs/generated/` — committed PDFs (old one replaced by two)
+- `tests/test_manuscript_figure_numbering.py` — pins the figure
+  number↔label map; update (Figure 6 becomes 6 and 7; S-series shifts
+  are not affected, main-text count is)
+
+## Actions
+
+1. Split the plot script output into two single-panel PDFs; wire two
+   render.mk rules (one output per rule); regenerate and commit both.
+2. Replace the Figure 6 environment with two figure environments, new
+   labels (keep `fig:exp2-arms` on the first panel to minimize ref
+   churn; add e.g. `fig:exp2-arms-b` — follow content, see
+   label-stability-contract), captions per panel, captions pointing to
+   the annex for details (finding-22 convention).
+3. Move tbl:exp2-2x2 (envelope + `\input`/tabular content) into
+   sec:annex-exp2; update every `\ref{tbl:exp2-2x2}` call site's
+   wording (it now renders as an S-table/annex table).
+4. Update the figure-numbering adherence test.
+
+## Test
+
+- Red first: update test_manuscript_figure_numbering.py to the target
+  state (two exp2-arms figures, table in annex) — red before the edit,
+  green after.
+
+## Verification
+
+- [ ] Two readable single-panel figures in §6; old combined PDF gone
+- [ ] Table sits in the annex; all refs resolve and read correctly
+- [ ] `make check` passes; manuscript builds; render.mk DAG correct
+  (prereqs match actual reads/writes)
+
+## Invariants
+
+- Data and panel content unchanged — display-only split
+- One output per Makefile rule; committed artifacts in the same PR
+- Crossref adherence test green
+
+## Exit criteria
+
+- [ ] Findings 36, 37 addressed
+- [ ] `make check` passes

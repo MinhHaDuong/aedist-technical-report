@@ -1,0 +1,65 @@
+%erg 0.1
+Title: §8 Discussion: condense to 1.5 pages, new opening, add scoring-levels discussion
+Created: 2026-06-12
+Author: HDMX-coding-agent
+Blocked-by: 0587
+
+--- log ---
+2026-06-12T21:52Z HDMX-coding-agent created child of 0578 (finding 40)
+
+--- body ---
+## Context
+
+Reading-2 finding 40 (tracker 0578), author's words: "'A consistent
+reading summarized in introduction' = how to NOT say a thing — drop
+the sentence. Opening: say this section examines limits and potential
+of the offered benchmark. Condense to 1.5 pages. Include a discussion
+of method quality scoring (time & money resources vs quality of
+results) vs table quality scoring (=run) vs model scoring (see docs/
+discussion note)."
+
+## Relevant files
+
+- `slides/manuscript/main.tex` — sec:discussion (L979–1103). Note
+  Phase C at L1085 should already be gone (ticket 0582); re-verify.
+- `docs/scoring-contract.md` — the scoring-levels discussion note
+  (run/cell/model levels); also `docs/quality-grounding.md` if needed
+- `docs/editorial-brief.md` — `rho-caveat-discussion`,
+  `equalisation-hedge`, `binding-constraint-conjecture` (post-0586
+  state) pin hedges in this section: condensation must keep the
+  hedged claims hedged
+
+## Actions
+
+1. Drop the "A consistent reading summarized in introduction" sentence.
+2. New opening: this section examines limits and potential of the
+   offered benchmark.
+3. Condense the section to ≤1.5 rendered pages.
+4. Add the three-level scoring discussion: method quality scoring
+   (time & money resources vs quality of results) vs table (=run)
+   quality scoring vs model scoring — grounded in
+   docs/scoring-contract.md, not invented.
+
+## Test
+
+- Negative guard: the dropped sentence's signature phrase ("consistent
+  reading summarized") absent from main.tex — red now, green after.
+
+## Verification
+
+- [ ] §8 ≤1.5 rendered pages
+- [ ] Scoring-levels paragraph present, consistent with
+  docs/scoring-contract.md terminology
+- [ ] All brief-pinned hedges in §8 survive condensation
+- [ ] `make check` passes
+
+## Invariants
+
+- Numbers macro-sourced; ρ caveats intact (brief
+  `rho-caveat-discussion`)
+- No new promises (no-companion-paper-promise)
+
+## Exit criteria
+
+- [ ] Finding 40 addressed
+- [ ] `make check` passes

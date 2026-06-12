@@ -1,0 +1,68 @@
+%erg 0.1
+Title: Figure 5: restore per-model family colors and move deepseek-v4-flash label left
+Created: 2026-06-12
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-12T21:52Z HDMX-coding-agent created child of 0578 (findings 19, 20)
+
+--- body ---
+## Context
+
+Reading-2 findings 19–20 (tracker 0578). Figure 5 (fig:reliability,
+`fig_exp1_reliability.pdf`) lost the per-model-family colors — a
+regression: `src/aedist/plot_exp1_reliability.py` paints every dot with
+the single `COLOR_MATCHED` constant and does not import
+`model_family_color` (unlike `plot_exp2_arms_comparison.py` and
+`plot_exp2_coverage_certainty.py`, which use it). Separately, the
+`deepseek-v4-flash` point label overlaps; it must be placed to the left
+(the `JITTER_SIDE` dict at ~L106 has `deepseek-v4-pro: "left"` but no
+entry for `deepseek-v4-flash`).
+
+Pure figure-code work: no main.tex edit, parallelizable with the
+main.tex chain (no Blocked-by).
+
+## Relevant files
+
+- `src/aedist/plot_exp1_reliability.py` — the plot script to fix
+- `src/aedist/plot_exp2_arms_comparison.py` — reference implementation
+  of `model_family_color` usage (per-agent `_AGENT_MODEL` dict)
+- `experiments/render.mk:290–292` — Makefile rule producing
+  `$(ANALYSIS_GEN)/fig_exp1_reliability.pdf`
+- `report/inputs/generated/fig_exp1_reliability.pdf` — committed
+  handoff artifact, regenerate and commit
+- `tickets/0574-…` — deterministic-PDF metadata ticket touches the same
+  `savefig` calls; coordinate (land either first, rebase the other)
+
+## Actions
+
+1. Color the scatter points by model family via `model_family_color`
+   (same util the exp2 plots import); keep matched/unmatched or other
+   semantic encodings the figure already carries.
+2. Add `"deepseek-v4-flash": "left"` to the label-side dict.
+3. Rebuild the figure via the render.mk target; commit script + PDF.
+
+## Test
+
+- Red first: a unit test (source-inspection style per coding rules) in
+  `tests/` asserting `plot_exp1_reliability.py` references
+  `model_family_color` and that the label-side mapping contains
+  `deepseek-v4-flash`. Goes red on current code, green after the fix.
+
+## Verification
+
+- [ ] Rebuilt PDF shows distinct colors per model family (visual check)
+- [ ] `deepseek-v4-flash` label sits left of its point, no overlap
+- [ ] `make check` passes
+
+## Invariants
+
+- Figure semantics unchanged (same data, same axes, same points)
+- Manuscript builds; figure numbering test stays green
+- Committed artifact and script land in the same PR
+
+## Exit criteria
+
+- [ ] Figure 5 has per-model-family colors again
+- [ ] deepseek-v4-flash label placed left
+- [ ] Regenerated PDF committed; `make check` passes

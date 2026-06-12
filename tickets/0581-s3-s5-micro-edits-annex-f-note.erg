@@ -1,0 +1,74 @@
+%erg 0.1
+Title: §3–§5 micro-edits (bar→answer key, AI-English, Figure 3 float, cohort) + Annex F swarm note
+Created: 2026-06-12
+Author: HDMX-coding-agent
+Blocked-by: 0580
+Blocked-by: 0577
+
+--- log ---
+2026-06-12T21:52Z HDMX-coding-agent created child of 0578 (findings 12, 28–35)
+
+--- body ---
+## Context
+
+Reading-2 findings 12, 28–35 (tracker 0578): a micro-edit pass over
+§3 (sec:quality), §4 (sec:capability), §5 (sec:exp1), plus a two-line
+addition in Annex F (sec:annex-rollout). The author attributed some
+items to §3, but grep places most sites in §5 — line numbers below are
+ground truth. Blocked-by 0577 because the ρ=0.78 macro-sourcing edits
+the same §4/§5 paragraphs; land the mechanical macro PR first.
+
+## Relevant files
+
+- `slides/manuscript/main.tex` — sec:quality (L271), sec:capability
+  (L366), sec:exp1 (L489), sec:annex-rollout (L2541)
+
+## Actions
+
+1. (31) §3: rephrase the double negative "defining good as scoring
+   zero on none of the twelve dimensions" → define bad runs as those
+   with at least one zero score in any dimension.
+2. (28) §4: drop the paragraph "Each integration… \ref{sec:annex-rollout}"
+   (the annex-F-pointing paragraph); §4 is too long.
+3. (30) §5 cohort presentation: replace the model enumeration with:
+   models are listed on Figure~\ref{fig:reliability} and include
+   Claude, DeepSeek, Mistral and Qwen at various sizes from
+   workstation to frontier.
+4. (12) §5: drop the language-family considerations entirely (L508
+   "three language families (EN/FR/ZH)") — irrelevant, false (models
+   are natively multilingual), and removes the claim of multiple
+   representatives for all three languages. Sweep for residual
+   language-family text elsewhere.
+5. (33) L546/L549: "firmly inside every cutoff" + "solidly
+   substantiated" in the same passage = AI English — delete/reword.
+6. (34, 35) The repeatedly-referenced undefined "bar" (L548–551,
+   L614 "seeded recall bar"): replace the verbose/obscure "seeded
+   recall bar" phrasing with the plain term "answer key", defining it
+   clearly at first use (or drop the bar metaphor).
+7. (32) Float Figure 3 (fig:direct-base, L602) two pages earlier, on
+   its own page, as Figure 4 is.
+8. (29) Annex F: add a note on the emerging capability to swarm,
+   orchestrate, and act as a team.
+
+## Test
+
+- Before editing, `grep -rn` tests for pinned phrasings being removed
+  ("seeded recall bar", "language famil", cutoff sentences); update
+  guards per CI polarity rule (negative pins only).
+
+## Verification
+
+- [ ] Each listed phrase gone / replaced; "answer key" defined at
+  first use
+- [ ] Figure 3 floats on its own page, ~2 pages earlier
+- [ ] `make check` passes; manuscript builds
+
+## Invariants
+
+- No new hand-typed numbers (macros rule); crossref test green
+- `\label{fig:direct-base}` stays attached; figure numbering unchanged
+
+## Exit criteria
+
+- [ ] Findings 12, 28–35 all addressed (mapping in tracker 0578)
+- [ ] `make check` passes

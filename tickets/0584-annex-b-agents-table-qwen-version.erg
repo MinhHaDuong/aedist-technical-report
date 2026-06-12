@@ -1,0 +1,66 @@
+%erg 0.1
+Title: Annex B agents table: drop Country column, auto colwidth; fix Qwen version to 3.7 per artifacts
+Created: 2026-06-12
+Author: HDMX-coding-agent
+Blocked-by: 0583
+
+--- log ---
+2026-06-12T21:52Z HDMX-coding-agent created child of 0578 (findings 2, 3); Qwen ground truth pre-verified
+
+--- body ---
+## Context
+
+Reading-2 findings 2–3 (tracker 0578). The Annex B agents table
+(longtable under `\subsection*{Agents}`, main.tex L2027) has five
+forced-equal-width columns (`\real{0.2000}`): #, Vendor, Model,
+Country, Surface. Drop the Country column and let column widths size
+naturally.
+
+Finding 3 pre-verified during planning: the author's recall is
+correct. `experiments/models.yaml` records the Exp 2 model as
+`qwen3.7-max-2026-05-20` (display name "Qwen3.7 Max"), and
+`plot_exp2_arms_comparison.py` L66 uses that slug — but the manuscript
+says "Qwen3-Max" (agents table L2058 and prose L705). Fix the text to
+the ground truth (Qwen3.7 Max), not the other way round.
+
+## Relevant files
+
+- `slides/manuscript/main.tex` — agents longtable L2027–2060 (Country
+  column at L2048, Qwen row L2058); prose "Qwen3-Max via DashScope"
+  L705; grep `Qwen` for any further version-bearing mentions
+- `experiments/models.yaml` — ground truth: `qwen3.7-max-2026-05-20`
+
+## Actions
+
+1. Remove the Country column (header + every row) from the agents
+   longtable; replace the five fixed `\real{0.2000}` colspecs with
+   natural/auto widths for the remaining four columns.
+2. Replace "Qwen3-Max" with "Qwen3.7 Max" (matching models.yaml
+   display name) at L2058, L705, and any other version-bearing Qwen
+   mention in main.tex.
+3. Re-check country information is not load-bearing elsewhere (the
+   §6 prose already states US/FR/CN inline at L703–706 — that prose
+   stays; only the table column goes).
+
+## Test
+
+- Red first: a negative guard asserting "Qwen3-Max" (the wrong
+  version string) does not appear in main.tex — red now, green after.
+
+## Verification
+
+- [ ] Agents table has 4 columns, widths auto, builds without overfull
+  hbox regressions
+- [ ] All Qwen mentions say 3.7, matching `models.yaml`
+- [ ] `make check` passes
+
+## Invariants
+
+- Model identity facts trace to `models.yaml` (derive prose from
+  artifacts, never from memory)
+- No other table content changes
+
+## Exit criteria
+
+- [ ] Findings 2, 3 addressed
+- [ ] `make check` passes
