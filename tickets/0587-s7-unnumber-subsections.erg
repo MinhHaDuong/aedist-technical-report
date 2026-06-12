@@ -1,0 +1,75 @@
+%erg 0.1
+Title: §7: convert numbered subsection headings to house style (unnumbered)
+Created: 2026-06-12
+Author: HDMX-coding-agent
+Blocked-by: 0586
+
+--- log ---
+2026-06-12T21:52Z HDMX-coding-agent created child of 0578 (finding 21); runs after the §7 prose tickets so headings are converted once
+
+--- body ---
+## Context
+
+Reading-2 finding 21 (tracker 0578). §7 (sec:extensions, main.tex
+L857) is the only section with NUMBERED subsection headings; all other
+sections respect the writing guide (no numbered subsections). Convert
+its four subsections to the starred house form. Sequenced after 0585
+and 0586 because those rewrite §7.1/§7.2 prose — convert the surviving
+headings once.
+
+Subsections (post-0586 state may differ — re-grep):
+- sec:ext-difficulty (L865) "Why is the task hard?"
+- sec:ext-screen (L882) "Screening without a reference"
+- sec:fusion (L913) "Can runs be fused?"
+- sec:ext-system (L941) "What system do the findings imply?"
+
+## Relevant files
+
+- `slides/manuscript/main.tex` — the four `\subsection` headings;
+  every `\ref{sec:ext-*}` / `\ref{sec:fusion}` call site (grep before
+  editing)
+- `tests/test_manuscript_source_section.py:80` — extracts
+  `section("sec:fusion")` as subsection text; must keep working
+- `tests/test_manuscript_cohort_and_caveats.py` — primacy-marker test
+  (~L252) keyed on sec:fusion; STANAG test (L257, L285) keyed on
+  sec:ext-screen — both key on labels, so labels MUST stay attached
+- `docs/editorial-brief.md` — `label-stability-contract`
+
+## Actions
+
+1. Convert each `\subsection{…}\label{…}` to
+   `\subsection*{…}\label{…}` + `\addcontentsline{toc}{subsection}{…}`
+   (house pattern, cf. the Prompts subsection L1373) — labels stay,
+   PDF bookmarks stay.
+2. A `\label` on a starred subsection resolves `\ref` to the enclosing
+   section counter — every `\ref{sec:fusion}` / `\ref{sec:ext-*}` call
+   site must be reworded so the rendered text stays truthful (e.g.
+   "the fusion discussion in §\ref{sec:extensions}" or a named
+   pointer). Re-check the crossref adherence test semantics: every ref
+   must still resolve to a defined label.
+3. Check hyperref anchor uniqueness builds clean (no duplicate
+   destination warnings introduced).
+
+## Test
+
+- Red first: a structural guard asserting no numbered `\subsection{`
+  exists between sec:extensions and the next `\section` — red now,
+  green after.
+
+## Verification
+
+- [ ] §7 headings render unnumbered; TOC/PDF bookmarks intact
+- [ ] All label-keyed tests (fusion primacy, STANAG, source-section
+  extraction) green WITHOUT weakening — labels still attached
+- [ ] Crossref test green; rendered refs read correctly in the PDF
+- [ ] `make check` passes
+
+## Invariants
+
+- No label deleted or renamed (label-stability-contract)
+- Section §7 number itself unchanged; figure/table numbering untouched
+
+## Exit criteria
+
+- [ ] Finding 21 addressed
+- [ ] `make check` passes

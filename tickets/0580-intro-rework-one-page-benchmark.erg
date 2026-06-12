@@ -1,0 +1,71 @@
+%erg 0.1
+Title: Intro rework: one page, contribute THE BENCHMARK, drop two-grain and STANAG
+Created: 2026-06-12
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-12T21:52Z HDMX-coding-agent created child of 0578 (finding 27); head of the main.tex chain
+
+--- body ---
+## Context
+
+Reading-2 finding 27 (tracker 0578), author's words: "Intro rework: do
+NOT enumerate three contributions + three results. Contribute THE
+BENCHMARK, which includes the four-dimension quality score as the
+computable metric. Drop two-grain and STANAG from the intro.
+'Reference-free criteria suffice to screen out weakest runs and
+models.' Drop the 'targeted pipeline design narrows the gap' charabia.
+Intro target length: one page."
+
+Head of the sequential main.tex chain for the reading-2 wave.
+
+## Relevant files
+
+- `slides/manuscript/main.tex` — §1 `sec:intro` (L101–172); two-grain
+  at L142, STANAG 2511 / Admiralty at L144
+- `docs/editorial-brief.md` — entry `intro-contributions-runin`
+  (contributions woven into prose, no bold run-in): amend its Decision
+  to the single-contribution framing in the same PR
+- `tests/test_manuscript_cohort_and_caveats.py` — STANAG test pins
+  `sec:ext-screen` only (L257, L285), NOT the intro; intro STANAG is
+  free to drop. Do not touch `sec:ext-screen`.
+
+## Actions
+
+1. Rewrite `sec:intro` to ≤1 rendered page: one contribution (the
+   benchmark), with the four-dimension quality score presented as its
+   computable metric.
+2. Remove the three-contributions/three-results enumeration.
+3. Remove two-grain (L142) and the STANAG/Admiralty sentence (L144)
+   from the intro only.
+4. Keep/state the screening message as: "Reference-free criteria
+   suffice to screen out weakest runs and models."
+5. Remove the "targeted pipeline design narrows the gap" phrasing.
+6. Amend brief entry `intro-contributions-runin` accordingly.
+
+## Test
+
+- Build + adherence suite is the harness here; before rewriting, check
+  which tests grep intro text (`grep -rn "sec:intro" tests/`) and
+  update any that pin removed phrasings (CI polarity rule: negative
+  guards only — do not add positive pins on the new wording).
+
+## Verification
+
+- [ ] Rendered intro ≤1 page in the built PDF
+- [ ] No "two-grain", "STANAG", "Admiralty" remains in `sec:intro`
+- [ ] Abstract untouched (brief `frontier-result-abstract` still holds)
+- [ ] `make check` passes; crossref + macros adherence tests green
+
+## Invariants
+
+- Abstract unchanged; all empirical numbers stay macro-sourced
+- `sec:ext-screen` STANAG vocabulary untouched (pinned by tests and
+  brief entry `novelty-two-grain`)
+- All `\label`s in §1 stay attached (label-stability-contract)
+
+## Exit criteria
+
+- [ ] Intro is one page, single benchmark contribution, charabia gone
+- [ ] Brief entry amended in the same PR
+- [ ] `make check` passes

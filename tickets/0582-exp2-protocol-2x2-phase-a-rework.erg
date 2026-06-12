@@ -1,0 +1,90 @@
+%erg 0.1
+Title: Exp 2 presented as 4-arm 2×2 from the start; Phase A rework; Phase C and ops noise removed
+Created: 2026-06-12
+Author: HDMX-coding-agent
+Blocked-by: 0581
+Blocked-by: 0575
+
+--- log ---
+2026-06-12T21:52Z HDMX-coding-agent created child of 0578 (findings 1, 4–7); biggest prose ticket of the wave
+
+--- body ---
+## Context
+
+Reading-2 findings 1, 4–7 (tracker 0578). The Exp 2 protocol
+presentation needs a structural rework in §6 (sec:exp2, L672) and the
+Exp 2 annex (sec:annex-exp2, L2003). Blocked-by 0575 (macro-sourcing
+of exp2 cost/row-count medians edits the same region — land the
+mechanical PR first).
+
+## Relevant files
+
+- `slides/manuscript/main.tex` — sec:exp2 (L672–857), sec:annex-exp2
+  (L2003+); "The experiment runs two arms" L709; "two arms" L2187;
+  2026-05-20 compose decision L2066; "Test one before blasting" L2106;
+  Phase C at L694, L737, L1085 (§8!), L2013, L2083, L2248, L2307;
+  tbl:exp2-2x2 at L755
+- `experiments/sota/protocol_07_naive_prompt.md` — base (naive) prompt
+  verbatim source
+- `experiments/sota/protocol_02_metaprompt.md` — metaprompt verbatim
+  source
+- `experiments/sota/protocol_06_validation_round_1.md`,
+  `experiments/sota/exp2_protocol_spec.md` — protocol-validation round
+  (models' feedback on the protocol)
+- `slides/manuscript/attic/synopsys-experiment-comments-{chatgpt,claude}.md`,
+  `slides/manuscript/attic/synopsys-experiment1-replies.md` — author's
+  named sources for the validation narrative
+- `tests/test_manuscript_exp2_annex_as_run.py:66`
+  (test_as_run_two_arms_and_n5 — pins "naive", "optimised", "n=5" in
+  the annex) — verify still green or update
+
+## Actions
+
+1. (1) Present Exp 2 as a 4-arm 2×2 protocol FROM THE START: rework
+   L709 ("The experiment runs two arms…") and L2187 (annex) so the
+   2×2 framing (already in tbl:exp2-2x2) leads the presentation. This
+   completes what ticket 0567 started.
+2. (4) Delete the 2026-05-20 compose-decision sentence (L2066) — noise.
+3. (5) Delete the "Test one before blasting" mention (L2106) — noise.
+4. (6) Rework Phase A, currently underexplained:
+   - introduce a shared sans-serif boxed environment for prompts
+     (e.g. a small `promptbox` in the preamble — it will be reused by
+     ticket 0590 for the Annex A analysis-cohort prompt);
+   - clear crossref to the base prompt rendered in that format;
+   - then the metaprompt verbatim, same formatting;
+   - the text MUST describe the protocol validation by the models
+     themselves — how we iterated, e.g. accommodated their request
+     that the harness not be one of the four tested (source from the
+     protocol/synopsys files above; do not invent).
+5. (7) Remove every Phase C mention — it does not exist. Sites: L694,
+   L737, L1085 (sec:discussion), L2013, L2083, L2248, L2307. Note
+   L2014 "deferred to post-conference" goes with it (also a promise —
+   see sweep ticket 0592).
+6. Doc-07 codename: when rewriting these passages, drop the codename
+   locally (say "the naive prompt"); the global codename sweep is
+   ticket 0591.
+
+## Test
+
+- Red first: extend the exp2 annex test (or add a sibling) asserting
+  "Phase C" appears nowhere in main.tex — red now (7 sites), green
+  after. Negative guard, polarity-rule compliant.
+
+## Verification
+
+- [ ] No "Phase C" anywhere in main.tex
+- [ ] §6 opens with the 4-arm 2×2 framing; no leading "two arms"
+- [ ] Base prompt + metaprompt rendered sans-serif, boxed; validation
+  narrative present and sourced
+- [ ] `make check` passes; manuscript builds
+
+## Invariants
+
+- All quoted prompt text verbatim from the protocol files
+- Cost/row-count numbers stay macro-sourced (0575)
+- tbl:exp2-2x2 label stays attached; crossref test green
+
+## Exit criteria
+
+- [ ] Findings 1, 4, 5, 6, 7 addressed
+- [ ] `make check` passes

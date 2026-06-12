@@ -1,0 +1,75 @@
+%erg 0.1
+Title: Global sweep: lab-journal register, noise phrases, promises, instruction-cruft
+Created: 2026-06-12
+Author: HDMX-coding-agent
+Blocked-by: 0591
+
+--- log ---
+2026-06-12T21:52Z HDMX-coding-agent created child of 0578 (findings 13-class, 17-class, 25, 26, 33-class, 38); last ticket of the wave
+
+--- body ---
+## Context
+
+Reading-2 findings 25, 26, 38 plus three defect CLASSES whose single
+instances earlier tickets fixed (tracker 0578): generation
+instructions surviving as prose (13), overcomplicated non-author tone
+(17), AI-English doublets (33). Final sweep of the wave, after all
+regional rewrites. Register target, author's words: "this is a
+technical report, not a lab journal."
+
+## Relevant files
+
+- `slides/manuscript/main.tex` — whole file
+- `docs/editorial-brief.md` — `no-companion-paper-promise` (the
+  promise sweep enforces it), hedge entries (sweep must not strip
+  pinned hedges)
+- `tickets/closed/0570-…` — the reading-1 tone-polish pass, for the
+  patterns already swept once
+
+## Actions
+
+1. (25) Promises sweep: any "deferred to post-conference analysis"
+   (pre-chain site L2014 — 0582 may have removed it; re-grep), "We
+   defer more observations with more models" (not found verbatim at
+   planning time — search "defer", "future work will", "will be
+   reported", "companion" variants). Promises are deleted, not
+   hedged.
+2. (38) Noise phrases, author's list: "now scored for all runs"
+   (L781), "minimum attainable p…" (L786), "bear evidence" (variants —
+   not found verbatim), "we don't do statistical tests" (variants).
+   Delete or fold into substantive sentences.
+3. (26, 17-class) Register sweep: lab-journal narration ("we then
+   ran…", session/ops chronology, harness details in prose) →
+   technical-report register; overcomplicated passages → plain
+   authorial tone (model: the §7.1 rewrite from ticket 0585).
+4. (13-class) Instruction-cruft sweep: generation/layout instructions
+   surviving as prose (model: "names read left-to-right, no
+   rotation").
+5. (33-class) AI-English doublet sweep: adverb+adverb /
+   intensifier-pair patterns ("solidly and firmly" class).
+
+## Test
+
+- Negative guards for the literal noise phrases above (those still
+  present at execution time) — red now, green after. Class-level
+  regex guards where a lexically stable signature exists (CI polarity
+  rule: forbid what must not be said; never pin new positive
+  phrasings).
+
+## Verification
+
+- [ ] All listed literals gone; promise grep clean
+- [ ] Brief-pinned hedges and primacy/STANAG vocabulary intact
+- [ ] Spot-read 3 random pages: register holds
+- [ ] `make check` passes
+
+## Invariants
+
+- No empirical-number edits; no quoted-prompt edits
+- Hedged claims stay hedged (brief entries)
+
+## Exit criteria
+
+- [ ] Findings 25, 26, 38 and the three classes swept
+- [ ] `make check` passes; reading-2 wave complete → tracker 0578
+  ready for integration review

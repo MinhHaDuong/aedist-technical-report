@@ -1,0 +1,74 @@
+%erg 0.1
+Title: Global sweep: internal codenames out, no code references in main text, name the matcher
+Created: 2026-06-12
+Author: HDMX-coding-agent
+Blocked-by: 0590
+
+--- log ---
+2026-06-12T21:52Z HDMX-coding-agent created child of 0578 (findings 8, 22, 23, 24); flow-vs-MILP discrepancy flagged for verification
+
+--- body ---
+## Context
+
+Reading-2 findings 8, 22, 23, 24 (tracker 0578). Global sweep over
+main.tex, run after the whole main.tex chain so it catches what the
+regional rewrites left behind. Line numbers below are pre-chain ground
+truth — re-grep everything.
+
+## Relevant files
+
+- `slides/manuscript/main.tex` — whole file
+- `src/aedist/matching/lp.py` — matcher implementation (header says
+  "Mixed-Integer Linear Programming (MILP) assignment problem")
+- `tests/test_manuscript_cohort_and_caveats.py:428` — verbatim-anchor
+  test: the KEPT analysis-cohort prompt quote contains Doc-07-era
+  sentences; the sweep must not alter quoted prompt text
+
+## Actions
+
+1. (8, 24) Sweep ALL internal codenames out of reader-facing prose:
+   Doc-07 (pre-chain sites L510, L511, L710, L1417, L1419, L2193),
+   ADR-3 (L1839), and grep for the classes `Doc-\d`, `ADR-\d`,
+   `exp[0-9]_`, ticket numbers, and similar repo-internal identifiers.
+   Replace with reader-facing descriptions ("the naive prompt", "the
+   matching-cost design choice"). Verbatim-quoted prompt text is
+   exempt (it is a quoted artifact).
+2. (22) Main text (§1–§9 + Conclusion) must not refer to code — file
+   paths, function names, module names belong in annexes only. Sweep
+   `\fpath{`, `\texttt{` and prose code mentions in the main sections;
+   move load-bearing detail to the relevant annex; figure captions
+   refer to annexes for details.
+3. (23) The matching algorithm has a name — use it consistently
+   instead of bare "the LP matcher" repetitions. DISCREPANCY TO
+   VERIFY: the author says the name is "flow", but the code calls it
+   a MILP assignment / LP matcher and main.tex says "LP matcher"
+   (L1019, L1096, L1359, L1832, L1878). Check whether the
+   implementation is a min-cost-flow formulation (assignment problems
+   are) or whether docs/ name it; if the evidence does not support
+   "flow" as the established name, name it per the code and flag the
+   divergence in the PR description for the author — do not invent.
+
+## Test
+
+- Red first: negative guards (adherence) asserting `Doc-07` and
+  `ADR-` appear nowhere in main.tex outside verbatim prompt quotes —
+  red now, green after. Consider a class guard (regex) rather than
+  per-instance pins (maw discipline: guard the defect class).
+
+## Verification
+
+- [ ] Zero internal codenames in reader-facing prose; quoted prompts
+  byte-identical (anchor test green)
+- [ ] No code references in main-text sections; annexes carry them
+- [ ] Matcher named consistently; naming evidence cited in the PR
+- [ ] `make check` passes
+
+## Invariants
+
+- Verbatim prompt quotes untouched
+- No empirical-number edits (macros rule untouched)
+
+## Exit criteria
+
+- [ ] Findings 8, 22, 23, 24 addressed
+- [ ] `make check` passes

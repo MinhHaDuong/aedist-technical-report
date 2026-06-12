@@ -1,0 +1,75 @@
+%erg 0.1
+Title: §9 Future research: condense to 1.5 pages, 6 research axes, weave literature into the axes
+Created: 2026-06-12
+Author: HDMX-coding-agent
+Blocked-by: 0588
+
+--- log ---
+2026-06-12T21:52Z HDMX-coding-agent created child of 0578 (finding 41); author invites pushback on axis ordering — propose, don't ask
+
+--- body ---
+## Context
+
+Reading-2 finding 41 (tracker 0578), author's words: "Condense to 1.5
+pages. State: we will continue towards a method that scores all green
+on Table S1 — finds all the projects, only the projects, each
+justified by 2 primary sources, with correct attributes. That method
+requires research on 6 axes: information fusion, external coherence
+scoring, tracking both events and states, knowledge base architecture,
+replication on country and sectors. Reorder the axes; weave the
+literature review with the 6 axes instead of juxtaposing. (Author
+invites pushback on ordering.)"
+
+Note: the author says 6 axes but the enumeration parses to 5–6
+(replication on countries / on sectors may be one axis or two).
+Reconcile against the current §9 content and state the resolution in
+the PR description.
+
+## Relevant files
+
+- `slides/manuscript/main.tex` — sec:future (L1103–1224); the current
+  axis list and the juxtaposed related-work passages
+- `docs/editorial-brief.md` — `kb-programme-items` (three KB design
+  items at no-spoiler altitude) and `no-companion-paper-promise`: both
+  constrain this rewrite
+- `.claude/rules/writing.md` — Related Work citation-budget and
+  per-paragraph-mix rules apply to the woven literature
+
+## Actions
+
+1. Condense §9 to ≤1.5 rendered pages.
+2. Open with the goal statement (all-green on Table S1: find all the
+   projects, only the projects, each justified by 2 primary sources,
+   with correct attributes).
+3. Restructure around the research axes; PROPOSE a reasoned ordering
+   (the author invites pushback — put the rationale in the PR
+   description, e.g. dependency order vs impact order; do not block
+   waiting for input).
+4. Weave the literature into each axis instead of juxtaposing a
+   review block; respect the citation-budget rules.
+
+## Test
+
+- Negative guards only (CI polarity rule): no promise phrasings
+  introduced (e.g. "will be reported", "deferred to", "companion
+  paper"); existing future-section guards stay green.
+
+## Verification
+
+- [ ] §9 ≤1.5 rendered pages; axes carry the literature
+- [ ] KB items stay at no-spoiler altitude (brief `kb-programme-items`)
+- [ ] PR description contains the proposed axis ordering + rationale
+  and the 5-vs-6 axes resolution
+- [ ] `make check` passes
+
+## Invariants
+
+- No new bibliography entries without checking refs.bib conventions;
+  no in-repo documents cited
+- No companion-paper promises
+
+## Exit criteria
+
+- [ ] Finding 41 addressed, ordering proposal documented for author
+  review at the PR
+- [ ] `make check` passes

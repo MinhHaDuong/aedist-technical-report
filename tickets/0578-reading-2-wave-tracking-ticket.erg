@@ -1,5 +1,5 @@
 %erg 0.1
-Title: Reading-2 wave — tracking ticket (findings collection IN PROGRESS, do not start)
+Title: Reading-2 wave — tracking ticket (children 0579–0592 filed)
 Created: 2026-06-12
 Author: HDMX-coding-agent
 Label: needs-human
@@ -7,18 +7,54 @@ Label: needs-human
 --- log ---
 2026-06-12T20:29Z HDMX-coding-agent created
 2026-06-12T20:32Z HDMX-coding-agent note author reading-2 in progress — findings parked verbatim below; organize into children ONLY when the author says finished
+2026-06-12T21:52Z HDMX-coding-agent note author declared reading finished; 42 findings organized into children 0579-0592 (mapping + wave plan in body); 0566+0572 raid merged as PR #1042 so the coordination clause is moot
 
 --- body ---
 ## Context
 
 Author reading-2 of the rebuilt manuscript PDF (post-restructure 0560,
-post-sweep 0571). Findings are being collected live; this ticket parks
-them so nothing is lost. DO NOT START WORK: the author is still reading;
-more findings will be appended. When the author says "finished", the
-orchestrator turns this into a tracker with sequenced children
-(figure-code work parallel; main.tex chain sequential; global sweeps
-last) and coordinates with the in-flight 0572+0566 macro raid (same
-§exp2 region).
+post-sweep 0571). Findings were collected live (verbatim below, kept
+for audit); the author declared the reading finished on 2026-06-12 and
+the findings are now organized into children 0579–0592. The 0572+0566
+macro raid merged as PR #1042 before filing, so no coordination clause
+remains — but pre-existing open tickets 0575 and 0577 gate two chain
+links (same-region macro-sourcing lands before prose rework).
+
+## Children and wave plan
+
+Parallel (no main.tex contact):
+- 0579 Figure 5 colors + deepseek-v4-flash label (findings 19, 20)
+- also raid-eligible alongside: 0573, 0574, 0576 (pre-existing,
+  artifact-side)
+
+Sequential main.tex chain (Blocked-by enforced, document order):
+1. 0580 Intro rework (27)
+2. 0581 §3–§5 micro-edits + Annex F note (12, 28–35) ← also gated by
+   pre-existing 0577 (ρ=0.78 macro, same region)
+3. 0582 Exp 2 protocol 2×2 + Phase A rework, Phase C out (1, 4–7)
+   ← also gated by pre-existing 0575 (exp2 medians macro, same region)
+4. 0583 Exp 2 results display: split Fig 6, Table 1 → annex (36, 37)
+5. 0584 Annex B agents table + Qwen 3.7 fix (2, 3)
+6. 0585 §7.1 + Annex C recognition story (13–17)
+7. 0586 Screening story: drop Annex E, §7.2 → Fig 5, Conclusion (18,
+   39, 42)
+8. 0587 §7 unnumber subsections (21)
+9. 0588 §8 Discussion condense (40)
+10. 0589 §9 Future research condense + axes (41)
+11. 0590 Annex A prompts cleanup (9–11)
+
+Global sweeps, last:
+12. 0591 codenames / code-refs / matcher naming (8, 22, 23, 24)
+13. 0592 register / noise / promises / cruft classes (25, 26, 38 +
+    classes of 13, 17, 33)
+
+Finding → child map: 1→0582, 2→0584, 3→0584, 4→0582, 5→0582, 6→0582,
+7→0582, 8→0591, 9→0590, 10→0590, 11→0590, 12→0581, 13→0585(+0592
+class), 14→0585, 15→0585, 16→0585, 17→0585(+0592 class), 18→0586,
+19→0579, 20→0579, 21→0587, 22→0591, 23→0591, 24→0591, 25→0592,
+26→0592, 27→0580, 28→0581, 29→0581, 30→0581, 31→0581, 32→0581,
+33→0581(+0592 class), 34→0581, 35→0581, 36→0583, 37→0583, 38→0592,
+39→0586, 40→0588, 41→0589, 42→0586. All 42 covered.
 
 ## Findings (batch 1, author's words preserved)
 
@@ -166,7 +202,9 @@ CONCLUSION / OVERARCHING CLAIMS
 
 ## Exit criteria
 
-- [ ] Author says "finished"; all batches recorded here
-- [ ] Children filed (sequenced; figure-code parallel; sweeps last),
-  coordinated with the 0572+0566 raid
-- [ ] This tracker closes after the wave's integration review
+- [x] Author says "finished"; all batches recorded here (2026-06-12)
+- [x] Children filed (sequenced; figure-code parallel; sweeps last);
+  0572+0566 raid had already merged (PR #1042)
+- [ ] All children 0579–0592 closed
+- [ ] This tracker closes after the wave's integration review (/roar
+  step 8: re-read child diffs, full suite, exit criteria)
