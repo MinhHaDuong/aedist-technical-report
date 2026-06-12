@@ -1,39 +1,68 @@
 %erg 0.1
-Title: Decide body-wide em-dash policy: LaTeX --- renders as em dash (reading-1 item 14 scope)
+Title: Em-dash once-over: diversify punctuation + density ratchet tests (reading-1 item 14 scope)
 Created: 2026-06-11
 Author: HDMX-coding-agent
-Label: needs-human
+Blocked-by: 0558
 
 --- log ---
 2026-06-11T22:29Z HDMX-coding-agent created
+2026-06-12T11:40Z orchestrator note author decision recorded (2026-06-12): NOT a blanket ban — em dashes are useful; aspect 1 (encoding) decided separately, Unicode — canonical, executing as ticket 0558 (PR #1017). This ticket respec'd to aspect 2: once-over to diversify + density ratchet tests. needs-human label dropped — spec ratified by author, ticket is now executable. Blocked-by 0558 (tests are a clean grep on — only after the encoding sweep lands).
 
 --- body ---
 ## Context
 
-Reading-1 item 14 said "Em-dashes are an AI tell — sweep and restyle
-(abstract and body)." Ticket 0543 (PR #992) verified the body and
-abstract carry zero *Unicode* em dashes and waived the sweep on that
-basis. The PR #992 prose-review panel pointed out the gap: the LaTeX
-`---` idiom renders as an em dash in the PDF the author annotated, and
-`slides/manuscript/main.tex` carries ~187 `---` occurrences in body
-prose. From the reader's side, item 14 is not resolved; from the
-source side, `---` may be a deliberate typographic convention.
-
-Restyling ~187 sites is an authorial-voice decision, out of scope for
-an autonomous editorial pass (several sit near test-pinned strings).
+Reading-1 item 14 said "Em-dashes are an AI tell — sweep and restyle."
+The manuscript body carries ~187 em dashes (as `---`, converted to
+Unicode — by ticket 0558/PR #1017). Author decision (2026-06-12): em
+dashes stay legal — the tell is *clustering and monotony*, not the
+character. Therefore: an editorial once-over that diversifies the
+punctuation, plus standing tests that cap density and prevent
+regression.
 
 ## Actions
 
-1. Author decides: (a) `---` is house style, item 14 was about Unicode
-   tells only — close this ticket with a waiver note; or (b) sweep and
-   restyle `---` in body prose (commas, colons, parentheses, sentence
-   splits), excluding quoted material (the verbatim Doc-07 prompt
-   block) and table/figure syntax.
-2. If (b): execute as its own PR; extend the abstract em-dash guard in
-   `tests/test_manuscript_cohort_and_caveats.py` to body prose,
-   excluding quote environments.
+1. Once-over editorial pass on `slides/manuscript/main.tex` body prose:
+   where em dashes cluster, diversify — commas, colons, parentheses,
+   sentence splits. Editor's heuristic (guidance, NOT a test): avoid
+   em dashes in consecutive paragraphs; prefer at most one per
+   paragraph unless it is a paired parenthetical `—like this—`.
+   Exclusions: verbatim/quoted material (the as-sent Doc-07 prompt
+   block is frozen), table/figure syntax, the Glossary box quotes.
+2. Standing adherence tests (extend
+   `tests/test_manuscript_cohort_and_caveats.py` or a new
+   test_manuscript_emdash.py):
+   a. **Local cap (hard):** no body-prose paragraph (blank-line-
+      delimited block, excluding verbatim/quote environments and
+      comments) contains more than 2 em dashes.
+   b. **Global ratchet (hard):** total body-prose em-dash count ≤ a
+      committed ceiling stored in a one-line data file the test reads
+      (e.g. tests/data/emdash_ceiling.txt). Lowering the ceiling is a
+      deliberate commit; any edit pushing the count above it fails CI.
+      Initialize the ceiling to the post-once-over count.
+3. Existing abstract guard semantics unchanged.
+
+## Test
+
+- Red first: the paragraph-cap test against pre-once-over main.tex
+  (expected to fail on current clusters), and the ratchet test with
+  the ceiling file absent/lower than the count.
+
+## Verification
+
+- [ ] Once-over diff is punctuation-only (no semantic rewording);
+      author spot-reads at next reading
+- [ ] `make -C slides manuscript` builds; PDF renders correctly
+- [ ] Both tests pass at the post-sweep count; ceiling committed
+
+## Invariants
+
+- Doc-07 verbatim block byte-identical (drift guard green)
+- `make check` green; crossref and macro adherence suites untouched
 
 ## Exit criteria
 
-- [ ] Author decision recorded in this log
-- [ ] Sweep executed or waiver noted; `make check` green
+- [x] Author decision recorded in this log (2026-06-12: diversify +
+      ratchet, no ban)
+- [ ] Once-over executed; em-dash usage diversified
+- [ ] Local cap (≤2/paragraph) + global ratchet tests standing
+- [ ] `make check` green
