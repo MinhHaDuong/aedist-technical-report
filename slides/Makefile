@@ -77,8 +77,12 @@ manuscript: manuscript/main.pdf
 # dropped the pandoc/pandoc-crossref toolchain). Asset paths inside main.tex
 # are relative to manuscript/ (tectonic resolves against the input file's
 # directory), hence ../../report/... there vs ../report/... here.
+# -r 2 caps the engine at 3 passes: tectonic's change detection trips on a
+# byte-identical bibtex .bbl rewrite ("internal consistency problem"), looping
+# to its 6-pass ceiling. Convergence at 3 passes is verified (stable .aux/.bbl
+# hashes, zero undefined references in the log).
 manuscript/main.pdf: manuscript/main.tex $(MANUSCRIPT_ASSETS) ../report/refs.bib
-	tectonic $<
+	tectonic -r 2 $<
 
 clean:
 	rm -f slides.pdf slides-en.pdf manuscript/main.pdf *.aux *.log *.nav *.out *.snm *.toc
