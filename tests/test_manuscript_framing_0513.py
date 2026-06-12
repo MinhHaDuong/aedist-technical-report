@@ -14,7 +14,6 @@ Guards the prose-quality changes that ticket 0513 lands on
    Parmenides/Heraclitus philosophy genealogy.
 """
 
-import re
 
 import pytest
 from manuscript_source import body
@@ -34,27 +33,23 @@ def _section_1_body() -> str:
     return md[start:end]
 
 
-def test_contributions_list_at_end_of_section_1() -> None:
-    """A Contributions run-in label plus three list items live inside §1."""
+def test_no_contributions_heading() -> None:
+    """Negative guard only: contributions must not get their own heading.
+
+    The positive pin on the bold run-in label was demoted to
+    docs/editorial-brief.md (CI polarity rule, 0557; author intro
+    rewrite 2026-06-12 restructured §1).
+    """
     sec1 = _section_1_body()
-    assert "\\textbf{Contributions.}" in sec1, (
-        "§1 must end with a bold 'Contributions.' run-in label, not a heading"
-    )
-    # Three list items: count \item bullets after the label.
-    tail = sec1[sec1.index("\\textbf{Contributions.}") :]
-    items = re.findall(r"\\item\b", tail)
-    assert len(items) >= 3, (
-        f"Contributions list should name three contributions; found {len(items)} items"
+    assert "\\section{Contributions}" not in sec1 and "\\subsection{Contributions}" not in sec1, (
+        "contributions stay inside §1 prose, never a separate heading"
     )
 
 
 def test_plausible_text_generator_reframing() -> None:
     md = _md()
-    assert "plausible-text generator" in md, (
-        "the 'plausible-text generator' reframing must be present"
-    )
     assert "random words generator" not in md, (
-        "'random words generator' must be replaced by 'plausible-text generator'"
+        "'random words generator' was reframed away (0513); never reintroduce it"
     )
 
 

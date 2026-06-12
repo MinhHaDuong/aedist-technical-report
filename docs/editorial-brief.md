@@ -246,3 +246,33 @@ immutable.
 **Ticket:** 0511; triaged keep-in-CI by 0557.
 
 **Status:** active
+
+## intro-contributions-runin
+
+**Decision:** §1 closes with the contributions woven into prose (author
+intro restructure, 2026-06-12, PR #1023); the earlier bold
+"Contributions." run-in label with a three-item list (0513) is no longer
+pinned. CI keeps only the negative guard: contributions never get their
+own section heading.
+
+**Rationale:** Authorial phrasing/structure choice — positive pin
+demoted per the CI polarity rule (0557). The framing history lives here,
+not in a test.
+
+**Ticket:** 0513; demoted during PR #1023 gate (residual missed by 0559
+sweep, which covered test_manuscript_0512_structure.py only).
+
+**Status:** active
+
+## plausible-text-generator
+
+**Decision:** The "plausible-text generator" phrase (0513 reframing of
+"random words generator") is no longer pinned positively; the abstract
+rewrite (PR #1023) rephrased it. CI keeps the negative guard:
+"random words generator" never returns.
+
+**Rationale:** Same polarity-rule demotion as above.
+
+**Ticket:** 0513; demoted during PR #1023 gate.
+
+**Status:** active
