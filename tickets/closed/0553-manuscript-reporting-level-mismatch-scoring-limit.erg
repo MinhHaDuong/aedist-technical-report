@@ -1,0 +1,38 @@
+%erg 0.1
+Title: Manuscript: state the reporting-level mismatch scoring limit
+Created: 2026-06-12
+Author: HDMX-coding-agent
+Closed: autoclosed — PR #1003
+
+--- log ---
+2026-06-12T00:00Z HDMX-coding-agent created
+2026-06-12T00:30Z HDMX-coding-agent note Implemented in same PR: hedged passage added after the matcher-limit sentence in Discussion; no 16/40 macro exists so prose kept qualitative
+
+2026-06-12T06:19Z HDMX-coding-agent closed — autoclosed — PR #1003
+--- body ---
+## Context
+Author directive (2026-06-12): the Discussion's scoring-limits paragraph
+covers the name-variant matcher limit but not the granularity one. The
+report's sec:fn-triage (PR #993) quantifies 16/40 Exp3 FNs as
+comparateur (aggregate-vs-sub-unit) failures: a model row at one
+reporting grain (power center / plant / generating unit) matched against
+a reference row at another grain scores as a false positive plus a false
+negative even when the asset is right. The manuscript should say so
+explicitly, in the author's hedged register.
+
+## Actions
+1. In `slides/manuscript/main.tex`, after the existing matcher-limit
+   sentence ("...a matcher limit, not a metric limit
+   (\ref{sec:annex-exp1})"), add one or two hedged sentences stating the
+   reporting-level mismatch limit, referencing the Annex asset-row rule
+   via `\ref` (no hand-typed numbers).
+2. Do not hand-type the 16/40 figure unless a generated macro exists
+   (checked: `report/inputs/generated/macros_manuscript.tex` has none;
+   `tab_exp3_fn_triage.tex` is report-side only) — keep prose
+   qualitative.
+
+## Exit criteria
+- [x] Passage added in Discussion, hedged register, symbolic `\ref` only
+- [x] No hand-typed empirical number without a generated macro
+- [x] Tectonic build green
+- [x] `pytest -m adherence` green
