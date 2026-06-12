@@ -5,6 +5,7 @@ Author: HDMX-coding-agent
 
 --- log ---
 2026-06-12T13:15Z HDMX-coding-agent created
+2026-06-12T18:30Z claude note raid imagine: drift guard PASS; one PR with 0572; plan annotated in body
 
 --- body ---
 ## Context
@@ -36,6 +37,24 @@ Out of 0562's scope (verbatim prose moves only); filed as the follow-up.
    the macro-expanded value via `manuscript_source.normalized()`.
 4. Update the `rho-value-static` editorial-brief entry to
    `retired (macro-sourced by this ticket)`.
+
+## Raid plan notes (2026-06-12)
+
+- The 4 hand-typed sites: `sec:ext-screen` (~line 880), Conclusion (~1237),
+  Exp 1 annex figure caption "ρ=0.92 veto" (~1905), `sec:annex-screen`
+  (~2475). Relocate by grep, not line number.
+- `screen_validation_within_model.py` does NOT yet compute the pooled
+  Spearman: `_spearman()` exists (line ~168) but is only called per-model.
+  Add a `pooled_spearman_cap` field, compute over all 70 scored runs, emit
+  `\ScreenPooledSpearman` in `write_macros()`. Fragment already in
+  `MANUSCRIPT_MACRO_FRAGMENTS`.
+- Test re-key: only `test_manuscript_structure.py` (~line 89) pins the
+  literal; switch to macro-presence guard. The rho-caveat conditionals in
+  `test_manuscript_cohort_and_caveats.py` key on `normalized()` output,
+  which expands macros — no change needed.
+- RISK GATE: the recomputed pooled Spearman must reproduce 0.92 to 2dp.
+  If it drifts, STOP and escalate — do not silently accept a new value.
+- Don't confuse with the distinct ρ = 0.78 coherence–F1 Spearman (~line 646).
 
 ## Exit criteria
 
