@@ -3,10 +3,13 @@ Title: Decide: adopt or annotate the regenerated tab_decomposition_fix numbers (
 Created: 2026-06-12
 Author: HDMX-coding-agent
 Label: needs-human
+Closed: regenerated numbers adopted; report.tex consistent
 
 --- log ---
 2026-06-12T08:10Z orchestrator created — split from 0424 (PR #995): numeric drift is an author decision
 
+2026-06-12T07:02Z author decided 2026-06-12: adopt regenerated numbers — 2x2 counterfactual showed FP rise is ~100% the legit #547 Mismatched-routing fix, v2 reference slightly reduces FP; table rebuilt, report.tex prose updated
+2026-06-12T07:03Z HDMX-coding-agent closed — regenerated numbers adopted; report.tex consistent
 --- body ---
 ## Context
 0424 (PR #995) restored the reconcile-from-archive P2 step. The
