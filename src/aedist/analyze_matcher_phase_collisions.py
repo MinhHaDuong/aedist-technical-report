@@ -32,7 +32,7 @@ from rapidfuzz import fuzz, process
 
 from aedist.config import VN_THERMAL_PLANTS_RELEASE_CSV
 from aedist.evaluate import load_plants_csv
-from aedist.matching.lp import _extract_digit_tokens
+from aedist.matching.lp import ambiguous_phase_bases, digit_veto
 from aedist.reconcile import plants_to_dataframe
 
 log = logging.getLogger(__name__)
@@ -44,15 +44,14 @@ DEFAULT_OUTPUT_CSV = Path("report/inputs/generated/tab_phase_collisions.csv")
 DEFAULT_OUTPUT_MACROS = Path("report/inputs/generated/macros_phase_collisions.tex")
 
 
-def _veto_blocked(name_a: str, name_b: str) -> bool:
+def _veto_blocked(name_a: str, name_b: str, ambiguous: frozenset[str]) -> bool:
     """True when the LP unit-number veto fires for this pair.
 
-    Reuses the LP's own ``_extract_digit_tokens`` and mirrors its veto
-    semantics (lp.py:203–208): both names carry standalone digit tokens
-    and the token sets differ.
+    Reuses the LP's own ``digit_veto`` (ticket 0551): both names carry
+    differing digit-token sets, or exactly one side carries digits, the
+    digit-stripped names are near-identical, and the base is phase-ambiguous.
     """
-    d1, d2 = _extract_digit_tokens(name_a), _extract_digit_tokens(name_b)
-    return bool(d1 and d2 and d1 != d2)
+    return digit_veto(name_a, name_b, ambiguous)
 
 
 def reference_names_clean(reference: Path = VN_THERMAL_PLANTS_RELEASE_CSV) -> list[str]:
@@ -75,6 +74,7 @@ def structural_false_matches(
     in sorted order; the score is the cdist one used for selection.
     """
     names = reference_names_clean(reference)
+    ambiguous = ambiguous_phase_bases(names)
     scores = process.cdist(names, names, scorer=fuzz.partial_ratio)
     pairs: dict[tuple[str, str], tuple[float, bool]] = {}
     for i in range(len(names)):
@@ -82,7 +82,7 @@ def structural_false_matches(
             if scores[i][j] >= threshold:
                 pairs[(names[i], names[j])] = (
                     float(scores[i][j]),
-                    _veto_blocked(names[i], names[j]),
+                    _veto_blocked(names[i], names[j], ambiguous),
                 )
     return pairs
 

@@ -175,5 +175,73 @@ def test_base_and_extension_both_match():
     )
 
 
+# ---------------------------------------------------------------------------
+# Digit-asymmetric veto (ticket 0551): base name vs phase-suffixed sibling
+# ---------------------------------------------------------------------------
+
+
+def test_base_vs_phase_sibling_vetoed_lp():
+    """'ca na' (no digits) must NOT match phase sibling 'ca na 2' (partial_ratio 100)."""
+    ref = pd.DataFrame(
+        [
+            _row("Cà Ná 2", "ca na 2", 1500.0),
+            _row("Cà Ná 3", "ca na 3", 1500.0),
+        ]
+    )
+    sys = pd.DataFrame([_row("Cà Ná", "ca na", 1500.0)])
+
+    result = reconcile(ref, sys)
+
+    system_only = result[result["status"] == "Only in file2"]
+    assert len(system_only) == 1, "base name 'ca na' must not match a phase-suffixed sibling"
+
+
+def test_same_digit_pair_still_blocked_lp():
+    """'vung ang 1' vs 'vung ang 2' stays blocked by the symmetric veto."""
+    ref = pd.DataFrame([_row("Vũng Áng 1", "vung ang 1", 1200.0)])
+    sys = pd.DataFrame([_row("Vũng Áng 2", "vung ang 2", 1200.0)])
+
+    result = reconcile(ref, sys)
+
+    assert not result["status"].str.startswith("Matched").any()
+
+
+def test_digit_free_distinct_pair_stays_matchable_lp():
+    """A genuinely distinct digit-free fuzzy pair is unaffected by the guard."""
+    ref = pd.DataFrame([_row("Long Sơn chemical", "long son chemical", 1500.0)])
+    sys = pd.DataFrame([_row("Long Sơn", "long son", 1500.0)])
+
+    result = reconcile(ref, sys)
+
+    assert result["status"].str.startswith("Matched").any()
+
+
+def test_unambiguous_base_vs_single_sibling_matches_lp():
+    """With a single phase sibling, the bare base name stays matchable (no ambiguity)."""
+    ref = pd.DataFrame([_row("LNG Quảng Ninh 1", "lng quang ninh 1", 1500.0)])
+    sys = pd.DataFrame([_row("LNG Quảng Ninh", "lng quang ninh", 1500.0)])
+
+    result = reconcile(ref, sys)
+
+    assert result["status"].str.startswith("Matched").any()
+
+
+def test_base_vs_phase_sibling_vetoed_phased():
+    """The phased matcher's digit guard must also block base-vs-sibling pairs."""
+    from aedist.matching.phased import reconcile as phased_reconcile
+
+    ref = pd.DataFrame(
+        [
+            _row("Cà Ná 2", "ca na 2", 1500.0),
+            _row("Cà Ná 3", "ca na 3", 1500.0),
+        ]
+    )
+    sys = pd.DataFrame([_row("Cà Ná", "ca na", 1500.0)])
+
+    result = phased_reconcile(ref, sys)
+
+    assert not result["status"].str.startswith("Matched").any()
+
+
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
