@@ -1,0 +1,105 @@
+%erg 0.1
+Title: Enumeration budget vs knowledge ceiling — retrospective audit of Exp 1 runs (no API calls)
+Created: 2026-06-12
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-12T13:11Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Author hypothesis (2026-06-12 session): single-query inventory recall may be
+capped by a model-size property, and partitioned queries (coal and gas
+asked separately) might beat one full-inventory query — possibly explaining
+the Mistral vs GPT/Claude gap. Session discussion reframed it testably:
+"layer size" is unidentifiable (frontier architectures undisclosed; width /
+depth / params collinear on the open ladder), so the question becomes
+**retrieval ceiling vs generation budget** — does the model not KNOW the
+plants, or not EMIT them in one response?
+
+Per the audit-before-instrumenting rule, this ticket is the retrospective
+stage on existing data only — no new API calls, no schema changes, no
+manuscript changes. Its verdict gates a possible Stage-2 partitioned-query
+sweep, which is follow-on work (it would probe the paper's central
+data-not-model conjecture and belongs to the next paper, not this one).
+
+Prior evidence in hand (hypotheses to verify, per the
+derive-from-artifacts rule):
+
+- Mean extracted rows per run (awk over committed
+  `experiments/derived/exp1_cross_eval.csv`, arm=parametric, column
+  n_rows, reference = 177 plants): claude-sonnet-4.6 ≈ 112, opus ≈ 95,
+  gpt-5.5 ≈ 85, the three Mistrals ≈ 47–63, with tight within-model rep
+  counts (e.g. haiku 51/72/51). Tight per-model row budgets while WHICH
+  plants vary across reps is the budget signature.
+- Intra-model 5-rep union beats single runs (aggregation sweep,
+  `experiments/derived/aggregation_sweep.csv`) — single runs already
+  undershoot the model's own recoverable set.
+- Per-fuel decomposition exists ONLY in the RAG regime
+  (`outputs/rag_per_fuel/`, DeepSeek V3.2 decomposed, F1 = 98.8%) — it
+  conflates documents with decomposition; the memory-only decomposed cell
+  is untested.
+- Known confound at the agent grain: Exp 2 Mistral arm-2 runs produced
+  zero PARSED rows (format/parse failure, not capacity) — frontier-agent
+  gap explanations must exclude this class first.
+
+## Relevant files
+
+- `experiments/outputs/exp1_batch2/` — raw run records (finish_reason,
+  completion tokens, raw output tables in emission order)
+- `experiments/derived/exp1_cross_eval.csv` — per-run n_rows, F1
+- `experiments/derived/aggregation_sweep.csv` — union-vs-single baselines
+- `experiments/measurements.jsonl` — run-level token accounting
+- `src/aedist/exp1_recognition.py` — per run × plant recognition data
+  (reuse for the position analysis)
+
+## Actions
+
+1. **Truncation check (kills or saves the question).** For all 70
+   parametric runs: finish_reason and completion-token counts vs the
+   sweep's max_tokens. Any run stopped by the token cap reclassifies the
+   "budget" as harness configuration, not model behavior.
+2. **Row-budget profile.** Per model: distribution of n_rows across the 5
+   reps (mean, spread); spread of WHICH plants (Jaccard between reps'
+   TP sets, from recognition data). Tight n_rows + variable membership =
+   budget signature; loose n_rows tracking F1 = knowledge signature.
+3. **Serial-position analysis.** Within each raw output table (emission
+   order): TP density by list position (first vs last decile), and
+   per-fuel coverage vs the position at which that fuel first appears.
+   A generation budget predicts late-position thinning and
+   later-mentioned-category under-coverage.
+4. **Verdict.** One paragraph in the ticket close log: budget-cap
+   signature present / absent / mixed per model family, with the three
+   artifacts above as evidence. State explicitly whether Stage 2 (memory-
+   only partitioned-query sweep, matched call AND token budget against
+   repetition-union) is warranted.
+
+Implementation: one script `src/aedist/audit_enumeration_budget.py`
+(argparse, logging, tests per coding rules) emitting
+`experiments/derived/enumeration_budget_audit.csv`; wire a Makefile target
+only if a downstream artifact consumes it.
+
+## Test
+
+- Red step: unit test on synthetic run records — a truncated run
+  (finish_reason=length) must be flagged; a tight-rows/variable-membership
+  synthetic model must score as budget-signature; a loose-rows synthetic
+  as knowledge-signature.
+
+## Verification
+
+- [ ] `make check-fast` green; new script has tests
+- [ ] Audit CSV committed; numbers in the verdict re-derivable from it
+- [ ] Zero API calls (no new entries in measurements.jsonl)
+
+## Invariants
+
+- No manuscript change, no experiments.toml change, no new sweep config
+- Existing derived artifacts untouched
+
+## Exit criteria
+
+- [ ] All three checks run over the 70 exp1_batch2 parametric runs
+- [ ] Verdict logged with Stage-2 go/no-go recommendation
+- [ ] `make check` passes
