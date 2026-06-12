@@ -1,0 +1,41 @@
+%erg 0.1
+Title: Tie-corrected (average-rank) Spearman in screen_validation_within_model
+Created: 2026-06-12
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-12T20:07Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Surfaced by the PR #1042 code review (ticket 0566): `_spearman()` in
+`src/aedist/screen_validation_within_model.py` assigns ordinal ranks
+with no tie correction — tied values get their natural-sort position
+instead of the average of tied ranks (the standard Spearman estimator).
+On the 70-run pooled data this yields ρ = 0.9166 vs scipy's 0.9195;
+both round to the published 0.92, so the manuscript claim is unaffected,
+but the committed 3dp artifact value (0.917) would not match an
+independent scipy replication (0.920). Pre-existing limitation, not a
+regression; the same ranks feed the per-model positive-direction counts.
+
+Adjacent hardening (same review, optional): `tests/test_manuscript_macros.py`
+`float(_screen_metric("pooled_spearman_cap_distinct"))` raises ValueError
+on an empty-value CSV row; guard or skip for the None case.
+
+## Actions
+
+1. Switch `_spearman()` to average-rank (midrank) tie handling.
+2. Regenerate the screen-validation artifacts and macros; check whether
+   the pooled value (expect 0.92 unchanged at 2dp) or any per-model
+   count shifts; commit regenerated artifacts together.
+3. If any published 2dp value shifts, STOP and escalate to the author
+   before touching prose.
+4. Add a unit test with deliberate ties pinning the midrank behaviour.
+
+## Exit criteria
+
+- [ ] `_spearman()` matches scipy.stats.spearmanr on tied data (unit test)
+- [ ] Regenerated artifacts committed; published 2dp values verified
+  unchanged or escalated
+- [ ] `make check` passes
