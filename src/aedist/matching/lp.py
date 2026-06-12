@@ -105,7 +105,12 @@ def _handle_empty(df1: pd.DataFrame, df2: pd.DataFrame) -> pd.DataFrame | None:
 
 
 def _extract_digit_tokens(name: str) -> frozenset[str]:
-    """Return the set of standalone digit tokens in a name_clean string."""
+    """Return the set of standalone digit tokens in a name_clean string.
+
+    Any all-digit token counts — unit numbers ("2") but also years ("2030")
+    if a cleaned name ever carried one. Dotted designators ("2.1") and
+    alphanumerics ("s1") are not digit tokens and bypass the veto.
+    """
     return frozenset(tok for tok in name.split() if tok.isdigit())
 
 

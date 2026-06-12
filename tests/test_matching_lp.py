@@ -207,13 +207,54 @@ def test_same_digit_pair_still_blocked_lp():
 
 
 def test_digit_free_distinct_pair_stays_matchable_lp():
-    """A genuinely distinct digit-free fuzzy pair is unaffected by the guard."""
-    ref = pd.DataFrame([_row("Long Sơn chemical", "long son chemical", 1500.0)])
+    """A digit-free fuzzy pair matches even when the base is phase-ambiguous.
+
+    'long son' is ambiguous (siblings 2 and 3 present), so pairings with the
+    digit-suffixed siblings are vetoed — but the digit-free pairing with
+    'long son chemical' must survive and win.
+    """
+    ref = pd.DataFrame(
+        [
+            _row("Long Sơn chemical", "long son chemical", 1500.0),
+            _row("Long Sơn 2", "long son 2", 1500.0),
+            _row("Long Sơn 3", "long son 3", 1500.0),
+        ]
+    )
     sys = pd.DataFrame([_row("Long Sơn", "long son", 1500.0)])
 
     result = reconcile(ref, sys)
 
-    assert result["status"].str.startswith("Matched").any()
+    matched = result[result["status"].str.startswith("Matched")]
+    assert len(matched) == 1
+    assert matched.iloc[0]["name_file1"] == "Long Sơn chemical"
+
+
+def test_ambiguous_phase_bases_helper():
+    """Bases with >= 2 digit variants are ambiguous; single-variant bases are not."""
+    from aedist.matching.lp import ambiguous_phase_bases
+
+    names = ["ca na 2", "ca na 3", "lng quang ninh 1", "long son chemical"]
+    assert ambiguous_phase_bases(names) == frozenset({"ca na"})
+
+
+def test_digit_veto_helper_branches():
+    """Unit coverage of digit_veto: symmetric, asymmetric-ambiguous, digit-free."""
+    from aedist.matching.lp import digit_veto
+
+    ambiguous = frozenset({"ca na"})
+    # Symmetric branch: differing digit sets — vetoed regardless of ambiguity.
+    assert digit_veto("vung ang 1", "vung ang 2")
+    # Equal digit sets — allowed.
+    assert not digit_veto("mong duong 2", "na duong 2")
+    # Asymmetric, base ambiguous — vetoed (either argument order).
+    assert digit_veto("ca na", "ca na 2", ambiguous)
+    assert digit_veto("ca na 2", "ca na", ambiguous)
+    # Asymmetric, base not ambiguous — allowed.
+    assert not digit_veto("lng quang ninh", "lng quang ninh 1", ambiguous)
+    # Asymmetric and ambiguous, but stripped names differ at word level — allowed.
+    assert not digit_veto("an khanh 1", "an khe", frozenset({"an khanh"}))
+    # Digit-free both sides — never vetoed.
+    assert not digit_veto("long son", "long son chemical", ambiguous)
 
 
 def test_unambiguous_base_vs_single_sibling_matches_lp():

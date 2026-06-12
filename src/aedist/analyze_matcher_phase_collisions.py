@@ -4,9 +4,10 @@ The LP matcher (``matching/lp.py``) accepts a fuzzy match when
 ``fuzz.partial_ratio(name_a, name_b) >= 90``. On phase-named plants
 (Vũng Áng 1 vs Vũng Áng 2) partial_ratio is structurally high across phases,
 so the raw threshold is exposed to cross-phase false matches. The LP also
-carries a unit-number veto (lp.py:203–208): when both names have digit tokens
-and they differ, the pair's cost is set above the leave-unmatched cost, making
-cross-phase assignment structurally impossible.
+carries a unit-number veto (``digit_veto`` in matching/lp.py, ticket 0551):
+when both names have differing digit tokens, or one side is a bare base name
+of an ambiguous phase family, the pair's cost is set above the
+leave-unmatched cost, making cross-phase assignment structurally impossible.
 
 This script measures, on the adopted reference, three layers of that exposure:
 

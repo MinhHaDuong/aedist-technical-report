@@ -1,0 +1,45 @@
+%erg 0.1
+Title: render.mk targets importing the matcher via reconcile.py lack the matching/ prerequisites
+Created: 2026-06-12
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-12T08:00Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+PR #1009 (ticket 0551) added `src/aedist/matching/lp.py` as a prerequisite of
+the phase-collision rule in `experiments/render.mk`, because the analysis
+script imports it. Review found sibling targets with the same gap: any rule
+whose script reaches the matcher through `reconcile.py` (recognition
+matrices, source concordance, wiki recall bar, ...) lists `reconcile.py` but
+not `matching/lp.py` / `matching/phased.py`, so a matcher change does not
+mark those artifacts stale. The 0551 session had to invoke the rebuilds
+manually.
+
+## Relevant files
+
+- `experiments/render.mk` — prerequisite lists
+- `src/aedist/reconcile.py`, `src/aedist/matching/*.py` — actual import graph
+- `tickets/closed/0530-*.erg`, `tickets/0535-*.erg` — prior prerequisite work
+
+## Actions
+
+1. Trace which render.mk rules run scripts that (transitively) import
+   `aedist.matching.*`.
+2. Add the missing prerequisites — or a shared `MATCHER_SRCS` variable.
+3. Consider extending the 0535 standing adherence test to catch transitive
+   import-vs-prereq drift for the matching package.
+
+## Test
+
+- Red first: a test (or `make -n` probe) showing that touching
+  `src/aedist/matching/lp.py` does not invalidate
+  `report/inputs/generated/macros_exp2_matrix_naive.tex`.
+
+## Exit criteria
+
+- [ ] Every render.mk rule whose script imports the matcher lists the
+      matching sources as prerequisites
+- [ ] `make check` green
