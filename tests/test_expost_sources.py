@@ -103,6 +103,18 @@ class TestStripPreamble:
     def test_already_clean_is_identity(self):
         assert strip_preamble(TABLE) == TABLE
 
+    def test_salvages_header_fused_onto_preamble_line(self):
+        # Frozen raw records (arm3 claude-opus runs 3-5, arm1 run 4) carry the
+        # table header glued onto the last preamble sentence with no newline.
+        # The header row must survive the strip or the run becomes unparseable.
+        text = "Let me conduct several targeted searches.| Plant | Fuel |\n|---|---|\n| A | Coal |\n"
+        assert strip_preamble(text) == "| Plant | Fuel |\n|---|---|\n| A | Coal |\n"
+
+    def test_mid_line_pipe_without_separator_is_still_preamble(self):
+        # A '|' in running prose must not trigger salvage.
+        text = "Caveat: data | may vary.\n\n| Plant | Fuel |\n|---|---|\n"
+        assert strip_preamble(text) == "| Plant | Fuel |\n|---|---|\n"
+
 
 class TestMistralRendering:
     def test_interleaves_tool_references_inline(self):

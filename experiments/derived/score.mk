@@ -270,28 +270,28 @@ $(ANALYSIS_EXP2_CROSS_EVAL_CSV): $(ANALYSIS_DERIVED_DIR)/arm1_flat/.done \
 	@mkdir -p $(dir $@)
 	rm -f $@
 	@for f in $(ANALYSIS_EXP2_NAIVE_DIR)/*.json; do \
-		read m r < <(python3 -c "import json,sys; d=json.load(open('$$f')); print(d['model'], d['run'])"); \
+		read m r < <(python3 -c "import json,sys; d=json.load(open('$$f')); print(d.get('model'), d.get('run'))"); \
 		[ "$$m" = "None" ] && { echo "skip (model=None): $$f"; continue; }; \
 		uv run python -m aedist.score_mechanical --arm naive --model "$$m" --run "$$r" \
 		    --naive-dir $(ANALYSIS_EXP2_NAIVE_DIR) --optimised-dir $(ANALYSIS_EXP2_OPTIMISED_DIR) \
 		    --output-csv $@ || true; \
 	done
 	@for f in $(ANALYSIS_EXP2_OPTIMISED_DIR)/*.json; do \
-		read m r < <(python3 -c "import json,sys; d=json.load(open('$$f')); print(d['model'], d['run'])"); \
+		read m r < <(python3 -c "import json,sys; d=json.load(open('$$f')); print(d.get('model'), d.get('run'))"); \
 		[ "$$m" = "None" ] && { echo "skip (model=None): $$f"; continue; }; \
 		uv run python -m aedist.score_mechanical --arm optimised --model "$$m" --run "$$r" \
 		    --naive-dir $(ANALYSIS_EXP2_NAIVE_DIR) --optimised-dir $(ANALYSIS_EXP2_OPTIMISED_DIR) \
 		    --output-csv $@ || true; \
 	done
 	@for f in $(ANALYSIS_EXP2_ARM3_DIR)/*.json; do \
-		read m r < <(python3 -c "import json,sys; d=json.load(open('$$f')); print(d['model'], d['run'])"); \
+		read m r < <(python3 -c "import json,sys; d=json.load(open('$$f')); print(d.get('model'), d.get('run'))"); \
 		[ "$$m" = "None" ] && { echo "skip (model=None): $$f"; continue; }; \
 		uv run python -m aedist.score_mechanical --arm arm3 --model "$$m" --run "$$r" \
 		    --arm3-dir $(ANALYSIS_EXP2_ARM3_DIR) --arm4-dir $(ANALYSIS_EXP2_ARM4_DIR) \
 		    --output-csv $@ || true; \
 	done
 	@for f in $(ANALYSIS_EXP2_ARM4_DIR)/*.json; do \
-		read m r < <(python3 -c "import json,sys; d=json.load(open('$$f')); print(d['model'], d['run'])"); \
+		read m r < <(python3 -c "import json,sys; d=json.load(open('$$f')); print(d.get('model'), d.get('run'))"); \
 		[ "$$m" = "None" ] && { echo "skip (model=None): $$f"; continue; }; \
 		uv run python -m aedist.score_mechanical --arm arm4 --model "$$m" --run "$$r" \
 		    --arm3-dir $(ANALYSIS_EXP2_ARM3_DIR) --arm4-dir $(ANALYSIS_EXP2_ARM4_DIR) \
