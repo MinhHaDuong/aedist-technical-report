@@ -325,3 +325,25 @@ rewrite (PR #1023) rephrased it. CI keeps the negative guard:
 **Ticket:** 0513; demoted during PR #1023 gate.
 
 **Status:** active
+
+## kb-programme-items
+
+**Decision:** The Future-research programme names the three
+knowledge-base design items at no-spoiler altitude: the
+representation-authority tension (narrative asset page vs knowledge
+graph vs append-only claim log of which both are projections, with
+this benchmark as the arbiter), the extract-once/render-many asymmetry
+principle (text→structure is the measured lossy direction;
+structure→text is cheap), and the bitemporal/modal claim log covering
+plans, forecasts, and scenario projections. The topology analysis and
+the modal model stay in `docs/kb-design-note.md` — the manuscript only
+names the questions.
+
+**Rationale:** 0560 restructure discussion + `docs/kb-design-note.md`
+(2026-06-12 Imagine session, §7). Per the CI polarity rule, no positive
+CI assertion pins the wording — this entry is the guard, checked by the
+review panel against manuscript diffs.
+
+**Ticket:** tickets/0565-future-research-kb-design-items-insert.erg
+
+**Status:** active

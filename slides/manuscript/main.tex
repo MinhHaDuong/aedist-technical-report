@@ -1154,8 +1154,13 @@ second axis.
 \textbf{Event-grain temporality.} The paper scopes to snapshot
 currency; scenario-projection use cases need historical
 reconstructability — the event-log representation discussed in
-\ref{sec:annex-temporality}. Upgrading the temporality dimension from
-states to events is the third axis.
+\ref{sec:annex-temporality}. Concretely, that is a bitemporal claim
+log (recording both when a fact held and when it was asserted) whose
+modality layer covers plans, forecasts, and scenario projections:
+completed events fold into the actual state, while scenario claims
+stay qualified by issuing institution, scenario, and vintage.
+Upgrading the temporality dimension from states to events is the
+third axis.
 
 \textbf{Industrialising the screen.} The two-grain scoring design
 (§\ref{sec:ext-screen}) is an existence proof tuned in-sample; making
@@ -1168,6 +1173,18 @@ parameters, and the quality bar were all developed against one
 reference (§\ref{sec:discussion}); transferring them to another
 country or asset class is a replication study in its own right — the
 fifth axis.
+
+\textbf{Knowledge-base architecture.} The auditable knowledge base
+sketched in §\ref{sec:ext-system} leaves open which representation is
+canonical (the narrative asset page, the knowledge graph, or an
+append-only claim log of which both are projections), a question this
+benchmark can arbitrate: build both representations from the same
+corpus, derive a table from each, score both with the same matcher
+against the same reference. The articulation findings
+(§\ref{sec:discussion}) already support one design principle:
+extracting structure from text is the measured lossy direction while
+rendering text from structure is cheap, so the extraction happens once
+at ingest and the rendering at every output — the sixth axis.
 
 \section{Conclusion}\label{sec:conclusion}
 

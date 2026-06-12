@@ -2,11 +2,15 @@
 Title: Future research §: insert the three knowledge-base design items (docs/kb-design-note.md §7)
 Created: 2026-06-12
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1033
 
 --- log ---
 2026-06-12T13:15Z HDMX-coding-agent created
 
 2026-06-12T13:46Z HDMX-coding-agent note blocker 0562 closed — Blocked-by removed.
+
+2026-06-12T14:34Z HDMX-coding-agent note executed — items inserted, brief entry added
+2026-06-12T15:01Z HDMX-coding-agent closed — autoclosed — PR #1033
 --- body ---
 ## Context
 
@@ -69,10 +73,10 @@ ticket-as-contract. This follow-up inserts them once 0562 has merged.
 
 ## Verification
 
-- [ ] `make check` green; manuscript builds
-- [ ] The three items present in the Future research programme, no
+- [x] `make check` green; manuscript builds
+- [x] The three items present in the Future research programme, no
   duplication with 0562's T2 sentence
-- [ ] Brief entry added; no new CI positive pin
+- [x] Brief entry added; no new CI positive pin
 
 ## Invariants
 
@@ -81,5 +85,5 @@ ticket-as-contract. This follow-up inserts them once 0562 has merged.
 
 ## Exit criteria
 
-- [ ] Programme contains the three KB design items at no-spoiler altitude
-- [ ] `make check` passes
+- [x] Programme contains the three KB design items at no-spoiler altitude
+- [x] `make check` passes
