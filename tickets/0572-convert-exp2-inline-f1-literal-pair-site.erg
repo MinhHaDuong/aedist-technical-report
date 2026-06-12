@@ -1,0 +1,19 @@
+%erg 0.1
+Title: Convert §exp2 inline F1 literal-pair sites to generated macros
+Created: 2026-06-12
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-12T16:49Z HDMX-coding-agent created
+
+--- body ---
+## Context
+PR #1037 (ticket 0568) added a per-agent memory-vs-web comparison and per-agent multi-turn deltas to §exp2 as inline F1 literals guarded by re-derivation tests (tests/test_manuscript_claims_alignment.py), following the established pattern (tickets 0515/0501/0474). The verify-gate flagged the tension with the numbers-through-macros rule (ticket 0531, .claude/rules/writing.md). Orchestrator ruling 2026-06-12: guard pattern accepted for the PR; strict-macro uniformity deferred here. Related: open ticket 0566 covers the same conversion for the hand-typed ρ = 0.92.
+
+## Actions
+Extend the emitter that owns the exp2 fragment (see MANUSCRIPT_MACRO_FRAGMENTS in experiments/render.mk) to emit macros for all five §exp2 literal-pair sites (the four pre-existing equalization pairs included); replace inline literals with the macros; keep the re-derivation tests as cross-checks; coordinate with 0566 (same emitters) — consider executing both in one PR.
+
+## Exit criteria
+- [ ] no inline F1 literal pairs in §exp2
+- [ ] re-derivation tests still green
+- [ ] make check passes

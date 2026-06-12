@@ -2,11 +2,14 @@
 Title: Claims/findings alignment — abstract coverage claim, degraded-vs-mixed, scaffolding strip, small fixes
 Created: 2026-06-12
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1037
 
 --- log ---
 2026-06-12T15:55Z HDMX-coding-agent created
 
 2026-06-12T16:13Z HDMX-coding-agent note blocker 0567 closed — Blocked-by removed.
+2026-06-12T16:39Z HDMX-coding-agent note executed on branch t0568: S1 resolved by keeping the abstract claim (derivation holds: only Mistral improves vs same-lab Exp1 flagship) and adding the per-agent comparison + caveat to the §exp2 body; M1 deltas, E2 floor re-derived (0.4062 rounds to 0.41, text kept, guard added), M3 strip, M2 opener fix + dedupe, small fixes done; action 6 skipped (labels mandated by house convention and used by label-keyed tests). Guards in tests/test_manuscript_claims_alignment.py; make check green.
+2026-06-12T16:53Z HDMX-coding-agent closed — autoclosed — PR #1037
 --- body ---
 ## Context
 

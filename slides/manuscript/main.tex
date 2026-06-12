@@ -94,7 +94,7 @@ We introduce a computable benchmark for this task: reconstruct the
 register of Vietnam's \NumRefPlants{} thermal power plants and score the result
 against a hand-compiled, comprehensive reference.
 We find that the task is hard for today's AI systems.
-Fourteen language models answering from memory recovered much less than the Wikipedia lists contain, even though these lists had presumably been in their training corpora for years. We observed that internal coherence metrics correlate with accuracy, allowing us to screen out weak runs without the reference. We then tested the commercial frontier of mid-2026: four agentic systems with web access and extended reasoning. Only one of them improved coverage over the memory-only query, and a harness giving them the opportunity to plan and execute a multi-step reply degraded the results. Handing the agents a curated document set did improve coverage, especially for the initially weaker agents. Fusing the lists from multiple runs more than doubles recall.
+Fourteen language models answering from memory recovered much less than the Wikipedia lists contain, even though these lists had presumably been in their training corpora for years. We observed that internal coherence metrics correlate with accuracy, allowing us to screen out weak runs without the reference. We then tested the commercial frontier of mid-2026: four agentic systems with web access and extended reasoning. Only one of them improved coverage over the memory-only query, and a harness giving them the opportunity to plan and execute a multi-step reply degraded the results for three of the four. Handing the agents a curated document set did improve coverage, especially for the initially weaker agents. Fusing the lists from multiple runs more than doubles recall.
 We conclude that an evergreen statistical-quality register requires deliberate knowledge engineering. We propose that datasets should be derived as dated snapshots from a sourced, auditable knowledge base, mechanically updated to assimilate a periodically harvested evidential corpus. Humans can stay in the loop to vet information sources and resolve the tail of hard statistical questions.
 \end{abstract}
 
@@ -149,7 +149,7 @@ Three empirical results stand out. First, the task is hard for
 today's AI systems: neither model memory nor web access yields a
 complete, well-sourced register, and a harness that lets the agents
 plan and execute a multi-step reply degrades rather than improves the
-result. Second, reference-free coherence criteria suffice to screen
+result for three of the four agents. Second, reference-free coherence criteria suffice to screen
 out the weakest runs. Third, targeted pipeline design narrows the
 gap: provisioning the agents with a curated document set improves
 coverage, and fusion reuses existing runs to good effect — pooling
@@ -674,14 +674,15 @@ Monitor, covers only \GemReviewedPct\% of the reference after light review
 (\ref{sec:annex-exp1}); the frontier agents are therefore measured
 against an inventory no single open database fully reproduces.
 
-The quality dimensions §\ref{sec:exp2} measures are the
+The quality dimensions this section measures are the
 \emph{operational and accuracy} ones: row-level F1 against the
 reference, coverage (plants enumerated), and per-row provenance counts
-(Source 1 / Source 2 citation presence, Figure~\ref{fig:coverage-certainty}). The
+(Source 1 / Source 2 citation presence,
+Figure~\ref{fig:coverage-certainty} in \ref{sec:annex-exp2}). The
 §\ref{sec:quality} dimensions that require \emph{peer cross-evaluation}
 — coherence, provenance support, and temporality scored on a rubric by
 judging agents — are deferred to Phase C (cross-model judging),
-reserved for post-conference analysis; §\ref{sec:exp2}'s claims rest on
+reserved for post-conference analysis; this section's claims rest on
 the F1, coverage, and citation-count metrics, not on the deferred
 cross-eval scores.
 
@@ -709,7 +710,13 @@ raw model capability. The naive arm is an independent sweep, not a
 re-run of the §\ref{sec:exp1} parametric protocol, so its scores are not
 directly comparable to §\ref{sec:exp1}'s per-model numbers;
 within-Experiment-2 comparisons all use this common arm-1 sweep as their
-baseline. Row-level F1 against the \NumRefPlants-plant reference is
+baseline. Read with that caveat, setting each agent's naive-arm mean F1
+(Table~\ref{tbl:exp2-2x2}) against the same lab's flagship in the
+§\ref{sec:exp1} parametric sweep, only Mistral improved (0.41 to 0.49):
+Anthropic declined (0.67 to 0.60), Qwen declined (0.41 to 0.37), and
+OpenAI stayed flat (0.63 to 0.63), so web access and extended reasoning
+improved on the memory-only baseline for only one of the four agents.
+Row-level F1 against the \NumRefPlants-plant reference is
 now scored for all four arms (Table~\ref{tbl:exp2-2x2}); cross-model
 judging on the four §\ref{sec:quality} dimensions remains reserved for
 post-conference analysis (Phase C).
@@ -776,15 +783,18 @@ rows versus arm 1 median 42 rows (regression; Qwen's self-designed
 protocol imposed a strict dual-source admissibility filter that
 constrains coverage from Turn 1). The optimised protocol costs 2--4×
 more per run than naive across all agents; OpenAI's ratio is most
-extreme (median \$0.73 optimised vs \$0.27 naive). We did not find
-published comparisons of frontier deep-research agents on
-structured-output coverage at this granularity; the contrast is mixed
-— modest gain for OpenAI, regression for Qwen.
+extreme (median \$0.73 optimised vs \$0.27 naive). On row-level F1
+(Table~\ref{tbl:exp2-2x2}, no-documents rows), the multi-turn protocol
+degraded three of the four agents (Anthropic 0.60 to 0.56, Mistral 0.49
+to 0.39, Qwen 0.37 to 0.27) and gave OpenAI a marginal gain (0.63 to
+0.65). We did not find published comparisons of frontier deep-research
+agents on structured-output coverage at this granularity.
 
 \textbf{Provenance: corroboration by a second source is the exception.}
 Every Source 1, Source 2, and Notes cell across all 40 runs was parsed
 to measure citation coverage and corroboration (see
-Figure~\ref{fig:coverage-certainty} for the full figure). OpenAI optimised is the
+Figure~\ref{fig:coverage-certainty} in \ref{sec:annex-exp2} for the full
+figure). OpenAI optimised is the
 only agent to achieve both high coverage (79--96 rows) and near-complete
 corroboration (77--88 rows with Source 2 — approaching the full
 diagonal). Qwen clusters near the diagonal at low coverage (22--45 rows
@@ -825,9 +835,7 @@ The analyses in this section were performed after the two experiments
 were presented at Econom'IA 2026, in response to questions from the
 audience: why is the task hard, can weak runs be screened without a
 reference, can runs be fused, and what system do the findings imply?
-They are exploratory, performed after the experiments were presented;
-each subsection summarises one analysis and points to the annex that
-develops it.
+They are exploratory; each subsection summarises one analysis.
 
 \subsection{Why is the task hard?}\label{sec:ext-difficulty}
 
@@ -1626,8 +1634,8 @@ tokens and simplify downstream parsing. Second, its status vocabulary
 follows Global Energy Monitor and offers no label for the reference's
 ``Proposed'' stratum (\textasciitilde\StatusProposedSharePct\% of rows) nor for ``Planned''
 — mechanically depressing measured status accuracy, as discussed in
-§\ref{sec:exp1}. Both are grounds for a revised-prompt rerun in the
-journal version.
+§\ref{sec:exp1}. The scores reported here measure the prompt as sent,
+with both limitations in place.
 
 In both cohorts, every API call carried the same system instruction
 explicitly forbidding web search (the two sweep configurations declare
@@ -2132,8 +2140,9 @@ Three reply strings, verbatim:
 
 Every user-side message after turn 1 carries a chat-text status prefix
 — \emph{``Status: remaining X.XK of 50K tokens, \$X.XX of \$3.00.
-Wall-clock elapsed Ys. Verify .''} — exposing both budget axes to the
-agent, and, where the provider exposes a metadata surface, a structured
+Wall-clock elapsed Ys. Verify Z.''} — exposing both budget axes to the
+agent (Z tracks the VERIFY-message state: pending, on this turn, or
+used), and, where the provider exposes a metadata surface, a structured
 metadata field carrying \texttt{cap\_tokens} and \texttt{cap\_usd}.
 After VERIFY's response is captured (or after TERMINAL's response), the
 loop terminates.
