@@ -30,8 +30,10 @@ stays fast and offline. It runs on the normalized body (line-wraps joined,
 ``\\$``/``\\%`` unescaped), so the markers read as plain prose.
 """
 
+import re
+
 import pytest
-from manuscript_source import section
+from manuscript_source import body, section
 
 pytestmark = pytest.mark.adherence
 
@@ -82,13 +84,19 @@ def test_factorial_framing_present():
     annex = _exp2_annex().lower()
     # The body's Figure 3 caption forward-references this annex for the 2x2.
     assert "2×2" in annex or "2x2" in annex, "2×2 factorial framing absent"
-    assert "exploratory" in annex, "the unregistered with-docs arms not labelled exploratory"
 
 
-def test_preregistration_named():
-    annex = _exp2_annex().lower()
-    assert "pre-registered" in annex or "registration" in annex or "registered" in annex, (
-        "the Exp2 annex does not disclose the preregistration"
+def test_no_registration_vocabulary():
+    """Ticket 0567 — Experiment 2 is presented as a plain 2×2 four-arm
+    design: no pre-registration framing anywhere in the manuscript body.
+    "register" as a noun (the statistical register) stays legal; the
+    banned forms are matched case-sensitively, as whole words."""
+    text = body()
+    banned = ["pre-registered", "unregistered", "registration", "registered"]
+    found = sorted(form for form in banned if re.search(rf"\b{re.escape(form)}\b", text))
+    assert not found, (
+        f"registration vocabulary still in the manuscript body: {found} "
+        "(Experiment 2 is a plain 2×2 four-arm design, ticket 0567)"
     )
 
 
@@ -111,7 +119,7 @@ def test_classifier_named_as_run_not_pilot():
     The pre-reroll draft named the pilot `mistral-small-latest` as *the*
     classifier and disclosed a (false, for the as-run experiment) same-vendor
     Mistral pair. As run, the production classifier was deepseek-v4-pro
-    (cross-vendor with all four subjects); nemotron was the registered choice.
+    (cross-vendor with all four subjects); nemotron was the earlier-run choice.
     Guard: the as-run classifier is named, and mistral-small no longer stands
     as the classifier.
     """
@@ -133,5 +141,5 @@ def test_classifier_named_as_run_not_pilot():
 def test_references_report_chapter():
     annex = _exp2_annex().lower()
     assert "technical report" in annex and "chapter" in annex, (
-        "the Exp2 annex must reference the technical report's Exp2 chapter for the registered analysis"
+        "the Exp2 annex must reference the technical report's Exp2 chapter for the inferential analysis"
     )
