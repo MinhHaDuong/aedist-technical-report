@@ -42,7 +42,7 @@ def price_card() -> dict:
         "price_per_mtok_in": 5.0,
         "price_per_mtok_out": 25.0,
         "price_per_mtok_cache_read": 0.50,
-        "price_per_mtok_cache_write": 6.25,
+        "price_per_mtok_cache_write": 10.0,
         "price_per_web_search": DEFAULT_PRICE_PER_WEB_SEARCH_USD,
     }
 

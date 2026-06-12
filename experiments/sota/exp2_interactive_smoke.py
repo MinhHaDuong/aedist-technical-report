@@ -55,7 +55,7 @@ _TOKENS_PER_MTOK = 1_000_000
 # (GA, no beta header) writes at 2× input rate instead of 1.25×, but one
 # avoided miss per conversation more than covers the premium, and the
 # prefix then survives all 3 reps of a model's arm-4 run (~36 min).
-_ANTHROPIC_CACHE_CONTROL = {"type": "ephemeral", "ttl": "1h"}
+ANTHROPIC_CACHE_CONTROL = {"type": "ephemeral", "ttl": "1h"}
 
 # --- Policy locked by ticket 0214 (state machine + LLM classifier) ---------
 # Supersedes the two-slot ticket 0207 policy. Three reply slots:
@@ -520,7 +520,7 @@ def _slide_followup_cache_breakpoint(messages: list[dict]) -> list[dict]:
                         {
                             "type": "text",
                             "text": content,
-                            "cache_control": dict(_ANTHROPIC_CACHE_CONTROL),
+                            "cache_control": dict(ANTHROPIC_CACHE_CONTROL),
                         }
                     ],
                 }
@@ -587,7 +587,7 @@ def run_anthropic_call(
             {
                 "type": "text",
                 "text": system_prompt,
-                "cache_control": dict(_ANTHROPIC_CACHE_CONTROL),
+                "cache_control": dict(ANTHROPIC_CACHE_CONTROL),
             }
         ]
     if not is_followup and payload.get("messages"):
@@ -603,7 +603,7 @@ def run_anthropic_call(
                     {
                         "type": "text",
                         "text": turn1["content"],
-                        "cache_control": dict(_ANTHROPIC_CACHE_CONTROL),
+                        "cache_control": dict(ANTHROPIC_CACHE_CONTROL),
                     }
                 ],
             }
