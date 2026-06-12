@@ -49,6 +49,14 @@ from experiments.sota import dialogue_classifier
 _TRIPLE_QUOTE_RE = re.compile(r'"""(.*?)"""', re.DOTALL)
 _TOKENS_PER_MTOK = 1_000_000
 
+# Anthropic prompt-cache TTL (ticket 0369). The 5-minute ephemeral cache is
+# shorter than this workload's turns (median wall 253 s, 31 % of turns
+# > 300 s), so most turn-to-turn transitions missed it. The 1-hour TTL
+# (GA, no beta header) writes at 2× input rate instead of 1.25×, but one
+# avoided miss per conversation more than covers the premium, and the
+# prefix then survives all 3 reps of a model's arm-4 run (~36 min).
+ANTHROPIC_CACHE_CONTROL = {"type": "ephemeral", "ttl": "1h"}
+
 # --- Policy locked by ticket 0214 (state machine + LLM classifier) ---------
 # Supersedes the two-slot ticket 0207 policy. Three reply slots:
 # ENCOURAGE (≤3 times), VERIFY (used once after first report), TERMINAL
@@ -509,7 +517,7 @@ def _slide_followup_cache_breakpoint(messages: list[dict]) -> list[dict]:
                         {
                             "type": "text",
                             "text": content,
-                            "cache_control": {"type": "ephemeral"},
+                            "cache_control": dict(ANTHROPIC_CACHE_CONTROL),
                         }
                     ],
                 }
@@ -576,14 +584,14 @@ def run_anthropic_call(
             {
                 "type": "text",
                 "text": system_prompt,
-                "cache_control": {"type": "ephemeral"},
+                "cache_control": dict(ANTHROPIC_CACHE_CONTROL),
             }
         ]
     if not is_followup and payload.get("messages"):
         # Breakpoint 2: cache Turn-1 user message (the designed_prompt).
         # Identical across all reps — within-rep turns 2+ cache-hit on
         # system + designed_prompt (~5000 tokens total); cross-rep Turn-1
-        # calls also hit fully when reps are spaced within the 5-min TTL.
+        # calls also hit fully when reps are spaced within the 1-hour TTL.
         turn1 = payload["messages"][-1]
         if isinstance(turn1.get("content"), str):
             payload["messages"][-1] = {
@@ -592,7 +600,7 @@ def run_anthropic_call(
                     {
                         "type": "text",
                         "text": turn1["content"],
-                        "cache_control": {"type": "ephemeral"},
+                        "cache_control": dict(ANTHROPIC_CACHE_CONTROL),
                     }
                 ],
             }
