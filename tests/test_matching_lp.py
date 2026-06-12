@@ -175,5 +175,114 @@ def test_base_and_extension_both_match():
     )
 
 
+# ---------------------------------------------------------------------------
+# Digit-asymmetric veto (ticket 0551): base name vs phase-suffixed sibling
+# ---------------------------------------------------------------------------
+
+
+def test_base_vs_phase_sibling_vetoed_lp():
+    """'ca na' (no digits) must NOT match phase sibling 'ca na 2' (partial_ratio 100)."""
+    ref = pd.DataFrame(
+        [
+            _row("Cà Ná 2", "ca na 2", 1500.0),
+            _row("Cà Ná 3", "ca na 3", 1500.0),
+        ]
+    )
+    sys = pd.DataFrame([_row("Cà Ná", "ca na", 1500.0)])
+
+    result = reconcile(ref, sys)
+
+    system_only = result[result["status"] == "Only in file2"]
+    assert len(system_only) == 1, "base name 'ca na' must not match a phase-suffixed sibling"
+
+
+def test_same_digit_pair_still_blocked_lp():
+    """'vung ang 1' vs 'vung ang 2' stays blocked by the symmetric veto."""
+    ref = pd.DataFrame([_row("Vũng Áng 1", "vung ang 1", 1200.0)])
+    sys = pd.DataFrame([_row("Vũng Áng 2", "vung ang 2", 1200.0)])
+
+    result = reconcile(ref, sys)
+
+    assert not result["status"].str.startswith("Matched").any()
+
+
+def test_digit_free_distinct_pair_stays_matchable_lp():
+    """A digit-free fuzzy pair matches even when the base is phase-ambiguous.
+
+    'long son' is ambiguous (siblings 2 and 3 present), so pairings with the
+    digit-suffixed siblings are vetoed — but the digit-free pairing with
+    'long son chemical' must survive and win.
+    """
+    ref = pd.DataFrame(
+        [
+            _row("Long Sơn chemical", "long son chemical", 1500.0),
+            _row("Long Sơn 2", "long son 2", 1500.0),
+            _row("Long Sơn 3", "long son 3", 1500.0),
+        ]
+    )
+    sys = pd.DataFrame([_row("Long Sơn", "long son", 1500.0)])
+
+    result = reconcile(ref, sys)
+
+    matched = result[result["status"].str.startswith("Matched")]
+    assert len(matched) == 1
+    assert matched.iloc[0]["name_file1"] == "Long Sơn chemical"
+
+
+def test_ambiguous_phase_bases_helper():
+    """Bases with >= 2 digit variants are ambiguous; single-variant bases are not."""
+    from aedist.matching.lp import ambiguous_phase_bases
+
+    names = ["ca na 2", "ca na 3", "lng quang ninh 1", "long son chemical"]
+    assert ambiguous_phase_bases(names) == frozenset({"ca na"})
+
+
+def test_digit_veto_helper_branches():
+    """Unit coverage of digit_veto: symmetric, asymmetric-ambiguous, digit-free."""
+    from aedist.matching.lp import digit_veto
+
+    ambiguous = frozenset({"ca na"})
+    # Symmetric branch: differing digit sets — vetoed regardless of ambiguity.
+    assert digit_veto("vung ang 1", "vung ang 2")
+    # Equal digit sets — allowed.
+    assert not digit_veto("mong duong 2", "na duong 2")
+    # Asymmetric, base ambiguous — vetoed (either argument order).
+    assert digit_veto("ca na", "ca na 2", ambiguous)
+    assert digit_veto("ca na 2", "ca na", ambiguous)
+    # Asymmetric, base not ambiguous — allowed.
+    assert not digit_veto("lng quang ninh", "lng quang ninh 1", ambiguous)
+    # Asymmetric and ambiguous, but stripped names differ at word level — allowed.
+    assert not digit_veto("an khanh 1", "an khe", frozenset({"an khanh"}))
+    # Digit-free both sides — never vetoed.
+    assert not digit_veto("long son", "long son chemical", ambiguous)
+
+
+def test_unambiguous_base_vs_single_sibling_matches_lp():
+    """With a single phase sibling, the bare base name stays matchable (no ambiguity)."""
+    ref = pd.DataFrame([_row("LNG Quảng Ninh 1", "lng quang ninh 1", 1500.0)])
+    sys = pd.DataFrame([_row("LNG Quảng Ninh", "lng quang ninh", 1500.0)])
+
+    result = reconcile(ref, sys)
+
+    assert result["status"].str.startswith("Matched").any()
+
+
+def test_base_vs_phase_sibling_vetoed_phased():
+    """The phased matcher's digit guard must also block base-vs-sibling pairs."""
+    from aedist.matching.phased import reconcile as phased_reconcile
+
+    ref = pd.DataFrame(
+        [
+            _row("Cà Ná 2", "ca na 2", 1500.0),
+            _row("Cà Ná 3", "ca na 3", 1500.0),
+        ]
+    )
+    sys = pd.DataFrame([_row("Cà Ná", "ca na", 1500.0)])
+
+    result = phased_reconcile(ref, sys)
+
+    assert not result["status"].str.startswith("Matched").any()
+
+
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])

@@ -105,8 +105,71 @@ def _handle_empty(df1: pd.DataFrame, df2: pd.DataFrame) -> pd.DataFrame | None:
 
 
 def _extract_digit_tokens(name: str) -> frozenset[str]:
-    """Return the set of standalone digit tokens in a name_clean string."""
+    """Return the set of standalone digit tokens in a name_clean string.
+
+    Any all-digit token counts — unit numbers ("2") but also years ("2030")
+    if a cleaned name ever carried one. Dotted designators ("2.1") and
+    alphanumerics ("s1") are not digit tokens and bypass the veto.
+    """
     return frozenset(tok for tok in name.split() if tok.isdigit())
+
+
+def _strip_digit_tokens(name: str) -> str:
+    """Return the name with standalone digit tokens removed."""
+    return " ".join(tok for tok in name.split() if not tok.isdigit())
+
+
+# Stripped-name near-identity cutoff for the digit-asymmetric veto branch.
+# Fixed (not the pair similarity_threshold): tool-mode matching at threshold 70
+# must not widen the veto to word-level different bases ("an khanh" vs "an khe").
+STRIPPED_NAME_VETO_THRESHOLD: int = 90
+
+
+def ambiguous_phase_bases(names: list[str]) -> frozenset[str]:
+    """Stripped base names carrying >= 2 distinct digit-token variants.
+
+    "ca na 2" and "ca na 3" make base "ca na" ambiguous: a bare base-name
+    emission cannot be attributed to either sibling. A base with a single
+    digit variant ("lng quang ninh 1" alone) is unambiguous and stays
+    matchable to its bare base name.
+    """
+    variants: dict[str, set[frozenset[str]]] = {}
+    for name in names:
+        d = _extract_digit_tokens(name)
+        if d:
+            variants.setdefault(_strip_digit_tokens(name), set()).add(d)
+    return frozenset(base for base, ds in variants.items() if len(ds) >= 2)
+
+
+def digit_veto(
+    name1: str, name2: str, ambiguous_bases: frozenset[str] = frozenset()
+) -> bool:
+    """True when the unit-number veto blocks this pair of name_clean strings.
+
+    Two branches (ticket 0544 symmetric case, ticket 0551 asymmetric case):
+      - Both names carry digit tokens and the sets differ ("vung ang 1" vs
+        "vung ang 2"): cross-unit pairs must not match.
+      - Exactly one side carries digit tokens, the digit-stripped names are
+        near-identical, and the stripped base is ambiguous (>= 2 phase
+        siblings in the corpus — see ambiguous_phase_bases): a base name
+        must not be arbitrarily absorbed by one of several siblings
+        ("ca na" vs "ca na 2" when "ca na 3" also exists). With a single
+        sibling the base name plausibly denotes that plant and may match.
+        Digit-free pairs ("long son" vs "long son chemical") are not vetoed.
+    """
+    digits1 = _extract_digit_tokens(name1)
+    digits2 = _extract_digit_tokens(name2)
+    if digits1 and digits2:
+        return digits1 != digits2
+    if digits1 or digits2:
+        stripped1 = _strip_digit_tokens(name1)
+        stripped2 = _strip_digit_tokens(name2)
+        base = stripped1 if digits1 else stripped2
+        return (
+            base in ambiguous_bases
+            and fuzz.ratio(stripped1, stripped2) >= STRIPPED_NAME_VETO_THRESHOLD
+        )
+    return False
 
 
 # Matches "BASE N & M", "BASE N&M", or "BASE N va M" where N and M are digits.
@@ -178,9 +241,11 @@ def _compute_costs(
           1 if the fuzzy similarity score (using fuzz.partial_ratio) meets or exceeds similarity_threshold;
           mismatch_penalty otherwise.
 
-    Unit-number veto: if both names contain digit tokens and those sets differ (e.g. "1" vs "2"),
-    the cost is set to 2*dummy_cost+1, making it cheaper for the LP to leave both records
-    unmatched than to accept a cross-unit false positive.
+    Unit-number veto (see digit_veto): if both names carry digit tokens and the sets differ
+    ("1" vs "2"), or exactly one side carries digits and the digit-stripped names are
+    near-identical ("ca na" vs "ca na 2"), the cost is set to 2*dummy_cost+1, making it
+    cheaper for the LP to leave both records unmatched than to accept a cross-phase
+    false positive.
 
     Args:
         df1 (pd.DataFrame): First DataFrame with plant records.
@@ -194,16 +259,18 @@ def _compute_costs(
         dict[tuple[int, int], float]: A mapping from (i, j) indices to computed matching cost.
     """
     veto_cost = 2 * dummy_cost + 1
+    ambiguous = ambiguous_phase_bases(
+        [str(n) for n in df1["name_clean"]] + [str(n) for n in df2["name_clean"]]
+    )
     costs: dict[tuple[int, int], float] = {}
     for i in df1.index:
         for j in df2.index:
             name1 = str(df1.loc[i, "name_clean"])
             name2 = str(df2.loc[j, "name_clean"])
 
-            # Unit-number veto: different trailing unit numbers must not match.
-            digits1 = _extract_digit_tokens(name1)
-            digits2 = _extract_digit_tokens(name2)
-            if digits1 and digits2 and digits1 != digits2:
+            # Unit-number veto: different unit numbers must not match, and a
+            # base name must not match one of several phase siblings (digit_veto).
+            if digit_veto(name1, name2, ambiguous):
                 costs[(i, j)] = veto_cost
                 continue
 

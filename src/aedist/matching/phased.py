@@ -11,18 +11,22 @@ from typing import Any
 import pandas as pd
 from rapidfuzz import fuzz, process
 
+from aedist.matching.lp import ambiguous_phase_bases, digit_veto
 from aedist.matching.result_row import build_result_row
 
 
-def _digit_compatible(name1: str, name2: str) -> bool:
+def _digit_compatible(
+    name1: str, name2: str, ambiguous_bases: frozenset[str] = frozenset()
+) -> bool:
     """Return True if two name_clean strings are compatible for matching.
 
-    Two names are incompatible when both carry digit tokens (unit numbers) that differ,
-    e.g. "na duong 1" vs "na duong 2".
+    Delegates to the LP matcher's shared digit_veto (ticket 0551): incompatible
+    when both carry differing digit tokens ("na duong 1" vs "na duong 2"), or
+    when exactly one side carries digits, the digit-stripped names are
+    near-identical, and the base has >= 2 phase siblings ("ca na" vs "ca na 2"
+    when "ca na 3" also exists).
     """
-    d1 = frozenset(tok for tok in name1.split() if tok.isdigit())
-    d2 = frozenset(tok for tok in name2.split() if tok.isdigit())
-    return not (d1 and d2 and d1 != d2)
+    return not digit_veto(name1, name2, ambiguous_bases)
 
 
 def find_exact_match(
@@ -153,10 +157,15 @@ def reconcile(group1: pd.DataFrame, group2: pd.DataFrame, **kwargs) -> pd.DataFr
     # ----------------------------------------------------------------------
     # Phase 2: Fuzzy matches
     # ----------------------------------------------------------------------
+    ambiguous = ambiguous_phase_bases(
+        [str(n) for n in group1["name_clean"]] + [str(n) for n in group2["name_clean"]]
+    )
     group1_drop_indexes = []
     for idx1, row1 in unmatched_group1.iterrows():
         # Unit-number guard: only consider candidates with compatible digit tokens.
-        mask = unmatched_group2["name_clean"].apply(partial(_digit_compatible, row1["name_clean"]))
+        mask = unmatched_group2["name_clean"].apply(
+            partial(_digit_compatible, row1["name_clean"], ambiguous_bases=ambiguous)
+        )
         candidates = unmatched_group2.loc[mask]
         row2, match_idx2, fuzzy_score = (
             find_fuzzy_match(row1, candidates, similarity_threshold)

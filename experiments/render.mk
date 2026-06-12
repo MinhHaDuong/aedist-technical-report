@@ -1013,6 +1013,7 @@ $(ANALYSIS_GEN)/macros_phase_collisions.tex &: \
 		$(ANALYSIS_EXPERT_REF) \
 		$(ANALYSIS_REPO_ROOT)/src/aedist/analyze_matcher_phase_collisions.py \
 		$(ANALYSIS_REPO_ROOT)/src/aedist/evaluate.py \
+		$(ANALYSIS_REPO_ROOT)/src/aedist/matching/lp.py \
 		$(ANALYSIS_REPO_ROOT)/src/aedist/reconcile.py \
 		$(ANALYSIS_DERIVED_DIR)/matching_sensitivity.csv
 	@mkdir -p $(dir $@)
