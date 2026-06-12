@@ -150,10 +150,11 @@ def test_binding_constraint_framed_as_hypothesis():
     """Ticket 0532: abstract and conclusion frame the binding-constraint claim
     as a hypothesis, not a finding.
 
-    Round 2 (author brief) literals: the abstract's "working hypothesis"
-    framing and the exploratory/unregistered qualifier on the documents
-    condition; the conclusion's "conjecture about why" opener and the
-    conditional recommendation.
+    Round 2 (author brief) literals: the conclusion's "conjecture about why"
+    opener and the conditional recommendation. The 2026-06-12 abstract rewrite
+    dropped the binding-constraint claim from the abstract altogether —
+    absence satisfies the no-overclaim intent by construction; the abstract
+    guard now only forbids reintroducing it as a flat finding.
 
     Ticket 0541 (scoped divergence): the body speaks within-experiment with
     light epistemic markers — "suggests" in the equalisation paragraph,
@@ -163,11 +164,8 @@ def test_binding_constraint_framed_as_hypothesis():
     abstract = _abstract_paragraph()
     text = body()
     conclusion = text.split("\\section{Conclusion}\\label{sec:conclusion}")[1].split("\\appendix")[0]
-    assert "point toward a working hypothesis" in abstract, (
-        "abstract must frame the binding-constraint claim as a working hypothesis"
-    )
-    assert "exploratory, unregistered condition" in abstract, (
-        "abstract must name the equalisation evidence exploratory and unregistered"
+    assert "binding constraint is" not in abstract, (
+        "abstract must not state the binding-constraint claim as a flat finding"
     )
     assert "the evidence points toward a conjecture about why" in conclusion, (
         "conclusion must frame the binding-constraint claim as a conjecture"

@@ -43,7 +43,9 @@ def test_no_synopsis_framing():
 
 
 def test_abstract_present_and_leads_with_frontier():
-    """Abstract must be present and lead with the frontier-falls-short result."""
+    """Abstract must be present and state the task-is-hard result for frontier
+    agents (2026-06-12 rewrite: "hard for today's AI systems" + the
+    one-of-four frontier improvement framing replaced "fall short")."""
     text = body()
     assert "\\begin{abstract}" in text, (
         "no abstract environment found in main.tex — add a structured abstract"
@@ -52,12 +54,13 @@ def test_abstract_present_and_leads_with_frontier():
     assert "frontier" in abstract_block.lower() or "sota" in abstract_block.lower(), (
         "abstract does not mention frontier agents"
     )
-    has_fall_short = (
+    has_hard_result = (
         "fall short" in abstract_block.lower()
         or "falls short" in abstract_block.lower()
         or "still fall" in abstract_block.lower()
+        or "hard for today's ai systems" in abstract_block.lower()
     )
-    assert has_fall_short, "abstract does not lead with the frontier-falls-short result"
+    assert has_hard_result, "abstract does not state the task-is-hard result"
 
 
 def test_abstract_numbers_in_body():
