@@ -105,11 +105,13 @@ ANALYSIS_VERIFICATION_TRADEOFF := $(ANALYSIS_VERIFICATION_DIR)/tradeoff.csv
 # decomp-fix step (experiments/derived/score.mk, ticket 0424 — unfreezing the
 # 0421 freeze). Gitignored regenerable P2 intermediates (run
 # `make -f experiments/derived/score.mk decomp-fix` first); the prereq lists
-# are derived from the archive raw-CSV listing so a missing derived file stops
-# the build with "No rule to make target" (clean-room: render never scores).
+# wildcard the DERIVED dir, not the archive listing: in a clean room (no P2
+# run) they are empty, so the committed tab_decomposition_fix.tex stands as
+# up to date and render never scores (test_render_build_clean_room). Staleness
+# vs a fresh P2 run is caught by the post-clean oracle, not by this rule.
 ANALYSIS_DECOMP_FIX_DIR := $(ANALYSIS_DERIVED_DIR)/decomp_fix
-ANALYSIS_DECOMP_BEFORE := $(patsubst $(ANALYSIS_EXPERIMENTS_DIR)/archive/outputs/rag_per_fuel/%.csv,$(ANALYSIS_DECOMP_FIX_DIR)/rag_per_fuel/reconciliation_%.csv,$(wildcard $(ANALYSIS_EXPERIMENTS_DIR)/archive/outputs/rag_per_fuel/*.csv))
-ANALYSIS_DECOMP_AFTER  := $(patsubst $(ANALYSIS_EXPERIMENTS_DIR)/archive/outputs/rag_per_fuel_v2/%.csv,$(ANALYSIS_DECOMP_FIX_DIR)/rag_per_fuel_v2/reconciliation_%.csv,$(wildcard $(ANALYSIS_EXPERIMENTS_DIR)/archive/outputs/rag_per_fuel_v2/*.csv))
+ANALYSIS_DECOMP_BEFORE := $(wildcard $(ANALYSIS_DECOMP_FIX_DIR)/rag_per_fuel/reconciliation_*.csv)
+ANALYSIS_DECOMP_AFTER  := $(wildcard $(ANALYSIS_DECOMP_FIX_DIR)/rag_per_fuel_v2/reconciliation_*.csv)
 # Raw rag_extract CSVs moved to archive/ by edda724b.
 ANALYSIS_RAG_CSVS      := $(wildcard $(ANALYSIS_EXPERIMENTS_DIR)/archive/outputs/rag_extract/*.csv)
 ANALYSIS_EXPERT_REF    := $(ANALYSIS_REPO_ROOT)/data/reference/vietnam_thermal_plants_v2_classified.csv
