@@ -5,6 +5,7 @@ Author: HDMX-coding-agent
 
 --- log ---
 2026-06-12T09:29Z HDMX-coding-agent created
+2026-06-12T14:10Z claude note raid-557 Imagine pass — drift verdict clean, inventory + triage table appended
 
 --- body ---
 ## Context
@@ -82,3 +83,73 @@ Policy decided with the author (2026-06-12 session):
 - [ ] No positive prose-literal assertion remains in CI
 - [ ] `docs/editorial-brief.md` exists and carries every demoted decision
 - [ ] Prose review path references the brief
+
+## Reimagined (raid 2026-06-12)
+
+Approach refinements (exit criteria unchanged):
+
+- **Drop the meta-test allowlist** (YAGNI). A grep meta-test can't
+  distinguish polarity (`assert X in` vs `assert X not in`) without complex
+  regex, and the allowlist needs maintenance on every legitimate addition.
+  Instead: state the policy in a project rule and let the verify-adherence
+  grep ratchet flag `assert .* in (abstract|conclusion|discussion|...)`
+  positives for review.
+- **The triage table below is the lookup record** — Execute applies it
+  inline; do not build per-assertion triage machinery.
+- **Content-fidelity anchors are mechanical, not prose pins**: assertions
+  that quote a *fixed external document* (Doc-07 prompt verbatim in annex)
+  or a structurally derived value verify content faithfulness, not
+  authorial wording — they stay.
+
+### Triage table — test_manuscript_cohort_and_caveats.py
+
+| Assertion | Class | Disposition |
+|---|---|---|
+| cohort counts 16/14 from TOML+CSV | mechanical | KEEP |
+| zero-good-run set from artifact | mechanical | KEEP |
+| abstract: no F1/ρ/τ/em-dash/"To our knowledge"/pooling | negative | KEEP |
+| abstract: `"lifecycle" in` | positive | demote: negative guard or brief ("177 plants = full-lifecycle register, not operating-only") |
+| abstract word cap <300 | mechanical | KEEP |
+| conclusion: exact "ρ = 0.92, pooled across models and in-sample" | positive | demote: negative form — if "ρ = 0.92" present, "pooled" + "in-sample" must accompany; exact phrasing → brief |
+| conclusion: exact "within-model signal positive but modest, \ref" | positive | demote: if ρ cited, annex-screen ref must appear; phrasing → brief |
+| discussion: "existence proof rather than a validated detector" | positive | demote: caveat-accompanies-ρ negative; phrasing → brief |
+| discussion: "tuned on the same 70 runs" | positive | demote: in-sample qualification must accompany ρ; phrasing → brief |
+| abstract: "binding constraint is" not in | negative | KEEP |
+| conclusion: "the evidence points toward a conjecture about why" | positive | demote → brief |
+| conclusion: "If the constraint is indeed the documents" | positive | demote → brief |
+| body: "suggests the binding constraint lies" | positive | demote: negative guard — flat-claim register banned in equalisation paragraph |
+| body: "appears to shift from model capability" | positive | demote: same negative guard |
+| intro per-cell provenance, cost-savings cut, nonmonotonicity dropped, demoted_phrasings loop | negative | KEEP |
+| novelty `survivors` loop (3 verbatim claims) | positive | demote: loose primacy-marker presence check (e.g. "no published") per section; verbatim claims → brief |
+| wikipedia seeding dates/revisions from PROVENANCE.md | mechanical | KEEP |
+| "built fleet"/"pipeline tail" | positive (low-risk factual) | borderline — keep OR demote; Plan decides, bias to keep (data-structure descriptors, not editorial framing) |
+| status-vocab: `{share}%` artifact check | mechanical | KEEP |
+| status-vocab: "controlled vocabulary"/"status accuracy" anchors | positive | demote phrase anchors → brief; keep share-% check |
+| analysis-cohort prompt matches shipped record | mechanical | KEEP |
+| body no longer attributes modules prompt to cohort | negative | KEEP |
+| annex statuses loop (re-derived from record) | mechanical | KEEP |
+| annex GEM-only negatives | negative | KEEP |
+| annex quote anchor ("primary-sourced reference inventory", …) | mixed | keep record-derivation check; demote annex quote anchor → brief |
+| annex Doc-07 verbatim anchors | content-fidelity | KEEP (quotes a fixed document, not prose) |
+
+### Triage table — test_manuscript_structure.py
+
+| Assertion | Class | Disposition |
+|---|---|---|
+| no-synopsis framing | negative | KEEP |
+| `\begin{abstract}` present | mechanical | KEEP |
+| "frontier"/"sota" in abstract | positive (loose topical) | KEEP — the frontier result is the paper's lead claim; note in brief |
+| has_hard_result 4-way OR | positive (already loosened) | KEEP — OR-pattern acts structural |
+| F1 stats from macros | mechanical | KEEP |
+| "0.92" in text | positive (fixed empirical value) | KEEP — note in brief: update manually if ρ changes |
+| affiliation / intro / conclusion / related-work present | mechanical | KEEP |
+
+### Risks carried forward
+
+1. IDH companion: review-pr-prose SKILL.md lives in `~/.claude` (IDH repo).
+   Exit criterion (c) needs at minimum the brief-check step added there via
+   IDH PR; file the companion ticket AND add the section, don't just note it.
+2. Novelty survivors: keep a weakened primacy-marker check in CI so the
+   three claims can't be silently dropped — the brief is review-time only.
+3. 0557 is independent of the reading-1 wave (test infra, not prose) —
+   safe in parallel.
