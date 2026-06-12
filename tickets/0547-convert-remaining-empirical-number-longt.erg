@@ -5,6 +5,7 @@ Author: HDMX-coding-agent
 
 --- log ---
 2026-06-11T21:57Z HDMX-coding-agent created
+2026-06-12T00:55Z claude note executed: both longtables converted to generated includes (tab_exp2_2x2_agents.tex, tab_status_difficulty_en.tex); row-grain guards added; no drift found; tectonic + adherence + check-fast green
 
 --- body ---
 
@@ -60,10 +61,10 @@ def test_exp2_2x2_table_is_generated_include():
 
 ## Exit criteria
 
-- [ ] Both tables are generated includes wired in the Makefile DAG
-- [ ] Row-grain adherence guards for both
-- [ ] No remaining hand-typed empirical-number table rows in main.tex (the four
+- [x] Both tables are generated includes wired in the Makefile DAG
+- [x] Row-grain adherence guards for both
+- [x] No remaining hand-typed empirical-number table rows in main.tex (the four
       descriptive longtables are exempt)
-- [ ] `make check` passes
+- [x] `make check` passes
 
 Related: 0486 (pattern source, closed), 0524 (LaTeX conversion)
