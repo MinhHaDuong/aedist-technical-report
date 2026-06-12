@@ -2,7 +2,7 @@
 Title: Ex post extractor for EXP3 outputs with unified data flow and source handling
 Created: 2026-05-25
 Author: HDMX-coding-agent
-Closed: autoclosed — PR #994
+Label: deferred
 
 --- log ---
 2026-05-25T00:00Z HDMX-coding-agent created
@@ -13,6 +13,7 @@ Closed: autoclosed — PR #994
 2026-06-12T01:10Z claude note disposition: audited every item against origin/main — extract_arm_single_turn/multi_turn + score.mk armN_flat already delivered the unified dataflow (items 1/3-partial/4: pre-existing); this PR adds src/aedist/expost/ (sources.py): numbered-bibliography parsing, Source 1/2 bare-ref→hyperlink mapping with per-run _source_audit.json trail (audit_status=in_progress when refs unresolved), preamble stripping; both extractors wired; exp2_naive_arm.py inline derivation removed (imports aedist.expost); VERIFY_REPLY/TERMINAL_REPLY table-unity sentences added; Phase A header already prescribed (richer 15-column schema in protocol_02, accepted as satisfying the intent). Arm4 anthropic smoke re-run criterion NOT executed (requires API spend; supervised run, author's call) — left unticked.
 2026-06-12T08:05Z orchestrator note smoke re-run criterion delegated to child 0548 (supervised API spend); safe to close on PR #994 merge
 2026-06-11T23:54Z HDMX-coding-agent closed — autoclosed — PR #994
+2026-06-12T09:30Z claude note reopened by author decision: VERIFY_REPLY/TERMINAL_REPLY table-unity sentences REVERTED (exact revert of the 8b12d118 prompt hunk). Rationale: (a) prompt changes belong to post-arXiv release; (b) the fix was partial — only reached multi-turn arms 2/4, while the fragmentation sweep (2026-06-12, all 80 production replies) showed arm3 (single-turn naive+EP) is the worst offender (7/20 fragmented, up to 11 tables; arm4 5/20, arm2 3/20, arm1 0/20; anthropic worst agent 7/20); (c) author's intended design differs: instruct the model on how to START its reply exactly — template the reply opening (prescribed first lines / exact table header), not a mid-conversation consolidation request. Extractor-side scope (src/aedist/expost/, PR #994) stays delivered; only the prompt-engineering section is live, deferred to post-arXiv. Child 0548 mooted.
 --- body ---
 ## Context
 
@@ -52,23 +53,28 @@ its data flow with arms 2 and 4.
 - [x] `exp2_phase_b0_consolidate.py` (or its replacement) correctly walks the
       new run{N}/ layout and produces the same aggregated output as before.
 
-## Prompt-engineering actions (absorbed from 0290)
+## Prompt-engineering actions (absorbed from 0290) — REOPENED, post-arXiv
 
-The same table-fragmentation problem requires both extraction fixes (above) and
-prompt-level constraints:
+Status 2026-06-12: the first attempt (table-unity sentences in
+`VERIFY_REPLY`/`TERMINAL_REPLY`, PR #994) was reverted by author decision —
+partial coverage (multi-turn arms only; arm3 is the worst fragmenter) and
+wrong mechanism. Deferred until after the arXiv release.
 
-1. **Prescribe the exact table header** in the Phase A meta-prompt: instruct
-   the Phase A designer to begin the Plant Inventory Table section with a
-   specific header row, e.g. `| Plant name | Fuel | Capacity (MWe) | Status |
-   As-of date | Confidence | Source 1 | Source 2 |`. Hard constraint, not a
-   suggestion.
-2. **Add a table-unity reminder to `VERIFY_REPLY`**: append a sentence
-   instructing the agent to consolidate all sub-tables into one master table
-   before returning the corrected inventory.
-3. **Consider adding to `TERMINAL_REPLY`**: if the agent has not yet produced
-   a unified table, explicitly ask for consolidation as the final act.
+Author's intended design: **template the reply opening** — instruct the model
+on how to START its reply exactly, e.g. prescribe the literal first lines of
+the deliverable (begin directly with the master inventory table using the
+exact header row `| Plant name | Fuel | Capacity (MWe) | Status | As-of date |
+Confidence | Source 1 | Source 2 |`). A hard constraint on reply shape applied
+uniformly to ALL arms (single-turn arm1/arm3 prompts and multi-turn arm2/arm4
+Phase B prompts), not a mid-conversation consolidation request.
 
-Additional exit criterion (arm4 anthropic smoke run):
-- [x] Re-run produces ≤ 2 table headers in the final output turn and
-      `inventory_rows` ≥ 40. (Delegated to child ticket 0548 — needs
-      supervised API spend.)
+Magnitude baseline (sweep of all 80 production replies, 2026-06-12, criterion
+>2 table headers in the final output turn): arm1 0/20, arm2 3/20, arm3 7/20
+(max 11 tables), arm4 5/20 (max 15); anthropic worst agent at 7/20. The ex
+post extractor (`merge_fragmented_tables`) neutralizes this downstream, so
+scored data is unaffected; the prompt-level cure is forward-looking.
+
+Exit criteria (live):
+- [ ] Reply-opening template applied to all four arms' prompts.
+- [ ] A supervised smoke per modified arm produces ≤ 2 table headers in the
+      final output turn and `inventory_rows` ≥ 40.

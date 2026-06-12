@@ -3,10 +3,12 @@ Title: Arm4 Anthropic smoke re-run: verify table-unity prompt fixes (child of 02
 Created: 2026-06-12
 Author: HDMX-coding-agent
 Label: needs-human
+Closed: mooted — table-unity prompt fix reverted (author decision); verification target no longer exists; redo via 0292 reply-templating post-arXiv
 
 --- log ---
 2026-06-12T08:05Z orchestrator created — split from 0292 (PR #994): the smoke re-run needs supervised API spend
 
+2026-06-12T07:09Z HDMX-coding-agent closed — mooted — table-unity prompt fix reverted (author decision); verification target no longer exists; redo via 0292 reply-templating post-arXiv
 --- body ---
 ## Context
 0292 (PR #994) added table-unity sentences to VERIFY_REPLY and
