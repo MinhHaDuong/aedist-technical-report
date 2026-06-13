@@ -780,17 +780,17 @@ tests, since the minimum attainable p at n=4 is 1/2⁴ =
 \end{figure}
 
 \textbf{Coverage: the best agent enumerates barely half the fleet.} For
-agents in the naive arm (arm 1): Anthropic median 77 rows (4/5 usable,
-one zero-row run); Mistral median 57 rows (range 48--74); OpenAI median
-83 rows (range 76--90); Qwen median 42 rows (range 33--45) — all
+agents in the naive arm (arm 1): Anthropic median \ExpTwoRowsAnthropicNaive{} rows (4/5 usable,
+one zero-row run); Mistral median \ExpTwoRowsMistralNaive{} rows (range \ExpTwoRowsMinMistralNaive{}--\ExpTwoRowsMaxMistralNaive{}); OpenAI median
+\ExpTwoRowsOpenAINaive{} rows (range \ExpTwoRowsMinOpenAINaive{}--\ExpTwoRowsMaxOpenAINaive{}); Qwen median \ExpTwoRowsQwenNaive{} rows (range \ExpTwoRowsMinQwenNaive{}--\ExpTwoRowsMaxQwenNaive{}) — all
 against the \NumRefPlants-plant reference. The optimised arm (arm 2) does not
-change the picture: OpenAI median 86 rows versus arm 1 median 83 rows
-(modest improvement; individual runs 79--96 vs 76--90); Qwen median 25
-rows versus arm 1 median 42 rows (regression; Qwen's self-designed
+change the picture: OpenAI median \ExpTwoRowsOpenAIOptimised{} rows versus arm 1 median \ExpTwoRowsOpenAINaive{} rows
+(modest improvement; individual runs \ExpTwoRowsMinOpenAIOptimised{}--\ExpTwoRowsMaxOpenAIOptimised{} vs \ExpTwoRowsMinOpenAINaive{}--\ExpTwoRowsMaxOpenAINaive{}); Qwen median \ExpTwoRowsQwenOptimised{}
+rows versus arm 1 median \ExpTwoRowsQwenNaive{} rows (regression; Qwen's self-designed
 protocol imposed a strict dual-source admissibility filter that
 constrains coverage from Turn 1). The optimised protocol costs 2--4×
 more per run than naive across all agents; OpenAI's ratio is most
-extreme (median \$0.73 optimised vs \$0.27 naive). On row-level F1
+extreme (median \$\ExpTwoCostOpenAIOptimised{} optimised vs \$\ExpTwoCostOpenAINaive{} naive). On row-level F1
 (Table~\ref{tbl:exp2-2x2}, no-documents rows), the multi-turn protocol
 degraded three of the four agents (Anthropic \ExpTwoFOneAnthropicNaive{}
 to \ExpTwoFOneAnthropicOptimised, Mistral \ExpTwoFOneMistralNaive{} to
