@@ -50,6 +50,15 @@
 \usepackage{pdfpages} % \includepdf: multi-page portrait recognition matrix
 \usepackage{xcolor}
 
+% promptbox: a sans-serif, page-breakable framed box for reproducing a
+% prompt sent to the agents verbatim (ticket 0582; reused by the Annex A
+% analysis-cohort prompt, ticket 0590). `framed` ships in the tectonic
+% bundle; it survives page breaks where a \fbox/minipage would not.
+\usepackage{framed}
+\newenvironment{promptbox}%
+  {\par\smallskip\begin{framed}\sffamily\small\setlength{\parskip}{0.4em plus 0.1em}}%
+  {\end{framed}\smallskip}
+
 % Bibliography
 \usepackage[round,authoryear]{natbib}
 \bibliographystyle{plainnat}
@@ -683,10 +692,9 @@ reference, coverage (plants enumerated), and per-row provenance counts
 Figure~\ref{fig:coverage-certainty} in \ref{sec:annex-exp2}). The
 §\ref{sec:quality} dimensions that require \emph{peer cross-evaluation}
 — coherence, provenance support, and temporality scored on a rubric by
-judging agents — are deferred to Phase C (cross-model judging),
-reserved for post-conference analysis; this section's claims rest on
-the F1, coverage, and citation-count metrics, not on the deferred
-cross-eval scores.
+judging agents — are out of scope here; this section's claims rest on
+the F1, coverage, and citation-count metrics, which are computed
+mechanically without a judging model.
 
 \textbf{Experiment 2 — frontier agents (\ref{sec:annex-exp2}).} We
 conduct an experiment with four cloud AI agents at the May-2026
@@ -698,17 +706,20 @@ Agents API + web\_search connector), and Qwen3-Max via DashScope (CN,
 web\_search inside thinking mode). The fourth slot is
 hypothesis-relevant rather than decorative: Chinese-language investor
 and trade documents on Vietnamese power assets are under-indexed by
-Western search. The experiment runs two arms over the same four agents
-(N=5 each). \textbf{Arm 1 (naive)}: a single-shot Doc-07 prompt,
-web on; the null comparator. \textbf{Arm 2
-(optimised, simple-harness multi-turn)}: a multi-turn protocol in
-which each agent first designs its own prompt and settings (Phase A),
-runs once as a smoke gate (Phase B-0), then runs N=5 against a single
-provider under a per-session cap of 50K tokens / \$3 (Phase B); this
-constitutes a simple harness: an LLM orchestrator (DeepSeek
-classifier) controlling a loop with the tested LLM as the tool. The
+Western search. Each agent is run through a 2×2 factorial,
+crossing \emph{query mode} (naive vs optimised) with \emph{documents}
+(absent vs a curated reference pack), N=5 per cell, four arms in all
+(Table~\ref{tbl:exp2-2x2}). The \emph{naive} mode sends a single-shot
+prompt with web search on, the null comparator; the \emph{optimised}
+mode runs a multi-turn protocol in which the agent first designs its
+own prompt and settings, then executes under a per-session cap of 50K
+tokens / \$3, orchestrated by a simple harness: an independent
+classifier model driving a loop with the tested agent as the tool. The
 naive-vs-optimised contrast isolates the protocol's contribution over
-raw model capability.
+raw model capability; the documents contrast tests whether a curated
+corpus matters more than the model. This section reads the two
+no-documents arms; the documents axis is detailed in
+\ref{sec:annex-exp2}.
 
 The naive arm is an independent sweep, not a
 re-run of the §\ref{sec:exp1} parametric protocol, so its scores are not
@@ -724,9 +735,9 @@ OpenAI stayed flat (\ExpTwoFOneOpenAIMemory{} to
 \ExpTwoFOneOpenAINaive), so web access and extended reasoning
 improved on the memory-only baseline for only one of the four agents.
 Row-level F1 against the \NumRefPlants-plant reference is
-now scored for all four arms (Table~\ref{tbl:exp2-2x2}); cross-model
-judging on the four §\ref{sec:quality} dimensions remains reserved for
-post-conference analysis (Phase C).
+scored for all four arms (Table~\ref{tbl:exp2-2x2}); the rubric-scored
+§\ref{sec:quality} dimensions that need a judging model are out of
+scope for this section.
 
 An anticipated objection: why not simply instruct the agents to merge
 Wikipedia and the Global Energy Monitor tracker? Because the benchmark
@@ -1074,11 +1085,10 @@ genuine inconsistencies; a large frontier model has better recall but
 may introduce its own confabulations as apparent corrections. Third, the
 depth of reasoning required varies by claim: detecting that a 6000 MW
 gas plant in a province with no pipeline access is incoherent requires
-multi-step inference, not lookup. Phase C cross-evaluation (the
-cross-model judging deferred in §\ref{sec:exp2})
-partially engages external coherence, since the judging agents bring
-parametric world knowledge, but does so implicitly and unsystematically.
-A principled external-coherence metric remains future work.
+multi-step inference, not lookup. A judging model brings parametric
+world knowledge that engages external coherence, but only implicitly
+and unsystematically; a principled external-coherence metric remains
+future work.
 
 \textbf{One case study, not a benchmark suite.} Every result above is
 measured on a single case: the Vietnam thermal-plant fleet against one
@@ -2000,9 +2010,9 @@ and optimised, 40 sessions) ran first; the two documents conditions
 attached, 40 sessions) were added during execution and complete the
 factorial. The four arms are reported jointly in §\ref{sec:exp2}'s
 Figure~\ref{fig:exp2-arms} and below. Row-level F1 against the
-reference was scored for all 80 runs. Phase C cross-evaluation on the
-four §\ref{sec:quality} dimensions is deferred to post-conference
-analysis. This annex pins the as-run specification; the inferential
+reference was scored for all 80 runs. The rubric-scored
+§\ref{sec:quality} dimensions that need a judging model are out of
+scope. This annex pins the as-run specification; the inferential
 analysis lives in the technical report's Experiment 2 chapter.}
 
 \subsection*{Task}
@@ -2053,9 +2063,8 @@ reasoning \\
 \fpath{web_search_20250305} + adaptive thinking \\
 \end{longtable}
 
-Anthropic is pinned to Opus 4.6 (not 4.7) per the 2026-05-20 compose
-decision: identical call shape, \textasciitilde40\% lower per-call cost
-on the verified probe. Kimi K2.6 is disqualified — vendor docs
+Anthropic is pinned to Opus 4.6 (not 4.7): identical call shape at
+lower per-call cost. Kimi K2.6 is disqualified — vendor docs
 document \texttt{thinking} and \texttt{\$web\_search} as mutually
 exclusive, fatal for §\ref{sec:exp2}'s ``extended reasoning AND web
 access'' requirement. Geographic / corpus spread (US × 2 + FR + CN) is
@@ -2070,36 +2079,135 @@ The naive one-shot baseline that §\ref{sec:exp2} compares against is
 It is the pre-existing \fpath{experiments/outputs/direct_complete/}
 artifact from \fpath{sweep_direct_complete} over
 \fpath{modelset_frontier_10labs} — a wider lab survey at a single
-rep per model. Phase C will read from it directly; it is not re-run.
+rep per model, read directly and not re-run.
 
 \subsection*{Phase structure}
 \addcontentsline{toc}{subsection}{Phase structure}
 
-\textbf{Phase A — Reflexive prompt design (optimised arm).} Each agent
-receives the baseline prompt
-(\texttt{experiments/prompts/prompt\_complete.txt}), the four
-§\ref{sec:quality} quality-dimension paragraphs verbatim, the task
-statement, a JSON envelope spec, and the per-session budget cap
-(announced upfront; see ``Phase B dialogue policy'' below). The agent
-is asked to return a fully-specified design (\texttt{system\_prompt},
-threaded into the provider's system field at agent creation;
-\texttt{designed\_prompt}, the user-side prompt sent on turn 1 of Phase
-B; \texttt{settings}, \texttt{thinking} and \texttt{max\_tokens}; and
-\texttt{rationale}) that maximises the quality of the report it will
-produce within the dual-axis session cap (below) and an overnight
-wall-clock. Outputs land as
-\texttt{<agent>\_phase\_a.json} with the four
-envelope fields.
+\textbf{Phase A — Reflexive prompt design (optimised arm).} The
+optimised arm opens with a design call. Each agent is shown the same
+inventory specification the naive arm sends (the task, the four
+§\ref{sec:quality} quality-dimension paragraphs, the source-admissibility
+and confidence rules, all reproduced verbatim as the analysis-cohort
+prompt in \ref{sec:annex-exp1}), then asked to design how it will
+work the task across the multi-turn Phase B. The agent returns a JSON
+envelope with a \texttt{system\_prompt} (installed at agent creation), a
+\texttt{designed\_prompt} (sent verbatim on turn 1 of Phase B),
+\texttt{settings} (\texttt{thinking}, \texttt{max\_tokens}), and a short
+\texttt{rationale}. Its freedom covers search strategy, source hierarchy,
+confidence discipline, and stopping criteria; the Phase B deliverable
+schema is fixed. The metaprompt that frames this design call is
+reproduced below verbatim, with one elision: the shared inventory
+specification it wraps (deliverable structure, quality dimensions,
+source-quality and confidence rules) is identical to the naive-arm
+prompt in \ref{sec:annex-exp1} and is marked but not repeated.
+
+\begin{promptbox}
+\textbf{\# ROLE}
+
+You are a state-of-the-art AI assistant being evaluated as a subject in
+a structured statistical-inventory experiment. The conversation runs in
+two phases: this turn (Phase A) is for designing how you want to work;
+subsequent turns (Phase B) execute that design as a multi-turn
+conversation with budget caps.
+
+\textbf{\# GOAL}
+
+In Phase A — this turn — you design your own approach. You will return a
+JSON envelope containing a \texttt{system\_prompt} to install on yourself
+at agent-create time, a \texttt{designed\_prompt} to receive as the first
+user message of Phase B, runtime \texttt{settings}, and a short
+\texttt{rationale}. Your freedom covers search strategy, source
+hierarchy, confidence rules, budget discipline, and stopping criteria —
+the Phase B deliverable schema and structure are fixed by this prompt.
+The designed Phase B prompt must be operational, not philosophical.
+
+[\,Elided: the Phase B deliverable specification, quality dimensions,
+source-quality management, calibrated confidence vocabulary, and
+asset-row rules — identical to the naive-arm prompt reproduced in
+\ref{sec:annex-exp1}.\,]
+
+\textbf{\# FORMAT}
+
+Return ONLY a single JSON object with this exact shape:
+
+{\footnotesize
+\begin{verbatim}
+{
+  "system_prompt": "<the system prompt you want installed on yourself
+                     at agent-create time>",
+  "designed_prompt": "<the user-side prompt you want sent to yourself
+                       verbatim on turn 1 of Phase B>",
+  "settings": {
+    "thinking": true_or_false,
+    "max_tokens": <int>,
+    "rationale_for_settings": "<short string>"
+  },
+  "rationale": "<2-4 sentences naming which of the four quality
+                 dimensions your changes target and how>"
+}
+\end{verbatim}
+}
+
+Output ONLY the JSON object. No markdown fence, no prose around it.
+
+\textbf{\# CONTEXT — Budget}
+
+Phase B has a two-dimensional budget per session: 50,000 tokens of model
+generation (visible output + internal thinking / reasoning tokens,
+summed across all your turns in that session) and a \$3.00 dollar guard
+(everything the provider bills: tokens at all rates + per-call
+web\_search fees + connector tokens at connector rates). Whichever cap
+reaches 20\% of its initial value first triggers a terminal reply. Web
+search input/output, connector tokens, and document-fetch payload do not
+count toward the 50,000-token cap — those are retrieval payload, not
+your generation. They do count toward the \$3 dollar guard. Phase A (this
+turn) has a separate \$1 ceiling. Across one Phase A and five Phase B
+sessions per subject, the total per-subject budget is ≤ \$16. If budget
+becomes tight, preserve recall, provenance, and uncertainty notes;
+compress per-asset notes and bibliography annotations.
+
+\textbf{\# CONTEXT — Planning headroom}
+
+Up to three turns of planning/search before the verify pass. Don't aim to
+produce the inventory on turn 1 — use early turns to search, decompose,
+and surface uncertainty. The harness prompts you up to three times while
+no report is present. After your first turn classified as a report, you
+get one verify-and-polish pass, then the conversation ends.
+
+\textbf{\# CONTEXT — Tools and dispatch}
+
+No tool that delegates reasoning/generation to another model (no
+sub-agents, no model-to-model handoff, no LLM-invoking code interpreter).
+Retrieval tools only. This experiment measures single-agent capability
+under a fixed budget.
+\end{promptbox}
+
+The protocol the agents executed was validated by the agents
+themselves. Before any production session, all four subjects reviewed
+the protocol as referees and returned a verdict; all four returned
+accept-with-reservations across two review rounds, and the design was
+revised against their reservations between rounds. The dual-axis budget
+cap above answers a dollar/token-parity objection three of them raised:
+a dollar-only cap would have penalised models with expensive output
+tokens, so the token axis binds reasoning capacity comparably across
+vendors while the dollar axis binds the bill. The planning-headroom
+paragraph answers an objection that the reply loop biased agents toward
+reporting on turn 1. The most consequential accommodation concerns the
+harness itself: the agents objected that an early design used a
+classifier from the same vendor as the subject it judged, a
+self-evaluation pairing. We moved the classifier to an independent
+third-party model — so the orchestrating harness is deliberately not one
+of the four agents under test, and never grades its own vendor's output.
 
 \textbf{Phase B-0 — Single-rep smoke (optimised arm).} Each designed
 prompt runs once (N=1) end-to-end through the multi-turn auto-reply loop
-(see ``Phase B dialogue policy''). This is \emph{Test one before
-blasting} applied at the experiment level: four outputs surface adapter
-parser bugs, prompt failures, refusals, and real per-session cost before
-committing the full N=5 batch. Gate to Phase B is a human review
-confirming (i) all four adapters produced valid \texttt{RunRecord}
-instances, (ii) parsed tables are non-empty, (iii) costs sit within the
-dual-axis session cap empirically.
+(see ``Phase B dialogue policy''). The four single-rep outputs surface
+adapter parser bugs, prompt failures, refusals, and real per-session
+cost before the full N=5 batch is committed. Gate to Phase B is a human
+review confirming (i) all four adapters produced valid
+\texttt{RunRecord} instances, (ii) parsed tables are non-empty, (iii)
+costs sit within the dual-axis session cap empirically.
 
 \subsubsection*{Phase B dialogue policy (fixed experimental condition)}
 \addcontentsline{toc}{subsubsection}{Phase B dialogue policy (fixed experimental condition)}
@@ -2174,21 +2282,23 @@ apply). The four Phase B-0 sessions are the first reps of these five.
 \subsection*{Arms and budget}
 \addcontentsline{toc}{subsection}{Arms and budget}
 
-The no-documents design has two arms over the same four agents, five
-reps each (40 production sessions):
+The query-mode axis of the 2×2 has two settings over the same four
+agents, five reps each — the no-documents half of the factorial (40
+production sessions):
 
 \begin{itemize}
 \tightlist
 \item
-  \textbf{Naive arm} — Doc-07
+  \textbf{Naive} — the naive prompt
   (\fpath{experiments/sota/protocol_07_naive_prompt.md}) sent
   verbatim as the sole user message, no system prompt, web search on,
   one model response per session. This carries the v2 task statement and
-  quality criteria but none of the optimised arm's methodology (budget
+  quality criteria but none of the optimised methodology (budget
   rules, planning headroom, source admissibility, calibrated confidence
-  vocabulary). It is the null comparator: the contrast between arms
-  isolates the protocol scaffolding's contribution. The file at this
-  path was revised after all naive-arm sessions had run (2026-05-24):
+  vocabulary). It is the null comparator: the contrast against the
+  optimised setting isolates the protocol scaffolding's contribution.
+  The file at this
+  path was revised after all naive sessions had run (2026-05-24):
   the five anthropic-direct run records archive the as-sent user
   message (the earlier, shorter version, identical across runs),
   and the three web-product sessions (2026-05-22--23) predate the
@@ -2196,11 +2306,11 @@ reps each (40 production sessions):
   prompt. The expanded current version is the Experiment 1
   analysis-cohort prompt reproduced in \ref{sec:annex-exp1}.
 \item
-  \textbf{Optimised arm} — Phase A design call followed by the Phase B
+  \textbf{Optimised} — Phase A design call followed by the Phase B
   multi-turn state machine above (Phase B-0 then Phase B-full).
 \end{itemize}
 
-Both arms share one \textbf{dual-axis per-session budget cap: 50 000
+Both settings share one \textbf{dual-axis per-session budget cap: 50 000
 tokens \emph{or} a \$3 dollar guard, whichever fires first triggers
 TERMINAL.} Dollar-only caps disadvantage models with expensive output
 tokens; the token cap binds reasoning capacity comparably across vendors
@@ -2213,7 +2323,7 @@ chapter, not pinned here.
 \subsection*{Design notes}
 \addcontentsline{toc}{subsection}{Design notes}
 
-Three design decisions shape how the results are read:
+Two design decisions shape how the results are read:
 
 \begin{itemize}
 \tightlist
@@ -2234,11 +2344,6 @@ Three design decisions shape how the results are read:
   same five sessions remain row-level-F1-scorable (N=5) via the LP
   matcher, and they are present in the 2×2 F1 table. The 0/5 must not be
   read as the runs failing outright.
-\item
-  \textbf{Phase C cross-evaluation is deferred.} The four-dimension peer
-  cross-evaluation was reserved for post-conference analysis; the as-run
-  results below and in §\ref{sec:exp2} are the operational and F1-based
-  metrics, not the §\ref{sec:quality}-dimension cross-eval scores.
 \end{itemize}
 
 The inferential analysis, per-arm validity criteria, and the
@@ -2283,8 +2388,7 @@ This experiment is script-based, not sweep-based. No
   \fpath{experiments/derived/tab_exp2_2x2.csv},
   \fpath{report/inputs/generated/tab_exp2_bib_quality.tex}:
   as-run derived tables (2×2 F1/cost factorial; per-arm bibliography
-  quality). The \fpath{experiments/derived/sota_cross_eval.csv} Phase
-  C target is reserved for the deferred cross-evaluation.
+  quality).
 \end{itemize}
 
 \subsection*{Evaluation}
@@ -2294,11 +2398,10 @@ Phase B outputs are evaluated against the \NumRefPlants-plant reference using th
 same \texttt{src/aedist/evaluate.py} machinery as §\ref{sec:exp1} (LP
 matcher, ADR-2/3, \texttt{similarity\_threshold\ =\ 90},
 \texttt{capacity\_weight\ =\ 0.001}), yielding row-level F1 and
-per-attribute accuracies. Phase C cross-evaluation — peer scoring of
-each output on the four §\ref{sec:quality} dimensions — is deferred to
-post-conference analysis; the as-run results are the F1-based and
-operational metrics of §\ref{sec:exp2}, not the
-§\ref{sec:quality}-dimension cross-eval scores.
+per-attribute accuracies. Rubric peer scoring of each output on the four
+§\ref{sec:quality} dimensions — which would need a judging model — is
+out of scope; the as-run results are the F1-based and operational
+metrics of §\ref{sec:exp2}, not the §\ref{sec:quality}-dimension scores.
 
 \begin{figure}
 \centering

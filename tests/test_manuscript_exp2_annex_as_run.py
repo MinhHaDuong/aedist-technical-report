@@ -143,3 +143,17 @@ def test_references_report_chapter():
     assert "technical report" in annex and "chapter" in annex, (
         "the Exp2 annex must reference the technical report's Exp2 chapter for the inferential analysis"
     )
+
+
+def test_no_phase_c_anywhere():
+    """Ticket 0582 — Phase C does not exist; it must not be mentioned anywhere.
+
+    The cross-model peer cross-evaluation was never run and is not a deferred
+    phase of Experiment 2. Earlier drafts referenced a "Phase C" in §exp2, the
+    discussion, and the annex; all such references are removed. Negative guard
+    (CI polarity rule, ticket 0557): the forbidden token never returns."""
+    text = body()
+    assert "Phase C" not in text, (
+        '"Phase C" still appears in the manuscript body '
+        "(Phase C does not exist — ticket 0582)"
+    )
