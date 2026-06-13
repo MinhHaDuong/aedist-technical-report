@@ -1,0 +1,41 @@
+%erg 0.1
+Title: Verify four new arXiv bib entries author lists and page ranges
+Created: 2026-06-13
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-13T20:18Z HDMX-coding-agent created
+
+--- body ---
+## Context
+PR #1048 (ticket 0589, merged 2026-06-13) rewrote §9 Future Research and added
+four new entries to `report/refs.bib`. The PR body flags that these entries use
+partial author lists (`and others`) for arXiv preprints — author lists and page
+ranges were not verified against the source and must be corrected before final
+typesetting.
+
+## Relevant files
+- `report/refs.bib` — the four entries to verify
+
+## Actions
+1. For each entry, resolve the canonical record (arXiv abstract page / DOI / publisher):
+   - `Zhao-Bo2012:latent-truth`
+   - `Balasubramanian-2026:correlated-judges`
+   - `Sun-2025:skill-aggregation`
+   - `ManriqueVallier-Daniel2016:lcmcr`
+2. Replace each `and others` with the full author list.
+3. Add/correct page ranges, year, venue, and DOI/eprint where missing.
+
+## Verification
+- [ ] No `and others` remains in any of the four entries
+- [ ] Each entry has a verifiable DOI, arXiv eprint, or publisher URL
+- [ ] Author lists match the source exactly
+- [ ] Page ranges present for published (non-preprint) entries
+- [ ] `make` builds the manuscript with no bibtex warnings on these keys
+
+## Invariants
+- Do not rewrite the citation keys (referenced from `main.tex` §9)
+- Existing refs.bib entries untouched
+
+## Exit criteria
+- All four entries verified and corrected against authoritative sources, manuscript rebuilds clean.
