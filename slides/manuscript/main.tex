@@ -708,12 +708,12 @@ hypothesis-relevant rather than decorative: Chinese-language investor
 and trade documents on Vietnamese power assets are under-indexed by
 Western search. Each agent is run through a 2×2 factorial,
 crossing \emph{query mode} (naive vs optimised) with \emph{documents}
-(absent vs a curated reference pack), N=5 per cell — four arms in all
+(absent vs a curated reference pack), N=5 per cell, four arms in all
 (Table~\ref{tbl:exp2-2x2}). The \emph{naive} mode sends a single-shot
 prompt with web search on, the null comparator; the \emph{optimised}
 mode runs a multi-turn protocol in which the agent first designs its
 own prompt and settings, then executes under a per-session cap of 50K
-tokens / \$3, orchestrated by a simple harness — an independent
+tokens / \$3, orchestrated by a simple harness: an independent
 classifier model driving a loop with the tested agent as the tool. The
 naive-vs-optimised contrast isolates the protocol's contribution over
 raw model capability; the documents contrast tests whether a curated
@@ -2085,20 +2085,20 @@ rep per model, read directly and not re-run.
 \addcontentsline{toc}{subsection}{Phase structure}
 
 \textbf{Phase A — Reflexive prompt design (optimised arm).} The
-optimised arm opens with a design call: each agent is shown the same
-inventory specification the naive arm sends — the task, the four
+optimised arm opens with a design call. Each agent is shown the same
+inventory specification the naive arm sends (the task, the four
 §\ref{sec:quality} quality-dimension paragraphs, the source-admissibility
 and confidence rules, all reproduced verbatim as the analysis-cohort
-prompt in \ref{sec:annex-exp1} — and is then asked to design how it will
+prompt in \ref{sec:annex-exp1}), then asked to design how it will
 work the task across the multi-turn Phase B. The agent returns a JSON
 envelope with a \texttt{system\_prompt} (installed at agent creation), a
 \texttt{designed\_prompt} (sent verbatim on turn 1 of Phase B),
 \texttt{settings} (\texttt{thinking}, \texttt{max\_tokens}), and a short
 \texttt{rationale}. Its freedom covers search strategy, source hierarchy,
 confidence discipline, and stopping criteria; the Phase B deliverable
-schema is fixed. The metaprompt that frames this design call — the part
-that differs from the inventory specification it wraps — is reproduced
-verbatim below.
+schema is fixed. The metaprompt that frames this design call, reproduced
+verbatim below, is the part that differs from the inventory
+specification it wraps.
 
 \begin{promptbox}
 \textbf{\# ROLE}

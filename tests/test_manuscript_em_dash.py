@@ -40,7 +40,7 @@ EM_DASH_PARAGRAPH_CAP = 2
 EM_DASH_CEILING_FILE = Path(__file__).resolve().parent / "data" / "emdash_ceiling.txt"
 
 _QUOTED_ENV_RE = re.compile(
-    r"\\begin\{(quote|quotation|verbatim|Verbatim|lstlisting)\}"
+    r"\\begin\{(quote|quotation|verbatim|Verbatim|lstlisting|promptbox)\}"
     r".*?"
     r"\\end\{\1\}",
     re.DOTALL,
