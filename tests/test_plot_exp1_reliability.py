@@ -192,3 +192,44 @@ def test_discriminating_dimensions_are_reference_free_subset() -> None:
     disc = discriminating_dimensions(rows)
     assert set(disc) < set(DIMENSIONS_ALL)
     assert len(disc) >= 5
+
+
+# ── Regression guards: per-family colors and label placement (ticket 0579) ───
+
+_SCRIPT_SRC = Path("src/aedist/plot_exp1_reliability.py").read_text(encoding="utf-8")
+
+
+def test_markers_colored_by_model_family() -> None:
+    """Figure 5 paints each dot by architectural family (ticket 0579 regression).
+
+    Previously every marker used the single COLOR_MATCHED constant, erasing the
+    per-family color axis the exp2 plots carry.  Source-inspection guard: the
+    family-color util is imported and fed the per-point model, and the dropped
+    flat constant is gone.
+    """
+    assert "model_family_color" in _SCRIPT_SRC
+    assert "color=model_family_color(model)" in _SCRIPT_SRC
+    assert "COLOR_MATCHED" not in _SCRIPT_SRC
+
+
+def test_distinct_families_get_distinct_colors() -> None:
+    """The model families present in the CSV map to distinct hex colors."""
+    from aedist.util import model_family, model_family_color
+
+    rel = reliability_by_model(CROSS_EVAL_CSV)
+    by_family = {model_family(m): model_family_color(m) for m in rel}
+    by_family.pop("fallback", None)  # un-attributed models share the fallback hue
+    assert len(by_family) >= 3
+    assert len(set(by_family.values())) == len(by_family)
+
+
+def test_deepseek_v4_flash_label_placed_left() -> None:
+    """deepseek-v4-flash sits in the 4/5 column; its label is nudged left to
+    clear the overlap, via LABEL_SIDE (label only, marker unmoved)."""
+    from aedist.plot_exp1_reliability import JITTER_SIDE, LABEL_SIDE
+
+    assert LABEL_SIDE.get("deepseek-v4-flash") == "left"
+    # Must NOT be in JITTER_SIDE — that would also nudge the marker off its
+    # integer reliability count (markers sit exactly on the count, no jitter
+    # outside the saturated 5/5 column).
+    assert "deepseek-v4-flash" not in JITTER_SIDE

@@ -109,9 +109,13 @@ JITTER_SIDE: dict[str, str] = {
     "mistral-large-2512": "right",
 }
 
-# Author-set label sides outside the jitter pairs.
+# Author-set label sides outside the jitter pairs.  deepseek-v4-flash sits in
+# the 4/5 column (not the saturated 5/5 jitter column), so its label is nudged
+# left via LABEL_SIDE — which moves only the label, never the marker — to clear
+# the overlap with neighbouring labels.
 LABEL_SIDE: dict[str, str] = {
     "qwen3.6-35b-a3b": "left",
+    "deepseek-v4-flash": "left",
 }
 
 
@@ -375,7 +379,7 @@ def make_figure(csv_path: Path, output: Path) -> None:
     import matplotlib.pyplot as plt
 
     from .evaluate import reference_plant_count
-    from .util import COLOR_MATCHED
+    from .util import model_family_color
 
     rel = reliability_by_model(csv_path)
     acc = mean_f1_good_by_model(csv_path)
@@ -401,7 +405,14 @@ def make_figure(csv_path: Path, output: Path) -> None:
                 # is the <= one-dot-radius horizontal nudge for the author-set
                 # near-coincident pairs in the saturated column.
                 x = count + (sign * _DOT_RADIUS_X if model in JITTER_SIDE else 0.0)
-                ax.plot(x, acc[model], "o", markersize=6, color=COLOR_MATCHED, zorder=3)
+                ax.plot(
+                    x,
+                    acc[model],
+                    "o",
+                    markersize=6,
+                    color=model_family_color(model),
+                    zorder=3,
+                )
                 ax.annotate(
                     model,
                     xy=(x, acc[model]),
