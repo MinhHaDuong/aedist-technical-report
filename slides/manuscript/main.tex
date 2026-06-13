@@ -126,35 +126,29 @@ benchmark suites that rank today's systems \citep{Hendrycks-Dan2021:mmlu,
 Ni-Shiwen2025:llm-benchmark-survey}; this paper extends the practice to
 national statistical registers.
 
-This paper makes three contributions, each reusable beyond the
-Vietnamese case. The first is the benchmark itself: to our knowledge,
-the first sourced evaluation of AI agents on national power-plant
-inventory construction, scored against a hand-compiled, fully sourced
-reference, with per-row citation coverage and corroboration measured
-(the paper counts and checks the presence of citations; it does not
-verify each cited source against each cell). We use \emph{benchmark}
-in the narrow sense: a frozen task definition, a public gold
-reference, and a computable metric — not a suite or a leaderboard —
-and the design measures training-data contamination as a
-parametric ceiling rather than trying to prevent it. The second is a
-four-dimension quality bar: per-row scoring of LLM-generated
-statistical tables on accuracy, coherence, provenance, and
-temporality. The third is two-grain credibility/reliability scoring:
-a run-level credibility screen and a model-level reliability grade,
-by analogy with the NATO Admiralty grading of STANAG 2511, which
-rates the credibility of each report separately from the reliability
-of its source.
+Our contribution is the benchmark, reusable beyond the Vietnamese
+case: to our knowledge, the first sourced evaluation of AI agents on
+national power-plant inventory construction, scored against a
+hand-compiled, fully sourced reference. We use \emph{benchmark} in the
+narrow sense of a frozen task definition, a public gold reference, and
+a computable metric, not a suite or a leaderboard; the design measures
+training-data contamination as a parametric ceiling rather than trying
+to prevent it. The computable metric is a four-dimension quality score:
+per-row scoring of an LLM-generated statistical table on accuracy,
+coherence, provenance, and temporality, with citation coverage and
+corroboration measured. The paper counts and checks the presence of
+citations; it does not verify each cited source against each cell.
 
-Three empirical results stand out. First, the task is hard for
-today's AI systems: neither model memory nor web access yields a
-complete, well-sourced register, and a harness that lets the agents
-plan and execute a multi-step reply degrades rather than improves the
-result for three of the four agents. Second, reference-free coherence criteria suffice to screen
-out the weakest runs. Third, targeted pipeline design narrows the
-gap: provisioning the agents with a curated document set improves
-coverage, and fusion reuses existing runs to good effect — pooling
-runs across models more than doubles recall, while requiring
-cross-model agreement nearly eliminates false positives.
+We find the task hard for today's AI systems. Across fourteen language
+models answering from memory and four agentic systems with web access,
+neither model memory nor web access yields a complete, well-sourced
+register, and a harness that lets the agents plan and execute a
+multi-step reply degrades rather than improves the result for most of
+them. The benchmark earns its keep by being usable without the gold
+reference: reference-free coherence criteria suffice to screen out the
+weakest runs and the weakest models, so the cheap part of the quality
+score can stand in for the expensive part when triaging which outputs
+deserve human attention.
 
 We situate the work against the existing open
 power-plant databases (§\ref{sec:related-empirical}), define a
