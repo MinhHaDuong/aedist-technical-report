@@ -1842,13 +1842,12 @@ graph with unit capacities. Province and fuel are deliberately excluded
 from the matching cost; they are scored separately as cell-level
 attribute accuracy on the matched pairs.
 
-The one-to-one assignment is a known limitation: when a reference entry
-names a power centre while the model enumerates its individual units
-(e.g.\ ``Kiên Giang~1 \& 2'' reported as a single row), the combined
-row cannot simultaneously match both reference units and is recorded as
-a false positive. A post-hoc audit of Exp.~2 false positives identified
-five such aggregate-vs-split cases; they are classified as
-reconciliation artefacts rather than model hallucination.
+The one-to-one assignment is a known limitation: when a model reports
+two units as a single combined row (e.g.\ ``Kiên Giang~1 \& 2''), the
+row can match at most one of the two reference entries and the other is
+recorded as a false positive. A post-hoc audit of Exp.~2 false
+positives identified five such combined-unit cases; they are classified
+as reconciliation artefacts rather than model hallucination.
 
 Metrics recorded per run:
 
