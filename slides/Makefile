@@ -46,7 +46,8 @@ MANUSCRIPT_ASSETS := \
 	$(LOCAL_ROOT_REPORT_GEN)/tab_status_difficulty_en.tex \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_capability_timeline.pdf \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_capability_dag.pdf \
-	$(LOCAL_ROOT_REPORT_GEN)/fig_exp2_arms_comparison.pdf \
+	$(LOCAL_ROOT_REPORT_GEN)/fig_exp2_arms_coverage.pdf \
+	$(LOCAL_ROOT_REPORT_GEN)/fig_exp2_arms_cost.pdf \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_exp2_coverage_certainty.pdf \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_fusion_mvp.pdf \
 	$(LOCAL_ROOT_REPORT_GEN)/fig_exp1_recognition_matrix_portrait.pdf \

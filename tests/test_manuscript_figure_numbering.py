@@ -30,6 +30,9 @@ pytestmark = pytest.mark.adherence
 # Ticket 0507: the reliability-vs-accuracy scatter replaces the quality-floor
 # heatmap as the section-4 headline quality figure.
 # Ticket 0540: the fusion-MVP figure moved to the fusion annex (becoming S5).
+# Ticket 0583: the Exp2 arms two-panel figure split into two single-panel
+# figures — coverage (fig:exp2-arms) then cost (fig:exp2-arms-cost) — so the
+# main body now ends at Figure 7.
 EXPECTED_MAIN = [
     "fig:longtail",
     "fig:capability-timeline",
@@ -37,6 +40,7 @@ EXPECTED_MAIN = [
     "fig:cost-quality",
     "fig:reliability",
     "fig:exp2-arms",
+    "fig:exp2-arms-cost",
 ]
 
 # Expected supplementary figure labels, in the order that yields S1..S5. The
@@ -94,6 +98,16 @@ def test_reliability_in_text_heatmap_in_annex() -> None:
     assert "fig_exp1_reliability" in body_part, "reliability scatter not in main text"
     assert "fig_quality_floor_heatmap_exp1" not in body_part, "heatmap still in main text"
     assert "fig_quality_floor_heatmap_exp1" in annex, "heatmap not in annex"
+
+
+def test_exp2_2x2_table_in_annex() -> None:
+    """Ticket 0583: the 2×2 F1/cost table moved from §exp2 body to the annex."""
+    text = body_raw()
+    parts = text.split("\n\\appendix\n", 1)
+    assert len(parts) == 2, "no \\appendix divider found in main.tex"
+    body_part, annex = parts
+    assert "tbl:exp2-2x2" not in body_part, "2×2 table label still in main text body"
+    assert "tbl:exp2-2x2" in annex, "2×2 table not relocated to annex"
 
 
 def test_no_hand_typed_figure_numbers_in_captions() -> None:
