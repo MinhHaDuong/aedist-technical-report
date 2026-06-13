@@ -395,7 +395,96 @@ def load_exp1_flagship_means(exp1_cross_eval_csv: Path) -> dict[str, float]:
     return {agent: statistics.fmean(vals) for agent, vals in scores.items()}
 
 
-def write_macros(collapsed: dict, exp1_means: dict[str, float], output: Path) -> None:
+# Median row-count and cost macros for the §exp2 coverage paragraph
+# (ticket 0575). Naming mirrors the F1 macros (letters-only parts, tectonic
+# truncates control words at digits): \ExpTwoRows<Agent><Arm>,
+# \ExpTwoRowsMin/Max<Agent><Arm>, \ExpTwoCost<Agent><Arm>. The prose only
+# quotes a subset; we emit them all so any future sentence is already sourced.
+def load_run_rows_and_cost(flat_root: Path) -> dict[tuple[str, str], dict]:
+    """Per-(agent, arm) report-run inventory-row counts and costs from flat dirs.
+
+    The §exp2 coverage paragraph quotes *medians* of the table-row count and
+    of the per-run cost, computed over the runs the figure classifies as
+    reports (``classification == "report"``) — the same projection
+    ``plot_exp2_arms_comparison`` draws. Row counts come from the committed
+    ``*.md`` sibling via ``count_best_table_rows`` (the flat JSON has no
+    ``inventory_rows`` field); cost comes from the JSON. Both inputs are
+    tracked sources, so the macro values are recomputable from git.
+    """
+    from .extract import count_best_table_rows
+
+    groups: dict[tuple[str, str], dict[str, list]] = defaultdict(
+        lambda: {"rows": [], "costs": []}
+    )
+    for arm in _ARMS:
+        arm_dir = flat_root / _ARM_FLAT_DIR_NAME[arm]
+        for json_path in sorted(arm_dir.glob("*_run*.json")):
+            meta = json.loads(json_path.read_text(encoding="utf-8"))
+            agent = meta.get("agent")
+            if agent not in _AGENT_ORDER:
+                continue
+            if str(meta.get("classification") or "report") != "report":
+                continue
+            rows_val = next(
+                (meta[k] for k in ("inventory_rows", "n_rows") if isinstance(meta.get(k), int)),
+                None,
+            )
+            if rows_val is None:
+                md_path = json_path.with_suffix(".md")
+                rows_val = (
+                    count_best_table_rows(md_path.read_text(encoding="utf-8"))
+                    if md_path.exists()
+                    else 0
+                )
+            cost = next((meta[k] for k in _COST_KEYS if meta.get(k) is not None), None)
+            grp = groups[(agent, arm)]
+            grp["rows"].append(int(rows_val))
+            if cost is not None:
+                grp["costs"].append(float(cost))
+
+    out: dict[tuple[str, str], dict] = {}
+    for key, grp in groups.items():
+        rows = grp["rows"]
+        costs = grp["costs"]
+        out[key] = {
+            "rows_median": statistics.median(rows) if rows else None,
+            "rows_min": min(rows) if rows else None,
+            "rows_max": max(rows) if rows else None,
+            "cost_median": statistics.median(costs) if costs else None,
+        }
+    return out
+
+
+def _rows_cost_macro_lines(stats: dict[tuple[str, str], dict]) -> list[str]:
+    """`\\newcommand` lines for the row-count and cost median macros."""
+    lines: list[str] = []
+    for agent in _AGENT_ORDER:
+        for arm in _ARMS:
+            cell = stats.get((agent, arm))
+            if cell is None:
+                continue
+            a, m = _MACRO_AGENT[agent], _MACRO_ARM[arm]
+            if cell["rows_median"] is not None:
+                # Medians of integer counts are whole or .5; the prose quotes
+                # whole-number medians, so emit with no decimal when integral.
+                med = cell["rows_median"]
+                med_str = f"{med:.0f}" if float(med).is_integer() else f"{med:g}"
+                lines.append(f"\\newcommand{{\\ExpTwoRows{a}{m}}}{{{med_str}}}")
+                lines.append(f"\\newcommand{{\\ExpTwoRowsMin{a}{m}}}{{{cell['rows_min']}}}")
+                lines.append(f"\\newcommand{{\\ExpTwoRowsMax{a}{m}}}{{{cell['rows_max']}}}")
+            if cell["cost_median"] is not None:
+                lines.append(
+                    f"\\newcommand{{\\ExpTwoCost{a}{m}}}{{{cell['cost_median']:.2f}}}"
+                )
+    return lines
+
+
+def write_macros(
+    collapsed: dict,
+    exp1_means: dict[str, float],
+    output: Path,
+    rows_cost_stats: dict[tuple[str, str], dict] | None = None,
+) -> None:
     """Flat F1 macros for the §exp2 prose (tickets 0531/0572).
 
     One 2-dp macro per (agent, arm) mean — ``\\ExpTwoFOneQwenDocsSingle`` —
@@ -445,6 +534,9 @@ def write_macros(collapsed: dict, exp1_means: dict[str, float], output: Path) ->
         lines.append(
             f"\\newcommand{{\\ExpTwoFOneDocsConvergence}}{{{statistics.fmean(rest):.2f}}}"
         )
+
+    if rows_cost_stats is not None:
+        lines.extend(_rows_cost_macro_lines(rows_cost_stats))
 
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text("\n".join(lines) + "\n", encoding="utf-8")
@@ -528,7 +620,12 @@ def main(argv: list[str] | None = None) -> None:
         args.output_agents_tex.write_text(render_agents_tex(collapsed), encoding="utf-8")
         log.info("Wrote %s", args.output_agents_tex)
     if args.output_macros is not None:
-        write_macros(collapsed, load_exp1_flagship_means(args.exp1_cross_eval), args.output_macros)
+        write_macros(
+            collapsed,
+            load_exp1_flagship_means(args.exp1_cross_eval),
+            args.output_macros,
+            rows_cost_stats=load_run_rows_and_cost(args.flat_root),
+        )
 
     _log_tables(cells, f1_eff, cost_eff)
     log.info("Wrote %s and %s", args.output_csv, args.output_tex)
