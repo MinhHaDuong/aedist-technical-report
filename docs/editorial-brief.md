@@ -255,18 +255,27 @@ immutable.
 
 ## intro-contributions-runin
 
-**Decision:** §1 closes with the contributions woven into prose (author
-intro restructure, 2026-06-12, PR #1023); the earlier bold
-"Contributions." run-in label with a three-item list (0513) is no longer
-pinned. CI keeps only the negative guard: contributions never get their
-own section heading.
+**Decision:** §1 contributes a single thing — THE BENCHMARK — woven
+into prose, never a three-contributions-plus-three-results enumeration
+(reading-2 finding 27, ticket 0580). The four-dimension quality score
+is presented as the benchmark's computable metric, not as a separate
+contribution. The intro drops the two-grain credibility/reliability
+framing and the STANAG 2511 / NATO Admiralty vocabulary (those live in
+the screening subsection `sec:ext-screen`, pinned by entry
+novelty-two-grain) and drops the "targeted pipeline design narrows the
+gap" framing. The screening message reads as "reference-free criteria
+suffice to screen out the weakest runs and models". The earlier bold
+"Contributions." run-in label with a three-item list (0513) is no
+longer pinned. CI keeps only the negative guard: contributions never
+get their own section heading.
 
-**Rationale:** Authorial phrasing/structure choice — positive pin
-demoted per the CI polarity rule (0557). The framing history lives here,
-not in a test.
+**Rationale:** Authorial phrasing/structure choice — positive pins
+demoted per the CI polarity rule (0557). One-contribution framing reads
+as a focused benchmark paper rather than a checklist; the framing
+history lives here, not in a test.
 
-**Ticket:** 0513; demoted during PR #1023 gate (residual missed by 0559
-sweep, which covered test_manuscript_0512_structure.py only).
+**Ticket:** 0580 (one-page benchmark rework); 0513 (earlier run-in
+demotion during PR #1023 gate).
 
 **Status:** active
 
