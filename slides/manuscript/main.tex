@@ -1827,19 +1827,30 @@ report ours as an observation rather than a primacy claim.
 \subsection*{Evaluation}
 \addcontentsline{toc}{subsection}{Evaluation}
 
-Each run is evaluated against the reference by
-\texttt{src/aedist/evaluate.py}. Plant pairs are matched by
-mixed-integer linear programming (MILP) — the LP matcher in
-\texttt{src/aedist/matching/lp.py} (ADR-2) — minimising a cost that
-combines (i) rapidfuzz \texttt{partial\_ratio} name similarity, with
-candidate pairs requiring \texttt{similarity\_threshold\ ≥\ 90} (integer
-0--100 scale), and (ii) a small capacity-difference term
-(\texttt{capacity\_weight\ ·\ |Δcapacity\_MWe|},
-default weight 0.001). Province and fuel are deliberately not part of
-the matching cost (ADR-3); they are scored separately as cell-level
-attribute accuracy on the matched pairs. The optimal one-to-one
-assignment is then solved globally rather than picked greedily. Metrics
-recorded per run:
+Each run is evaluated against the reference using a minimum-cost
+bipartite assignment formulated as a mixed-integer linear programme
+(LP~matcher). Each candidate pair $(i,j)$ receives a cost combining
+(i)~a name-similarity term — zero for exact matches, one when the
+\texttt{partial\_ratio} score reaches~90 on the integer 0--100 scale,
+and a large penalty otherwise — and (ii)~a small capacity-difference
+term (default weight $10^{-3}$ per MWe). Binary slack variables allow
+any record to be left unmatched at a fixed penalty rather than forced
+into a poor pairing; the global optimum is found by a branch-and-bound
+solver rather than greedily. This formulation is mathematically
+equivalent to a minimum-cost flow problem on a bipartite supply-demand
+graph with unit capacities. Province and fuel are deliberately excluded
+from the matching cost; they are scored separately as cell-level
+attribute accuracy on the matched pairs.
+
+The one-to-one assignment is a known limitation: when a reference entry
+names a power centre while the model enumerates its individual units
+(e.g.\ ``Kiên Giang~1 \& 2'' reported as a single row), the combined
+row cannot simultaneously match both reference units and is recorded as
+a false positive. A post-hoc audit of Exp.~2 false positives identified
+five such aggregate-vs-split cases; they are classified as
+reconciliation artefacts rather than model hallucination.
+
+Metrics recorded per run:
 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
