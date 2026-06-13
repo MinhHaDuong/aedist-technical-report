@@ -230,6 +230,102 @@ def test_stale_review_literals_gone():
         assert needle not in text, f"stale literal {needle!r} back in main.tex"
 
 
+def _exp2_section() -> str:
+    """The §exp2 section body (unexpanded), bounded by its label."""
+    text = _unexpanded_body()
+    start = text.find("\\label{sec:exp2}")
+    assert start != -1, "no \\label{sec:exp2} in main.tex body"
+    nxt = re.search(r"\\section\*?\{", text[start:])
+    return text[start : start + nxt.start()] if nxt else text[start:]
+
+
+# Independent re-derivation of the §exp2 row-count and cost medians from the
+# committed flat arm dirs — a DIFFERENT parse than the emitter (its own arm
+# map, its own report filter), so the fragment is checked against the data,
+# never against the emitter (ticket 0575).
+_FLAT_ARM_DIRS = {
+    "naive": "arm1_flat",
+    "optimised": "arm2_flat",
+    "arm3": "arm3_flat",
+    "arm4": "arm4_flat",
+}
+_COST_FIELDS = ("total_cost_usd", "cost_usd")
+
+
+def _flat_rows_cost(agent: str, arm: str) -> tuple[list[int], list[float]]:
+    import json
+
+    from aedist.extract import count_best_table_rows
+
+    arm_dir = REPO_ROOT / "experiments" / "derived" / _FLAT_ARM_DIRS[arm]
+    if not arm_dir.exists():
+        pytest.skip(f"{arm_dir} not present")
+    rows: list[int] = []
+    costs: list[float] = []
+    for jp in sorted(arm_dir.glob("*_run*.json")):
+        meta = json.loads(jp.read_text(encoding="utf-8"))
+        if meta.get("agent") != agent:
+            continue
+        if str(meta.get("classification") or "report") != "report":
+            continue
+        n = next((meta[k] for k in ("inventory_rows", "n_rows") if isinstance(meta.get(k), int)), None)
+        if n is None:
+            md = jp.with_suffix(".md")
+            n = count_best_table_rows(md.read_text(encoding="utf-8")) if md.exists() else 0
+        rows.append(int(n))
+        cost = next((meta[k] for k in _COST_FIELDS if meta.get(k) is not None), None)
+        if cost is not None:
+            costs.append(float(cost))
+    return rows, costs
+
+
+@pytest.mark.parametrize(
+    "agent,arm",
+    [
+        ("anthropic", "naive"),
+        ("mistral", "naive"),
+        ("openai", "naive"),
+        ("qwen", "naive"),
+        ("openai", "optimised"),
+        ("qwen", "optimised"),
+    ],
+)
+def test_exp2_rowcount_macros_match_flat_data(agent, arm):
+    """Ticket 0575: each \\ExpTwoRows*/Min/Max macro equals the median /
+    min / max table-row count re-derived from the committed flat dirs."""
+    rows, _ = _flat_rows_cost(agent, arm)
+    assert rows, f"no report runs for {agent}/{arm}"
+    macro_agent = {"anthropic": "Anthropic", "mistral": "Mistral", "openai": "OpenAI", "qwen": "Qwen"}[agent]
+    macro_arm = {"naive": "Naive", "optimised": "Optimised"}[arm]
+    med = statistics.median(rows)
+    med_str = f"{med:.0f}" if float(med).is_integer() else f"{med:g}"
+    assert _macro(f"ExpTwoRows{macro_agent}{macro_arm}") == med_str
+    assert _macro(f"ExpTwoRowsMin{macro_agent}{macro_arm}") == str(min(rows))
+    assert _macro(f"ExpTwoRowsMax{macro_agent}{macro_arm}") == str(max(rows))
+
+
+@pytest.mark.parametrize("agent", ["openai"])
+def test_exp2_cost_macros_match_flat_data(agent):
+    """Ticket 0575: \\ExpTwoCost*Naive/Optimised equals the median per-run
+    cost re-derived from the committed flat dirs (2-dp)."""
+    macro_agent = {"openai": "OpenAI"}[agent]
+    for arm, macro_arm in (("naive", "Naive"), ("optimised", "Optimised")):
+        _, costs = _flat_rows_cost(agent, arm)
+        assert costs, f"no costs for {agent}/{arm}"
+        assert _macro(f"ExpTwoCost{macro_agent}{macro_arm}") == f"{statistics.median(costs):.2f}"
+
+
+def test_exp2_no_handtyped_coverage_medians():
+    """Ticket 0575: no hand-typed 'median NN rows' or 'median \\$N.NN' in the
+    §exp2 coverage prose — they must flow through \\ExpTwoRows*/\\ExpTwoCost*
+    macros (negative guard, 0557 polarity rule)."""
+    sec = _exp2_section()
+    bad_rows = re.findall(r"median\s+\d+\s+rows", sec)
+    assert not bad_rows, f"hand-typed row-count median back in §exp2: {bad_rows}"
+    bad_cost = re.findall(r"median\s+\\\$\d", sec)
+    assert not bad_cost, f"hand-typed cost median back in §exp2: {bad_cost}"
+
+
 def test_exp2_no_handtyped_f1_pairs():
     """Ticket 0572: §exp2 F1 value pairs flow from macros_exp2_f1.tex — a
     hand-typed '0.xx to 0.yy' pair in the UNexpanded source is a literal
