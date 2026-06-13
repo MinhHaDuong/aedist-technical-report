@@ -434,11 +434,6 @@ integration:
   includes the model itself.
 \end{itemize}
 
-Each integration targets one or more of the §\ref{sec:quality} quality
-limits; none addresses all four. The detailed per-lab shipping
-order — feature parallelism, the deep-research dependency, and the
-DeepSeek negative case — is given in \ref{sec:annex-rollout}.
-
 Below these integrations sits \emph{articulation} — the craft of
 casting the problem into a query the system can answer. The
 articulation is double: the problem must be cast as the analyst's
@@ -497,11 +492,28 @@ every per-model number, Figure~\ref{fig:direct-base},
 Figure~\ref{fig:cost-quality}, and Figure~\ref{fig:reliability}. Every
 figure caption below names the cohort it draws on.
 
+\begin{figure}[p]
+\centering
+\includegraphics[width=\linewidth]{../../report/inputs/generated/fig_direct_p1_base.pdf}
+\caption{No model approaches the full inventory from memory, and
+repeated identical queries return different plants. Direct-query
+performance across \NumCensusModels{} models and \CensusNumRuns{} runs on the \NumRefPlants-plant Vietnam
+thermal reference: each bar is one run; family-coloured segments to the
+right are correctly identified plants (TP), red segments to the left are
+unmatched plants (FP: extracted but not in the reference). The dashed
+green line marks the \NumRefPlants-plant reference; the light-grey dotted line
+marks Wikipedia's light-reviewed coverage of all \NumRefPlants{} reference plants
+(\WikiReviewedPct\%, \WikiReviewed/\NumRefPlants) —
+the answer key every model should recover, since that content sat
+in the training corpus. Models grouped on the vertical
+axis.}\label{fig:direct-base}
+\end{figure}
+
 \textbf{Experiment 1 — Parametric baseline.} We query fourteen
-language models from the \emph{modelset\_exp1\_batch2} set, spanning
-three language families (EN/FR/ZH) and five laboratories from mid-range
-through frontier-class systems, with a fixed inventory-specification
-prompt (the full Doc-07 naive prompt,
+language models from the \emph{modelset\_exp1\_batch2} set; they are
+listed on Figure~\ref{fig:reliability} and include Claude, DeepSeek,
+Mistral and Qwen at various sizes from workstation to frontier, with a
+fixed inventory-specification prompt (the full Doc-07 naive prompt,
 \texttt{experiments/sota/protocol\_07\_naive\_prompt.md}, reproduced
 verbatim in \ref{sec:annex-exp1}). No documents are
 provided; models draw exclusively on parametric knowledge and receive a
@@ -514,9 +526,12 @@ row-level precision, recall, and F1; fuel type, operational status, and
 province accuracy are scored at the cell level for matched rows. Cost in
 USD and wall-clock time are recorded per run.
 
-\textbf{A seeded recall bar: the answer key was already in the training
-corpus.} These scores need an upper bound the reader can judge them
-against. Before the experiment, the author's group published a
+\textbf{An answer key already in the training corpus.} These scores
+need an upper bound the reader can judge them against. We call that
+upper bound the \emph{answer key}: the share of the reference a model
+could have recovered from public training text alone, because the
+content was already there to read. Before the experiment, the author's
+group published a
 derivative of the reference (the MOIT/PDP8 coal plant list) on
 Wikipedia; the experimental protocol therefore bans Wikipedia as a
 \emph{justification} source (compliance audit in \ref{sec:annex-exp2}),
@@ -530,26 +545,25 @@ increasing its coverage; verifiable in the page history, revision
 \texttt{902510278}), and \emph{List of coal power stations in Vietnam}
 was split off on 5 July 2019 (provenance and diff in
 \texttt{data/reference/PROVENANCE.md}). Both events predate the 2026-era
-model cohort by roughly six and a half years (comfortably before any
-plausible training cutoff), so the bar's validity is not in doubt for
-the cohort; we report the comparison directionally because the project
-does not record per-model cutoff dates.
+model cohort by roughly six and a half years, so the answer key's
+validity is not in doubt for the cohort; we report the comparison
+directionally because the project does not record per-model cutoff
+dates.
 
 One caveat on coverage: the
-built fleet (operating, retired) has been on these pages since mid-2019
-and is firmly inside every cutoff, while much of the forward-looking
+built fleet (operating, retired) has been on these pages since mid-2019,
+while much of the forward-looking
 pipeline is PDP8-era (post-2019) content added after the June 2019
-injection, so those rows may postdate some cutoffs. The recall bar is
-therefore solidly substantiated for the built fleet and an upper-bound
+injection, so those rows may postdate some cutoffs. The answer key is
+therefore firm for the built fleet and an upper-bound
 heuristic for the pipeline tail. Wikipedia coverage of the reference is
-thus the recall bar a competent parametric model ought to clear — the
-answer key was placed directly in the training corpus — and grading
-recall against it is not circular, because the bar measures retrieval,
-not justification. The bar has two regimes (light-reviewed,
+thus the answer key a competent parametric model ought to recover, and
+grading recall against it is not circular, because it measures retrieval,
+not justification. The answer key has two regimes (light-reviewed,
 \ref{sec:annex-exp1}): the built fleet is covered at a 92\% mean
 (operating 95\%, construction 80\%, permitted 100\%), while the
 forward-looking pipeline sits at 55\% (proposed and announced; 73\%
-aggregate). Scoring below the built-fleet bar is therefore not missing
+aggregate). Scoring below the built-fleet level is therefore not missing
 obscure facts: it is failing to retrieve knowledge demonstrably
 present in the training corpus. The pipeline tail, which even Wikipedia
 barely carries, is the reference's unique contribution; no parametric
@@ -595,23 +609,6 @@ in the Discussion.
 
 \begin{figure}
 \centering
-\includegraphics[width=\linewidth]{../../report/inputs/generated/fig_direct_p1_base.pdf}
-\caption{No model approaches the full inventory from memory, and
-repeated identical queries return different plants. Direct-query
-performance across \NumCensusModels{} models and \CensusNumRuns{} runs on the \NumRefPlants-plant Vietnam
-thermal reference: each bar is one run; family-coloured segments to the
-right are correctly identified plants (TP), red segments to the left are
-unmatched plants (FP: extracted but not in the reference). The dashed
-green line marks the \NumRefPlants-plant reference; the light-grey dotted line
-marks Wikipedia's light-reviewed coverage of all \NumRefPlants{} reference plants
-(\WikiReviewedPct\%, \WikiReviewed/\NumRefPlants) —
-the seeded recall bar every model should clear, since that content sat
-in the training corpus. Models grouped on the vertical
-axis.}\label{fig:direct-base}
-\end{figure}
-
-\begin{figure}
-\centering
 \includegraphics[width=\linewidth]{../../report/inputs/generated/fig_direct_cost_quality.pdf}
 \caption{Paying more per call does not buy a proportionally better
 inventory. Plants correctly identified vs cost per call across the
@@ -629,10 +626,11 @@ shapes, colour palette, the per-rep cohort split, and the audit artifact
 
 \textbf{A reference-free reliability grade separates the cohort.} The
 §\ref{sec:quality} quality bar yields a model-level \emph{reliability}
-grade that needs no reference data: call a run \emph{good} when it
-scores zero on none of the twelve reference-free quality dimensions
-(every dimension except the accuracy ones, which require the reference),
-and grade each model by its count of good runs out of five.
+grade that needs no reference data: call a run \emph{bad} when it
+scores zero on at least one of the twelve reference-free quality
+dimensions (every dimension except the accuracy ones, which require the
+reference), call the rest \emph{good}, and grade each model by its count
+of good runs out of five.
 Figure~\ref{fig:reliability} plots this grade against reference-based
 accuracy. The cohort splits cleanly: nine models deliver four or five
 good runs and F1 means of 0.41--0.67, while five models deliver at most
@@ -653,8 +651,8 @@ zeroes) is the quality-floor heatmap, also in \ref{sec:annex-exp1}.
 \caption{Inaccurate models are also unreliable — and a reference-free
 screen can reject them. Model-level reliability vs accuracy for
 Experiment 1 (14 models × 5 runs). X axis: reliability, the count of
-good runs out of five, where a good run scores zero on none of the
-twelve reference-free quality dimensions — computable without any
+good runs out of five, where a run is bad if it scores zero on at least
+one of the twelve reference-free quality dimensions and good otherwise — computable without any
 reference data. Y axis: accuracy, the mean row-level F1 against the
 \NumRefPlants-plant reference over the good runs; for the three models with zero
 good runs (claude-haiku-4.5, gpt-oss-20b, qwen3.6-35b-a3b), no good run
@@ -2590,6 +2588,18 @@ perpendicular to it. And the consumer-product methodology excludes the
 military and dual-use deployment track: a parallel trajectory operating
 at comparable capability levels, now routine front-page news, that the
 commercial-product framing does not capture and does not claim to.
+
+\textbf{An emerging surface beyond the eight features.} A capability is
+forming at the edge of this schema that the tool-affordance ladder does
+not yet index: models that swarm, orchestrate, and act as a team —
+multiple agents dividing a task, delegating sub-goals, and reconciling
+their partial results into one answer. The fusion experiment
+(§\ref{sec:exp2}) already exercises a primitive form of this by pooling
+independent runs after the fact; a native multi-agent surface would
+internalise that coordination inside the system rather than leaving it to
+the harness. We note the trend without scoring it: no feature in this
+annex measures team behaviour, and the experiments here query single
+agents.
 
 \clearpage
 
