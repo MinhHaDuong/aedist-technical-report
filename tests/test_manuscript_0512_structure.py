@@ -34,24 +34,24 @@ def test_empirical_related_work_section_exists():
 
 
 def test_future_research_section_absorbs_methods_review():
-    """Ticket 0562 (tracker 0560): the methods review is the opening of a
-    numbered Future research section ("lessons from the field"), followed by
-    the research programme; the unnumbered 'Related Work — Methods' section
-    is gone. This replaces the 0512 pin (unnumbered methods RW before the
-    Conclusion) with the new author-approved decision."""
+    """Ticket 0562 (tracker 0560): the methods review is absorbed into the
+    numbered Future research section; the unnumbered 'Related Work — Methods'
+    section is gone. Ticket 0589 (Finding 41): the juxtaposed literature blocks
+    are replaced by research axes with woven literature — the old bridge
+    paragraph 'From lessons to programme' must be gone."""
     text = body()
     assert "\\section*{Related Work" not in text, (
         "unnumbered 'Related Work — Methods' section must be gone: the "
-        "methods review now opens the numbered Future research section "
+        "methods review now lives inside the numbered Future research section "
         "(ticket 0562)"
     )
     assert "\\section{Future research}\\label{sec:future}" in text, (
         "numbered, labelled Future research section missing (ticket 0562)"
     )
     future = section("sec:future")
-    assert "Petroni-Fabio2019:lm-as-kb" in future, (
-        "Future research must absorb the methods review (lessons from the "
-        "field) — Petroni et al. citation missing from the section"
+    assert "From lessons to programme" not in future, (
+        "Ticket 0589 (Finding 41): literature is woven into the research axes; "
+        "the old 'From lessons to programme' bridge paragraph must be gone"
     )
 
 
