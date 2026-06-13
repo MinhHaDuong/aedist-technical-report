@@ -2096,9 +2096,11 @@ envelope with a \texttt{system\_prompt} (installed at agent creation), a
 \texttt{settings} (\texttt{thinking}, \texttt{max\_tokens}), and a short
 \texttt{rationale}. Its freedom covers search strategy, source hierarchy,
 confidence discipline, and stopping criteria; the Phase B deliverable
-schema is fixed. The metaprompt that frames this design call, reproduced
-verbatim below, is the part that differs from the inventory
-specification it wraps.
+schema is fixed. The metaprompt that frames this design call is
+reproduced below verbatim, with one elision: the shared inventory
+specification it wraps (deliverable structure, quality dimensions,
+source-quality and confidence rules) is identical to the naive-arm
+prompt in \ref{sec:annex-exp1} and is marked but not repeated.
 
 \begin{promptbox}
 \textbf{\# ROLE}
@@ -2120,35 +2122,55 @@ hierarchy, confidence rules, budget discipline, and stopping criteria —
 the Phase B deliverable schema and structure are fixed by this prompt.
 The designed Phase B prompt must be operational, not philosophical.
 
-[The Phase B deliverable specification, quality dimensions, source-quality
-management, calibrated confidence vocabulary, and asset-row rules follow
-here verbatim and are identical to the naive-arm prompt reproduced in
-\ref{sec:annex-exp1}.]
+[\,Elided: the Phase B deliverable specification, quality dimensions,
+source-quality management, calibrated confidence vocabulary, and
+asset-row rules — identical to the naive-arm prompt reproduced in
+\ref{sec:annex-exp1}.\,]
 
 \textbf{\# FORMAT}
 
 Return ONLY a single JSON object with this exact shape:
-\texttt{system\_prompt}, \texttt{designed\_prompt},
-\texttt{settings} (\texttt{thinking}, \texttt{max\_tokens},
-\texttt{rationale\_for\_settings}), \texttt{rationale} (2--4 sentences
-naming which of the four quality dimensions your changes target and how).
+
+{\footnotesize
+\begin{verbatim}
+{
+  "system_prompt": "<the system prompt you want installed on yourself
+                     at agent-create time>",
+  "designed_prompt": "<the user-side prompt you want sent to yourself
+                       verbatim on turn 1 of Phase B>",
+  "settings": {
+    "thinking": true_or_false,
+    "max_tokens": <int>,
+    "rationale_for_settings": "<short string>"
+  },
+  "rationale": "<2-4 sentences naming which of the four quality
+                 dimensions your changes target and how>"
+}
+\end{verbatim}
+}
+
 Output ONLY the JSON object. No markdown fence, no prose around it.
 
 \textbf{\# CONTEXT — Budget}
 
 Phase B has a two-dimensional budget per session: 50,000 tokens of model
-generation (visible output + internal thinking, summed across turns) and
-a \$3.00 dollar guard (everything the provider bills). Whichever cap
+generation (visible output + internal thinking / reasoning tokens,
+summed across all your turns in that session) and a \$3.00 dollar guard
+(everything the provider bills: tokens at all rates + per-call
+web\_search fees + connector tokens at connector rates). Whichever cap
 reaches 20\% of its initial value first triggers a terminal reply. Web
-search, connector, and document-fetch payload count toward the dollar
-guard but not the token cap. Phase A has a separate \$1 ceiling.
+search input/output, connector tokens, and document-fetch payload do not
+count toward the 50,000-token cap — those are retrieval payload, not
+your generation. They do count toward the \$3 dollar guard. Phase A (this
+turn) has a separate \$1 ceiling.
 
 \textbf{\# CONTEXT — Planning headroom}
 
 Up to three turns of planning/search before the verify pass. Don't aim to
 produce the inventory on turn 1 — use early turns to search, decompose,
-and surface uncertainty. After your first turn classified as a report,
-you get one verify-and-polish pass, then the conversation ends.
+and surface uncertainty. The harness prompts you up to three times while
+no report is present. After your first turn classified as a report, you
+get one verify-and-polish pass, then the conversation ends.
 
 \textbf{\# CONTEXT — Tools and dispatch}
 
