@@ -29,6 +29,7 @@ pytestmark = pytest.mark.adherence
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 MANUSCRIPT = REPO_ROOT / "slides" / "manuscript" / "main.tex"
+REPORT = REPO_ROOT / "report" / "report.tex"
 MODELS_PATH = REPO_ROOT / "experiments" / "models.yaml"
 
 # The models.yaml slug for the Exp 2 Qwen agent (cross-checked against the
@@ -99,4 +100,17 @@ def test_no_stale_qwen_version_in_manuscript():
     assert "Qwen3-Max" not in text, (
         "stale 'Qwen3-Max' string present in main.tex — the Exp 2 Qwen agent "
         f"is {EXP2_QWEN_SLUG!r} (Qwen3.7 Max) per models.yaml and the run records"
+    )
+
+
+def test_no_stale_qwen_version_in_report():
+    """Negative guard (ticket 0594): the stale ``Qwen3-Max`` string must not
+    appear in the French report either — same defect class as main.tex, same
+    artifact ground truth (``Qwen3.7 Max`` per models.yaml slug
+    ``qwen3.7-max-2026-05-20``)."""
+    text = REPORT.read_text(encoding="utf-8")
+    assert "Qwen3-Max" not in text, (
+        "stale 'Qwen3-Max' string present in report/report.tex — the Exp 2 "
+        f"Qwen agent is {EXP2_QWEN_SLUG!r} (Qwen3.7 Max) per models.yaml and "
+        "the run records"
     )
