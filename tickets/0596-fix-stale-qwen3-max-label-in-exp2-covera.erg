@@ -1,0 +1,61 @@
+%erg 0.1
+Title: Fix stale Qwen3-Max label in exp2 coverage-certainty plot (manuscript figure)
+Created: 2026-06-14
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-14T07:31Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+Surfaced by the ticket-0594 `/roar` anti-pattern sweep (2026-06-14). PRs #1057
+(0584) and #1069 (0594) corrected the stale `Qwen3-Max` display name to the
+study's actual qwen frontier agent — **Qwen3.7 Max** (artifact ground truth:
+`experiments/models.yaml` slug `qwen3.7-max-2026-05-20`) — in `main.tex` and
+`report/report.tex`. The sweep found the same stale label still live in a
+figure-generating script:
+
+`src/aedist/plot_exp2_coverage_certainty.py:55` maps `"qwen": "Qwen3-Max"`. The
+figure it produces (`exp2_coverage_certainty`) is `\includegraphics`'d in
+`slides/manuscript/main.tex`, so the stale name renders into a current
+manuscript figure — same defect class, outside 0594's scope.
+
+## Relevant files
+- `src/aedist/plot_exp2_coverage_certainty.py` — line ~55 label map
+  `"qwen": "Qwen3-Max"` → correct display name.
+- `experiments/models.yaml` — ground truth (`qwen3.7-max-2026-05-20`).
+- `slides/manuscript/main.tex` — consumes the regenerated figure; verify the
+  rebuilt PDF shows the corrected label.
+
+## Actions
+1. Confirm the exp2 "qwen" arm is the qwen3.7-max model (cross-check a
+   `sota_exp2_*` qwen run-record / cost.json model slug — do NOT assume).
+2. If confirmed, change the label map value to match the manuscript's display
+   form (the exact string main.tex uses for this agent; `Qwen3.7 Max`).
+3. Regenerate the figure via its Makefile target (no `make -B` blanket churn —
+   only the affected PDF) and rebuild the manuscript to confirm.
+
+## Test
+Extend the negative-guard adherence test to forbid the literal `Qwen3-Max`
+(hyphenated stale form) in `src/aedist/plot_exp2_coverage_certainty.py`'s label
+map — red on current main, green after the fix. Keep `Qwen3-Max-Thinking`
+(genuinely different model) permitted.
+
+## Verification
+- [ ] exp2 "qwen" arm confirmed = qwen3.7-max from a run-record (not assumed)
+- [ ] Plot label map no longer emits the stale `Qwen3-Max` for the 3.7 arm
+- [ ] Figure regenerated; manuscript PDF shows corrected label
+- [ ] `make check` green
+
+## Invariants
+- Do NOT touch `Qwen3-Max-Thinking` (the `qwen3-max-thinking` entry) in
+  `tab_census.tex` / `tab_exp1_reasoning_topup.tex` — genuinely different model.
+- Do NOT edit archived run-records under `experiments/archive/outputs/` or
+  protocol specs under `experiments/sota/` — immutable experimental record.
+- Do not run `make -B`; regenerate only the affected figure PDF.
+
+## Exit criteria
+- exp2 coverage-certainty plot emits the correct (Qwen3.7 Max) display name;
+  guard extended to the plot script; figure + manuscript rebuilt; `make check`
+  green.
