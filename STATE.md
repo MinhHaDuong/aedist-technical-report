@@ -1,4 +1,4 @@
-Last updated: 2026-06-12T19:10Z
+Last updated: 2026-06-14T03:45Z
 
 ## North star
 
@@ -6,26 +6,24 @@ Produce research-quality energy infrastructure datasets from open sources, valid
 
 ## Current milestone: arXiv preprint (0435)
 
-**The preprint WP is `slides/manuscript/main.tex`** (hand-curated LaTeX, tectonic + CI-built since #969) — report.tex is internal ("no future", author 2026-06-05). Landed 2026-06-12: **back-half restructure** (tracker 0560: de-anchored tests 0561, Extensions/Future-research arc 0562, annex reorder A–G 0563; + 0565 KB programme items) and the **final showstopper sweep** (tracker 0571: registration framing dropped 0567 — Exp 2 is a plain 2×2; claims/findings aligned 0568; repetitions compressed 0569; tone polished to author register + paragraph splits 0570). Integration reviews COHERENT both times; full suite green; PDF rebuilt and delivered to author. **Manuscript is ready for author reading-2 → arXiv sign-off.** Standing authorizations (author 2026-06-11): merge-review-merge cadence — merge each PR on APPROVED + green CI, no long-lived branches; genuinely new judgment calls stay needs-human. 0171 cross-eval OUT (journal delta).
+**The preprint WP is `slides/manuscript/main.tex`** (hand-curated LaTeX, tectonic + CI-built). **Reading-2 fix wave COMPLETE 2026-06-14** (tracker 0578: 13 children 0579–0592 + prereq 0575, each Sonnet-gated + verify-checked; integration review PASS, manuscript builds clean). Prior landings: back-half restructure (0560), showstopper sweep (0571). **Ready for arXiv sign-off** pending (a) author confirm-close 0578, (b) the general-reading-skills prose pass below. Standing auth (2026-06-11): merge-review-merge cadence; new judgment calls stay needs-human.
 
 ## Status
-<!-- generated 2026-06-12T19:10Z -->
-
-**Tickets:** 21 ready · 32 blocked — `erg ready tickets/` for full list
+<!-- generated 2026-06-14T03:45Z -->
+**Tickets:** 27 ready — `erg ready tickets/` for full list
 **Recent commits:**
-  81e484bb Merge pull request #1040 from MinhHaDuong/chore/close-0571
-  5bafae2c ticket(0571): close and archive — final showstopper sweep complete
-  fe62760c Merge pull request #1039 from MinhHaDuong/t0570
-  31671fb0 ticket(0570): close and archive — PR #1039
-  61960eb5 0570: tone polish to the author's register + paragraph splits
+  ebac7e01 Merge #1066 — annotate 0578 wave complete; file 0595
+  654c42a7 Merge #1065 — 0592 register/promises sweep (last child)
+  ec81cfb8 Merge #1064 — 0591 codename/code-ref sweep
+  (reading-2 wave 0579–0592 + prereq 0575 all merged)
 
-## Next actions
+## Next: general reading skills (prose-quality pass)
 
-1. **Author reading-2 of the rebuilt PDF** (sent 2026-06-12) → arXiv build, sign-off. The manuscript has passed restructure + showstopper sweep; remaining edits should be author's-taste only.
-2. **In flight (author's bg raid, 2026-06-12 evening):** 0572 + 0566 — macro-source the §exp2 F1 literal pairs and ρ = 0.92 (same emitters, one PR).
-3. **Next-paper seeds:** `docs/kb-design-note.md` (KB information-flow topologies + temporal-modal claim model, feeds the follow-on system paper); 0564 enumeration-budget audit (deferred, revisit at follow-on planning).
-4. Independent code work any time: 0544 (rapidfuzz threshold validation). Imagines awaiting discussion: 0450, 0454. 0255–0262 deferred (Blocked-by 0435), owed to journal.
-5. Backlog: 0520 (arm-1D extension, deferred); `erg ready tickets/` for the rest.
+Build 3 reusable IDH skills, applied after every substantial rewrite, for all texts (specced 2026-06-14):
+1. **descaffold** — strip instruction/scaffolding leak from prose (generalises 0592; mechanical-first).
+2. **voiceprint** — flag LLMisms / dry-academism / academism vs the author's voice. Corpus = chemin-de-voix `author-voice` collection (30+ yr); reading-1 voice brief in closed 0532 + 0570 + em-dash ratchet. NEEDS author to ratify the extracted trait list before it enforces.
+3. **caption-altitude** — figure captions one reading level below body, non-redundant (FR readability).
+Each = mechanical helper + LLM lens + editorial-brief entry + /review-pr-prose lens → then one global main.tex pass → arXiv sign-off. Follow-ups open: 0594 (report.tex Qwen), 0595 (test scanner). Backlog via `erg ready` (kb-design-note system paper, 0564, 0544).
 
 ## Next: methods contribution
 
