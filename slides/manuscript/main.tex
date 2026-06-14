@@ -753,41 +753,32 @@ optimised arm's multi-turn protocol explicitly encourages source
 discovery. The one thing the protocol never discloses is where the
 reference inventory itself is published.
 
-\begin{table}[htbp]
+\begin{figure}
 \centering
-\caption{\label{tbl:exp2-2x2}Experiment 2 — row-level F1 and per-run
-API cost (USD) by agent across the 2×2 factorial (query mode ×
-documents), N=5 per cell. The §\ref{sec:exp2} narrative focuses on the
-two no-documents arms (naive vs optimised). The two documents = yes
-rows per agent complete the 2×2 factorial (\ref{sec:annex-exp2}).
-Values generated from
-\texttt{experiments/derived/tab\_exp2\_2x2.csv}'s pipeline.}
-{\small\setlength{\tabcolsep}{4pt}
-\input{../../report/inputs/generated/tab_exp2_2x2_agents.tex}}
-\end{table}
+\includegraphics[width=\linewidth]{../../report/inputs/generated/fig_exp2_arms_coverage.pdf}
+\caption{No agent comes close to the full fleet. Each agent's bars show
+how many plants it found: the blue part counts plants that are really in
+the reference, the red part below the line counts plants it named that
+are not. The hatched bar on the left of each group is the same agent
+working from memory alone (Experiment 1); the four bars to its right add
+web search and, for two of them, a reference document pack. The dashed
+green line is the full \NumRefPlants-plant reference; the dotted grey line
+is the best independent public database. The complete arm-by-arm
+breakdown is in \ref{sec:annex-exp2}.}\label{fig:exp2-arms}
+\end{figure}
 
 \begin{figure}
 \centering
-\includegraphics[width=\linewidth]{../../report/inputs/generated/fig_exp2_arms_comparison.pdf}
-\caption{Web access lifts coverage, but no agent approaches the
-reference, and the multi-turn protocol costs 2--4× more for mixed
-returns. Experiment 2: naive (arm 1, single-shot) vs optimised (arm
-2, multi-turn) comparison, N=5 per agent. Panel (a): Plants found — TP
-bars (blue, upward, matched against the \NumRefPlants-plant reference) and FP bars
-(red, downward, unmatched plants: extracted but not in the reference),
-median over runs with scored outputs; left bar = arm 1, right bar = arm
-2 per agent group. Grey bars indicate runs with no matched-row scores
-available. Panel (b): API cost per run (USD), individual runs as scatter
-points. Dashed green line marks the \NumRefPlants-plant reference count; the
-light-grey dotted line marks GEM's light-reviewed coverage (\GemReviewedPct\%), the
-best independent external database (\ref{sec:annex-exp1}). Row-level F1
-against the \NumRefPlants-plant reference is now scored for all 80 runs; the 2×2
-factorial analysis of F1 and cost (query mode × documents) is given in
-Table~\ref{tbl:exp2-2x2} and detailed in \ref{sec:annex-exp2}. With N=4
-agents as the blocking factor, effects are reported as directional
-consistency (k/n agents agreeing in sign) rather than significance
-tests, since the minimum attainable p at n=4 is 1/2⁴ =
-0.0625.}\label{fig:exp2-arms}
+\includegraphics[width=\linewidth]{../../report/inputs/generated/fig_exp2_arms_cost.pdf}
+\caption{The longer, multi-turn protocol costs far more for little extra
+coverage. Each bar is one agent's average dollar cost for a single run;
+the whiskers show the spread across runs. Reading left to right within a
+group: the agent from memory alone (hatched), then single-shot and
+multi-turn variants with and without a reference document pack. The
+multi-turn variants run several rounds of search and drafting, which is
+where most of the cost comes from. Coverage for the same runs is in
+Figure~\ref{fig:exp2-arms}; the full breakdown is in
+\ref{sec:annex-exp2}.}\label{fig:exp2-arms-cost}
 \end{figure}
 
 \textbf{Coverage: the best agent enumerates barely half the fleet.} For
@@ -800,7 +791,8 @@ change the picture: OpenAI median \ExpTwoRowsOpenAIOptimised{} rows versus arm 1
 rows versus arm 1 median \ExpTwoRowsQwenNaive{} rows (regression; Qwen's self-designed
 protocol imposed a strict dual-source admissibility filter that
 constrains coverage from Turn 1). The optimised protocol costs 2--4×
-more per run than naive across all agents; OpenAI's ratio is most
+more per run than naive across all agents
+(Figure~\ref{fig:exp2-arms-cost}); OpenAI's ratio is most
 extreme (median \$\ExpTwoCostOpenAIOptimised{} optimised vs \$\ExpTwoCostOpenAINaive{} naive). On row-level F1
 (Table~\ref{tbl:exp2-2x2}, no-documents rows), the multi-turn protocol
 degraded three of the four agents (Anthropic \ExpTwoFOneAnthropicNaive{}
@@ -2345,6 +2337,18 @@ Two design decisions shape how the results are read:
   matcher, and they are present in the 2×2 F1 table. The 0/5 must not be
   read as the runs failing outright.
 \end{itemize}
+
+\begin{table}[htbp]
+\centering
+\caption{\label{tbl:exp2-2x2}Experiment 2 — row-level F1 and per-run
+API cost (USD) by agent across the 2×2 factorial (query mode ×
+documents), N=5 per cell. The §\ref{sec:exp2} narrative focuses on the
+two no-documents arms (naive vs optimised). The two documents = yes
+rows per agent complete the 2×2 factorial. Values generated from
+\texttt{experiments/derived/tab\_exp2\_2x2.csv}'s pipeline.}
+{\small\setlength{\tabcolsep}{4pt}
+\input{../../report/inputs/generated/tab_exp2_2x2_agents.tex}}
+\end{table}
 
 The inferential analysis, per-arm validity criteria, and the
 descriptive F1/cost statistics are in the technical report's

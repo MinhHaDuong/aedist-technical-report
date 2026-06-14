@@ -66,9 +66,12 @@ def test_make_figure_writes_pdf(tmp_path):
     _write_csv(csv_path, _minimal_rows())
     rows = _load_csv(csv_path)
     out = tmp_path / "fig.pdf"
-    make_figure(rows, out, exp1_summary={})
+    make_figure(rows, out, panel="coverage", exp1_summary={})
     assert out.exists()
     assert out.stat().st_size > 1000
+    out_cost = tmp_path / "fig_cost.pdf"
+    make_figure(rows, out_cost, panel="cost", exp1_summary={})
+    assert out_cost.exists()
 
 
 def test_load_pack_arm_rows_total_cost_usd(tmp_path):
@@ -128,7 +131,7 @@ def test_all_false_positive_bars_are_red(tmp_path) -> None:
     rows[0]["n_matched"] = 100  # 14 FP
     rows[1]["n_matched"] = 110  # 10 FP
 
-    fig = make_figure(rows, tmp_path / "fig.pdf", exp1_summary={})
+    fig = make_figure(rows, tmp_path / "fig.pdf", panel="coverage", exp1_summary={})
     ax = fig.axes[0]  # coverage panel
     negative_bars = [p for p in ax.patches if p.get_height() < 0]
     assert len(negative_bars) == 2, f"expected 2 FP bars (arm1+arm2), got {len(negative_bars)}"
@@ -184,11 +187,11 @@ def test_exp1_baseline_bars_rendered(tmp_path) -> None:
         for slug in _AGENT_EXP1_SLUG.values()
     }
 
-    fig = make_figure(rows, tmp_path / "fig.pdf", exp1_summary=exp1_summary)
+    cov_fig = make_figure(rows, tmp_path / "fig_cov.pdf", panel="coverage", exp1_summary=exp1_summary)
 
     # Coverage panel: should have 4 E1 positive bars (hatched) + 4 arm1 positive
     # bars + 4 E1 FP bars (hatched, negative) + 4 arm1 FP bars (negative).
-    cov_ax = fig.axes[0]
+    cov_ax = cov_fig.axes[0]
     hatched = [p for p in cov_ax.patches if p.get_hatch()]
     assert len(hatched) >= 4, (
         f"expected at least 4 hatched E1 bars in coverage panel, got {len(hatched)}"
@@ -201,8 +204,9 @@ def test_exp1_baseline_bars_rendered(tmp_path) -> None:
             f"E1 FP bars must be red; got {colors}"
         )
 
-    # Cost panel: should have 4 hatched E1 bars.
-    cost_ax = fig.axes[1]
+    # Cost figure: should have 4 hatched E1 bars.
+    cost_fig = make_figure(rows, tmp_path / "fig_cost.pdf", panel="cost", exp1_summary=exp1_summary)
+    cost_ax = cost_fig.axes[0]
     cost_hatched = [p for p in cost_ax.patches if p.get_hatch()]
     assert len(cost_hatched) == 4, (
         f"expected 4 hatched E1 bars in cost panel, got {len(cost_hatched)}"

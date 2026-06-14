@@ -1,15 +1,16 @@
-"""Two-panel comparison figure: Exp1 memory-only baseline plus Exp2 four arms.
+"""Single-panel comparison figures: Exp1 memory-only baseline plus Exp2 four arms.
 
 Pipeline phase: P3 (analyze & render) — invoked by experiments/render.mk.
 
 Usage:
     python -m aedist.plot_exp2_arms_comparison \
         --input report/inputs/generated/tab_exp2_arms_runs.csv \
-        --output report/inputs/generated/fig_exp2_arms_comparison.pdf
+        --panel coverage \
+        --output report/inputs/generated/fig_exp2_arms_coverage.pdf
 
-Panels (left to right):
-    (a) coverage (plants enumerated)
-    (b) cost (USD per run)
+The figure was split (ticket 0583) into two single-panel artifacts:
+    --panel coverage : plants enumerated (matched vs false-positive bars)
+    --panel cost     : USD per run
 
 Each panel groups by agent on the x-axis. Within each group, the hatched E1 bar
 shows the Exp1 memory-only baseline, followed by the four Exp2 arms (1N/5N/1D/5D)
@@ -31,8 +32,13 @@ from .extract import count_best_table_rows
 from .util import (
     COLOR_ALERT,
     COLOR_REFERENCE,
-    SLIDE_FIGSIZE_WIDE,
+    SLIDE_FIGSIZE_FULL,
     model_family_color,
+)
+
+_CONDITION_LEGEND = (
+    "E1 = Memory only (Exp 1)  ·  1N = Singleshot, no doc  ·  "
+    "5N = Multiturn, no doc  ·  1D = Singleshot, docs  ·  5D = Multiturn, docs"
 )
 
 log = logging.getLogger(__name__)
@@ -343,15 +349,27 @@ def _style_panel(ax, ylabel: str | None) -> None:
     _annotate_conditions(ax)
 
 
+_PANEL_TITLE = {
+    "coverage": "Coverage, experiment 2",
+    "cost": "Costs, experiment 2",
+}
+
+
 def make_figure(
-    rows: list[dict], output: Path, exp1_summary: dict[str, dict] | None = None
+    rows: list[dict],
+    output: Path,
+    panel: str,
+    exp1_summary: dict[str, dict] | None = None,
 ) -> Figure:
     import matplotlib.pyplot as plt
+
+    if panel not in _PANEL_TITLE:
+        raise ValueError(f"unknown panel {panel!r}; expected one of {sorted(_PANEL_TITLE)}")
 
     if exp1_summary is None:
         exp1_summary = load_exp1_summary()
 
-    fig, axes = plt.subplots(1, 2, figsize=SLIDE_FIGSIZE_WIDE)
+    fig, ax = plt.subplots(1, 1, figsize=SLIDE_FIGSIZE_FULL)
     no_report_rows = [r for r in rows if not r["is_report"]]
     if no_report_rows:
         sample = ", ".join(f"{r['arm']}/{r['agent']}/run{r['run']}" for r in no_report_rows[:6])
@@ -362,19 +380,13 @@ def make_figure(
         )
     rows = [r for r in rows if r["is_report"]]
 
-    _draw_coverage_panel(axes[0], rows, exp1_summary)
-    _draw_cost_panel(axes[1], rows, exp1_summary)
+    if panel == "coverage":
+        _draw_coverage_panel(ax, rows, exp1_summary)
+    else:
+        _draw_cost_panel(ax, rows, exp1_summary)
 
-    fig.suptitle("Coverage and costs, experiment 2", fontsize=13, fontweight="bold", y=0.99)
-    fig.text(
-        0.5,
-        0.925,
-        "E1 = Memory only (Exp 1)  ·  1N = Singleshot, no doc  ·  5N = Multiturn, no doc  ·  "
-        "1D = Singleshot, docs  ·  5D = Multiturn, docs",
-        ha="center",
-        va="top",
-        fontsize=8.5,
-    )
+    fig.suptitle(_PANEL_TITLE[panel], fontsize=13, fontweight="bold", y=0.99)
+    fig.text(0.5, 0.93, _CONDITION_LEGEND, ha="center", va="top", fontsize=8.5)
     fig.tight_layout(rect=(0.0, 0.0, 1.0, 0.90))
     output.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(output, bbox_inches="tight", dpi=150)
@@ -385,11 +397,17 @@ def make_figure(
 
 def main(argv: list[str] | None = None) -> None:
     logging.basicConfig(level=logging.INFO, format="%(message)s")
-    parser = argparse.ArgumentParser(description="2-panel Exp2 4-arm comparison figure")
+    parser = argparse.ArgumentParser(description="Single-panel Exp2 4-arm comparison figure")
     parser.add_argument("--input", required=True, help="Path to tab_exp2_arms_runs.csv")
+    parser.add_argument(
+        "--panel",
+        required=True,
+        choices=sorted(_PANEL_TITLE),
+        help="Which panel to render (coverage or cost)",
+    )
     parser.add_argument("--output", required=True, help="Path to write PDF figure")
     args = parser.parse_args(argv)
-    make_figure(_load_csv(Path(args.input)), Path(args.output))
+    make_figure(_load_csv(Path(args.input)), Path(args.output), panel=args.panel)
 
 
 if __name__ == "__main__":

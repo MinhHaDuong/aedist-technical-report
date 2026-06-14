@@ -34,7 +34,8 @@ include $(dir $(lastword $(MAKEFILE_LIST)))paths.mk
 
 # --- P3 output artifact paths (render-only) ---------------------------------
 
-ANALYSIS_EXP2_ARM_FIG := $(ANALYSIS_GEN)/fig_exp2_arms_comparison.pdf
+ANALYSIS_EXP2_ARM_COVERAGE_FIG := $(ANALYSIS_GEN)/fig_exp2_arms_coverage.pdf
+ANALYSIS_EXP2_ARM_COST_FIG := $(ANALYSIS_GEN)/fig_exp2_arms_cost.pdf
 ANALYSIS_EXP2_TURN_FIG := $(ANALYSIS_GEN)/fig_exp2_turn_trajectory.pdf
 ANALYSIS_EXP2_BIB_TABLE := $(ANALYSIS_GEN)/tab_exp2_bib_quality.tex
 ANALYSIS_EXP2_BIB_TABLE_FR := $(ANALYSIS_GEN)/tab_exp2_bib_quality_fr.tex
@@ -167,12 +168,21 @@ $(ANALYSIS_EXP2_MART_VIEWS): $(ANALYSIS_EXP2_MART_JSONL)
 
 # --- Tables and figures -----------------------------------------------------
 
-# The comparison figure now loads Exp1 baseline data from the mart (via
-# exp1_cost_quality), matching the split figure's E1 bar derivation.
-$(ANALYSIS_EXP2_ARM_FIG): $(ANALYSIS_GEN)/tab_exp2_arms_runs_view.csv $(ANALYSIS_MEASUREMENTS) $(ANALYSIS_CONCORDANCE_CSV)
+# The comparison figures load Exp1 baseline data from the mart (via
+# exp1_cost_quality). Ticket 0583 split the former two-panel PDF into two
+# single-panel artifacts — coverage and cost — one output per rule.
+$(ANALYSIS_EXP2_ARM_COVERAGE_FIG): $(ANALYSIS_GEN)/tab_exp2_arms_runs_view.csv $(ANALYSIS_MEASUREMENTS) $(ANALYSIS_CONCORDANCE_CSV)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_exp2_arms_comparison \
 	    --input $< \
+	    --panel coverage \
+	    --output $@
+
+$(ANALYSIS_EXP2_ARM_COST_FIG): $(ANALYSIS_GEN)/tab_exp2_arms_runs_view.csv $(ANALYSIS_MEASUREMENTS) $(ANALYSIS_CONCORDANCE_CSV)
+	@mkdir -p $(dir $@)
+	uv run python -m aedist.plot_exp2_arms_comparison \
+	    --input $< \
+	    --panel cost \
 	    --output $@
 
 $(ANALYSIS_EXP2_TURN_FIG): $(ANALYSIS_GEN)/exp2_turn_trajectory_view.csv
@@ -406,7 +416,8 @@ $(ANALYSIS_GEN)/tab_exp2_outline_hypothesis_status.tex:
 
 ANALYSIS_EXP2_REPORT_TARGETS := \
 	$(ANALYSIS_EXP2_MART_VIEWS) \
-	$(ANALYSIS_EXP2_ARM_FIG) \
+	$(ANALYSIS_EXP2_ARM_COVERAGE_FIG) \
+	$(ANALYSIS_EXP2_ARM_COST_FIG) \
 	$(ANALYSIS_EXP2_TURN_FIG) \
 	$(ANALYSIS_EXP2_BIB_TABLE) \
 	$(ANALYSIS_EXP2_BIB_TABLE_FR) \
