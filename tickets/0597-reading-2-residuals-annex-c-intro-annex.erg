@@ -1,0 +1,71 @@
+%erg 0.1
+Title: Reading-2 residuals: Annex C intro, Annex B colwidth, recognition-rate column header
+Created: 2026-06-14
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-14T00:00Z HDMX-coding-agent created
+2026-06-14T00:00Z HDMX-coding-agent note residuals from merged reading-2 tickets; tracker 0578
+
+--- body ---
+## Context
+Three residual gaps left by merged reading-2 tickets. Tracker:
+`tickets/0578-reading-2-wave-tracking-ticket.erg`.
+Reading-2 findings 15, 2 (residual), and 16 (residual).
+
+## Findings
+
+### Finding 15 — Annex C intro repeats the caption
+Annex C (`sec:annex-recognition`) intro restated the figure's
+"plants as rows, runs as columns, grouped by status then capacity,
+blue = recognised" layout almost verbatim with the figure caption.
+Shorten the intro so it only carries what the caption does NOT say:
+the contrast with `fig:direct-base` (counts vs. which plants are
+missed) and the forward pointer to `tbl:status-difficulty`.
+
+### Finding 2 (residual) — Annex B agents table column width
+The Annex B agents table (`sec:annex-exp2`) Surface column used a
+single hard-coded `p{0.48\linewidth}` fraction while the other three
+were auto `l`. Make the column widths automatic/balanced. Switching
+to `tabularx` with an auto-sizing `X` column for Surface removes the
+hard-coded fraction and lets LaTeX fill the remaining width.
+
+### Finding 16 (residual) — recognition-rate column header
+The §7.1 prose + caption (`tbl:status-difficulty`) were reworded to
+"the average probability of a plant being found by an Experiment 1
+model run", but the generated EN table column header still read
+"Recognition rate". Fix the EMITTER
+(`src/aedist/tabulate_status_difficulty.py`, English function), not
+the artifact; regenerate `tab_status_difficulty_en.tex` via the make
+target and commit it. New header: "Avg. detection prob." The French
+table (`format_status_latex`) keeps "Taux de reconnaissance" — its
+French caption matches it; this finding is EN-only.
+
+## Relevant files
+- `slides/manuscript/main.tex` — Annex C intro, Annex B agents table, tabularx package
+- `src/aedist/tabulate_status_difficulty.py` — EN emitter column header
+- `report/inputs/generated/tab_status_difficulty_en.tex` — regenerated artifact
+- `tests/test_tabulate_status_difficulty.py` — adherence test for the new header
+- `tests/test_manuscript_agents_table.py` — locator generalised to tabularx + p{0.48} guard
+
+## Test
+- New `@pytest.mark.adherence` test in `tests/test_tabulate_status_difficulty.py`
+  that re-derives the EN rate-column header from the committed
+  `tab_status_difficulty_en.tex` and asserts it is "Avg. detection prob."
+  (red before the emitter fix, green after).
+
+## Verification
+- [ ] Annex C intro no longer restates the figure layout (rows/cols/grouping/colour)
+- [ ] Annex B agents table Surface column auto-sizes (no `p{0.48\linewidth}`)
+- [ ] EN status-difficulty header reads "Avg. detection prob.", regenerated from the emitter
+- [ ] `make check-fast` green; manuscript builds (`tectonic -r 2`), agents-table overfull gone
+
+## Invariants
+- Empirical NUMBERS unchanged (header label only).
+- French table header unchanged ("Taux de reconnaissance").
+- Generated artifact regenerated via make target, never hand-edited.
+- `tbl:status-difficulty` and figure labels stay attached.
+
+## Exit criteria
+- All three findings fixed, adherence test green, `make check-fast` passes,
+  manuscript builds without the agents-table overfull alignment.
