@@ -1358,57 +1358,15 @@ reconciliation is deferred (post-arXiv).}
 \subsection*{Prompts}
 \addcontentsline{toc}{subsection}{Prompts}
 
-\textbf{Archived baseline prompt (2026-05-20 cohort).} The archived
-baseline sweep — the earlier cohort in which the GPT-5.5 refusals
-occurred — used the locked composition of two modules from
-\fpath{experiments/prompts/modules/}: \texttt{2\_goal.txt} (task
-declaration) and \texttt{5\_table.txt} (structured table specification).
-These are the implicit ``always'' pair: every sweep includes them;
-ablations opt in to additional modules. The assembled prompt is the
-concatenation in filename lex order, joined by a blank line:
-
-\begin{quote}
-\textbf{\#\# Goal}
-
-Produce a complete, primary-sourced reference inventory of Vietnam's
-past, present and future thermal generation assets (>
-30MWe) structured as follows:
-
-\textbf{\#\# Structured power plants table}
-
-Tabulate for every thermal power plant in Vietnam:
-
-Name (Vietnamese) | Name (English) | Province
-| Fuel | Technology | Units × MW |
-Total MWe | Status | COD | Owner/Developer
-| Source 1 | Source 2 | Notes |
-
-Where: - Fuel: Coal / Domestic gas / Imported LNG - Technology (coal):
-Subcritical / Supercritical / USC - Technology (gas): CCGT / OCGT -
-Status: Approved / Planned / Operational / Under construction /
-Suspended / Cancelled / Retired - Total MWe: Include units >
-30MWe. - COD: Actual or expected commercial operation date - Sources:
-specify where in the document, include URL
-
-Output format: Markdown.
-\end{quote}
-
-No persona, no narratives, no quality bullets — those land in ablation
-sweeps, not the archived baseline. The status enumeration above is the
-as-sent text from the archived records; the \texttt{5\_table.txt} module
-file was aligned to the Global Energy Monitor status vocabulary only
-after this cohort ran, which the analysis-cohort prompt below reflects.
-
 \textbf{Analysis-cohort prompt (Doc-07).} The fourteen-model analysis
 cohort (\texttt{modelset\_exp1\_batch2}, the cohort behind every
 per-model number in §\ref{sec:exp1}) received the full Doc-07 naive
 prompt — \fpath{experiments/sota/protocol_07_naive_prompt.md} —
-verbatim as the sole user message (trailing newline stripped by the
-worker), at temperature 0, seed 42, \texttt{max\_tokens} 65536, web
-access off; this was verified against the archived per-run records. The
-prompt in full:
+verbatim as the sole user message, at temperature 0, seed 42,
+\texttt{max\_tokens} 65536, web access off; this was verified against
+the archived per-run records. The prompt in full:
 
-\begin{quote}\small
+\begin{promptbox}
 \textbf{\# GOAL}
 
 Produce a complete, primary-sourced reference inventory of Vietnam's
@@ -1638,7 +1596,7 @@ follow the table and are selective: write one only for assets that are
 major, disputed, ambiguous, or historically important. For
 straightforward operational assets a compact Notes cell in the table is
 sufficient; do not repeat it as a separate note.
-\end{quote}
+\end{promptbox}
 
 Two prompt-design limitations are acknowledged. First, although the
 prompt asks the model to ``begin the document directly with the
@@ -1661,32 +1619,31 @@ Answer from parametric knowledge only.''}
 \addcontentsline{toc}{subsection}{Models}
 
 Sixteen models from \fpath{modelset_exp1_journal} (v2, defined in
-\fpath{experiments/experiments.toml}), organised around three language
-families with multiple labs per family:
+\fpath{experiments/experiments.toml}):
 
-\begin{longtable}[]{@{}lllll@{}}
+\begin{longtable}[]{@{}llll@{}}
 \toprule\noalign{}
-Model & Lab & Family & Size class & Reasoning tokens* \\
+Model & Lab & Size class & Reasoning tokens* \\
 \midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-claude-opus-4.6 & Anthropic & EN & frontier & 0 \\
-claude-sonnet-4.6 & Anthropic & EN & frontier & 0 \\
-claude-haiku-4.5 & Anthropic & EN & mid & 0 \\
-gpt-5.5 & OpenAI & EN & frontier & 1,537 \\
-gpt-oss-120b & OpenAI & EN & large & 35 \\
-gpt-oss-20b & OpenAI & EN & mid & 18 \\
-mistral-small-2603 & Mistral & FR & mid & 0 \\
-mistral-medium-3-5 & Mistral & FR & mid & 0 \\
-mistral-large-2512 & Mistral & FR & frontier & 0 \\
-qwen3.6-27b & Alibaba & ZH & mid & 5,735 \\
-qwen3.6-35b-a3b & Alibaba & ZH & mid & 8,143 \\
-qwen3.6-flash & Alibaba & ZH & mid & 7,971 \\
-qwen3.6-plus & Alibaba & ZH & frontier & 6,677 \\
-qwen3-max-thinking & Alibaba & ZH & frontier & 0 \\
-deepseek-v4-pro & DeepSeek & ZH & frontier & 16,774 \\
-deepseek-v4-flash & DeepSeek & ZH & mid & 775 \\
+claude-opus-4.6 & Anthropic & frontier & 0 \\
+claude-sonnet-4.6 & Anthropic & frontier & 0 \\
+claude-haiku-4.5 & Anthropic & mid & 0 \\
+gpt-5.5 & OpenAI & frontier & 1,537 \\
+gpt-oss-120b & OpenAI & large & 35 \\
+gpt-oss-20b & OpenAI & mid & 18 \\
+mistral-small-2603 & Mistral & mid & 0 \\
+mistral-medium-3-5 & Mistral & mid & 0 \\
+mistral-large-2512 & Mistral & frontier & 0 \\
+qwen3.6-27b & Alibaba & mid & 5,735 \\
+qwen3.6-35b-a3b & Alibaba & mid & 8,143 \\
+qwen3.6-flash & Alibaba & mid & 7,971 \\
+qwen3.6-plus & Alibaba & frontier & 6,677 \\
+qwen3-max-thinking & Alibaba & frontier & 0 \\
+deepseek-v4-pro & DeepSeek & frontier & 16,774 \\
+deepseek-v4-flash & DeepSeek & mid & 775 \\
 \end{longtable}
 
 * Median over 3 runs.
