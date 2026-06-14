@@ -13,6 +13,8 @@ shared include like `paths.mk`/`common.mk` — fails this test.
 """
 
 import re
+import subprocess
+import sys
 from pathlib import Path
 
 import pytest
@@ -30,13 +32,28 @@ _MAKEFILE_LIST_DIR = "$(dir $(lastword $(MAKEFILE_LIST)))"
 
 
 def _makefiles() -> list[Path]:
-    """All committed makefiles in the repo (root Makefile + *.mk, any depth)."""
-    found = [
-        p
-        for pat in ("Makefile", "*.mk")
-        for p in REPO_ROOT.rglob(pat)
-        if ".git" not in p.parts
-    ]
+    """All git-tracked makefiles in the repo (root Makefile + *.mk, any depth).
+
+    Sourced from `git ls-files`, not a working-tree `rglob`: untracked agent
+    worktrees under `.claude/worktrees/` and untracked `attic/` artifacts carry
+    their own Makefiles, and an `rglob` would flag those as orphaned outputs,
+    making `make check` flaky whenever an agent worktree is present (ticket
+    0595). Only tracked makefiles are real build outputs this guard governs.
+    """
+    out = subprocess.run(
+        ["git", "ls-files", "-z"],
+        cwd=REPO_ROOT,
+        capture_output=True,
+        text=True,
+        check=True,
+    ).stdout
+    found = []
+    for rel in out.split("\0"):
+        if not rel:
+            continue
+        name = rel.rsplit("/", 1)[-1]
+        if name == "Makefile" or rel.endswith(".mk"):
+            found.append(REPO_ROOT / rel)
     return sorted(set(found))
 
 
@@ -117,4 +134,80 @@ def test_recipe_makefiles_have_delete_on_error():
         ".DELETE_ON_ERROR not reachable (self or via include) in build "
         f"makefiles that run recipes: {uncovered}. Add `.DELETE_ON_ERROR:` to "
         "the file or to a shared include it reads (paths.mk / common.mk)."
+    )
+
+
+def test_discovery_ignores_untracked_worktrees_and_attic():
+    """`_makefiles()` enumerates only git-tracked makefiles.
+
+    Agent worktrees under `.claude/worktrees/` and untracked `attic/`
+    directories carry their own Makefiles; before ticket 0595 the working-tree
+    `rglob` scooped them up and the `attic/` Makefile (no `.DELETE_ON_ERROR`)
+    failed this test locally whenever a worktree was present. A `git ls-files`
+    source excludes anything untracked by construction.
+    """
+    discovered = {m.relative_to(REPO_ROOT).as_posix() for m in _makefiles()}
+    leaked = [
+        p
+        for p in discovered
+        if p.startswith((".claude/worktrees/", "attic/"))
+    ]
+    assert not leaked, (
+        "discovery leaked untracked makefiles (must scan git-tracked paths "
+        f"only): {leaked}"
+    )
+
+    # Cross-check: every discovered path is actually tracked by git.
+    tracked = set(
+        subprocess.run(
+            ["git", "ls-files"],
+            cwd=REPO_ROOT,
+            capture_output=True,
+            text=True,
+            check=True,
+        ).stdout.split("\n")
+    )
+    untracked = [p for p in discovered if p not in tracked]
+    assert not untracked, f"discovered makefiles not tracked by git: {untracked}"
+
+
+@pytest.mark.integration
+def test_orphaned_tracked_makefile_still_detected(tmp_path, monkeypatch):
+    """Detection of a genuine orphan is preserved; an untracked twin is ignored.
+
+    Builds a throwaway git repo with two recipe-bearing Makefiles missing the
+    directive: one tracked (must be flagged), one untracked under a worktree
+    path (must be ignored). The fix must not weaken orphan detection on tracked
+    files while it gains immunity to untracked worktree/attic artifacts.
+    """
+    subprocess.run(["git", "init", "-q"], cwd=tmp_path, check=True)
+    recipe = "all:\n\ttouch out\n"
+
+    tracked_mk = tmp_path / "Makefile"
+    tracked_mk.write_text(recipe, encoding="utf-8")
+
+    untracked_dir = tmp_path / ".claude" / "worktrees" / "foo"
+    untracked_dir.mkdir(parents=True)
+    (untracked_dir / "Makefile").write_text(recipe, encoding="utf-8")
+
+    subprocess.run(["git", "add", "Makefile"], cwd=tmp_path, check=True)
+
+
+    monkeypatch.setattr(sys.modules[__name__], "REPO_ROOT", tmp_path)
+    discovered = {m.relative_to(tmp_path).as_posix() for m in _makefiles()}
+
+    assert "Makefile" in discovered, "tracked orphan must be discovered"
+    assert ".claude/worktrees/foo/Makefile" not in discovered, (
+        "untracked worktree Makefile must be ignored"
+    )
+
+    recipe_makefiles = [m for m in _makefiles() if _has_recipes(m)]
+    uncovered = [
+        m.relative_to(tmp_path).as_posix()
+        for m in recipe_makefiles
+        if not _reachable(m)
+    ]
+    assert uncovered == ["Makefile"], (
+        "the tracked orphan must still be flagged as uncovered, and only it: "
+        f"{uncovered}"
     )

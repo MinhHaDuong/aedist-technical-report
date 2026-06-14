@@ -2,10 +2,12 @@
 Title: Scope test_makefile_delete_on_error to git-tracked files (ignore worktree dirs)
 Created: 2026-06-14
 Author: HDMX-coding-agent
+Closed: Fixed: _makefiles() now sourced from git ls-files; untracked worktree/attic makefiles no longer flagged. Tests + make check green.
 
 --- log ---
 2026-06-14T03:34Z HDMX-coding-agent created
 
+2026-06-14T06:53Z HDMX-coding-agent closed — Fixed: _makefiles() now sourced from git ls-files; untracked worktree/attic makefiles no longer flagged. Tests + make check green.
 --- body ---
 
 ## Context
