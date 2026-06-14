@@ -219,7 +219,9 @@ def _unexpanded_body() -> str:
 
 def test_body_uses_the_macros():
     text = _unexpanded_body()
-    for name in ("\\ScreenTauCap", "\\NumRefPlants", "\\ExpOneFOneMean", "\\AggUnionGainX"):
+    # \ScreenTauCap left the body with Annex E (ticket 0586); \ScreenPooledSpearman
+    # (the ρ = 0.92 screen correlation) is the surviving body Screen* macro.
+    for name in ("\\ScreenPooledSpearman", "\\NumRefPlants", "\\ExpOneFOneMean", "\\AggUnionGainX"):
         assert name in text, f"manuscript body no longer uses {name} — literal crept back?"
 
 
