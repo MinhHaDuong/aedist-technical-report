@@ -3,6 +3,7 @@ Title: Reading-2 wave — tracking ticket (children 0579–0592 filed)
 Created: 2026-06-12
 Author: HDMX-coding-agent
 Label: needs-human
+Closed: autoclosed — PR #1073
 
 --- log ---
 2026-06-12T20:29Z HDMX-coding-agent created
@@ -12,6 +13,7 @@ Label: needs-human
 2026-06-14T01:35Z HDMX-coding-agent note AUTHOR-DECISION ITEM: finding 23 (matcher name 'flow') — the code (src/aedist/matching/lp.py) is a MILP assignment, not min-cost-flow; 'flow' is the math equivalence not the implementation name (PR #1047 named it accurately). 0591 kept the MILP/LP naming and deferred the 'flow' rename to you. Decide whether to rename.
 
 2026-06-14T08:46Z reading-2 wave verified complete: 42 findings re-inspected against post-merge main (e5f782cc) by an 8-agent red-team (refute-by-default). All 42 reflected in main.tex; children 0579-0592 and residuals 0597 merged. Two stale labels in the finding notes (not manuscript defects): finding 29 'Annex F' is now Annex E (swarm/orchestrate/team note present in the capability-rollout annex); finding 41 '6 axes' is 5 (all named axes present). Finding 23 matcher naming settled by PR #1047 (formal name in annex, lay term in body).
+2026-06-14T08:48Z HDMX-coding-agent closed — autoclosed — PR #1073
 --- body ---
 ## Context
 
