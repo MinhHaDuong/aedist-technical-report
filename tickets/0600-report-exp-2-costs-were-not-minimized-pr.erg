@@ -1,0 +1,75 @@
+%erg 0.1
+Title: Report Exp 2 costs were not minimized; production caching can reduce them
+Created: 2026-06-14
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-14T09:50Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+The Exp 2 cost figures and prose (fig:exp2-arms-cost, the "optimised
+protocol costs 2–4×" paragraph) report dollar costs as measured. Those
+costs were **not minimized** — the harness made no attempt at cost
+optimisation (no prompt/response caching, no KV-cache reuse, no batching
+of the shared reference pack across turns/arms). The author wants the
+paper to state this explicitly so the costs are not read as a floor: in
+production, cache management can save a large fraction, especially for
+the documents arms where the same reference pack is resent every call.
+
+This is a fairness/interpretation caveat, not a new measurement — it
+keeps the reported numbers honest about what they do and do not bound.
+
+## Relevant files
+
+- `slides/manuscript/main.tex`:
+  - `:769–778` — fig:exp2-arms-cost caption ("average dollar cost for a
+    single run").
+  - `:790–793` — "The optimised protocol costs 2–4× … OpenAI's ratio is
+    most extreme (median \$\ExpTwoCostOpenAIOptimised{} vs
+    \$\ExpTwoCostOpenAINaive{})".
+  - cost macros live in `report/inputs/generated/macros_manuscript.tex`
+    (`\ExpTwoCost*`) — do NOT hand-type; numbers stay macro-sourced.
+- Possibly `sec:annex-exp2` for a fuller methodological note.
+
+## Actions
+
+1. Add a sentence (body near `:790–793`, and/or the figure caption)
+   stating the reported Exp 2 costs are un-optimised: no caching, the
+   reference pack is resent each call, so the figures are an upper bound
+   on production cost, not a minimised cost.
+2. Note that production cache management (prompt caching / context reuse
+   across turns and arms) can materially reduce this, particularly for
+   the documents arms — frame as a known lever, not a measured result
+   (no number we did not measure; keep it qualitative or clearly hedged).
+3. Keep all dollar figures sourced from `\ExpTwoCost*` macros.
+
+## Test
+
+- Red first: an `@pytest.mark.adherence` loose structural anchor — assert
+  the Exp 2 cost region contains a caching/"not minimised"/"upper bound"
+  caveat marker (presence of the caveat vocabulary, not a pinned
+  sentence — CI polarity rule: structural presence is allowed, positive
+  wording is not pinned). Record the editorial decision in
+  `docs/editorial-brief.md` (costs reported as un-optimised upper bound).
+
+## Verification
+
+- [ ] Exp 2 cost prose/caption states the costs are un-optimised (no
+      caching; reference pack resent) → an upper bound, not a floor.
+- [ ] Production caching named as a cost-reduction lever, hedged (no
+      unmeasured number asserted).
+- [ ] All dollar values still macro-sourced; no hand-typed costs.
+- [ ] Brief entry recorded; `make check` passes; manuscript builds.
+
+## Invariants
+
+- No measured cost value changes. The caveat must not overclaim a
+  specific saving we did not measure.
+
+## Exit criteria
+
+- The paper reports Exp 2 costs as un-minimised (upper bound) and names
+  production caching as the lever that reduces them; macro-sourced
+  numbers intact; `make check` green.
