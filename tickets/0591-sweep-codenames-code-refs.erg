@@ -2,12 +2,12 @@
 Title: Global sweep: internal codenames out, no code references in main text, name the matcher
 Created: 2026-06-12
 Author: HDMX-coding-agent
-Blocked-by: 0590
 
 --- log ---
 2026-06-12T21:52Z HDMX-coding-agent created child of 0578 (findings 8, 22, 23, 24); flow-vs-MILP discrepancy flagged for verification
 2026-06-13T08:40Z finding 23 (matcher naming) partially addressed: Evaluation paragraph in main.tex (ex-L1830) rewritten. New prose names the method "minimum-cost bipartite assignment (MILP)", adds the flow-equivalence sentence, removes ADR-2/ADR-3 codenames and \texttt file/function references, and documents the 1:1 limitation with the five aggregate-vs-split cases from the Exp.2 FP audit. Remaining work: findings 8, 22, 24 (full codename sweep, code refs in §1–§9).
 
+2026-06-14T02:21Z HDMX-coding-agent note blocker 0590 closed — Blocked-by removed.
 --- body ---
 ## Context
 
