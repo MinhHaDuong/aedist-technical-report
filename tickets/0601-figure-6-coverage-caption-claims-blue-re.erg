@@ -1,0 +1,89 @@
+%erg 0.1
+Title: Figure 6 coverage caption claims blue/red TP-FP but bars are model-coded
+Created: 2026-06-14
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-14T09:51Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Two caption errors in the same figure — `fig:exp2-arms` (the coverage
+half of the former Figure 6), `slides/manuscript/main.tex:756–764`.
+
+1. **Colour mismatch.** The caption says: "the blue part counts plants
+   that are really in the reference, the red part below the line counts
+   plants it named that are not." But the figure is **model-coded**: the
+   emitter `src/aedist/plot_exp2_arms_comparison.py` (coverage panel)
+   renders bars "with project glyphs and per-model colours" (docstring),
+   matched above zero / false-positive below. So the blue/red TP–FP
+   description does not match the rendered figure.
+
+2. **Vague reference.** The caption says "the four bars to its right add
+   web search and, for two of them, a reference document pack." Replace
+   "two of them" with "**the rightmost two**" — the document-pack arms
+   are the rightmost two bars.
+
+## Ground truth to confirm first
+
+Per the derive-from-artifact rule: open
+`report/inputs/generated/fig_exp2_arms_coverage.pdf` and read
+`plot_exp2_arms_comparison.py` to confirm the actual encoding before
+editing prose. The emitter docstring indicates per-model colour with
+matched-above / FP-below; verify whether "blue/red" survives anywhere in
+the rendered figure or is fully replaced by family colour.
+
+## Decision needed
+
+The figure is model-coded by design (family colour is used consistently
+across the paper's figures). So the **caption** is the thing to fix:
+describe the actual encoding — bars are coloured by model family;
+the part above the line is matched (true) plants, the part below the
+line is false positives — without claiming a blue/red scheme. (If the
+author instead wants a blue/red TP–FP encoding here, that's a figure
+change in the emitter, not a caption edit — flag for author choice.)
+
+## Relevant files
+
+- `slides/manuscript/main.tex:756–764` — `fig:exp2-arms` caption (both
+  fixes).
+- `src/aedist/plot_exp2_arms_comparison.py` — coverage-panel emitter
+  (ground-truth encoding; only touch if the author wants blue/red).
+- `report/inputs/generated/fig_exp2_arms_coverage.pdf` — the artifact.
+
+## Actions
+
+1. Confirm the rendered encoding (PDF + emitter).
+2. Reword the caption's colour sentence to match the model-coded reality
+   (above-line = matched, below-line = false positive; colour = model
+   family). Do not assert blue/red unless the figure actually uses it.
+3. Change "for two of them" → "for the rightmost two".
+4. If the author prefers a blue/red TP–FP figure instead, open that as a
+   separate emitter change.
+
+## Test
+
+- Red first: an `@pytest.mark.adherence` negative guard that the
+  `fig:exp2-arms` caption does not assert a "blue"/"red" colour scheme
+  that the figure does not use (forbid the stale colour literals in that
+  caption). Per the CI polarity rule, forbid the wrong description; do
+  not pin the new positive wording.
+
+## Verification
+
+- [ ] Caption colour description matches the rendered figure (no
+      unmatched blue/red claim).
+- [ ] "for two of them" → "for the rightmost two".
+- [ ] `make check` passes; manuscript builds.
+
+## Invariants
+
+- No data changes. Caption-only unless the author chooses the figure
+  route for the colour scheme.
+
+## Exit criteria
+
+- `fig:exp2-arms` caption accurately describes the model-coded encoding
+  and names the document-pack arms as the rightmost two; `make check`
+  green.
