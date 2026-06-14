@@ -33,16 +33,22 @@ CI by 0557.
 
 **Decision:** If the conclusion cites the ρ = 0.92 screen correlation, the
 sentence carries the pooled-across-models and in-sample qualifications and
-points to the within-model validation annex (`sec:annex-screen`). Current
-phrasing: "Spearman ρ = 0.92, pooled across models and in-sample;
-within-model signal positive but modest".
+points to the model-level reliability figure (`fig:reliability`), which
+shows the same screen with more statistical power than the dropped Annex E
+within-model test (ticket 0586). Current phrasing: "Spearman ρ = 0.92,
+pooled across models and in-sample, so an existence proof rather than a
+validated detector; the model-level grade it aggregates to is
+Figure~\ref{fig:reliability}".
 
-**Rationale:** Pooled in-sample ρ overstates the screen; the within-model
-signal is positive but modest. CI keeps the conditional-negative guard
-(unqualified ρ = 0.92 in the conclusion fails); the exact caveat wording is
-free.
+**Rationale:** Pooled in-sample ρ overstates the screen; the in-sample
+caveat is load-bearing and stays. The Annex E within-model validation was
+dropped (ticket 0586) because Figure~\ref{fig:reliability} shows the
+screening result more powerfully; the ρ caveat retargets to that figure.
+CI keeps the conditional-negative guard (unqualified ρ = 0.92 in the
+conclusion fails); the exact caveat wording is free.
 
-**Ticket:** 0532 (round 2); demoted from CI by 0557.
+**Ticket:** 0532 (round 2); demoted from CI by 0557; retargeted to
+`fig:reliability` by 0586.
 
 **Status:** active
 
@@ -51,15 +57,18 @@ free.
 **Decision:** If the Discussion or the screening subsection (label
 `sec:ext-screen`; the screen prose moved there from the Discussion in the
 0562 restructure) cites ρ = 0.92, the existence-proof qualification
-accompanies it ("an existence proof rather than a validated detector, as
-the cutoffs were tuned on the same 70 runs").
+accompanies it ("an existence proof rather than a validated detector,
+[because] the cutoffs were tuned in-sample on these same runs"); the
+subsection now points to `fig:reliability` for the model-level grade
+rather than the dropped Annex E (ticket 0586).
 
 **Rationale:** The threshold rule was tuned on the same 70 runs it rejects
 from — presenting it as a validated detector would be an overclaim. CI keeps
 the conditional-negative guard ("existence proof" and an in-sample marker
 must accompany ρ = 0.92 in the Discussion); the phrasing is free.
 
-**Ticket:** 0532 (round 2); demoted from CI by 0557.
+**Ticket:** 0532 (round 2); demoted from CI by 0557; Annex E reference
+retargeted to `fig:reliability` by 0586.
 
 **Status:** active
 
@@ -67,18 +76,22 @@ must accompany ρ = 0.92 in the Discussion); the phrasing is free.
 
 **Decision:** The binding-constraint claim ("the binding constraint is the
 data, not the model") is framed as a conjecture everywhere, never as a
-finding. The conclusion opens it with "the evidence points toward a
-conjecture about why" and keeps the recommendation conditional ("If the
-constraint is indeed the documents, …"). The abstract does not carry the
-claim at all (2026-06-12 rewrite).
+finding. The conclusion no longer opens with the conjecture sentence at all
+(dropped by ticket 0586 as vague generality; replaced with the
+documents-equalisation evidence — Mistral Large ≈ Opus with documents — and
+a conditional sourcing recommendation). The recommendation stays conditional
+("If the constraint is indeed the documents, …"). The abstract does not
+carry the claim at all (2026-06-12 rewrite).
 
 **Rationale:** The claim rests on the documents condition (one corpus,
-four agents, single-query only) — conjecture is the honest register.
-CI keeps the negatives: the claim is forbidden in the abstract, and any
-body sentence stating "binding constraint is" must carry
-conjecture/conditional framing.
+four agents, single-query only) — conjecture is the honest register, and
+the bare conjecture sentence in the conclusion was vague generality the
+measured equalisation result states more concretely. CI keeps the
+negatives: the claim is forbidden in the abstract, and any body sentence
+stating "binding constraint is" must carry conjecture/conditional framing.
 
-**Ticket:** 0532; demoted from CI by 0557.
+**Ticket:** 0532; demoted from CI by 0557; conclusion sentence dropped by
+0586 (abstract ban retained).
 
 **Status:** active
 

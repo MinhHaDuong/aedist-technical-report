@@ -907,11 +907,16 @@ In the vocabulary of intelligence evaluation (the NATO ``Admiralty''
 grading of STANAG 2511), the run-level screen rates \emph{information
 credibility} while the model-level grade rates \emph{source
 reliability}. Making these scorers part of the standard pipeline is
-future work (§\ref{sec:future}). \ref{sec:annex-screen} tests whether
-the screen discriminates good from bad runs of the \emph{same} model
-(removing the across-model confound) and reports a model-stratified
-Kendall τ = +\ScreenTauCap{} for cap\_distinct vs F1, positive in
-\ScreenPositiveSpearman/\ScreenNModels{} models.
+future work (§\ref{sec:future}). Aggregating the screen across each
+model's five repetitions yields the reference-free reliability grade of
+Figure~\ref{fig:reliability}: the inaccurate models are also the
+unreliable ones, so the grade separates good sources from bad before any
+reference is consulted — though the cutoffs were tuned in-sample on
+these same runs, so this is an existence proof rather than a validated
+detector. Treating models as information sources and runs as information
+packages, this same source-reliability grade is a natural input to
+fusion: a low-reliability model can be down-weighted or excluded before
+its runs are pooled (§\ref{sec:fusion}).
 
 \subsection{Can runs be fused?}\label{sec:fusion}
 
@@ -1213,11 +1218,9 @@ its own right.
 \section{Conclusion}\label{sec:conclusion}
 
 As of mid-2026, AI systems queried with or without web access do not
-reliably produce research-grade statistical inventories, and the
-evidence points toward a conjecture about why: the binding constraint is
-the data, not the model. Each claim in that sentence rests on a measured
-result. That the task is hard is established twice. In the memory-only
-baseline (§\ref{sec:exp1}), fourteen models score row-level F1 between
+reliably produce research-grade statistical inventories. That the task
+is hard is established twice. In the memory-only baseline
+(§\ref{sec:exp1}), fourteen models score row-level F1 between
 \ExpOneFOneMin{} and \ExpOneFOneMax{} with high within-model variance, below an available
 ceiling: group-seeded Wikipedia lists alone cover 92\% of the built
 fleet and sat in the training corpus for years, yet the models failed to
@@ -1226,17 +1229,25 @@ web access and extended reasoning enumerate at best around half the
 fleet and fall short on the quality dimensions measured here (row-level
 accuracy, coverage, and citation-based provenance); the rubric-scored
 dimensions (coherence, provenance support, temporality) were not
-measured. The conjecture itself rests on
-the documents condition: handing the same
+measured.
+
+What changes the picture is the documents condition. Handing the same
 agents a curated document set in a single query equalises three of the
-four, though the multi-turn protocol does not replicate the effect
-(§\ref{sec:exp2}).
+four: with documents in hand, the frontier-priced Anthropic agent
+(F1 \ExpTwoFOneAnthropicDocsSingle) and the cheaper Mistral Large agent
+(F1 \ExpTwoFOneMistralDocsSingle) land within a few points of each
+other, and which model runs the query matters less than which documents
+it is handed (§\ref{sec:exp2}; the multi-turn protocol does not
+replicate the effect). The investment that pays is sourcing, not a
+stronger or costlier model: there is room to hope this task is solved
+through a document pipeline rather than an arms race.
 
 Two levers already deliver without any new data
 collection. The reference-free screen rejects the weakest outputs
 without ground truth (Spearman ρ = \ScreenPooledSpearman{} against reference-based F1,
-pooled across models and in-sample; within-model signal positive but
-modest, \ref{sec:annex-screen}). Fusion recovers coverage: pooling runs across
+pooled across models and in-sample, so an existence proof rather than a
+validated detector; the model-level grade it aggregates to is
+Figure~\ref{fig:reliability}). Fusion recovers coverage: pooling runs across
 models finds plants no single model reliably finds, and requiring two
 models to agree nearly eliminates false positives (§\ref{sec:fusion}).
 If the constraint is indeed the documents, the path to research-grade
@@ -2542,64 +2553,6 @@ against the reference; FP = unmatched plants (extracted but not in the
 reference). Under ≥2-models in E1: F1=\FusionRTwoEOneFFrac{}, TP=\FusionRTwoEOneTP, FP=\FusionRTwoEOneFP. Under
 ≥2-models in E2-1D: F1=\FusionRTwoETwoOneDFFrac{}, TP=\FusionRTwoETwoOneDTP, FP=\FusionRTwoETwoOneDFP.}\label{fig:fusion-mvp}
 \end{figure}
-
-\clearpage
-
-\section{Run-grain screen validation: within-model accuracy gap}\label{sec:annex-screen}
-
-The screening subsection (§\ref{sec:ext-screen}) reports a pooled
-Spearman ρ = \ScreenPooledSpearman{} between
-within-run capacity variability and reference-based F1 across 70
-Experiment 1 runs. A potential confound: weak models are weak across the
-board, so the correlation may reflect \emph{model quality} rather than
-run quality — the screen may be near-tautological at the model grain.
-This annex tests whether the screen discriminates good from bad runs of
-the \textbf{same model}, removing the across-model confound.
-
-\textbf{Method.} For each of the 70 runs (14 models × 5 repetitions), we
-compute \texttt{cap\_distinct} (number of distinct capacity values in
-the raw output table) and \texttt{status\_distinct} (number of distinct
-status values) directly from the exp1\_batch2 raw CSVs. The veto rule
-\texttt{cap\_distinct\ ≤\ 4\ OR\ status\_distinct\ ≤\ 1} assigns each
-run to vetoed or surviving. Reference-based F1 is taken from the
-cross-evaluation CSV (the \emph{outcome}; it is never used as a veto
-input, preserving the reference-free property of the screen). The
-model-stratified Kendall τ counts concordant and discordant pairs
-of \texttt{(cap\_distinct,\ F1)} \emph{only within each model's 5 runs},
-then sums the counts across all 14 models — an exact removal of the
-across-model confound.
-
-\textbf{Results.} The model-stratified Kendall τ of cap\_distinct
-vs F1 is \textbf{+\ScreenTauCap} (\ScreenTauCapConcordant{} concordant, \ScreenTauCapDiscordant{} discordant pairs across \ScreenNModels{}
-models; \ScreenPositiveSpearman/\ScreenNModels{} models show a positive within-model Spearman ρ). For
-status\_distinct vs F1 the stratified τ is \textbf{+\ScreenTauStatus} (\ScreenTauStatusConcordant{}
-concordant, \ScreenTauStatusDiscordant{} discordant). Across-model pooled statistics (tautological
-baseline): mean F1 of vetoed runs = \ScreenPooledVetoedMeanFOne{}, surviving = \ScreenPooledSurvivingMeanFOne{}, gap =
-+\ScreenPooledGap{}. Within-model binary gap (only the \ScreenNMixed{} models with both vetoed and
-surviving runs): mean of per-model gaps = \textbf{+\ScreenBinaryGap} (\ScreenPerModelGaps). The reduction from
-the pooled gap (+\ScreenPooledGap) to the within-model gap (+\ScreenBinaryGap) shows that
-roughly half the pooled signal was attributable to the across-model
-confound; the residual within-model effect (+\ScreenBinaryGap) is the honest lower
-bound.
-
-\textbf{Interpretation and limitations.} The within-model directional
-signal is positive and consistent across a clear majority of models
-(\ScreenPositiveSpearman/\ScreenNModels), supporting the claim that the screen earns its keep at the run
-grain. However, the statistic is modest, and only \ScreenNMixed{} of the \ScreenNModels{} models
-have both vetoed and surviving runs — the binary within-model
-comparison is therefore underpowered for formal significance testing.
-One false-veto case exists: \ScreenFalseVetoModel{} run \ScreenFalseVetoRun{} (F1 = \ScreenFalseVetoFOne)
-is vetoed by the cap\_distinct threshold yet outscores one of the
-model's two surviving runs. These limitations are acknowledged; the
-screen is presented as an existence proof validated within-model, not as
-a fully calibrated detector. The cutoff thresholds were tuned in-sample
-on the same 70 runs — cross-validation against Experiment 2 or
-held-out runs is future work.
-
-\emph{Supporting data:
-\fpath{report/inputs/generated/tab_screen_validation_within_model.csv}
-(produced by \fpath{src/aedist/screen_validation_within_model.py},
-wired in \fpath{experiments/render.mk}).}
 
 \clearpage
 

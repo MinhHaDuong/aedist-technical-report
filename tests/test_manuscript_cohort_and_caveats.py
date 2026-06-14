@@ -139,18 +139,21 @@ def test_rho_caveat_wherever_rho_appears():
     Discussion in ticket 0562), the pooled / in-sample qualification must
     accompany it in that section. The exact caveat phrasings are editorial
     decisions recorded in docs/editorial-brief.md (rho-caveat-conclusion,
-    rho-caveat-discussion); CI only forbids an unqualified ρ. The annex
-    occurrence (sec:annex-screen) is out of scope: the label-keyed
-    extractions end at the next sectioning command, well before the annexes
-    (ticket 0561)."""
+    rho-caveat-discussion); CI only forbids an unqualified ρ.
+
+    Ticket 0586 dropped the within-model validation annex (sec:annex-screen)
+    and retargeted the ρ caveat to the model-level reliability figure
+    (fig:reliability), which shows the same screen with more statistical
+    power. The in-sample caveat requirement is preserved; only the required
+    cross-reference changed."""
     conclusion = section("sec:conclusion")
     if "ρ = 0.92" in conclusion:
         assert "pooled" in conclusion and "in-sample" in conclusion, (
             "conclusion cites ρ = 0.92 without the pooled/in-sample caveat"
         )
-        assert "\\ref{sec:annex-screen}" in conclusion, (
-            "conclusion cites ρ = 0.92 without pointing to the within-model "
-            "validation annex"
+        assert "\\ref{fig:reliability}" in conclusion, (
+            "conclusion cites ρ = 0.92 without pointing to the model-level "
+            "reliability figure (fig:reliability)"
         )
     for label in ("sec:discussion", "sec:ext-screen"):
         text = section(label)
