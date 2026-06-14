@@ -990,122 +990,103 @@ projections — are where language-model reasoning is most useful.
 
 \section{Discussion}\label{sec:discussion}
 
-The two experiments (§\ref{sec:exp1}, §\ref{sec:exp2}) and the post-hoc
-extensions (§\ref{sec:extensions}) support a consistent reading,
-summarised in the Introduction. This section examines what the
-measuring instrument can and cannot support in that reading: the F1
-metric, its variance sources, and the single-case design.
+This section examines the limits and the potential of the benchmark we
+offer: what the F1 metric can and cannot support, the three levels at
+which a result is scored, the variance sources the design leaves
+unquantified, and the single-case scope.
 
 \textbf{F1 is a useful but opaque aggregate.} Row-level F1 is the
-primary metric in §\ref{sec:exp1} and §\ref{sec:exp2}: it is the
-field's standard comparability unit for structured recall, and it is
-computable without manual annotation. As an aggregate, it collapses
-coverage (are the right assets present?),
-freshness (are the values current?), articulation (was the query
-well-specified?), and coherence (are the claims consistent?) into a
-single score. A system can achieve high F1 by excelling on one
-dimension while failing silently on others — a well-articulated
-prompt against a stale corpus, for example, can return complete,
+primary metric in §\ref{sec:exp1} and §\ref{sec:exp2}: the field's
+standard comparability unit for structured recall, computable without
+manual annotation. As an aggregate, it collapses coverage (are the
+right assets present?), freshness (are the values current?),
+articulation (was the query well-specified?), and coherence (are the
+claims consistent?) into a single score. A system can reach high F1 by
+excelling on one dimension while failing silently on others — a
+well-articulated prompt against a stale corpus can return complete,
 internally consistent, but outdated values. The §\ref{sec:quality}
 four-dimensional framework diagnoses \emph{where} a system fails once
-F1 has ranked it. Readers should interpret F1 comparisons as aggregate
-capability rankings, with the quality framework as the diagnostic
-lens.
+F1 has ranked it; read F1 comparisons as aggregate capability rankings,
+the quality framework as the diagnostic lens.
 
-\textbf{F1 conflates facts never found with facts found but not
-expressed.} Articulation — the gap between analyst intent and model
-query — has a soft boundary with coverage. A model that retrieves the
-correct fact but paraphrases it in a form the downstream extractor does
-not recognise produces a missing value in the output table; the symptom
-is indistinguishable from a genuine coverage gap. F1 therefore conflates
-two distinct failure modes: facts the model never found, and facts the
-model found but failed to express in extractable form. The structured
-four-section prompt in §\ref{sec:exp1} is designed to close the
-articulation gap; the residual F1 deficit is more likely to reflect true
-coverage and freshness limits than articulation failures. But this
-remains an assumption, not a measured separation.
+F1 also conflates two failure modes that look identical in the output
+table: facts the model never found, and facts it found but expressed in
+a form the downstream extractor does not recognise. Articulation — the
+gap between analyst intent and model query — shares a soft boundary
+with coverage, so a paraphrased-but-correct fact reads as a missing
+value. The structured prompt in §\ref{sec:exp1} is designed to close
+the articulation gap; we assume the residual deficit reflects true
+coverage and freshness limits rather than articulation failures, but
+this is an assumption, not a measured separation.
 
-A third failure mode
-belongs to the measuring instrument rather than the model: plant-name
-matching is itself a named-entity recognition problem, and a true plant
-reported under a name variant the LP matcher does not recognise is
-scored as a false positive plus a false negative: a matcher limit,
-not a metric limit (\ref{sec:annex-exp1}). The converse failure
-(fuzzily merging two distinct plants) appears bounded: a
-phase-collision audit of the reference name space leaves
-\PhaseCollisionResidualNinety{} of \PhaseCollisionPairsNinety{}
-ambiguous distinct-plant name pairs matchable after the unit-number
-veto, and the scored runs realise \RealisedFuzzyBelowNinety{} such
-false fuzzy matches (Table~\ref{tbl:source-concordance}). The same instrument limit
-arises from reporting-level mismatches: the same asset can be reported
-at three grains (the power center, the power plants it hosts, and
-their generating units), and a model row at one grain matched against
-a reference row at another scores as a false positive plus a false
-negative even when the asset itself is right. The prompt's asset-row
-rule (\ref{sec:annex-exp1}) fixes the intended grain at the plant /
-unit-group level, but models do not always comply, and a share of the
-false-positive and false-negative counts likely reflects such grain
-disagreements rather than genuine errors.
+A further share of false positives and false negatives belongs to the
+measuring instrument rather than the model: a true plant reported under
+an unrecognised name variant,
+or at a different reporting grain than the reference (power center,
+plant, or generating unit), scores as one of each even when the asset
+is right (\ref{sec:annex-exp1}). The converse error — fuzzily merging
+two distinct plants — appears bounded: of \PhaseCollisionPairsNinety{}
+ambiguous name pairs, \PhaseCollisionResidualNinety{} remain matchable
+after the unit-number veto, and the scored runs realise
+\RealisedFuzzyBelowNinety{} such false matches
+(Table~\ref{tbl:source-concordance}).
+
+\textbf{A result is scored at three levels.} The benchmark separates
+three questions that an aggregate F1 ranking elides. \emph{Method
+quality} asks what the resources buy: the cost-versus-F1 relation
+(Figure~\ref{fig:cost-quality}) reads the time and money a method
+spends against the quality of the table it returns, and a method that
+spends more without returning more is dominated regardless of its rank.
+\emph{Run quality} scores one table — a single model's single run —
+on the four §\ref{sec:quality} dimensions, the cell-level accuracy of
+its matched rows together with its coherence, provenance, and currency.
+\emph{Model quality} aggregates runs into a reliability grade for the
+model as a source: a version whose runs are repeatedly incoherent is
+disqualified as a source even when an occasional run scores well
+(§\ref{sec:ext-screen}, Figure~\ref{fig:reliability}). The three are
+perpendicular, and conflating them is how a single number flatters an
+expensive or erratic system.
 
 \textbf{Interday drift is an unquantified variance source.} Beyond the
 5-rep within-session spread, provider-side silent movement (routing
 changes, checkpoint updates) shifts scores at fixed call shape and
 seed. The top-up canary observed shifts up to \(\Delta\)F1 = 0.289 over
-a 24-hour window (qwen3.6-27b, \ref{sec:annex-exp1}), an interday
+a 24-hour window (qwen3.6-27b, \ref{sec:annex-exp1}) — an interday
 variance the design observes but does not quantify.
 
-\textbf{Refusal is evidence about the standard.} In the archived
-baseline sweep (prompt \texttt{p1\_base}; runs preserved in
-\fpath{experiments/archive/outputs/exp1/baseline/},
-\ref{sec:annex-exp1}), GPT-5.5 declined the task on 3 of its 5
-memory-only reps, opening with ``I can't honestly produce a complete,
-primary-sourced inventory\ldots{}'' and refusing to fabricate URLs or
-source citations from parametric knowledge alone; of the two completing
-reps, one scored F1 = 0.64 and the other returned a single-row,
-near-empty table (F1 = 0.00).
-
-The \texttt{modelset\_exp1\_batch2} re-run
-reported in §\ref{sec:exp1} resolved compliance (all five reps
-completed, F1 between 0.61 and 0.65), yet the declined responses are not
-a missing data point to be imputed — they are a signal about the bar
-itself. The model judged that a complete, primary-sourced inventory
-cannot honestly be produced from parametric memory and refused to
-fabricate the citations the table format invites. Read against the
-§\ref{sec:quality} provenance dimension, that refusal is the correct
-response: the dimension polices confidently-stated fabrication, and a
-system that declines rather than fabricates is clearing, not failing,
-the auditability test the benchmark is built to measure. The other
+\textbf{Refusal is evidence about the standard.} In an archived
+baseline sweep (\ref{sec:annex-exp1}), one model declined the task on 3
+of its 5 memory-only reps, opening with ``I can't honestly produce a
+complete, primary-sourced inventory\ldots{}'' and refusing to fabricate
+citations from parametric knowledge alone; a later re-run resolved
+compliance, yet the declined responses are not a missing data point to
+be imputed. Read against the §\ref{sec:quality} provenance dimension,
+the refusal is the correct response: the dimension polices
+confidently-stated fabrication, so a system that declines rather than
+fabricates is clearing, not failing, the auditability test. The other
 models' fluent but unsourced tables are the contrasting failure mode.
 
-\textbf{External coherence is harder to measure, for three
-reasons.} The §\ref{sec:quality} coherence criterion distinguishes
-internal consistency (within the dataset) from external consistency
-(against world knowledge). The experiments in this paper measure
-internal coherence. First, the reference knowledge base is undefined:
-checking whether a stated capacity is plausible requires specifying
-which knowledge pool to check against (the RAG corpus, the model's
-parametric memory, official statistics, or physical engineering
-constraints), and these pools overlap imperfectly and carry different
-reliability.
-
-Second, the checker's capability matters: a small model
-used as evaluator has poor recall of world knowledge and will miss
-genuine inconsistencies; a large frontier model has better recall but
-may introduce its own confabulations as apparent corrections. Third, the
-depth of reasoning required varies by claim: detecting that a 6000 MW
-gas plant in a province with no pipeline access is incoherent requires
-multi-step inference, not lookup. A judging model brings parametric
-world knowledge that engages external coherence, but only implicitly
-and unsystematically; a principled external-coherence metric remains
-future work.
+\textbf{External coherence is harder to measure.} The §\ref{sec:quality}
+coherence criterion distinguishes internal consistency (within the
+dataset) from external consistency (against world knowledge); the
+experiments here measure the internal kind. The external kind resists a
+single metric for three reasons: the reference knowledge pool is
+undefined (RAG corpus, parametric memory, official statistics, or
+physical constraints overlap imperfectly and carry different
+reliability); the checker's own capability bounds what it can catch (a
+small evaluator misses inconsistencies, a large one may confabulate
+corrections); and the reasoning depth varies by claim, since detecting
+that a 6000 MW gas plant in a province with no pipeline access is
+incoherent requires multi-step inference, not lookup. A principled
+external-coherence metric remains future work.
 
 \textbf{One case study, not a benchmark suite.} Every result above is
 measured on a single case: the Vietnam thermal-plant fleet against one
-\NumRefPlants-plant reference list. N = 1 at the dataset level means the findings
-are existence proofs — the task is hard, a curated corpus equalises
-the agents, a reference-free screen and simple fusion rules work here
-— not generalisable benchmarks. The prompt templates, the LP matcher
-parameters, and the quality bar were all developed against this
+\NumRefPlants-plant reference list. N = 1 at the dataset level means the
+findings are existence proofs — the task is hard, a curated corpus
+equalises the agents, a reference-free screen and simple fusion rules
+work here — not generalisable benchmarks. The prompt templates, the
+matcher parameters, and the quality bar were all developed against this
 reference; transferring them to another country or asset class is a
 replication study, not a configuration change. That is what makes the
 agenda of §\ref{sec:future} a research programme: each step is open to
