@@ -250,19 +250,21 @@ load-bearing.
 
 ## annex-quote-anchor
 
-**Decision:** The Annex baseline-prompt quote reproduces the as-sent
-Doc-07 prompt faithfully, including the sentences "primary-sourced
-reference inventory" and "Actual or expected commercial operation date".
+**Decision:** The Annex analysis-cohort prompt quote reproduces the
+as-sent Doc-07 prompt faithfully (the boxed `promptbox` reformat is
+typographic only). The archived-baseline prompt block was deleted
+(reading-2 finding 9, ticket 0590) — its results were never presented.
 
 **Rationale:** Content fidelity of a fixed external document, not
 authorial prose — the annex quotes what was actually sent to the models,
-so the verbatim anchors are KEPT in CI
-(`test_annex_baseline_prompt_carries_as_sent_status_vocabulary`,
-`test_annex_carries_doc07_prompt_verbatim_anchors`). Recorded here so a
-reviewer rewording the annex framing knows the quoted block itself is
-immutable.
+so the verbatim anchors of the kept Doc-07 prompt are KEPT in CI
+(`test_annex_carries_doc07_prompt_verbatim_anchors`,
+`test_analysis_cohort_prompt_matches_shipped_record`). The deleted
+archived-baseline block is now negatively guarded
+(`test_annex_baseline_prompt_block_removed`). Recorded here so a reviewer
+rewording the annex framing knows the quoted prompt itself is immutable.
 
-**Ticket:** 0511; triaged keep-in-CI by 0557.
+**Ticket:** 0511; triaged keep-in-CI by 0557; baseline block removed by 0590.
 
 **Status:** active
 
