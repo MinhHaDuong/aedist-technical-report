@@ -1,0 +1,46 @@
+%erg 0.1
+Title: Fix stale Qwen3-Max in report.tex French report; extend agents-table guard to report
+Created: 2026-06-14
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-14T00:30Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+PR #1057 (ticket 0584) fixed the stale `Qwen3-Max` version in the manuscript
+`main.tex` → `Qwen3.7 Max` (artifact ground truth: `experiments/models.yaml`
+slug `qwen3.7-max-2026-05-20`, confirmed in sota run-records). The gate review
+surfaced that the **French report `report/report.tex` retains 3 stale
+`Qwen3-Max` occurrences** — same defect class, outside 0584's main.tex scope.
+This ticket fixes the sibling file and closes the defect class.
+
+## Relevant files
+- `report/report.tex` — 3 `Qwen3-Max` occurrences to correct.
+- `experiments/models.yaml` — ground truth (`qwen3.7-max-2026-05-20`).
+- `tests/test_manuscript_agents_table.py` — existing guard (main.tex-scoped);
+  extend its negative `Qwen3-Max`-forbidden guard to also cover `report.tex`.
+
+## Actions
+1. Replace the 3 `Qwen3-Max` strings in `report/report.tex` with the correct
+   `Qwen3.7 Max` (verify each against `models.yaml`; respect French-report
+   wording/casing conventions around them).
+2. Extend the negative guard so `Qwen3-Max` is forbidden in `report.tex` too.
+
+## Test
+Add/extend a negative-guard adherence test: `Qwen3-Max` must not appear in
+`report/report.tex` (red on current main, green after the fix).
+
+## Verification
+- [ ] `grep -c 'Qwen3-Max' report/report.tex` → 0
+- [ ] Guard test covers report.tex and is red→green
+- [ ] `make check` green; report builds clean under tectonic
+
+## Invariants
+- Do not touch other Qwen entries (`qwen3.6-*`, `qwen3-max-thinking`,
+  OpenRouter `qwen3-max`) — they are genuinely different models.yaml entries.
+- Do not run `make -B`; no figure-PDF churn.
+
+## Exit criteria
+- No `Qwen3-Max` in `report/report.tex`; guard extended; `make check` green.
