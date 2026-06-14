@@ -857,7 +857,8 @@ audience: why is the task hard, can weak runs be screened without a
 reference, can runs be fused, and what system do the findings imply?
 They are exploratory; each subsection summarises one analysis.
 
-\subsection{Why is the task hard?}\label{sec:ext-difficulty}
+\subsection*{Why is the task hard?}\label{sec:ext-difficulty}
+\addcontentsline{toc}{subsection}{Why is the task hard?}
 
 The task is hard because the reference list is a long-tail
 distribution. As the introduction notes, the existing power plants are
@@ -882,7 +883,8 @@ decomposes this difficulty plant by plant: famous plants form dense
 rows, obscure ones sparse, and the operational core separates visibly
 from the project-dominated tail.
 
-\subsection{Screening without a reference}\label{sec:ext-screen}
+\subsection*{Screening without a reference}\label{sec:ext-screen}
+\addcontentsline{toc}{subsection}{Screening without a reference}
 
 Internal coherence rejects the weakest runs without any
 reference. The reference list grades runs from the outside; an
@@ -916,9 +918,10 @@ these same runs, so this is an existence proof rather than a validated
 detector. Treating models as information sources and runs as information
 packages, this same source-reliability grade is a natural input to
 fusion: a low-reliability model can be down-weighted or excluded before
-its runs are pooled (§\ref{sec:fusion}).
+its runs are pooled (the fusion discussion that follows).
 
-\subsection{Can runs be fused?}\label{sec:fusion}
+\subsection*{Can runs be fused?}\label{sec:fusion}
+\addcontentsline{toc}{subsection}{Can runs be fused?}
 
 The experiments in §\ref{sec:exp1} and §\ref{sec:exp2} establish that
 the gap is real: recall from model memory is incomplete and volatile;
@@ -939,14 +942,15 @@ with \FusionRTwoETwoOneDFP{} on the Experiment 2 naive arm (full results in
 \ref{sec:annex-fusion}). Both levers reuse existing runs; the
 structural answer to the ceiling no single model breaks is a stateful
 pipeline that invests in the corpus rather than the model
-(§\ref{sec:ext-system}). To our knowledge, no published benchmark or
+(the stateful-pipeline discussion that follows). To our knowledge, no published benchmark or
 system targets open-world enumeration of a national asset class with
 per-cell provenance at this granularity. Nor did we find a published
 demonstration of the conjunction of per-cell provenance with per-cell
 temporal validity in LLM-augmented inventories; demonstrating that
 conjunction remains future work.
 
-\subsection{What system do the findings imply?}\label{sec:ext-system}
+\subsection*{What system do the findings imply?}\label{sec:ext-system}
+\addcontentsline{toc}{subsection}{What system do the findings imply?}
 
 The single-model ceiling motivates a stateful architecture: one that
 keeps an organised memory between runs instead of starting from scratch
