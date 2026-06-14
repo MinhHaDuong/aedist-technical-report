@@ -492,11 +492,8 @@ scientific quality standards. Numbers shift between runs, citations are
 absent or fabricated, and there is no way to tell which cells one should
 trust.
 
-\textbf{Cohorts.} The sweep dispatched 16 models (the
-\texttt{modelset\_exp1\_journal} set in
-\texttt{experiments/experiments.toml}). Two — \texttt{qwen3.6-27b} and
-\texttt{qwen3.6-plus} — were dropped before analysis, leaving the
-14-model analysis cohort (\texttt{modelset\_exp1\_batch2}) that backs
+\textbf{Cohorts.} The sweep dispatched 16 models. Two were dropped before
+analysis, leaving the 14-model analysis cohort that backs
 every per-model number, Figure~\ref{fig:direct-base},
 Figure~\ref{fig:cost-quality}, and Figure~\ref{fig:reliability}. Every
 figure caption below names the cohort it draws on.
@@ -518,12 +515,11 @@ in the training corpus. Models grouped on the vertical
 axis.}\label{fig:direct-base}
 \end{figure}
 
-\textbf{Experiment 1 — Parametric baseline.} We query fourteen
-language models from the \emph{modelset\_exp1\_batch2} set; they are
+\textbf{Experiment 1 — Parametric baseline.} We query the fourteen
+analysis-cohort language models; they are
 listed on Figure~\ref{fig:reliability} and include Claude, DeepSeek,
 Mistral and Qwen at various sizes from workstation to frontier, with a
-fixed inventory-specification prompt (the full Doc-07 naive prompt,
-\texttt{experiments/sota/protocol\_07\_naive\_prompt.md}, reproduced
+fixed inventory-specification prompt (the naive prompt, reproduced
 verbatim in \ref{sec:annex-exp1}). No documents are
 provided; models draw exclusively on parametric knowledge and receive a
 system instruction forbidding web search. Each model is queried five
@@ -552,8 +548,8 @@ author's group injected reference-derived content into the pre-existing
 \emph{List of power stations in Vietnam} on 19 June 2019 (significantly
 increasing its coverage; verifiable in the page history, revision
 \texttt{902510278}), and \emph{List of coal power stations in Vietnam}
-was split off on 5 July 2019 (provenance and diff in
-\texttt{data/reference/PROVENANCE.md}). Both events predate the 2026-era
+was split off on 5 July 2019 (provenance and diff documented with the
+reference dataset). Both events predate the 2026-era
 model cohort by roughly six and a half years, so the answer key's
 validity is not in doubt for the cohort; we report the comparison
 directionally because the project does not record per-model cutoff
@@ -611,7 +607,7 @@ experiment cost is \$\CensusCostTotal{}.
 
 An earlier sweep surfaced refusals rather than scores: in the archived
 baseline sweep, GPT-5.5 declined the task on 3 of its 5 reps before the
-\texttt{modelset\_exp1\_batch2} re-run reported above resolved
+analysis-cohort re-run reported above resolved
 compliance. We retain the declined responses as data; the episode and
 its reading against the §\ref{sec:quality} provenance bar are taken up
 in the Discussion.
@@ -1358,9 +1354,9 @@ reconciliation is deferred (post-arXiv).}
 \subsection*{Prompts}
 \addcontentsline{toc}{subsection}{Prompts}
 
-\textbf{Analysis-cohort prompt (Doc-07).} The fourteen-model analysis
+\textbf{Analysis-cohort prompt.} The fourteen-model analysis
 cohort (\texttt{modelset\_exp1\_batch2}, the cohort behind every
-per-model number in §\ref{sec:exp1}) received the full Doc-07 naive
+per-model number in §\ref{sec:exp1}) received the full naive
 prompt — \fpath{experiments/sota/protocol_07_naive_prompt.md} —
 verbatim as the sole user message, at temperature 0, seed 42,
 \texttt{max\_tokens} 65536, web access off; this was verified against
@@ -2345,8 +2341,8 @@ This experiment is script-based, not sweep-based. No
 \addcontentsline{toc}{subsection}{Evaluation}
 
 Phase B outputs are evaluated against the \NumRefPlants-plant reference using the
-same \texttt{src/aedist/evaluate.py} machinery as §\ref{sec:exp1} (LP
-matcher, ADR-2/3, \texttt{similarity\_threshold\ =\ 90},
+same \texttt{src/aedist/evaluate.py} machinery as §\ref{sec:exp1} (the LP
+matcher with \texttt{similarity\_threshold\ =\ 90},
 \texttt{capacity\_weight\ =\ 0.001}), yielding row-level F1 and
 per-attribute accuracies. Rubric peer scoring of each output on the four
 §\ref{sec:quality} dimensions — which would need a judging model — is
