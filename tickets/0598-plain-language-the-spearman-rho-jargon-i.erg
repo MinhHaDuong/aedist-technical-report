@@ -1,0 +1,75 @@
+%erg 0.1
+Title: Plain-language the Spearman rho jargon in main-text body (keep in annexes)
+Created: 2026-06-14
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-14T09:47Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Reading-2 register intent (findings 17/26: "technical report, not a lab
+journal", author's plain voice) was applied broadly, but the author flags
+that the **Spearman ρ** statistic still reads as jargon in the main-text
+body. Plain it in the body; the statistic itself belongs in the annexes,
+where it may stay technical.
+
+## Relevant files
+
+- `slides/manuscript/main.tex` — body occurrences to plain:
+  - `:644` (§3) — "the inaccurate models are also the unreliable ones
+    (Spearman ρ = 0.78 …"  ← NOTE: `0.78` is **hand-typed**, violating the
+    macros rule (numbers go through generated macros). This is a different
+    correlation from the pooled screen (0.92); reconcile or macro-ise.
+  - `:893` (§7.2) — "with reference-based F1 at Spearman ρ =
+    \ScreenPooledSpearman{} across the 70 runs."
+  - `:1229` (Conclusion) — "without ground truth (Spearman ρ =
+    \ScreenPooledSpearman{} against reference-based F1, … in-sample …)".
+  Keep (annex, technical detail is fine): `:1867`, `:1885`, `:1889`.
+- `docs/editorial-brief.md` — the `rho-caveat-conclusion` entry: the
+  Conclusion's ρ must keep its in-sample caveat. Do not strip it.
+- CI: the conditional guard "IF ρ = 0.92 appears in the Conclusion, the
+  in-sample caveat must accompany it" — if the literal leaves the
+  Conclusion, update the guard in lockstep (it must not silently pass).
+
+## Actions
+
+1. Rephrase the three body sites in plain language while keeping the
+   meaning. Suggested register: "the reference-free score and the
+   reference-based F1 rank the runs almost identically" — carry the
+   number via `\ScreenPooledSpearman{}` if a number is kept; do NOT
+   hand-type it. The author decides whether a number stays in the body
+   at all or moves to the annex.
+2. Fix `:644`'s hand-typed `0.78`: route through a generated macro or
+   move the statistic to the annex.
+3. Preserve the in-sample caveat in the Conclusion (brief contract).
+4. Leave annex occurrences (`:1867/1885/1889`) as-is.
+
+## Test
+
+- Red first: an `@pytest.mark.adherence` negative guard asserting
+  "Spearman" does not appear in the body region of `main.tex` (between
+  the document start and `\appendix`), while permitted after `\appendix`.
+  Per the CI polarity rule this is a body-scoped negative guard — forbid
+  the jargon where it must not appear; do not pin a positive replacement.
+- Keep the existing conditional ρ/in-sample-caveat guard green (update
+  it if the Conclusion literal changes).
+
+## Verification
+
+- [ ] No "Spearman" / "Spearman ρ" in `main.tex` before `\appendix`.
+- [ ] Annex ρ usages intact.
+- [ ] No hand-typed correlation number in the body (`:644` fixed).
+- [ ] In-sample caveat still present in the Conclusion; brief guard green.
+- [ ] `make check` passes; manuscript builds.
+
+## Invariants
+
+- No empirical-number values change (only how they are phrased / sourced).
+- Editorial-brief hedges and the in-sample caveat stay intact.
+
+## Exit criteria
+
+- Body reads plainly (no Spearman jargon); annexes keep the statistic;
+  numbers sourced from macros; `make check` green.

@@ -1,0 +1,82 @@
+%erg 0.1
+Title: Discussion section conflates method quality and table quality
+Created: 2026-06-14
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-14T09:48Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+§8 Discussion (reading-2 finding 40) introduces three scoring levels and
+asserts "The three are perpendicular." But the prose defines **method
+quality through table quality**, conflating exactly the two it claims are
+orthogonal. The author flags the conflation.
+
+The offending definition (`slides/manuscript/main.tex:1031–1040`):
+
+> \emph{Method quality} asks what the resources buy: the cost-versus-F1
+> relation (Figure cost-quality) reads the time and money a method
+> spends **against the quality of the table it returns** …
+
+"Method quality" is then literally the relation cost ↔ table-quality —
+while "Run quality" is defined as the quality of one table. The two share
+the table-quality axis, so calling them perpendicular is internally
+inconsistent.
+
+## Relevant files
+
+- `slides/manuscript/main.tex:1031–1046` — the "A result is scored at
+  three levels." paragraph.
+- Memory/context: the paper's three-quality spine (data / answer /
+  method) — method quality is a distinct, perpendicular axis, not a
+  function of answer/table quality.
+
+## Actions
+
+1. Rewrite the three-levels paragraph so the axes are genuinely
+   independent:
+   - **Method quality** = a property of the *method/process* — the
+     resources it consumes (time, money) and its reproducibility — to
+     reach a result. Independent of how good any single table is.
+   - **Run/table quality** = the quality of one output table on the four
+     dimensions.
+   - **Model quality** = source reliability aggregated over runs.
+   The cost-vs-F1 figure *relates* method cost to result quality; it does
+   not *define* method quality as table quality. Reword so the figure is
+   a relationship between two distinct axes, not a definition of one in
+   terms of the other.
+2. Keep the "perpendicular" claim only if the rewrite makes it true;
+   otherwise drop/soften it.
+
+## Test
+
+- Red first: this is prose-judgment, so the durable guard is a
+  **negative** one — e.g. assert the method-quality sentence does not
+  define it via "quality of the table it returns" (forbid the specific
+  conflating phrasing). Per the CI polarity rule, do not pin the new
+  positive wording; record the editorial decision (axes are
+  perpendicular, method quality is process-not-output) in
+  `docs/editorial-brief.md` instead, checked by /review-pr-prose.
+
+## Verification
+
+- [ ] Method quality is defined as a process/resource property, not as
+      cost-vs-table-quality.
+- [ ] Run quality and method quality no longer share the table-quality
+      axis in their definitions.
+- [ ] "Perpendicular" claim is now internally consistent (or removed).
+- [ ] Editorial-brief entry added for the decision.
+- [ ] `make check` passes; manuscript builds.
+
+## Invariants
+
+- No empirical-number changes. Cost-vs-F1 figure and its data unchanged
+  (only the prose framing around it).
+
+## Exit criteria
+
+- The three scoring levels read as genuinely orthogonal; method quality
+  is no longer defined through table quality; brief entry recorded;
+  `make check` green.
