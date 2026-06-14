@@ -101,13 +101,18 @@ def test_reliability_in_text_heatmap_in_annex() -> None:
 
 
 def test_exp2_2x2_table_in_annex() -> None:
-    """Ticket 0583: the 2×2 F1/cost table moved from §exp2 body to the annex."""
+    """Ticket 0583: the 2×2 F1/cost table definition moved to the annex.
+
+    The label \\caption{\\label{tbl:exp2-2x2}…} must live in the annex; only
+    \\ref call sites remain in the body (so the table renders after §exp2).
+    """
     text = body_raw()
     parts = text.split("\n\\appendix\n", 1)
     assert len(parts) == 2, "no \\appendix divider found in main.tex"
     body_part, annex = parts
-    assert "tbl:exp2-2x2" not in body_part, "2×2 table label still in main text body"
-    assert "tbl:exp2-2x2" in annex, "2×2 table not relocated to annex"
+    label_def = "\\caption{\\label{tbl:exp2-2x2}"
+    assert label_def not in body_part, "2×2 table definition still in main text body"
+    assert label_def in annex, "2×2 table definition not relocated to annex"
 
 
 def test_no_hand_typed_figure_numbers_in_captions() -> None:
