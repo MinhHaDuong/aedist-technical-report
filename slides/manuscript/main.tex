@@ -46,6 +46,7 @@
 
 % Tables and figures
 \usepackage{longtable,booktabs,array}
+\usepackage{tabularx}
 \usepackage{graphicx}
 \usepackage{pdfpages} % \includepdf: multi-page portrait recognition matrix
 \usepackage{xcolor}
@@ -1980,13 +1981,10 @@ Four direct-API agents, ordered by ascending baseline smoke cost.
 OpenRouter is not used here — vendor-direct invocation keeps
 web-search billing transparent.
 
-\begin{longtable}[]{@{}lll>{\raggedright\arraybackslash}p{0.48\linewidth}@{}}
-\toprule\noalign{}
+\begin{tabularx}{\linewidth}{@{}lll>{\raggedright\arraybackslash}X@{}}
+\toprule
 \# & Vendor & Model & Surface \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
+\midrule
 1 & Mistral & Mistral Large 2512 & Agents API +
 \texttt{web\_search} connector \\
 2 & Alibaba & Qwen3.7 Max & DashScope, \texttt{web\_search} inside
@@ -1995,7 +1993,8 @@ thinking mode \\
 reasoning \\
 4 & Anthropic & Claude Opus 4.6 & Anthropic API +
 \fpath{web_search_20250305} + adaptive thinking \\
-\end{longtable}
+\bottomrule
+\end{tabularx}
 
 Anthropic is pinned to Opus 4.6 (not 4.7): identical call shape at
 lower per-call cost. Kimi K2.6 is disqualified — vendor docs
@@ -2395,13 +2394,11 @@ not detected.
 
 \section{Experiment 1: per-plant recognition matrix}\label{sec:annex-recognition}
 
-Figure~\ref{fig:recognition-matrix} places each of the \ExpOneMatrixPlants{} reference
-plants on its own row against the \ExpOneMatrixRuns{} Experiment 1 runs as
-columns. Unlike Figure~\ref{fig:direct-base}, which only counts each
-run's recognised plants, the fixed-row alignment reveals \emph{which}
-plants each model misses: famous plants form dense rows, obscure ones
-sparse rows. The status composition behind this difficulty is in
-Table~\ref{tbl:status-difficulty}.
+Unlike Figure~\ref{fig:direct-base}, which only counts each run's
+recognised plants, Figure~\ref{fig:recognition-matrix}'s fixed-row
+alignment reveals \emph{which} plants each model misses: famous plants
+form dense rows, obscure ones sparse rows. The status composition behind
+this difficulty is in Table~\ref{tbl:status-difficulty}.
 
 \refstepcounter{figure}\label{fig:recognition-matrix}
 \noindent\emph{Figure \thefigure. (Next three pages.) Experiment 1 recognition

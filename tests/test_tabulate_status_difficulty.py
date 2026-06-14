@@ -170,3 +170,26 @@ def test_status_en_body_rederives_from_fr_artifact_and_macros():
     all_row = next(r for r in rows if r[0] == "\\textbf{All}")
     overall = all_row[3].replace("\\textbf{", "").replace("}", "").removesuffix("\\%")
     assert f"\\newcommand{{\\StatusOverallRatePct}}{{{overall}}}" in macros
+
+
+# --- Ticket 0597: finding 16 — EN rate-column header matches the new framing ---
+
+# The §7.1 prose + caption reword the metric as "the average probability of a
+# plant being found by an Experiment 1 model run" (tbl:status-difficulty). The
+# generated EN column header must follow the same framing, not the legacy
+# "Recognition rate" label. Re-derived independently from the committed artifact.
+
+
+@pytest.mark.adherence
+def test_status_en_header_matches_detection_framing():
+    """Finding 16: the EN rate column reads as a detection probability, not the
+    legacy 'Recognition rate' label that contradicts the caption's framing."""
+    header = next(r for r in _en_rows() if r and r[0] == "Status")
+    assert header[-1] == "Avg. detection prob.", (
+        "EN rate-column header must match the caption's "
+        "'average probability of being found' framing (finding 16)"
+    )
+    raw = EN_BODY.read_text(encoding="utf-8")
+    assert "Recognition rate" not in raw, (
+        "legacy 'Recognition rate' header must not survive in the EN artifact"
+    )

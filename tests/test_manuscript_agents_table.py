@@ -38,14 +38,18 @@ EXP2_QWEN_SLUG = "qwen3.7-max-2026-05-20"
 
 
 def _agents_table() -> str:
-    """The ``\\begin{longtable}...\\end{longtable}`` block whose header lists
-    the agent columns (# / Vendor / Model / Surface)."""
+    """The agents-table block whose header lists the agent columns
+    (# / Vendor / Model / Surface). The environment is ``tabularx`` (ticket
+    0597: the Surface column auto-sizes via an ``X`` column instead of a
+    hard-coded ``p{0.48\\linewidth}`` fraction); the legacy ``longtable``
+    form is still accepted so the locator survives an env revert."""
     text = MANUSCRIPT.read_text(encoding="utf-8")
-    for m in re.finditer(r"\\begin\{longtable\}.*?\\end\{longtable\}", text, re.DOTALL):
+    pattern = r"\\begin\{(longtable|tabularx)\}.*?\\end\{\1\}"
+    for m in re.finditer(pattern, text, re.DOTALL):
         block = m.group(0)
         if "Vendor" in block and "Surface" in block:
             return block
-    raise AssertionError("agents longtable (Vendor/Surface header) not found in main.tex")
+    raise AssertionError("agents table (Vendor/Surface header) not found in main.tex")
 
 
 def _expected_qwen_display() -> str:
@@ -73,13 +77,18 @@ def test_agents_table_no_country_column():
 
 
 def test_agents_table_widths_not_fixed_equal():
-    """Column widths size naturally — the five forced-equal ``\\real{0.2000}``
-    colspecs were removed."""
+    """Column widths size automatically — neither the five forced-equal
+    ``\\real{0.2000}`` colspecs (ticket 0584) nor the single hard-coded
+    ``p{0.48\\linewidth}`` Surface fraction (ticket 0597) survive."""
     block = _agents_table()
     colspec = block.split("\\toprule", 1)[0]
     assert "\\real{0.2000}" not in colspec, (
         "agents table colspec still forces equal 0.20 widths — ticket 0584 "
         "switched to natural column widths"
+    )
+    assert "0.48\\linewidth" not in colspec, (
+        "agents table Surface column still uses a hard-coded p{0.48\\linewidth} "
+        "fraction — ticket 0597 switched it to an auto-sizing tabularx X column"
     )
 
 
