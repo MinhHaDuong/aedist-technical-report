@@ -702,7 +702,7 @@ commercial frontier, each with extended reasoning and web access,
 queried over direct vendor APIs (no browser automation): Anthropic
 Claude Opus 4.6 (US, web\_search + adaptive thinking), OpenAI GPT-5.5
 (US, Responses API + web\_search + reasoning), Mistral Large 2512 (FR,
-Agents API + web\_search connector), and Qwen3-Max via DashScope (CN,
+Agents API + web\_search connector), and Qwen3.7 Max via DashScope (CN,
 web\_search inside thinking mode). The fourth slot is
 hypothesis-relevant rather than decorative: Chinese-language investor
 and trade documents on Vietnamese power assets are under-indexed by
@@ -2023,35 +2023,20 @@ Four direct-API agents, ordered by ascending baseline smoke cost.
 OpenRouter is not used here — vendor-direct invocation keeps
 web-search billing transparent.
 
-\begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}@{}}
+\begin{longtable}[]{@{}lll>{\raggedright\arraybackslash}p{0.48\linewidth}@{}}
 \toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-\#
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Vendor
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Model
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Country
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Surface
-\end{minipage} \\
+\# & Vendor & Model & Surface \\
 \midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-1 & Mistral & Mistral Large 2512 & FR & Agents API +
+1 & Mistral & Mistral Large 2512 & Agents API +
 \texttt{web\_search} connector \\
-2 & Alibaba & Qwen3-Max & CN & DashScope, \texttt{web\_search} inside
+2 & Alibaba & Qwen3.7 Max & DashScope, \texttt{web\_search} inside
 thinking mode \\
-3 & OpenAI & GPT-5.5 & US & Responses API + \texttt{web\_search} +
+3 & OpenAI & GPT-5.5 & Responses API + \texttt{web\_search} +
 reasoning \\
-4 & Anthropic & Claude Opus 4.6 & US & Anthropic API +
+4 & Anthropic & Claude Opus 4.6 & Anthropic API +
 \fpath{web_search_20250305} + adaptive thinking \\
 \end{longtable}
 
