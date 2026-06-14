@@ -47,6 +47,8 @@ def _body_excluding_abstract() -> str:
 # to do specific work outside this paper.
 _PROMISE_PATTERNS = [
     r"post-conference",
+    r"\bpost-arxiv\b",
+    r"deferred \(post-",
     r"deferred to [\w\- ]*analysis",
     r"\bfuture work will\b",
     r"\bwe plan to\b",
