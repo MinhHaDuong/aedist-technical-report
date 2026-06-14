@@ -859,20 +859,28 @@ They are exploratory; each subsection summarises one analysis.
 
 \subsection{Why is the task hard?}\label{sec:ext-difficulty}
 
-The per-plant recognition matrix in \ref{sec:annex-recognition}
-decomposes the difficulty plant by plant: each reference plant becomes
-a row observed by many noisy runs. Within-model and across-model
-coherence can be read directly from the row densities (famous plants
-form dense rows, obscure ones sparse), and the operational core
-separates visibly from the project-dominated tail.
+The task is hard because the reference list is a long-tail
+distribution. As the introduction notes, the existing power plants are
+easy to know, but the list also holds many abandoned or recently
+proposed projects, and these have low visibility. Table~\ref{tbl:status-difficulty}
+shows the composition: proposed plants form the largest share of the
+list, and parametric memory cannot know them. Their average probability
+of being found by an Experiment 1 model run falls far below that of
+operational plants, so the low overall recognition is a property of the
+list's composition, not merely a model failure.
 
-The status composition of the reference list explains why the low
-recognition is structural: the list is dominated by proposed plants,
-which parametric memory cannot know, and their mean recognition rate
-is far below that of operational plants. Low overall recognition is
-therefore a property of the list's composition, not merely a model
-failure. The full matrix and the status-by-status decomposition are in
-\ref{sec:annex-recognition}.
+\begin{table}[htbp]
+\centering
+\caption{\label{tbl:status-difficulty}Composition of the reference list
+by status, and the average probability of a plant being found by an
+Experiment 1 model run (direct method: 14 models × 5 repetitions).}
+\input{../../report/inputs/generated/tab_status_difficulty_en.tex}
+\end{table}
+
+The per-plant recognition matrix in \ref{sec:annex-recognition}
+decomposes this difficulty plant by plant: famous plants form dense
+rows, obscure ones sparse, and the operational core separates visibly
+from the project-dominated tail.
 
 \subsection{Screening without a reference}\label{sec:ext-screen}
 
@@ -2436,22 +2444,15 @@ not detected.
 
 \clearpage
 
-\section{Experiment 1: per-plant recognition matrix and the status composition of task difficulty}\label{sec:annex-recognition}
+\section{Experiment 1: per-plant recognition matrix}\label{sec:annex-recognition}
 
 Figure~\ref{fig:recognition-matrix} places each of the \ExpOneMatrixPlants{} reference
-plants on its own row (names read left-to-right, no rotation) against
-the \ExpOneMatrixRuns{} Experiment 1 runs (14 models × 5 repetitions) as columns. A blue
-cell marks a recognised plant (true positive); an empty cell, a miss.
-Rows are grouped by status, then by decreasing capacity, using the same
-status categories as the difficulty table below. To keep plant names
-legible at print scale, the matrix is split across pages by lifecycle
-stage. A final page lists the \ExpOneMatrixFPs{} most frequent false positives across
-all runs, sorted by decreasing occurrence, in red — the paper's
-false-positive convention (unmatched: extracted but not in the
-reference; possibly real, not necessarily fabricated). Unlike
-Figure~\ref{fig:direct-base}, which only counts each run's recognised
-plants, the fixed-row alignment reveals \emph{which} plants each model
-misses: famous plants form dense rows, obscure ones sparse rows.
+plants on its own row against the \ExpOneMatrixRuns{} Experiment 1 runs as
+columns. Unlike Figure~\ref{fig:direct-base}, which only counts each
+run's recognised plants, the fixed-row alignment reveals \emph{which}
+plants each model misses: famous plants form dense rows, obscure ones
+sparse rows. The status composition behind this difficulty is in
+Table~\ref{tbl:status-difficulty}.
 
 \refstepcounter{figure}\label{fig:recognition-matrix}
 \noindent\emph{Figure \thefigure. (Next three pages.) Experiment 1 recognition
@@ -2465,24 +2466,6 @@ count. Blue = plant recognised. Pages 1--2 split the plants by lifecycle stage
 under-construction ones); page 3 lists the \ExpOneMatrixFPs{} most frequent false positives
 (red).}
 \includepdf[pages=-,pagecommand={\thispagestyle{plain}}]{../../report/inputs/generated/fig_exp1_recognition_matrix_portrait.pdf}
-
-The table below shares the same data derivation as the figure (library
-\texttt{aedist.exp1\_recognition}: common cause, no
-producer--consumer chaining) and decomposes the difficulty by status.
-Proposed plants form the largest share of the rows, and parametric
-memory cannot know them; their mean recognition rate falls far below
-that of operational plants. The low overall recognition is thus
-structural: it reflects the composition of the list, not merely model
-failure.
-
-\begin{table}[htbp]
-\centering
-\caption{\label{tbl:status-difficulty}Composition of the reference list
-by status, and mean recognition rate (Experiment 1, direct method: 14
-models × 5 repetitions). The rate is the share of run × plant cells
-recognised among plants of that status.}
-\input{../../report/inputs/generated/tab_status_difficulty_en.tex}
-\end{table}
 
 \clearpage
 
