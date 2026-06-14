@@ -1,0 +1,45 @@
+%erg 0.1
+Title: Scope test_makefile_delete_on_error to git-tracked files (ignore worktree dirs)
+Created: 2026-06-14
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-14T03:34Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+Surfaced by the reading-2 wave integration review (tracker 0578, 2026-06-14).
+`make check` failed locally on `test_makefile_delete_on_error` because it
+`rglob`s the working tree and flags **untracked** `.claude/worktrees/*` agent
+worktree directories (and an `attic/.../Makefile`) as orphaned outputs. These
+are not git-tracked and not real Makefile outputs — the test passes on CI
+(clean checkout) and on every wave-child merge. This is a pre-existing scanner
+overreach, not a wave regression, but it makes local `make check` flaky
+whenever agent worktrees are present.
+
+## Relevant files
+- `tests/test_makefile_delete_on_error.py` — the scanner; scope its `rglob` to
+  git-tracked files only (e.g. `git ls-files`), or exclude `.claude/worktrees/`
+  and `attic/`.
+- `.gitignore` — optionally add `.claude/worktrees/` if not already ignored.
+
+## Actions
+1. Restrict the test's file scan to git-tracked paths (or add explicit
+   excludes for `.claude/worktrees/` and `attic/`).
+2. Verify it still catches a genuine orphaned tracked output (don't neuter it).
+
+## Test
+Add a case (or fixture) proving: an untracked `.claude/worktrees/foo/` dir does
+NOT trip the test, while a genuinely orphaned *tracked* output still does.
+
+## Verification
+- [ ] `make check` green with agent worktrees present locally
+- [ ] The test still fails if a real tracked orphaned output is introduced
+
+## Invariants
+- Do not weaken detection of genuine DELETE_ON_ERROR / orphaned-output defects.
+
+## Exit criteria
+- `test_makefile_delete_on_error` ignores untracked worktree/attic dirs; still
+  catches real orphaned tracked outputs; `make check` green locally.

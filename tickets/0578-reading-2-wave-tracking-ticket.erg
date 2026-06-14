@@ -8,6 +8,8 @@ Label: needs-human
 2026-06-12T20:29Z HDMX-coding-agent created
 2026-06-12T20:32Z HDMX-coding-agent note author reading-2 in progress — findings parked verbatim below; organize into children ONLY when the author says finished
 2026-06-12T21:52Z HDMX-coding-agent note author declared reading finished; 42 findings organized into children 0579-0592 (mapping + wave plan in body); 0566+0572 raid merged as PR #1042 so the coordination clause is moot
+2026-06-14T01:35Z HDMX-coding-agent note WAVE COMPLETE — all 13 children (0579-0592) merged + 0575 prereq (PR #1051-1065); each gated (Sonnet review) + verify-gate before merge. Integration review PASS: make check green on main, manuscript builds clean, zero \ref/\label collisions across the structural moves (Table1->annex, Fig6->Fig6/7, Annex E dropped, §7 unnumbered, ρ retargeted to Fig5), cross-child scan clean. READY TO CLOSE — left open for author confirmation per the close-tickets-with-confirmation rule.
+2026-06-14T01:35Z HDMX-coding-agent note AUTHOR-DECISION ITEM: finding 23 (matcher name 'flow') — the code (src/aedist/matching/lp.py) is a MILP assignment, not min-cost-flow; 'flow' is the math equivalence not the implementation name (PR #1047 named it accurately). 0591 kept the MILP/LP naming and deferred the 'flow' rename to you. Decide whether to rename.
 
 --- body ---
 ## Context
