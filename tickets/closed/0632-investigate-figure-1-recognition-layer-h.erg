@@ -2,11 +2,13 @@
 Title: Investigate Figure 1 recognition-layer holes: OSM-not-Wiki/GEM and Wiki-not-GEM look like matcher false-negatives, not real coverage gaps
 Created: 2026-06-15
 Author: HDMX-coding-agent
+Closed: non-finding accepted: 4 longtail holes all real (0 matcher FNs); documented, no fix
 
 --- log ---
 2026-06-15T10:27Z HDMX-coding-agent created
 
 2026-06-15T11:30Z AUTHOR ACCEPTED (non-finding). Investigation: only 4 longtail cross-layer holes, ALL real (legacy operational oil/gas plants absent from GEM tracker + Wikipedia rows; 1 GEM grain-aggregation diff Vinh Tan 4 extension) — ZERO matcher false-negatives. Diacritic path (Cà Mau) recovers correctly. Outcome: document as real, do NOT fix matcher. Close at wave wrap.
+2026-06-15T15:04Z HDMX-coding-agent closed — non-finding accepted: 4 longtail holes all real (0 matcher FNs); documented, no fix
 --- body ---
 ## Context
 
