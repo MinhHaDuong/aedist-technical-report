@@ -804,19 +804,34 @@ reference, can runs be fused, and what system do the findings imply?
 \addcontentsline{toc}{subsection}{Why is the task hard?}
 
 The task is hard because the reference list is a long-tail
-distribution. As the introduction notes, the existing power plants are
-easy to know, but the list also holds many abandoned or recently
-proposed projects, and these have low visibility. Table~\ref{tbl:status-difficulty}
-shows the composition: proposed plants form the largest share of the
-list, and parametric memory cannot know them. Their average probability
-of being found by an Experiment 1 model run falls far below that of
-operational plants.
+distribution. Vietnam is a fast-growing power system, so its asset
+register is dominated by forward-looking entries: proposed and planned
+plants together form the largest share of the list, ahead of the
+operational core. Getting this register right is a policy and business
+concern — capacity planning, grid investment, and project finance all
+turn on which plants are coming, not only on which already run. Yet
+these forward-looking entries are precisely the ones a model's
+parametric memory finds hard to know: many are recent or abandoned
+projects with little public footprint.
+
+Detection likelihood measures this difficulty directly. We define it,
+for a status category, as the probability that a random plant in that
+category is found by a random run of the experiment — averaged over the
+(plant × run) cells. Table~\ref{tbl:status-difficulty} reports it for
+two regimes: Experiment 1 (all models, memory only; 70 runs) and the
+Experiment 2 with-documents arm (20 runs). The operational category is
+easy: even though Experiment 1 spans weak models alongside strong ones,
+they still find operational plants. The long tail is hard: proposed and
+planned plants fall far below the operational core in Experiment 1.
+Giving the models documents lifts the whole list, and the tail most of
+all.
 
 \begin{table}[htbp]
 \centering
 \caption{\label{tbl:status-difficulty}Composition of the reference list
-by status, and the average probability of a plant being found by an
-Experiment 1 model run (direct method: 14 models × 5 repetitions).}
+by asset lifecycle status, from Proposed to Retired, and detection
+likelihood. Experiment 1 includes all models; Experiment 2 is the
+single-shot with-documents arm. Source: author.}
 \input{../../report/inputs/generated/tab_status_difficulty_en.tex}
 \end{table}
 

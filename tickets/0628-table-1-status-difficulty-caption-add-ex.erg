@@ -2,11 +2,13 @@
 Title: Table 1 (status-difficulty): caption + add Exp2 arm-3 detection-likelihood column; split §7.1 text (register shape vs detection-likelihood definition; 'hard to know' not 'cannot')
 Created: 2026-06-15
 Author: HDMX-coding-agent
+Closed: implemented A caption + B arm-3 column + C §7.1 split
 
 --- log ---
 2026-06-15T09:14Z HDMX-coding-agent created
 
 2026-06-15T11:30Z AUTHOR DECISION B: FEASIBLE, no new pipeline — exp2_recognition.load_exp2_recognition(arm='arm3') (20 records in exp2_mart), build_status_table is arm-agnostic. Disclose the unequal denominator SIMPLY in text as '(X runs)' — no caveat fuss. Proceed whole (A caption + B column + C §7.1 split).
+2026-06-15T13:49Z HDMX-coding-agent closed — implemented A caption + B arm-3 column + C §7.1 split
 --- body ---
 ## Context
 

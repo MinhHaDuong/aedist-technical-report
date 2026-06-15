@@ -993,11 +993,16 @@ $(ANALYSIS_GEN)/fig_exp2_recognition_matrix_arm4.pdf $(ANALYSIS_GEN)/macros_exp2
 # status group order is shared with the matrix's column bands. The manuscript
 # macros (proposed share/rate, overall rate, status accuracy excluding the
 # proposed stratum) come from the same single pass (grouped &: rule, 0531).
-$(ANALYSIS_GEN)/tab_status_difficulty.tex $(ANALYSIS_GEN)/tab_status_difficulty_en.tex $(ANALYSIS_STATUS_DIFFICULTY_MACROS) &: $(ANALYSIS_EXP1_BATCH2_RECORDS) $(ANALYSIS_EXPERT_REF) $(ANALYSIS_REPO_ROOT)/src/aedist/tabulate_status_difficulty.py $(ANALYSIS_REPO_ROOT)/src/aedist/exp1_recognition.py
+# Two detection columns (ticket 0628): Exp1 all-models (records glob) and Exp2
+# arm-3 single-shot-with-documents (mart + arm3_flat .md files). The arm-3
+# column reuses the existing mart records — no new pipeline.
+$(ANALYSIS_GEN)/tab_status_difficulty.tex $(ANALYSIS_GEN)/tab_status_difficulty_en.tex $(ANALYSIS_STATUS_DIFFICULTY_MACROS) &: $(ANALYSIS_EXP1_BATCH2_RECORDS) $(ANALYSIS_EXP2_MART_JSONL) $(wildcard $(ANALYSIS_DERIVED_DIR)/arm3_flat/*.md) $(ANALYSIS_EXPERT_REF) $(ANALYSIS_REPO_ROOT)/src/aedist/tabulate_status_difficulty.py $(ANALYSIS_REPO_ROOT)/src/aedist/exp1_recognition.py $(ANALYSIS_REPO_ROOT)/src/aedist/exp2_recognition.py $(ANALYSIS_REPO_ROOT)/src/aedist/extract.py
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.tabulate_status_difficulty \
 	    --records-glob "$(ANALYSIS_EXPERIMENTS_DIR)/outputs/exp1_batch2/*.record.json" \
 	    --reference $(ANALYSIS_EXPERT_REF) \
+	    --mart-jsonl $(ANALYSIS_EXP2_MART_JSONL) \
+	    --repo-root $(ANALYSIS_REPO_ROOT) \
 	    --output $(ANALYSIS_GEN)/tab_status_difficulty.tex \
 	    --output-body-en $(ANALYSIS_GEN)/tab_status_difficulty_en.tex \
 	    --output-macros $(ANALYSIS_STATUS_DIFFICULTY_MACROS)
