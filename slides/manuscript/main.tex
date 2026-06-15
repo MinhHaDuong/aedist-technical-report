@@ -242,9 +242,8 @@ physically built infrastructure only). Well-documented operating plants
 appear in every layer; the under-documented tail — proposed and
 planned projects from the PDP8 pipeline — thins out layer by layer.
 This tail is the reference's unique contribution, and the segment where
-investing in a sourcing pipeline adds the most value. Counts re-derived
-from
-\texttt{data/reference/tab\_longtail\_layers.csv}.}\label{fig:longtail}
+investing in a sourcing pipeline adds the most value. Recognition-layer
+provenance is detailed in \ref{sec:annex-recognition}.}\label{fig:longtail}
 \end{figure}
 
 \textbf{Statistical perimeters by use case.} What counts as a
@@ -621,12 +620,12 @@ inventory. Plants correctly identified vs cost per call across the
 Experiment 1 lineup, split by architectural family across two panels
 with shared axes: \textbf{panel (a)} Claude, GPT, Mistral; \textbf{panel
 (b)} Qwen, DeepSeek. Each of the fourteen
-\texttt{modelset\_exp1\_batch2} models contributes a filled square at
+models contributes a filled square at
 its pooled median true-positive count and a marker at every individual
 rep, plotted at the rep's own per-call cost (cents USD, log scale); the
 dashed line at \NumRefPlants{} marks the full Vietnam thermal inventory. Marker
 shapes, colour palette, the per-rep cohort split, and the audit artifact
-(\texttt{report/inputs/generated/cost\_quality.csv}) are detailed in
+are detailed in
 \ref{sec:annex-exp1}.}\label{fig:cost-quality}
 \end{figure}
 
@@ -663,8 +662,8 @@ reference data. Y axis: accuracy, the mean row-level F1 against the
 \NumRefPlants-plant reference over the good runs; for the three models with zero
 good runs (claude-haiku-4.5, gpt-oss-20b, qwen3.6-35b-a3b), no good run
 exists, so the mean is taken over \textbf{all} five runs. Source
-artifact: \texttt{experiments/derived/exp1\_cross\_eval.csv}; gate
-sensitivity in \ref{sec:annex-exp1}.}\label{fig:reliability}
+artifact and gate
+sensitivity are detailed in \ref{sec:annex-exp1}.}\label{fig:reliability}
 \end{figure}
 
 \section{Experiment 2: frontier agents fall short on the measured quality dimensions}\label{sec:exp2}
@@ -1259,7 +1258,7 @@ compiled the \NumRefPlants-plant reference list, and an intern in the author's
 group, working under the author's supervision, seeded reference-derived
 content into the relevant Wikipedia pages in June 2019; the author also
 made minor edits to those pages directly (§\ref{sec:exp1}; provenance in
-\texttt{data/reference/PROVENANCE.md}). Both the benchmark reference and
+\ref{sec:annex-exp1}). Both the benchmark reference and
 part of its Wikipedia coverage therefore originate from the author's
 group; this dual role is disclosed, and the reference list is provided
 as a supplementary artifact with per-plant source citations.

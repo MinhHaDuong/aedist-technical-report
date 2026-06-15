@@ -372,3 +372,32 @@ review panel against manuscript diffs.
 **Ticket:** tickets/0565-future-research-kb-design-items-insert.erg
 
 **Status:** active
+
+## text-and-captions-standalone
+
+**Decision:** The main text AND the figure/table captions are standalone at
+the maths/ideas level: no code references — file paths, module/function/script
+names, config keys, filenames — appear in §1–§9, the Conclusion, the
+backmatter, or any caption among them (everything before `\appendix`).
+Load-bearing implementation detail is relocated to the relevant annex and
+reached by `\ref{sec:annex-…}`. Code references are allowed only in the
+annexes (after `\appendix`). This SUPERSEDES ticket 0591's caption exemption:
+0591 cleaned §1–§9 prose but excised `\caption{…}` blocks from its scan; 0633
+brings captions into scope. Carve-out — reader-facing data tokens that are not
+repo artifacts stay (the OpenStreetMap `power=plant` tag, the Wikipedia
+revision id, the controlled status vocabulary).
+
+**Rationale:** A reader of the paper and its captions should follow the
+ideas without consulting the codebase; repo artifacts are an annex concern.
+Canonical re-articulation of finding 22 (author, 2026-06-15). CI keeps the
+negative class guard
+(`test_manuscript_0633_caption_coderefs.py`): code-reference signatures are
+forbidden in body captions and in the body before `\appendix`; the annexes are
+out of scope. The 0591 caption-exempting guard
+(`test_manuscript_codenames_coderefs.py`) remains for the §1–§9 prose scope it
+already covered.
+
+**Ticket:** tickets/0633-global-caption-sweep-text-and-captions-s.erg
+(supersedes ticket 0591's caption exemption)
+
+**Status:** active
