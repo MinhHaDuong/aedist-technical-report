@@ -30,7 +30,8 @@ measured.
 - 0650 Figure 1 entity-grain clarification + Figure 4/§5 cost–coverage consistency
 - 0651 Surface Exp1 caveats: status-vocabulary mismatch + prompt-impossibility/refusal scoring
 - 0652 Bibliography/consistency nits
-- 0653 Expand Related Work with missing literatures (within budget)
+- 0653 Expand Related Work — DECLINED (bibliography already large; author
+  decision 2026-06-15; see editorial-brief `related-work-budget-frozen`)
 
 ## Children — defer (new experiments / data)
 - 0654 Independent expert audit of the reference + inter-annotator agreement
@@ -41,6 +42,7 @@ measured.
 - 0659 Matcher/entity-resolution sensitivity analysis
 - 0660 Re-run Exp1 with status vocabulary aligned to the reference
 - 0661 Expand Exp2 (RAG baseline, broader systems, advanced fusion, multilingual/temporal)
+- 0662 Post-arXiv: fuse the document pack to measure its coverage of the reference
 
 ## Exit criteria
 - [ ] All prose children (0645–0653) closed via merge requests

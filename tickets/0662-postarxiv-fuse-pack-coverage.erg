@@ -1,0 +1,31 @@
+%erg 0.1
+Title: Post-arXiv: fuse the document pack to measure its coverage of the reference
+Created: 2026-06-15
+Author: claude
+Label: deferred
+
+--- log ---
+2026-06-15T21:00Z claude created from peer-review tracker 0644 (post-arXiv)
+
+--- body ---
+## Context
+The Experiment 2 document pack (\fpath{data/rag_corpus/} — eighteen
+ministerial PDP7/7A/8 and national-utility EVN lists, extracted and
+reformatted) simulates a near-ideal retrieval step. The reference was
+compiled from these same sources, but the pack is not guaranteed to contain
+every one of the \NumRefPlants{} reference plants, and its own coverage of
+the reference is not yet measured. This bears directly on the reviewers'
+"documents may be too close to the answer" concern (now addressed in §6 prose
+by 0649): knowing the pack's coverage bounds how much of the documents-arm
+gain is retrieval vs extraction. Tracker: 0644. Author decision: do this
+post-publication (after the arXiv deposit).
+
+## Actions
+1. Fuse the eighteen pack lists into a single deduplicated plant set.
+2. Match it against the \NumRefPlants{}-plant reference (same matcher as Exp 1/2).
+3. Report the pack's coverage of the reference (how many reference plants the
+   pack contains), overall and by lifecycle status.
+
+## Exit criteria
+- [ ] Pack coverage of the reference reported; the documents-arm gain reframed
+      against that ceiling
