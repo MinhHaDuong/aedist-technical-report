@@ -1,0 +1,60 @@
+%erg 0.1
+Title: Figure 7 (fig:exp2-arms-cost): replace caption (costs, May 2026, linear Y; Claude Exp2 vs Exp1; docs/multiturn raise cost+variability; refs)
+Created: 2026-06-15
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-15T09:01Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Reading-3 (tracker [[0605]]). Replace the whole caption of Figure 7
+(`fig:exp2-arms-cost`, `slides/manuscript/main.tex` ~`:770–778`) with the
+author's version:
+
+> Costs. May 2026 conditions, linear Y scale. Claude in Experiment 2
+> costs several times more for worse coverage than Experiment 1 (see
+> Figure~\ref{fig:cost-quality}). Providing documents or using a
+> multi-turn harness increases the average cost. The harness also
+> increases cost variability, as it lets the model redefine its own
+> prompt. Source: author; see \ref{sec:annex-exp2}.
+
+Notes:
+- "see figure [REF]" = the Exp 1 cost figure → `\ref{fig:cost-quality}`
+  (Figure 4). "see annex [REF]" → `\ref{sec:annex-exp2}`. No hardcoded
+  numbers/letters (house rule).
+- Uses "multi-turn" ([[0620]]); no `\texttt` filename ([[0606]]).
+- "Claude … costs several times more for worse coverage" is a qualitative
+  comparison; if any number is stated it must be macro-sourced. Verify the
+  direction (Exp 2 Claude cost > Exp 1 Claude cost, worse coverage) against
+  the data before finalizing.
+- Em dash literal "—" if used.
+
+## Coordination
+
+- [[0624]] (font sizes) and [[0623]]/[[0622]] touch the same emitter/figure
+  pair — sequence to avoid conflicts.
+
+## Relevant files
+
+- `slides/manuscript/main.tex` ~`:770–778` (caption).
+- `fig:cost-quality` (Figure 4) is the cross-referenced Exp 1 cost figure.
+
+## Test
+
+- Red first: `@pytest.mark.adherence` — caption refs `fig:cost-quality`
+  and `sec:annex-exp2`, no hardcoded figure/annex number, no `\texttt`
+  filename; uses "multi-turn" not "optimised".
+
+## Verification
+
+- [ ] Figure 7 caption replaced with the author's costs version; both
+      `\ref`s resolve; comparison direction verified.
+- [ ] Consistent with 0620 (terms), 0606 (no filename).
+- [ ] `make check` passes; manuscript builds.
+
+## Exit criteria
+
+- Figure 7 caption is the author's costs version with figure + annex refs;
+  `make check` green.
