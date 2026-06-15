@@ -423,3 +423,36 @@ not a function of answer/table quality.
 **Ticket:** tickets/0599-discussion-section-conflates-method-qual.erg
 
 **Status:** active
+
+## scoring-annex-v0-1
+
+**Decision:** The four-dimension quality score is delivered as a dedicated
+Scoring annex (`sec:annex-scoring`), the FIRST `\appendix` section (Annex A),
+which owns figure S1 (`fig:quality-floor`). It writes out, in order, the
+cell--run--model hierarchy and each dimension's formula (q1 accuracy = F1,
+q2 coherence, q3 provenance, q4 temporality), transcribed to match the code
+(`score_mechanical.py`, `score_coherence_level.py`, `metrics.py`). It is
+marked version 0.1 of the benchmark, to be improved. §3 (`sec:quality`)
+references it as THE IMPLEMENTATION ("the scoring is implemented in …"),
+never as a "detail". Cost/run-bookkeeping detail stays in the Exp1 annex
+(it scores method quality, not the benchmark's run/model output); the
+reliability-gate sensitivity sweep also stays in the Exp1 annex
+(gate-robustness diagnostic, not the benchmark definition).
+
+**Rationale:** Ticket 0602 (author, 2026-06-15). The intro promised a
+four-dimension score whose math the body delivered only qualitatively;
+the annex makes the promise resolve to real formulas aligned to the
+scorer. Scoring is Annex A because it delivers the promised benchmark
+(semantic ordering); figure numbering follows, keeping the quality-floor
+heatmap as S1. The benchmark does NOT measure corroboration (no
+`corroborat*` in `src/aedist/score_*.py`), so the intro's "and
+corroboration measured" claim was dropped; the Exp2 sections retain
+"corroboration" where they legitimately report Source-2 double-sourcing.
+The operational citation hedge ("counts and checks presence … does not
+verify each cited source against each cell") moved from the intro to §3's
+provenance discussion, where it scopes the verifiable-vs-verified
+distinction.
+
+**Ticket:** tickets/0602-intro-para-3-deliver-four-dimension-math.erg
+
+**Status:** active

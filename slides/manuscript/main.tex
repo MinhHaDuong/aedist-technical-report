@@ -144,9 +144,7 @@ a computable metric, not a suite or a leaderboard; the design measures
 training-data contamination as a parametric ceiling rather than trying
 to prevent it. The computable metric is a four-dimension quality score:
 per-row scoring of an LLM-generated statistical table on accuracy,
-coherence, provenance, and temporality, with citation coverage and
-corroboration measured. The paper counts and checks the presence of
-citations; it does not verify each cited source against each cell.
+coherence, provenance, and temporality.
 
 We find the task hard for today's AI systems. Across fourteen language
 models answering from memory and four agentic systems with web access,
@@ -322,9 +320,11 @@ philosophy-of-science empirical adequacy
   and could in principle be checked) from \emph{verified} provenance
   (the citation was retrieved and confirmed to support the stated
   value). Verified provenance is the stronger standard; verifiable is the
-  minimum floor. When sources contradict one another, the resolution —
-  which source was preferred and why — is itself part of the
-  provenance record.
+  minimum floor. The scoring in this paper counts and checks the presence
+  of citations; it does not verify each cited source against each cell, so
+  it measures verifiable rather than verified provenance. When sources
+  contradict one another, the resolution — which source was preferred and
+  why — is itself part of the provenance record.
 \item
   \emph{Temporality} is not metadata added after the fact; it is part of
   the statistical fact itself. Energy infrastructure changes over time:
@@ -355,6 +355,10 @@ that asymmetry: where reference-free indicators correlate with accuracy,
 they can estimate it — screening out weak outputs without the
 reference. The experiments exercise this logic directly
 (§\ref{sec:exp1}).
+
+The scoring is implemented in \ref{sec:annex-scoring}, which writes out the
+per-dimension formulas and the cell--run--model hierarchy as version~0.1 of
+the benchmark.
 
 \section{AI capability landscape: from chatbots to agentic systems}\label{sec:capability}
 
@@ -614,7 +618,7 @@ The disqualified set is essentially stable
 under the gate's tuning choices — indicator set and pass threshold —
 as the sensitivity sweep in \ref{sec:annex-exp1} shows; the
 per-criterion breakdown behind the grade (which dimension each model
-zeroes) is the quality-floor heatmap, also in \ref{sec:annex-exp1}.
+zeroes) is the quality-floor heatmap in \ref{sec:annex-scoring}.
 
 \begin{figure}
 \centering
@@ -1238,6 +1242,153 @@ as a supplementary artifact with per-plant source citations.
 
 \clearpage
 
+\section{Scoring}\label{sec:annex-scoring}
+
+This annex is version~0.1 of the benchmark scoring, to be improved: it
+records the four-dimension quality score exactly as the current code
+computes it. The §\ref{sec:quality} dimensions are stated qualitatively
+there; here each is written out as the formula the scorer evaluates.
+
+\subsection*{Hierarchy: cell, run, model}
+\addcontentsline{toc}{subsection}{Hierarchy: cell, run, model}
+
+Scoring is hierarchical across three levels. A \emph{cell} score judges
+one attribute of one row (e.g.\ whether the fuel value is in the
+controlled vocabulary, or whether a matched row carries the correct
+province). A \emph{run} score is one model's single answer table: most
+run-level scores are the fraction of rows or cells that pass a per-row
+predicate, and accuracy is the run's row-level F1 against the reference.
+A \emph{model} score aggregates a model version's runs into a
+reference-free reliability grade: a version whose runs are repeatedly
+incoherent is disqualified as a source even when an occasional run scores
+well. Run-level scores below are fractions in $[0,1]$ (higher is better);
+the model tier is defined at the end of this annex.
+
+\subsection*{Accuracy (q1): row-level F1}
+\addcontentsline{toc}{subsection}{Accuracy (q1): row-level F1}
+
+Accuracy is measured against the reference by a minimum-cost bipartite
+assignment formulated as a mixed-integer linear programme (LP~matcher).
+Each candidate pair $(i,j)$ receives a cost combining (i)~a
+name-similarity term — zero for exact matches, one when the
+\texttt{partial\_ratio} score reaches~90 on the integer 0--100 scale,
+and a large penalty otherwise — and (ii)~a small capacity-difference
+term (default weight $10^{-3}$ per MWe). Binary slack variables allow
+any record to be left unmatched at a fixed penalty rather than forced
+into a poor pairing; the global optimum is found by a branch-and-bound
+solver rather than greedily. This formulation is mathematically
+equivalent to a minimum-cost flow problem on a bipartite supply-demand
+graph with unit capacities. Province and fuel are deliberately excluded
+from the matching cost; they are scored separately as cell-level
+attribute accuracy on the matched pairs.
+
+The one-to-one assignment is a known limitation: when a model reports
+two units as a single combined row (e.g.\ ``Kiên Giang~1 \& 2''), the
+row can match at most one of the two reference entries and the other is
+recorded as a false positive. A post-hoc audit of Exp.~2 false
+positives identified five such combined-unit cases; they are classified
+as reconciliation artefacts — a reference entry left unmatched by row
+aggregation — rather than plants invented by the model.
+
+Let $M$ be the matched pairs, $R$ the reference rows, $S$ the system
+rows. Coverage (recall) is $|M|/|R|$, precision is $|M|/|S|$, and the
+headline accuracy score is their harmonic mean,
+\[
+  \mathrm{F1} = \frac{2\,\mathrm{coverage}\cdot\mathrm{precision}}
+                     {\mathrm{coverage}+\mathrm{precision}},
+\]
+zero when either component is zero. Cell-level attribute accuracy is the
+fraction of matched rows whose fuel, lifecycle status, or province agrees
+with the reference; a run that finds the right plants can still score low
+here if it describes them wrongly. Plant-name matching is a named-entity
+recognition problem, and the LP matcher is not a general solution to it —
+nor is it claimed as one. It was developed iteratively against the
+Vietnam reference list; the similarity threshold (≥ 90 on the rapidfuzz
+integer scale) and the capacity-difference weight (0.001) were chosen to
+minimise false-positive matches on this specific reference, and both
+parameters should be validated before applying the pipeline to a
+different country or asset class. Run outcomes other than \texttt{ok}
+(refusal, empty, parse error) are recorded with $\mathrm{F1}=0$.
+
+\subsection*{Coherence (q2): reference-free consistency}
+\addcontentsline{toc}{subsection}{Coherence (q2): reference-free consistency}
+
+Coherence is scored without the reference, as a set of per-row predicates
+each reported as the fraction of rows that pass. Vocabulary adherence is
+the fraction of rows whose fuel is in the controlled fuel set, and
+status-vocabulary adherence the fraction whose lifecycle status is in the
+controlled status set. Row atomicity is the fraction of rows whose name
+does \emph{not} carry a unit-merge marker (two identifiers joined in one
+name, e.g.\ ``3 \& 4'', ``I \& II'', ``1 và 2''). Capacity
+non-negativity is the fraction of rows with a parseable, non-negative
+capacity. Two level-conditioned predicates check internal
+self-consistency given the level the model declared: capacity is
+plausible for the declared level when it falls under the level's cap
+(Unit~≤~1350~MW, Plant~≤~3200~MW, Block~≥~1300~MW, Complex uncapped),
+and the level is consistent with the name when none of three name-pattern
+rules fires (a merge-marker name cannot be a Unit; a bare-site name with
+no number cannot be a Unit or Plant; a site-plus-number name implies a
+Plant, not a Unit). Each predicate scores $(\text{rows passing})/
+(\text{rows scoreable})$.
+
+At the run level a coherence \emph{veto} flags a degenerate table: a run
+is vetoed when its capacity column has at most four distinct values
+\emph{or} its status column has at most one distinct value
+($\texttt{cap\_distinct}\le 4 \;\lor\; \texttt{status\_distinct}\le 1$).
+The veto was calibrated in-sample on the Experiment~1 runs and is the
+reference-free screen feeding the model-level grade below.
+
+\subsection*{Provenance (q3): citation presence}
+\addcontentsline{toc}{subsection}{Provenance (q3): citation presence}
+
+Provenance is scored from the citation cells alone. Source presence is
+the fraction of rows carrying at least one source (Source~1 or
+Source~2). Among rows the model marks \texttt{HIGH} confidence,
+high-confidence dual-sourcing is the fraction that carry both Source~1
+and Source~2. Source diversity rewards drawing on many distinct
+references, $\min(d/20,\,1)$ where $d$ is the number of distinct
+non-empty Source~1 values, and source spread measures concentration,
+$1 - c_{\max}/n$ where $c_{\max}$ is the count of the most frequent
+source and $n$ the number of cited rows. Consistent with §\ref{sec:quality},
+this is verifiable rather than verified provenance: the scorer counts and
+checks that citations are present, it does not retrieve each cited source
+and confirm it supports the cell.
+
+\subsection*{Temporality (q4): as-of dating}
+\addcontentsline{toc}{subsection}{Temporality (q4): as-of dating}
+
+Temporality is scored from the dating cells. As-of presence is the
+fraction of rows carrying an as-of date. Among those, plausible-range is
+the fraction whose extracted year falls in $[1980, 2100]$; a uniform
+as-of year is not treated as degenerate, since a single freshness date
+for a parametric dump is an honest claim, while an implausible uniform
+year still scores zero through the plausible fraction. Commissioning-date
+plausibility is the fraction of commissioning-date values whose year
+falls in $[1960, 2035]$, scored zero when every value is identical.
+
+\subsection*{Per-criterion breakdown and model-level grade}
+\addcontentsline{toc}{subsection}{Per-criterion breakdown and model-level grade}
+
+Figure~\ref{fig:quality-floor} breaks the quality bar down criterion by
+criterion, showing which dimension each model zeroes. The model-level
+reliability grade (Figure~\ref{fig:reliability}) aggregates the
+reference-free run scores: a version whose runs are repeatedly vetoed is
+disqualified as a source.
+
+\begin{figure}
+\centering
+\includegraphics[width=\linewidth]{../../report/inputs/generated/fig_quality_floor_heatmap_exp1.pdf}
+\caption{Per-criterion breakdown of the quality bar (Experiment~1,
+14 models × 5 runs): each cell is a per-model mean sub-score on a
+red→green scale, and a dark-red cell anywhere in a column disqualifies
+that model, since the bar is a conjunction. Rows span Accuracy,
+Coherence, Provenance, and Temporality; only discriminating sub-scores
+are shown. Full per-dimension formulas are above in this
+annex.}\label{fig:quality-floor}
+\end{figure}
+
+\clearpage
+
 \section{Experiment 1: Technical specification}\label{sec:annex-exp1}
 
 \subsection*{Task}
@@ -1724,31 +1875,14 @@ quantification of day-scale F1 drift at fixed deterministic call
 parameters for production LLM APIs on structured extraction tasks; we
 report ours as an observation rather than a primacy claim.
 
-\subsection*{Evaluation}
-\addcontentsline{toc}{subsection}{Evaluation}
+\subsection*{Run bookkeeping and gate sensitivity}
+\addcontentsline{toc}{subsection}{Run bookkeeping and gate sensitivity}
 
-Each run is evaluated against the reference using a minimum-cost
-bipartite assignment formulated as a mixed-integer linear programme
-(LP~matcher). Each candidate pair $(i,j)$ receives a cost combining
-(i)~a name-similarity term — zero for exact matches, one when the
-\texttt{partial\_ratio} score reaches~90 on the integer 0--100 scale,
-and a large penalty otherwise — and (ii)~a small capacity-difference
-term (default weight $10^{-3}$ per MWe). Binary slack variables allow
-any record to be left unmatched at a fixed penalty rather than forced
-into a poor pairing; the global optimum is found by a branch-and-bound
-solver rather than greedily. This formulation is mathematically
-equivalent to a minimum-cost flow problem on a bipartite supply-demand
-graph with unit capacities. Province and fuel are deliberately excluded
-from the matching cost; they are scored separately as cell-level
-attribute accuracy on the matched pairs.
-
-The one-to-one assignment is a known limitation: when a model reports
-two units as a single combined row (e.g.\ ``Kiên Giang~1 \& 2''), the
-row can match at most one of the two reference entries and the other is
-recorded as a false positive. A post-hoc audit of Exp.~2 false
-positives identified five such combined-unit cases; they are classified
-as reconciliation artefacts — a reference entry left unmatched by row
-aggregation — rather than plants invented by the model.
+The four-dimension scoring — the LP~matcher, the per-dimension formulas,
+and the cell--run--model hierarchy — is implemented in
+\ref{sec:annex-scoring}. This subsection records the bookkeeping fields
+logged alongside the scores for each run and the sensitivity of the
+reliability gate.
 
 Metrics recorded per run:
 
@@ -1783,58 +1917,8 @@ correct province \\
 \texttt{tokens\_out} & run & Output tokens consumed \\
 \end{longtable}
 
-Run outcomes other than \texttt{ok} (refusal, empty, parse error) are
-recorded with \texttt{f1\ =\ 0} and flagged in \texttt{status}.
-
-Plant-name matching is a named-entity recognition problem, and the LP
-matcher is not a general solution to it — nor is it claimed as one.
-It was developed iteratively against the Vietnam reference list. The
-similarity threshold (≥ 90 on the rapidfuzz integer scale) and the
-capacity-difference weight (0.001) were chosen to minimise
-false-positive matches on this specific reference; both parameters
-should be validated before applying the pipeline to a different country
-or asset class.
-
-\textbf{Per-criterion breakdown.} Figure~\ref{fig:quality-floor} is the
-diagnostic behind the §\ref{sec:exp1} reliability grade
-(Figure~\ref{fig:reliability}): it breaks the quality bar down criterion
-by criterion, showing \emph{which} dimension each model zeroes.
-
-\begin{figure}
-\centering
-\includegraphics[width=\linewidth]{../../report/inputs/generated/fig_quality_floor_heatmap_exp1.pdf}
-\caption{Per-criterion breakdown of the quality bar: which dimension
-each model fails. The bar is a conjunction, so a dark-red cell anywhere
-in a column disqualifies that model. Quality-floor heatmap for
-Experiment 1 (parametric arm, 14 models × 5 runs). Columns are the same
-fourteen models as Figure~\ref{fig:direct-base}, laid out in the same
-order — architectural family (Claude, DeepSeek, GPT, Mistral, Qwen)
-then size descending (larger first) — with DeepSeek included. Rows are
-the sub-score criteria, grouped by dimension and derived
-programmatically from the scoring CSV. Only \textbf{discriminating}
-sub-scores are shown: a criterion every model clears uniformly carries
-no quality-floor signal and is dropped automatically when its
-across-model spread falls below 0.1 (on the current data this drops
-capacity sanity, core/capacity completeness, source presence,
-dual-source, and as-of presence; and with the latter rows, the whole
-Field-completeness dimension). The surviving rows span Accuracy,
-Coherence, Provenance, and Temporality. Each cell is the
-\textbf{per-model mean} of that sub-score across the five runs, rendered
-on a continuous red→green scale (0 = every run fails the criterion, 1 =
-every run clears it); the simple mean suffices because a model that
-systematically zeros a free criterion averages to ≈0 and reads dark red,
-the §\ref{sec:quality} ``too weak to clear the bar'' signal. The
-§\ref{sec:exp1} internal-coherence screen (the reference-free
-veto, \texttt{cap\_distinct\ ≤\ 4\ OR\ status\_distinct\ ≤\ 1}) is
-\textbf{merged into the Coherence dimension} as its positive complement
-(\texttt{1\ −\ veto}, the ``Internal coherence'' row), so higher is
-better in lockstep with every other sub-score rather than occupying a
-separate disqualifying column. The §\ref{sec:quality} quality bar is a
-conjunction: a near-zero (dark red) cell anywhere in a model's column
-means the bar is not cleared. Model labels are family-coloured and
-dimension-separation lines isolate the criterion
-groups.}\label{fig:quality-floor}
-\end{figure}
+The matcher, the scoring formulas, and the per-criterion quality-floor
+breakdown (Figure~\ref{fig:quality-floor}) are in \ref{sec:annex-scoring}.
 
 \textbf{Reliability-gate sensitivity.} The Figure~\ref{fig:reliability}
 grade depends on two tuning choices: the indicator set (which
