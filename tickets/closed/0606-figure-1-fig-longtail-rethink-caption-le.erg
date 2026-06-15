@@ -2,11 +2,13 @@
 Title: Figure 1 (fig:longtail): rethink caption (lead with 177-record gold register, no filenames, drop last sentence); decide GEM-not-in-GOLD + matcher-shippability
 Created: 2026-06-15
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1117
 
 --- log ---
 2026-06-15T07:37Z HDMX-coding-agent created
 
 2026-06-15T11:30Z AUTHOR DECISIONS C/D: keep Figure 1 reference-anchored (GEM-only tail = 13 cancelled/proposed, deferred to 0498); ship as-is + add ONE caption sentence noting OSM uses name-only fuzzy matching (its sparser coverage = real gaps + weaker matcher). Holes audit recorded in 0632 + 0498. A (caption) + this caveat remain to execute; B is now 0633.
+2026-06-15T13:56Z HDMX-coding-agent closed — autoclosed — PR #1117
 --- body ---
 ## Context
 
