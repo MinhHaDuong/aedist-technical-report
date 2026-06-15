@@ -41,6 +41,11 @@ _CONDITION_LEGEND = (
     "5N = Multiturn, no doc  ·  1D = Singleshot, docs  ·  5D = Multiturn, docs"
 )
 
+# Minimum legible font size for figures rendered at one-column width (~3.5 in).
+# All explicit fontsize= / labelsize= calls in this module must be ≥ this value.
+# Guarded by tests/test_plot_exp2_arms_comparison.py::test_min_font_size_adherence.
+_MIN_FONT_SIZE = 8.0
+
 log = logging.getLogger(__name__)
 
 
@@ -260,7 +265,7 @@ def _draw_coverage_panel(ax, rows: list[dict], exp1_summary: dict[str, dict]) ->
     _wiki_n, _wiki_pct = _wiki_coverage()
     ax.axhline(_wiki_n, color="0.6", linestyle=":", linewidth=1.0, zorder=1)
     ax.text(
-        len(_AGENT_ORDER) - 0.5, _wiki_n, f"Wikipedia {_wiki_pct}%", ha="right", va="bottom", fontsize=8, color="0.45"
+        len(_AGENT_ORDER) - 0.5, _wiki_n, f"Wikipedia {_wiki_pct}%", ha="right", va="bottom", fontsize=9, color="0.45"
     )
     ax.yaxis.set_major_formatter(lambda val, pos: str(abs(int(val))))
     # Top of the axis tracks the reference size so the dashed line stays visible.
@@ -273,7 +278,7 @@ def _draw_coverage_panel(ax, rows: list[dict], exp1_summary: dict[str, dict]) ->
         f"{N_REFERENCE_PLANTS} plants",
         ha="left",
         va="bottom",
-        fontsize=8,
+        fontsize=9,
         fontweight="bold",
     )
     _style_panel(
@@ -311,7 +316,7 @@ def _draw_cost_panel(ax, rows: list[dict], exp1_summary: dict[str, dict]) -> Non
     ax.set_ylim(bottom=0)
     ax.set_title(
         "API cost per run, USD (hatched = Exp 1 baseline)",
-        fontsize=9,
+        fontsize=10,
         fontweight="bold",
         pad=6,
     )
@@ -331,7 +336,7 @@ def _annotate_conditions(ax) -> None:
                 label,
                 ha="center",
                 va="bottom",
-                fontsize=6.0,
+                fontsize=8.0,
                 color="0.30",
                 zorder=6,
             )
@@ -339,11 +344,11 @@ def _annotate_conditions(ax) -> None:
 
 def _style_panel(ax, ylabel: str | None) -> None:
     ax.set_xticks(range(len(_AGENT_ORDER)))
-    ax.set_xticklabels([_AGENT_LABELS[a] for a in _AGENT_ORDER], fontsize=7.5)
+    ax.set_xticklabels([_AGENT_LABELS[a] for a in _AGENT_ORDER], fontsize=9.0)
     ax.set_xlim(-0.65, len(_AGENT_ORDER) - 0.35)
     if ylabel:
-        ax.set_title(ylabel, fontsize=9, fontweight="bold", pad=6)
-    ax.tick_params(axis="y", labelsize=7.5)
+        ax.set_title(ylabel, fontsize=10, fontweight="bold", pad=6)
+    ax.tick_params(axis="y", labelsize=9.0)
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
     _annotate_conditions(ax)
@@ -385,8 +390,8 @@ def make_figure(
     else:
         _draw_cost_panel(ax, rows, exp1_summary)
 
-    fig.suptitle(_PANEL_TITLE[panel], fontsize=13, fontweight="bold", y=0.99)
-    fig.text(0.5, 0.93, _CONDITION_LEGEND, ha="center", va="top", fontsize=8.5)
+    fig.suptitle(_PANEL_TITLE[panel], fontsize=14, fontweight="bold", y=0.99)
+    fig.text(0.5, 0.93, _CONDITION_LEGEND, ha="center", va="top", fontsize=10)
     fig.tight_layout(rect=(0.0, 0.0, 1.0, 0.90))
     output.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(output, bbox_inches="tight", dpi=150)
