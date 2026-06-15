@@ -1,0 +1,43 @@
+%erg 0.1
+Title: Section 7 para 1: drop the last sentence 'They are exploratory...'
+Created: 2026-06-15
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-15T09:03Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Reading-3 (tracker [[0605]]). §7 (Extensions) para 1
+(`slides/manuscript/main.tex:851–855`) ends:
+
+> … and what system do the findings imply? They are exploratory; each
+> subsection summarises one analysis.
+
+Author: drop the last sentence "They are exploratory; each subsection
+summarises one analysis."
+
+## Actions
+
+1. Delete that closing sentence; the paragraph then ends on the
+   audience-questions sentence ("… what system do the findings imply?").
+
+## Relevant files
+
+- `slides/manuscript/main.tex:851–855`.
+
+## Test
+
+- Red first: `@pytest.mark.adherence` negative guard — "They are
+  exploratory" absent from §7.
+
+## Verification
+
+- [ ] §7 para 1 ends on the questions sentence; "They are exploratory…"
+      gone.
+- [ ] `make check` passes.
+
+## Exit criteria
+
+- §7 para 1 last sentence dropped; `make check` green.

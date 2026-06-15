@@ -1,0 +1,45 @@
+%erg 0.1
+Title: Section 7 para 2: drop the clause 'so the low overall recognition...'
+Created: 2026-06-15
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-15T09:03Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Reading-3 (tracker [[0605]]). §7.1 paragraph
+(`slides/manuscript/main.tex:864–868`) ends:
+
+> … Their average probability of being found by an Experiment 1 model run
+> falls far below that of operational plants, so the low overall
+> recognition is a property of the list's composition, not merely a model
+> failure.
+
+Author: drop the clause "so the low overall recognition is a property of
+the list's composition, not merely a model failure."
+
+## Actions
+
+1. End the sentence at "… falls far below that of operational plants."
+   Delete the ", so the low overall recognition … not merely a model
+   failure" clause.
+
+## Relevant files
+
+- `slides/manuscript/main.tex:866–868`.
+
+## Test
+
+- Red first: `@pytest.mark.adherence` negative guard — "so the low overall
+  recognition is a property of the list's composition" absent from §7.
+
+## Verification
+
+- [ ] The clause is gone; sentence ends at "operational plants."
+- [ ] `make check` passes.
+
+## Exit criteria
+
+- §7 para 2 clause dropped; `make check` green.
