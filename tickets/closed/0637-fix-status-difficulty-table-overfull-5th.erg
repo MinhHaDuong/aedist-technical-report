@@ -1,0 +1,37 @@
+%erg 0.1
+Title: Fix status-difficulty table overfull (5th column too wide): shorten EN headers + small + tabcolsep
+Created: 2026-06-15
+Author: HDMX-coding-agent
+Closed: autoclosed — PR #1127
+
+--- log ---
+2026-06-15T17:23Z HDMX-coding-agent created
+
+2026-06-15T17:28Z HDMX-coding-agent closed — autoclosed — PR #1127
+--- body ---
+## Context
+
+Author standing rule: render the PDF and adjust table column widths after
+any table change. The reading-3 arm-3 column (0628) made `tbl:status-difficulty`
+158pt overfull (5 columns, two ~28-char headers "Avg. detection prob. (Exp 1)"
+/ "(Exp 2, 1D)").
+
+## Actions (done)
+
+- Shortened the EN headers in the emitter `src/aedist/tabulate_status_difficulty.py`:
+  "Avg. detection prob. (Exp 1)" -> "Detection (Exp 1)"; "Share of list" -> "Share".
+  Regenerated `tab_status_difficulty_en.tex`.
+- Wrapped the table `\input` in `{\small\setlength{\tabcolsep}{4pt}...}` in main.tex.
+- Result: overfull 158pt -> 0 (gone). Manuscript builds.
+- Loosened the over-pinned header test `test_status_en_header_matches_detection_framing`
+  (it asserted the exact old phrasing — a CI-polarity violation): now pins the
+  stable markers "(Exp 1)"/"(Exp 2, 1D)" + "detection" + the "Recognition rate"
+  negative guard, not the exact wording.
+
+## Verification
+- [x] No status-difficulty overfull \hbox; manuscript builds.
+- [x] Header test passes (loosened, polarity-compliant).
+- [ ] `make check` passes.
+
+## Exit criteria
+- status-difficulty table fits; header test polarity-compliant; build clean.

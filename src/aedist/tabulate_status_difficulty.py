@@ -243,8 +243,8 @@ def format_status_latex_en(
         "\\begin{tabular}{@{}lrrrr@{}}",
         "\\toprule",
         (
-            "Status & n & Share of list & "
-            "Avg. detection prob. (Exp 1) & Avg. detection prob. (Exp 2, 1D) \\\\"
+            "Status & n & Share & "
+            "Detection (Exp 1) & Detection (Exp 2, 1D) \\\\"
         ),
         "\\midrule",
         *body_lines,
