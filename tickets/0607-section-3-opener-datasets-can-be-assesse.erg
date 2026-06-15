@@ -1,0 +1,51 @@
+%erg 0.1
+Title: Section 3 opener: 'Datasets can be assessed on four dimensions' -> 'We benchmark model-produced datasets on four dimensions'
+Created: 2026-06-15
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-15T07:38Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Reading-3 (tracker [[0605]]). §3 opener (`slides/manuscript/main.tex:277`)
+is passive and generic:
+
+> Datasets can be assessed on four dimensions: accuracy, coherence,
+> provenance, and temporality.
+
+Author wants it active and benchmark-framed:
+
+> We benchmark model-produced datasets on four dimensions: accuracy,
+> coherence, provenance, and temporality.
+
+This aligns §3 with the intro's "benchmark" framing and is consistent
+with [[0602]] (the four-dimension quality maths / benchmark v0.1).
+
+## Actions
+
+1. Replace the `:277` sentence opener "Datasets can be assessed on four
+   dimensions" → "We benchmark model-produced datasets on four
+   dimensions". Keep the dimension list and the rest of the paragraph.
+
+## Relevant files
+
+- `slides/manuscript/main.tex:277`.
+
+## Test
+
+- Red first: `@pytest.mark.adherence` negative guard — assert the passive
+  "Datasets can be assessed on four dimensions" phrasing is absent from
+  §3 (CI polarity: forbid the old phrasing; do not pin the exact new
+  wording, which the author may tune).
+
+## Verification
+
+- [ ] §3 opens with the active "We benchmark model-produced datasets…"
+      framing; dimension list intact.
+- [ ] `make check` passes; manuscript builds.
+
+## Exit criteria
+
+- §3 opener is active/benchmark-framed; `make check` green.
