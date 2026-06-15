@@ -1,0 +1,74 @@
+%erg 0.1
+Title: Section 5: end sentence at 'yielding 70 runs.' then new sentence 'Each run is then scored ...'
+Created: 2026-06-15
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-15T08:05Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Reading-3 (tracker [[0605]]). §5 Experiment-1 paragraph
+(`slides/manuscript/main.tex:527–532`):
+
+> Each model is queried five times at temperature zero, yielding
+> \ExpOneNRuns{} runs against a \NumRefPlants-plant reference inventory of
+> Vietnamese thermal power plants (coal and gas, all lifecycle statuses).
+> Runs are evaluated by matching extracted plant names against the
+> reference using fuzzy string matching, yielding row-level precision,
+> recall, and F1; fuel type, operational status, and province accuracy
+> are scored at the cell level for matched rows. Cost in USD and
+> wall-clock time are recorded per run.
+
+## Actions
+
+1. **End the sentence at the run count.** "… yielding \ExpOneNRuns{} runs
+   against a \NumRefPlants-plant reference inventory of Vietnamese thermal
+   power plants (coal and gas, all lifecycle statuses)." → full stop.
+   (`\ExpOneNRuns` = 70, macro-sourced — keep the macro.)
+2. **Start a new sentence "Each run is then scored …" and replace the
+   inline scoring detail with a reference to the defining section.** The
+   methodology sentence ("Runs are evaluated by matching … fuzzy string
+   matching … cell level for matched rows") restates scoring that belongs
+   to §3 (the quality-dimensions framework, `sec:quality`). Replace it
+   with e.g.: "Each run is then scored on the quality dimensions of
+   §\ref{sec:quality}." — a ref, not a restated method.
+   - The matcher mechanics (fuzzy matching, cell-level detail) live in the
+     annex (coordinate with [[0602]]'s Scoring Annex A and the
+     standalone-text policy [[0606]]); ensure the detail is present there.
+3. Keep "Cost in USD and wall-clock time are recorded per run." (resource
+   recording, not scoring detail) — unless the author folds it elsewhere.
+
+## Coordination
+
+- [[0602]] creates the Scoring Annex A; the ref in step 2 may point to §3
+  and/or the Scoring annex once 0602 lands. Keep consistent at raid time.
+- [[0613]] already sweeps experimental-history bookkeeping to the annex;
+  this ticket does the §5 scoring-detail → ref part.
+
+## Relevant files
+
+- `slides/manuscript/main.tex:527–532`.
+- `sec:quality` (§3) — scoring framework the ref points to.
+
+## Test
+
+- Red first: `@pytest.mark.adherence` negative guard — the inline scoring
+  detail ("scored at the cell level for matched rows" / "fuzzy string
+  matching, yielding row-level precision, recall, and F1") is absent from
+  §5 body; a `\ref{sec:quality}` appears in its place. CI polarity: forbid
+  the restated method in the body; do not pin the new sentence.
+
+## Verification
+
+- [ ] §5 sentence ends at "\ExpOneNRuns{} runs … statuses)."; new "Each
+      run is then scored …" sentence refs §\ref{sec:quality}.
+- [ ] Inline scoring methodology removed from §5; detail present in the
+      annex / §3.
+- [ ] `make check` passes; manuscript builds.
+
+## Exit criteria
+
+- §5 run sentence split; scoring detail replaced by a section ref;
+  `make check` green.
