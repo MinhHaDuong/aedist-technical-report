@@ -1,0 +1,46 @@
+%erg 0.1
+Title: Exp2 2x2 emitter still renders 'naive (single-shot)/optimised (multi-turn)' — rename to single-shot/multi-turn
+Created: 2026-06-15
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-15T16:17Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Roar sweep after the reading-3 wave. Ticket 0620 renamed the query-mode
+labels naive→single-shot / optimised→multi-turn in `main.tex` prose, but
+the GENERATED 2x2 table emitter still renders the old labels:
+`report/inputs/generated/tab_exp2_2x2_agents.tex` shows rows like
+"Anthropic & naive (single-shot) & no & …". That table is reader-facing
+(it is the `tbl:exp2-2x2` shown in the Exp 2 annex). So "naive"/"optimised"
+still appear in the rendered manuscript via the table.
+
+## Actions
+
+1. In `src/aedist/tabulate_exp2_2x2.py`, rename the arm labels
+   "naive (single-shot)" → "single-shot" and "optimised (multi-turn)" →
+   "multi-turn" (drop the parenthetical old term). Regenerate
+   `tab_exp2_2x2_agents.tex` via the render.mk target; commit it.
+2. Check other generated artifacts the sweep flagged for reader-facing
+   leakage of naive/optimised (e.g. `tab_exp2_bib_quality.tex`,
+   `macros_exp2_matrix_naive.tex` — the macro filename is internal, but
+   confirm its rendered VALUES do not surface the words). Internal-only
+   data files (csv, stat-test txt) are out of scope.
+3. Extend the 0620 query-mode negative guard to also scan the generated
+   tables that `main.tex` `\input`s, so the class can't return.
+
+## Test
+- Red first: extend the query-mode adherence guard to assert no
+  "naive"/"optimised" query-mode label in `tab_exp2_2x2_agents.tex` (and
+  any other \input'd generated table). Negative guard, CI polarity.
+
+## Verification
+- [ ] tab_exp2_2x2_agents.tex shows single-shot/multi-turn (regenerated).
+- [ ] No reader-facing naive/optimised in any \input'd generated table.
+- [ ] `make check` passes.
+
+## Exit criteria
+- The rendered 2x2 table uses single-shot/multi-turn; guard extended;
+  `make check` green.
