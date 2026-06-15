@@ -102,9 +102,9 @@ and traceable to authoritative primary sources. Yet across much of the
 world these data arrive late or incomplete.
 We introduce a computable benchmark for this task: reconstruct the
 register of Vietnam's \NumRefPlants{} thermal power plants and score the result
-against a hand-compiled, comprehensive reference.
+against a hand-compiled, per-cell-sourced reference.
 We find that the task is hard for today's AI systems.
-Fourteen language models answering from memory recovered much less than the Wikipedia lists contain, even though these lists had presumably been in their training corpora for years. We observed that internal coherence metrics correlate with accuracy, allowing us to screen out weak runs without the reference. We then tested the commercial frontier of mid-2026: four agentic systems with web access and extended reasoning. Only one of them improved coverage over the memory-only query, and a harness giving them the opportunity to plan and execute a multi-step reply degraded the results for three of the four. Handing the agents a curated document set did improve coverage, especially for the initially weaker agents. Fusing the lists from multiple runs more than doubles recall.
+Fourteen language models answering from memory recovered much less than the Wikipedia lists contain, even though these lists had presumably been in their training corpora for years. We observed that a reference-free signal, the within-run variability of the reported capacities, correlates with accuracy, letting us screen out weak runs without the reference. We then tested the commercial frontier of mid-2026: four agentic systems with web access and extended reasoning. Only one of them improved coverage over the memory-only query, and a harness giving them the opportunity to plan and execute a multi-step reply degraded the results for three of the four. Handing the agents a curated document set did improve coverage, especially for the initially weaker agents. Fusing the lists from multiple runs more than doubles recall.
 We conclude that an evergreen statistical-quality register requires deliberate knowledge engineering. We propose that datasets should be derived as dated snapshots from a sourced, auditable knowledge base, mechanically updated to assimilate a periodically harvested evidential corpus. Humans can stay in the loop to vet information sources and resolve the tail of hard statistical questions.
 \end{abstract}
 
@@ -128,8 +128,9 @@ This paper uses a concrete task — building a complete, sourced
 inventory of Vietnam's thermal power plants — to evaluate whether
 AI systems can yet produce research-grade statistical data.
 
-Our contribution is the benchmark, reusable beyond the Vietnamese
-case: to our knowledge, the first sourced evaluation of AI agents on
+Our contribution is the benchmark, demonstrated here on the Vietnamese
+case, with transfer to other countries and asset classes left to future
+work (§\ref{sec:future}): to our knowledge, the first sourced evaluation of AI agents on
 national power-plant inventory construction, scored against a
 hand-compiled, fully sourced reference. We use \emph{benchmark} in the
 narrow sense of a frozen task definition, a public gold reference, and
@@ -137,14 +138,16 @@ a computable metric, not a suite or a leaderboard; the design measures
 training-data contamination as a parametric ceiling rather than trying
 to prevent it. The computable metric is a four-dimension quality score:
 per-row scoring of an LLM-generated statistical table on accuracy,
-coherence, provenance, and temporality.
+coherence, provenance, and temporality, with provenance scored as
+citation presence rather than verified support and external coherence
+left to future work.
 
 We find the task hard for today's AI systems. Across fourteen language
 models answering from memory and four agentic systems with web access,
 neither model memory nor web access yields a complete, well-sourced
 register, and a harness that lets the agents plan and execute a
 multi-step reply degrades rather than improves the result for most of
-them. Reference-free coherence correlates with accuracy (Figure~\ref{fig:reliability}),
+them. A reference-free reliability signal correlates with accuracy (Figure~\ref{fig:reliability}),
 so the cheap part of the quality score screens out the weakest runs and
 models and can stand in for the expensive part when triaging which outputs
 deserve attention.
@@ -474,8 +477,8 @@ right are correctly identified plants (TP), red segments to the left are
 unmatched plants (FP: extracted but not in the reference). The dashed
 green line marks the \NumRefPlants-plant reference; the light-grey dotted line
 marks Wikipedia's coverage of \WikiReviewed{} assets
-(\WikiReviewedPct\% of our reference list) — the coverage bar that
-models could be expected to pass.}\label{fig:direct-base}
+(\WikiReviewedPct\% of our reference list), the share already present in
+public training text.}\label{fig:direct-base}
 \end{figure}
 
 \textbf{Experiment 1 — Parametric baseline.} We query the
@@ -522,7 +525,7 @@ pipeline is PDP8-era (post-2019) content added after the June 2019
 injection, so those rows may postdate some cutoffs. The coverage bar is
 therefore firm for the built fleet and an upper-bound
 heuristic for the pipeline tail. Wikipedia coverage of the reference is
-thus the coverage bar a competent parametric model ought to recover, and
+thus an upper bound on what a competent parametric model could recover, and
 grading recall against it is not circular, because it measures retrieval,
 not justification. The coverage bar has two regimes (light-reviewed,
 \ref{sec:annex-exp1}): the built fleet is covered at a 92\% mean
@@ -568,7 +571,10 @@ experiment cost is \$\CensusCostTotal{}.
 An earlier sweep surfaced refusals rather than scores: in the archived
 baseline sweep, GPT-5.5 declined the task on 3 of its 5 reps before the
 analysis-cohort re-run reported above resolved
-compliance. We retain the declined responses as data; the episode and
+compliance. A memory-only prompt that demands primary sourcing while
+forbidding the web leaves refusal as a defensible response that
+nonetheless scores F1 = 0, mixing task compliance with epistemic caution.
+We retain the declined responses as data; the episode and
 its reading against the §\ref{sec:quality} provenance bar are taken up
 in the Discussion.
 
@@ -576,8 +582,7 @@ in the Discussion.
 \centering
 \includegraphics[width=\linewidth]{../../report/inputs/generated/fig_direct_cost_quality.pdf}
 \caption{Coverage (Y) vs.\ cost (log-scale X), Experiment 1. Prices and models as
-of May 2026. More expensive models discover more assets and return more
-stable results. Source: author; see \ref{sec:annex-exp1}.}\label{fig:cost-quality}
+of May 2026. Source: author; see \ref{sec:annex-exp1}.}\label{fig:cost-quality}
 \end{figure}
 
 \textbf{A reference-free reliability grade separates the cohort.} The
@@ -732,7 +737,11 @@ degraded three of the four agents (Anthropic \ExpTwoFOneAnthropicNaive{}
 to \ExpTwoFOneAnthropicOptimised, Mistral \ExpTwoFOneMistralNaive{} to
 \ExpTwoFOneMistralOptimised, Qwen \ExpTwoFOneQwenNaive{} to
 \ExpTwoFOneQwenOptimised) and gave OpenAI a marginal gain
-(\ExpTwoFOneOpenAINaive{} to \ExpTwoFOneOpenAIOptimised). We did not
+(\ExpTwoFOneOpenAINaive{} to \ExpTwoFOneOpenAIOptimised). This result
+indicts the tested harness (agent-designed prompts under a 50K-token / \$3
+cap, driven by an external classifier loop), not multi-step agency in
+general: a human-authored pipeline or a larger budget might fare
+differently. We did not
 find published comparisons of frontier deep-research
 agents on structured-output coverage at this granularity.
 
@@ -1730,7 +1739,11 @@ deepseek-v4-flash & DeepSeek & mid & 775 \\
 Mistral's per-tier branding (Small 4 / Medium 3.5 / Large 3) is the
 lab's own scheme and does not denote a generation order; we adopt their
 naming verbatim. All sixteen models received identical call parameters
-(T=0, seed=42, max\_tokens=32768, no-web system instruction). The only
+(T=0, seed=42, max\_tokens=32768, no-web system instruction). The
+per-model results in §\ref{sec:exp1} come from the \ExpOneNModels{}-model
+analysis cohort: this sixteen-model journal tier minus two weak Qwen
+variants (\texttt{modelset\_exp1\_batch2}, defined in the Prompts
+subsection below). The only
 reasoning-related signal sent was
 \texttt{reasoning\_effort\ =\ "minimal"} for the two \texttt{gpt-oss-*}
 entries, declared in the registry. The ``Reasoning tokens'' column

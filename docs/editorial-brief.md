@@ -476,3 +476,85 @@ macro-sourced (\ExpTwoCost* family); no hand-typed figures.
 **Ticket:** tickets/0600-report-exp-2-costs-were-not-minimized-pr.erg
 
 **Status:** active
+
+## benchmark-scoped-to-vietnam
+
+**Decision:** The contribution is the benchmark "demonstrated here on the
+Vietnamese case," with transfer to other countries and asset classes named
+as future work (intro, abstract). The paper does not claim out-of-distribution
+validity; matcher parameters and the quality bar were tuned in-sample.
+
+**Rationale:** All four external reviewers (2026-06-15) flagged the
+"reusable beyond the Vietnamese case" framing as unsupported on N=1. Scoping
+the claim is honest; the replication that would license generality is
+deferred (ticket 0655).
+
+**Ticket:** tickets/0645-calibrate-overclaims-frontmatter.erg
+
+**Status:** active
+
+## proxy-quality-metrics
+
+**Decision:** The four-dimension score is presented with its measurement
+limits stated where it is introduced: provenance is scored as citation
+presence (verifiable), not verified support, and external coherence is left
+to future work. The abstract/intro/conclusion do not imply full
+data-quality scoring.
+
+**Rationale:** Reviewers noted the framework oversells the measurements. The
+§3/§8 "verifiable not verified" language already existed; this surfaces it
+into the front matter. The verified-citation layer is deferred (ticket 0658).
+
+**Ticket:** tickets/0645-calibrate-overclaims-frontmatter.erg
+
+**Status:** active
+
+## wikipedia-coverage-availability-bound
+
+**Decision:** Wikipedia coverage is framed as an availability upper bound on
+what a parametric model could recover, not as a recall expectation models
+"ought to" or "could be expected to" pass. The Figure 3 caption states what
+the dotted line is (the share present in public training text) with no
+expectation claim; the §5 body keeps "firm for the built fleet, upper-bound
+heuristic for the pipeline tail."
+
+**Rationale:** The author's group seeded reference-derived content into
+Wikipedia (2019); all four reviewers flagged the circularity of using it as
+a recall ceiling. Availability/upper-bound framing is defensible; it also
+honours the no-caveats-in-captions rule.
+
+**Ticket:** tickets/0646-wikipedia-coverage-bar-framing.erg
+
+**Status:** active
+
+## multiturn-scoped-to-harness
+
+**Decision:** The multi-turn degradation result is scoped to the tested
+harness (agent-designed prompts under a 50K-token / \$3 cap, external
+classifier loop), explicitly not a verdict on multi-step agency in general
+(§6). The abstract/conclusion attribute it to "a harness," not to agentic
+workflows at large.
+
+**Rationale:** Three reviewers warned the result reads as a broad indictment
+of agentic workflows; it is one harness under one budget. A human-authored
+pipeline or larger budget is named as a possible different outcome.
+
+**Ticket:** tickets/0647-scope-multiturn-to-harness.erg
+
+**Status:** active
+
+## screen-signal-is-capacity-variability
+
+**Decision:** The reference-free screen is described as resting on within-run
+variability of the reported capacities (Figure 5), NOT on the
+internal-coherence indicators — which §7 states carry no such signal. The
+abstract and intro say "a reference-free signal / reliability signal,"
+never "internal coherence metrics correlate with accuracy."
+
+**Rationale:** An external reviewer caught the abstract↔§7 contradiction. The
+accurate attribution is capacity variability; the in-sample tuning caveat and
+out-of-sample validation are deferred (ticket 0657).
+
+**Ticket:** tickets/0648-reconcile-abstract-s7-screen-signal.erg
+
+**Status:** active
