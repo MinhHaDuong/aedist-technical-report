@@ -31,46 +31,42 @@ CI by 0557.
 
 ## rho-caveat-conclusion
 
-**Decision:** If the conclusion cites the ρ = 0.92 screen correlation, the
-sentence carries the pooled-across-models and in-sample qualifications and
-points to the model-level reliability figure (`fig:reliability`), which
-shows the same screen with more statistical power than the dropped Annex E
-within-model test (ticket 0586). Current phrasing: "Spearman ρ = 0.92,
-pooled across models and in-sample, so an existence proof rather than a
-validated detector; the model-level grade it aggregates to is
-Figure~\ref{fig:reliability}".
+**Decision:** Retired. The conclusion no longer presents the Spearman ρ
+screen correlation at all — ticket 0598 dropped the ρ regression from the
+whole manuscript (body and annex). The screening conclusion (a
+reference-free reliability grade triages the weak models without ground
+truth) is now carried by Figure~\ref{fig:reliability} and its in-sample
+existence-proof caveat, not by a coefficient. There is no ρ claim left to
+police.
 
-**Rationale:** Pooled in-sample ρ overstates the screen; the in-sample
-caveat is load-bearing and stays. The Annex E within-model validation was
-dropped (ticket 0586) because Figure~\ref{fig:reliability} shows the
-screening result more powerfully; the ρ caveat retargets to that figure.
-CI keeps the conditional-negative guard (unqualified ρ = 0.92 in the
-conclusion fails); the exact caveat wording is free.
+**Rationale:** This entry existed only to keep the in-sample caveat
+attached to the conclusion's ρ = 0.92 citation. With the citation gone the
+guard is moot. The companion conditional-negative CI guard was removed in
+lockstep (ticket 0598).
 
 **Ticket:** 0532 (round 2); demoted from CI by 0557; retargeted to
-`fig:reliability` by 0586.
+`fig:reliability` by 0586; retired by 0598.
 
-**Status:** active
+**Status:** retired
 
 ## rho-caveat-discussion
 
-**Decision:** If the Discussion or the screening subsection (label
-`sec:ext-screen`; the screen prose moved there from the Discussion in the
-0562 restructure) cites ρ = 0.92, the existence-proof qualification
-accompanies it ("an existence proof rather than a validated detector,
-[because] the cutoffs were tuned in-sample on these same runs"); the
-subsection now points to `fig:reliability` for the model-level grade
-rather than the dropped Annex E (ticket 0586).
+**Decision:** Retired. The Discussion / external-screening subsection no
+longer cites ρ = 0.92 — ticket 0598 dropped the ρ regression from the
+whole manuscript. The existence-proof / in-sample framing the screen prose
+needs survives on its own terms ("an existence proof rather than a
+validated detector, as the cutoffs were tuned in-sample"); it is no longer
+tethered to a ρ value.
 
-**Rationale:** The threshold rule was tuned on the same 70 runs it rejects
-from — presenting it as a validated detector would be an overclaim. CI keeps
-the conditional-negative guard ("existence proof" and an in-sample marker
-must accompany ρ = 0.92 in the Discussion); the phrasing is free.
+**Rationale:** The entry existed only to keep the existence-proof
+qualification attached to the Discussion's ρ = 0.92 citation. With the
+citation gone the guard is moot. The companion conditional-negative CI
+guard was removed in lockstep (ticket 0598).
 
 **Ticket:** 0532 (round 2); demoted from CI by 0557; Annex E reference
-retargeted to `fig:reliability` by 0586.
+retargeted to `fig:reliability` by 0586; retired by 0598.
 
-**Status:** active
+**Status:** retired
 
 ## binding-constraint-conjecture
 

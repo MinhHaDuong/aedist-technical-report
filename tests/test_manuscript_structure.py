@@ -64,7 +64,7 @@ def test_abstract_present_and_leads_with_frontier():
 
 
 def test_abstract_numbers_in_body():
-    """Key numeric claims (F1 min/mean/max, ρ) appear in the manuscript body.
+    """Key numeric claims (F1 min/mean/max) appear in the manuscript body.
 
     The F1 stats are read from ``macros_exp1_run_stats.tex`` (regenerated from
     ``exp1_cross_eval.csv``) rather than hardcoded, so a re-score that shifts the
@@ -85,12 +85,9 @@ def test_abstract_numbers_in_body():
     for macro in ("ExpOneFOneMin", "ExpOneFOneMean", "ExpOneFOneMax"):
         val = _parse_macro(macros, macro)
         assert val in text, f"F1 stat {val} ({macro}) missing from manuscript body — update main.tex"
-    # The pooled screening ρ flows from macros_screen_validation.tex since
-    # ticket 0566: guard the macro call in the source, not the literal — the
-    # value itself is drift-checked in test_manuscript_macros.py.
-    assert "\\ScreenPooledSpearman" in raw(), (
-        "pooled screening Spearman macro \\ScreenPooledSpearman missing from manuscript"
-    )
+    # Ticket 0598 dropped the Spearman ρ regression presentation entirely
+    # (body + annex); the screening conclusion is now carried by
+    # fig:reliability, not a coefficient. No ρ-presence assertion remains.
 
 
 def test_author_affiliation_present():
