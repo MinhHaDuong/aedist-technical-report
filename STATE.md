@@ -1,21 +1,20 @@
-Last updated: 2026-06-14T03:45Z
+Last updated: 2026-06-16T00:00Z
 
 ## North star
 
 Produce research-quality energy infrastructure datasets from open sources, validated by a methods benchmark. **Not which model is best, but which method produces trustworthy statistics with locatable errors.** PyPSA-ASEAN remains the long-term target; the benchmark de-risks v1 pipeline design choices. See MASTERPLAN.md.
 
-## Current milestone: arXiv preprint (0435)
+## Current milestone: dissemination → arXiv
 
-**The preprint WP is `slides/manuscript/main.tex`** (hand-curated LaTeX, tectonic + CI-built). **Reading-2 fix wave COMPLETE 2026-06-14** (tracker 0578: 13 children 0579–0592 + prereq 0575, each Sonnet-gated + verify-checked; integration review PASS, manuscript builds clean). Prior landings: back-half restructure (0560), showstopper sweep (0571). **Ready for arXiv sign-off** pending (a) author confirm-close 0578, (b) the general-reading-skills prose pass below. Standing auth (2026-06-11): merge-review-merge cadence; new judgment calls stay needs-human.
+Preprint (`slides/manuscript/main.tex`) diffused to Econom'IA 2026 participants; tagged `economia-2026-report` (2da83d04, 65 pp) and **released on GitHub with the PDF (0666)**. Prior: reading-2/3 waves + a 4-reviewer external panel (tracker 0644 — prose findings fixed, experiments deferred post-arXiv). **Dissemination tracker 0663**: HAL deposit (0664, gated/SWORD) is the next step → arXiv-via-HAL (0665), homepage (0667), CIRED (0668). **Spring-cleanup tracker 0669** (publications/ rehome, data+derived→experiments, root tidy) is parked behind dissemination. Standing auth: merge-review-merge cadence; new judgment calls stay needs-human.
 
 ## Status
-<!-- generated 2026-06-14T03:45Z -->
-**Tickets:** 27 ready — `erg ready tickets/` for full list
+<!-- generated 2026-06-16T00:00Z -->
+**Tickets:** 38 ready — `erg ready tickets/` for full list
 **Recent commits:**
-  ebac7e01 Merge #1066 — annotate 0578 wave complete; file 0595
-  654c42a7 Merge #1065 — 0592 register/promises sweep (last child)
-  ec81cfb8 Merge #1064 — 0591 codename/code-ref sweep
-  (reading-2 wave 0579–0592 + prereq 0575 all merged)
+  4150e577 Merge #1147 — close 0666 (GitHub release published)
+  ebd8c30d Merge #1146 — dissemination (0663) + spring-cleanup (0669) trackers
+  (this session: reading-3, peer-review calibration 0644, widow shaving, tag + release)
 
 ## Next: general reading skills (prose-quality pass)
 
