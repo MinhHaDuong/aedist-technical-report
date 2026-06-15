@@ -269,3 +269,40 @@ def test_exp2_coverage_wikipedia_line_drawn(tmp_path) -> None:
     )
     dotted = [line for line in hlines if line.get_linestyle() in (":", "dotted")]
     assert dotted, "No dotted axhline found; the Wikipedia coverage bar is missing."
+
+
+@pytest.mark.adherence
+def test_min_font_size_adherence() -> None:
+    """0624: no explicit fontsize= or labelsize= call in the emitter may fall
+    below _MIN_FONT_SIZE, so the tiny-font regression (ticket 0624) cannot return.
+
+    Checks the source against the module's own _MIN_FONT_SIZE constant so the
+    threshold is self-documenting and kept in one place.
+    """
+    import ast
+    import inspect
+
+    from aedist import plot_exp2_arms_comparison
+    from aedist.plot_exp2_arms_comparison import _MIN_FONT_SIZE
+
+    src = inspect.getsource(plot_exp2_arms_comparison)
+    tree = ast.parse(src)
+
+    violations: list[str] = []
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Call):
+            continue
+        for kw in node.keywords:
+            if kw.arg not in ("fontsize", "labelsize"):
+                continue
+            if isinstance(kw.value, ast.Constant) and isinstance(kw.value.value, (int, float)):
+                size = float(kw.value.value)
+                if size < _MIN_FONT_SIZE:
+                    violations.append(
+                        f"line {node.lineno}: {kw.arg}={size} < _MIN_FONT_SIZE={_MIN_FONT_SIZE}"
+                    )
+
+    assert not violations, (
+        "Font size(s) below the legibility threshold in plot_exp2_arms_comparison:\n"
+        + "\n".join(violations)
+    )
