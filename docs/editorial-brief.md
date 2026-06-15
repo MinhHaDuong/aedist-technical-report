@@ -456,3 +456,23 @@ distinction.
 **Ticket:** tickets/0602-intro-para-3-deliver-four-dimension-math.erg
 
 **Status:** active
+
+## exp2-costs-upper-bound
+
+**Decision:** The Exp 2 cost figures (§6, fig:exp2-arms-cost paragraph) are
+explicitly framed as an upper bound on production cost, not a minimised
+floor. The prose states that the harness applies no prompt caching or
+context reuse and resents the reference documents on every call. Production
+cache management — especially across documents-arm calls that share an
+identical reference pack — is named as a cost-reduction lever, hedged as
+"can materially reduce" without asserting a measured saving.
+
+**Rationale:** Reporting costs without this caveat risks readers treating
+them as a floor estimate. The measurement is honest about what it captures
+(un-optimised API spend); the caveat preserves that honesty without
+requiring new experiments or numbers. All dollar values remain
+macro-sourced (\ExpTwoCost* family); no hand-typed figures.
+
+**Ticket:** tickets/0600-report-exp-2-costs-were-not-minimized-pr.erg
+
+**Status:** active

@@ -745,7 +745,14 @@ protocol imposed a strict dual-source admissibility filter that
 constrains coverage from Turn 1). The multi-turn protocol costs 2--4×
 more per run than single-shot across all agents
 (Figure~\ref{fig:exp2-arms-cost}); OpenAI's ratio is most
-extreme (median \$\ExpTwoCostOpenAIOptimised{} multi-turn vs \$\ExpTwoCostOpenAINaive{} single-shot). On row-level F1
+extreme (median \$\ExpTwoCostOpenAIOptimised{} multi-turn vs \$\ExpTwoCostOpenAINaive{} single-shot).
+These costs are not minimised: the harness applies no prompt caching or
+context reuse, and the reference documents are resent on every call; they
+are an upper bound on production cost rather than a floor. In production,
+cache management across turns and arms (particularly for the
+documents-arm calls that share an identical reference pack) can
+materially reduce this, though we did not measure the saving.
+On row-level F1
 (Table~\ref{tbl:exp2-2x2}, no-documents rows), the multi-turn protocol
 degraded three of the four agents (Anthropic \ExpTwoFOneAnthropicNaive{}
 to \ExpTwoFOneAnthropicOptimised, Mistral \ExpTwoFOneMistralNaive{} to
