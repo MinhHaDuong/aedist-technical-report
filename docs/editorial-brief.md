@@ -397,3 +397,29 @@ already covered.
 (supersedes ticket 0591's caption exemption)
 
 **Status:** active
+
+## three-scoring-levels-perpendicular
+
+**Decision:** The three scoring levels in §discussion ("A result is scored at
+three levels") are genuinely perpendicular axes — process, output, source. In
+particular, \emph{method quality} is a property of the *process*, not of any
+output it produces: whether the procedure is auditable, reproducible, and
+cost-predictable independent of which model runs it (the definition set at the
+end of §ext-system). It must NOT be defined through the quality of the table
+the method returns. The cost-versus-F1 figure *relates* method cost to result
+(run/table) quality across two distinct axes; it does not *define* method
+quality as table quality. Run quality scores one output table; model quality
+aggregates runs into a source-reliability grade.
+
+**Rationale:** Reading-2 finding 40 (author, 2026-06-14): the prior wording
+defined method quality as the cost-vs-table-quality relation while also
+defining run quality as the quality of one table, so the two shared the
+table-quality axis and "perpendicular" was internally inconsistent. The
+method/model distinction was already established at the end of §ext-system;
+§discussion builds on it rather than re-conflating. The three-quality spine of
+the paper (data / answer / method) treats method quality as a distinct axis,
+not a function of answer/table quality.
+
+**Ticket:** tickets/0599-discussion-section-conflates-method-qual.erg
+
+**Status:** active

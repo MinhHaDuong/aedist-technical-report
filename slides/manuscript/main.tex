@@ -1007,10 +1007,14 @@ after the unit-number veto, and the scored runs realise
 
 \textbf{A result is scored at three levels.} The benchmark separates
 three questions that an aggregate F1 ranking elides. \emph{Method
-quality} asks what the resources buy: the cost-versus-F1 relation
-(Figure~\ref{fig:cost-quality}) reads the time and money a method
-spends against the quality of the table it returns, and a method that
-spends more without returning more is dominated regardless of its rank.
+quality} is a property of the process, not of any one output it
+produces: whether the procedure is auditable, reproducible, and
+cost-predictable independent of which model runs it
+(§\ref{sec:ext-system}). The cost-versus-F1 relation
+(Figure~\ref{fig:cost-quality}) does not define this axis; it
+\emph{relates} it to the next one, plotting the time and money a method
+spends against the table quality it achieves, so that a method spending
+more without achieving more is dominated regardless of its rank.
 \emph{Run quality} scores one table — a single model's single run —
 on the four §\ref{sec:quality} dimensions, the cell-level accuracy of
 its matched rows together with its coherence, provenance, and currency.
@@ -1018,8 +1022,8 @@ its matched rows together with its coherence, provenance, and currency.
 model as a source: a version whose runs are repeatedly incoherent is
 disqualified as a source even when an occasional run scores well
 (§\ref{sec:ext-screen}, Figure~\ref{fig:reliability}). The three are
-perpendicular, and conflating them is how a single number flatters an
-expensive or erratic system.
+perpendicular (process, output, source), and conflating them is how a
+single number flatters an expensive or erratic system.
 
 \textbf{Interday drift is an unquantified variance source.} Beyond the
 5-rep within-session spread, provider-side silent movement (routing
