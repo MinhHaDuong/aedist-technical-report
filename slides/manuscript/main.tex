@@ -340,8 +340,8 @@ requires a held-out gold reference. Coherence, provenance, and
 temporality are reference-free: they can be assessed from the model
 reply alone. Where reference-free indicators correlate with accuracy,
 they can estimate it — screening out weak outputs without the
-reference. The experiments exercise this logic directly
-(§\ref{sec:exp1}). The scoring is implemented in \ref{sec:annex-scoring},
+reference. Figure~\ref{fig:reliability} illustrates this logic. The
+scoring is implemented in \ref{sec:annex-scoring},
 which writes out the per-dimension formulas.
 
 \section{AI capability landscape: from chatbots to agentic systems}\label{sec:capability}
@@ -355,24 +355,18 @@ output media} (text, vision, audio, video), \emph{tool access} (none,
 web browser, code execution, computer control), and \emph{product
 workflow} (simple chat, single-task agent, deep research, coding agent,
 autonomous task runner).
-Figure~\ref{fig:capability-timeline} shows one projection of this
-coordinate system: when each of eight capability surfaces first shipped
-in a consumer-facing product, the threshold at which a working analyst
-can rely on it, months after API or privileged-partner availability.
+The envelope grows by \emph{integration}: capabilities are added by
+wrapping the model in a runtime that supplies retrieval, web access,
+reasoning, code execution, tool use, and recursion. Integration alone
+is not enough — the model must also be \emph{conditioned} to use each
+surface: a lab's investment in training it to exploit retrieved
+documents, tool calls, long reasoning chains, and delegated sub-tasks
+is what makes a capability usable once the runtime exposes it.
 
-The envelope grows by integration. The integrations themselves
-(retrieval, web access, reasoning surfaces, code execution, tool use,
-and recursion) live in the runtime that wraps the model. What the model
-contributes is \emph{conditioning}: a lab's investment in training the
-model to exploit retrieved documents, tool calls, long reasoning
-chains, and delegated sub-tasks is what lets it use each surface when
-the framework exposes it. Each marker in
-Figure~\ref{fig:capability-timeline} is the date the framework ×
-trained-model × product triple first appears in a publicly available
-commercial product.
-
-Each row of Figure~\ref{fig:capability-timeline} corresponds to one
-integration:
+Figure~\ref{fig:capability-timeline} dates each integration by when it
+first reached a public commercial product — the point at which a
+working analyst can rely on it, months after the underlying API. Each
+row is one integration:
 
 \begin{itemize}
 \item
