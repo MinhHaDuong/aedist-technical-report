@@ -1,0 +1,21 @@
+%erg 0.1
+Title: Fix 45pt annex overfull: texttt{modelset_exp1_journal} -> fpath (breakable)
+Created: 2026-06-15
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-15T18:23Z HDMX-coding-agent created
+
+--- body ---
+## Context
+Render-and-adjust pass found a 45pt overfull hbox in the Exp-2 annex
+"Baseline reference" paragraph: an unbreakable long \texttt token
+(\texttt{modelset\_exp1\_journal}) — the overfull source writing.md warns
+about. Line 1753 already uses the breakable \fpath form.
+
+## Action (done)
+- main.tex:2076 \texttt{modelset\_exp1\_journal} -> \fpath{modelset_exp1_journal}.
+- Rebuilt: 45pt overfull gone; only a 0.5pt sub-mm sliver remains (noise).
+
+## Exit criteria
+- No 45pt overfull; manuscript builds. (done)
