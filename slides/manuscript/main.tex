@@ -1137,19 +1137,17 @@ classification convention.
 
 \section{Conclusion}\label{sec:conclusion}
 
+This paper contributes a computable benchmark for producing evergreen,
+research-grade statistical datasets, and it shows we are far from there.
 As of mid-2026, AI systems queried with or without web access do not
-reliably produce research-grade statistical inventories. That the task
-is hard is established twice. In the memory-only baseline
-(§\ref{sec:exp1}), fourteen models score row-level F1 between
-\ExpOneFOneMin{} and \ExpOneFOneMax{} with high within-model variance, below an available
-ceiling: group-seeded Wikipedia lists alone cover 92\% of the built
-fleet and sat in the training corpus for years, yet the models failed to
-retrieve them. At the commercial frontier (§\ref{sec:exp2}), agents with
-web access and extended reasoning enumerate at best around half the
-fleet and fall short on the quality dimensions measured here (row-level
-accuracy, coverage, and citation-based provenance); the rubric-scored
-dimensions (coherence, provenance support, temporality) were not
-measured.
+reliably produce these inventories; that the task is hard is established
+twice. In the memory-only baseline (§\ref{sec:exp1}), fourteen models
+score row-level F1 between \ExpOneFOneMin{} and \ExpOneFOneMax{} with
+high within-model variance, producing lists far less complete than the
+Wikipedia pages already in their training data. At the commercial
+frontier (§\ref{sec:exp2}), agents with web access and extended
+reasoning enumerate at best around half the fleet, and fall short on
+accuracy, coverage, and provenance.
 
 What changes the picture is the documents condition. Handing the same
 agents a curated document set in a single query equalises three of the
