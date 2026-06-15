@@ -1,12 +1,45 @@
 %erg 0.1
-Title: Plain-language the Spearman rho jargon in main-text body (keep in annexes)
+Title: Drop the Spearman rho regression presentation entirely (body + annex); rely on the bimodal reliability figure
 Created: 2026-06-14
 Author: HDMX-coding-agent
 
 --- log ---
 2026-06-14T09:47Z HDMX-coding-agent created
 
+2026-06-15T07:28Z SCOPE EXPANDED by author: not just plaining the jargon — drop the Spearman rho regression presentation ENTIRELY, anywhere in the manuscript (body AND annex). Rely instead on the bimodal figure fig:reliability that separates weak vs strong models on both axes (just the data, stronger argument). The brief rho-caveat-conclusion entry and the conditional CI guard become moot — remove/retire them.
 --- body ---
+## SCOPE UPDATE (author, supersedes the plain-language framing below)
+
+This is NOT just a jargon fix. The author does not want the rho
+*regression* presented at all — anywhere in the manuscript, body or
+annex. The argument that reference-free coherence tracks accuracy is
+made more strongly by the DATA: the bimodal figure `fig:reliability`
+(`main.tex:633–667`, "a reference-free reliability grade separates the
+cohort" — reliability × accuracy) visibly separates weak from strong
+models on both axes. That separation is the evidence; a Spearman ρ
+coefficient on top of it is weaker and reads as lab-journal stats.
+
+Revised goal:
+1. **Remove every Spearman ρ regression statement** — body (`:644`,
+   `:893`, `:1229`) AND annex (`:1867`, `:1885`, `:1889`). Drop the
+   coefficient, the "correlates at ρ = …" framing, and the
+   `\ScreenPooledSpearman` / hand-typed `0.78` numbers from the prose.
+2. **Make the point via `fig:reliability`** instead: the cohort splits
+   into a low-reliability/low-accuracy cluster and a
+   high-reliability/high-accuracy cluster, so the reference-free grade
+   screens the weak models without the gold reference — shown, not
+   correlated.
+3. **Retire the now-moot machinery:** the `rho-caveat-conclusion`
+   editorial-brief entry and the conditional "IF ρ = 0.92 in Conclusion
+   → in-sample caveat" CI guard exist only to police the ρ claim; once
+   the claim is gone, remove them (and the `\ScreenPooledSpearman` macro
+   if nothing else consumes it — check first).
+4. The screening *conclusion* (reference-free coherence triages weak
+   runs/models) stays — it is just supported by the figure, not the ρ.
+
+The line-level notes below remain accurate for *locating* the ρ sites;
+read them as "where to delete", not "where to reword".
+
 ## Context
 
 Reading-2 register intent (findings 17/26: "technical report, not a lab

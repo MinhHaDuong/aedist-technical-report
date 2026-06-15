@@ -1,0 +1,55 @@
+%erg 0.1
+Title: Intro para 5: drop social-science jargon 'lens' and 'situate'; plain English
+Created: 2026-06-15
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-15T07:30Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+The intro uses two social-science register words the author wants in
+plain English:
+
+- `:128` — "… inventory of Vietnam's thermal power plants — as a **lens**
+  for …"
+- `:163` — "We **situate** the work against the existing open
+  power-plant databases (§\ref{sec:related-empirical}), define …"
+
+(Both sit in the intro. A third "lens" at `:1007`, "the quality
+framework as the diagnostic lens" in §8, is out of scope here unless the
+author wants it swept too — flag it.)
+
+## Actions
+
+1. Replace "situate" (`:163`) with plain English. Suggested: "We compare
+   the work to the existing open power-plant databases (§…), define …" or
+   "We start from the existing open power-plant databases (§…), then
+   define …". Keep the section-roadmap structure and all `§\ref`s intact.
+2. Replace "as a lens for" (`:128`) with plain English — e.g. "as a way
+   to test …" / "as a test case for …" — preserving the sentence's
+   meaning.
+3. Author picks the final phrasing; propose plain options in the PR.
+
+## Relevant files
+
+- `slides/manuscript/main.tex:128`, `:163` (intro). `:1007` (§8) only if
+  the author opts to sweep it.
+
+## Test
+
+- Red first: `@pytest.mark.adherence` negative guard — "situate" absent
+  from the intro and "lens" absent from the intro region (CI polarity
+  rule: forbid the jargon words; do not pin the replacement wording).
+
+## Verification
+
+- [ ] No "situate" / "lens" in the intro; meaning and `§\ref` roadmap
+      preserved.
+- [ ] `make check` passes; manuscript builds.
+
+## Exit criteria
+
+- Intro reads in plain English without "lens"/"situate"; `make check`
+  green.

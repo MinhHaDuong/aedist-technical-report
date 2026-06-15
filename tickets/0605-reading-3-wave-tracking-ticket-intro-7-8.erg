@@ -1,0 +1,66 @@
+%erg 0.1
+Title: Reading-3 wave — tracking ticket (intro/§7/§8/figures/benchmark-maths findings)
+Created: 2026-06-15
+Author: HDMX-coding-agent
+Label: needs-human
+
+--- log ---
+2026-06-15T07:30Z HDMX-coding-agent created
+
+2026-06-15T07:31Z HDMX-coding-agent label needs-human
+--- body ---
+## Context
+
+Author reading-3 of the manuscript (post reading-2 wave 0578, all merged).
+Findings are filed live as children as the author dictates them. This
+tracker stays OPEN until the reading is declared finished AND every child
+is merged and verified — same discipline as the reading-2 tracker 0578.
+
+## Children (filed so far)
+
+- [[0598]] — Drop the Spearman ρ regression presentation entirely (body +
+  annex); make the screening point via the bimodal figure `fig:reliability`.
+  Retire the rho-caveat brief entry + conditional CI guard.
+- [[0599]] — §8 Discussion conflates method quality with table quality
+  (defines one via the other, then calls them perpendicular); the
+  method/model distinction was already established at the end of §7.
+- [[0600]] — Report Exp 2 costs as an un-minimised upper bound; production
+  caching is the cost-reduction lever (qualitative/hedged).
+- [[0601]] — `fig:exp2-arms` caption claims a blue/red TP–FP scheme but the
+  bars are model-coded; also "for two of them" → "for the rightmost two".
+- [[0602]] — Intro para 3: deliver the four-dimension quality maths in an
+  annex (v0.1, will improve); drop the unmeasured "corroboration measured"
+  claim (verified absent in code); move the citation hedge to main text.
+- [[0603]] — Intro para 4: recast the "benchmark earns its keep" sentence
+  so the subject is the correlation and its consequence; drop "human"
+  before "attention".
+- [[0604]] — Intro para 5: drop social-science jargon "lens"/"situate";
+  plain English.
+
+(More children may be appended as the reading continues.)
+
+## Wave plan (mirrors 0578)
+
+1. Author declares reading-3 finished.
+2. Organize children into a raid order (sequence the main.tex-contact
+   tickets to avoid same-file conflicts; intro tickets 0602/0603/0604 all
+   touch the intro region — stack or sequence them; 0598 spans intro +
+   §7.2 + Conclusion + annex; 0601 is caption-only; 0600 is §exp2; 0602
+   adds an annex + code-aligned maths).
+3. Execute in worktree-isolated waves; each child PR gated (review +
+   verify-gate) before merge.
+4. Red-team verify ALL findings against post-merge main (refute-by-default,
+   the 0578 method).
+5. Close this tracker after the integration review passes.
+
+## Dependencies / coordination notes
+
+- 0598 and 0603 both touch the intro screening sentence — keep their
+  claims consistent (screening conclusion stays; ρ coefficient goes).
+- 0602, 0603, 0604 all edit the intro — sequence them.
+- 0599 depends on the §7 method/model distinction staying intact.
+
+## Exit criteria
+
+- Reading-3 declared finished; all children merged; red-team verification
+  clean against post-merge main; `make check` green.

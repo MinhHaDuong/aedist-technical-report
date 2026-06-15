@@ -1,0 +1,59 @@
+%erg 0.1
+Title: Intro para 4: recast 'benchmark earns its keep' sentence (subject = correlation+consequence); drop 'human'
+Created: 2026-06-15
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-15T07:30Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Intro paragraph 4 ends (`slides/manuscript/main.tex:158–162`):
+
+> The benchmark earns its keep by being usable without the gold
+> reference: reference-free coherence criteria suffice to screen out the
+> weakest runs and the weakest models, so the cheap part of the quality
+> score can stand in for the expensive part when triaging which outputs
+> deserve human attention.
+
+Two fixes:
+1. **Drop the "The benchmark earns its keep by being usable without the
+   gold reference:" clause** at the start. The real subject is the
+   existing correlation and its consequence — not the benchmark
+   congratulating itself. Recast so the sentence leads with the finding:
+   that reference-free coherence criteria track accuracy, and therefore
+   screen the weakest runs and models without the gold reference.
+   (Suggested: "Reference-free coherence criteria suffice to screen out
+   the weakest runs and the weakest models, so the cheap part of the
+   quality score can stand in for the expensive part when triaging which
+   outputs deserve attention.")
+2. **Delete "human"** before "attention" → "deserve attention".
+
+Note the dependency on [[0598]]: that ticket drops the ρ regression and
+makes the screening point via `fig:reliability`. Keep this sentence's
+claim consistent with 0598 — the screening conclusion stays, the
+correlation coefficient does not.
+
+## Relevant files
+
+- `slides/manuscript/main.tex:158–162` — the sentence.
+
+## Test
+
+- Red first: `@pytest.mark.adherence` negative guards — assert "earns its
+  keep" is absent from the intro, and "human attention" is absent (CI
+  polarity rule: forbid the dropped phrasings; do not pin the rewrite).
+
+## Verification
+
+- [ ] "The benchmark earns its keep …" clause gone; sentence leads with
+      the correlation/consequence.
+- [ ] "human" removed before "attention".
+- [ ] Consistent with 0598 (no ρ coefficient reintroduced).
+- [ ] `make check` passes; manuscript builds.
+
+## Exit criteria
+
+- Intro para 4's closing sentence leads with the finding (not the
+  benchmark), says "deserve attention"; `make check` green.
