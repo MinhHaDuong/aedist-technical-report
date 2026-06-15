@@ -795,9 +795,7 @@ The task is hard because the reference list is a long-tail
 distribution. Vietnam is a fast-growing power system, so its asset
 register is dominated by forward-looking entries: proposed and planned
 plants together form the largest share of the list, ahead of the
-operational core. Getting this register right is a policy and business
-concern — capacity planning, grid investment, and project finance all
-turn on which plants are coming, not only on which already run. Yet
+operational core. Yet
 these forward-looking entries are precisely the ones a model's
 parametric memory finds hard to know: many are recent or abandoned
 projects with little public footprint.
@@ -807,17 +805,14 @@ for a status category, as the probability that a random plant in that
 category is found by a random run of the experiment — averaged over the
 (plant × run) cells. Table~\ref{tbl:status-difficulty} reports it for
 two regimes: Experiment 1 (all models, memory only; 70 runs) and the
-Experiment 2 with-documents arm (20 runs). The operational category is
-easy: even though Experiment 1 spans weak models alongside strong ones,
-they still find operational plants. The long tail is hard: proposed and
-planned plants fall far below the operational core in Experiment 1.
-Giving the models documents lifts the whole list, and the tail most of
-all.
+Experiment 2 with-documents arm (20 runs). Operational plants are easy: almost every run finds them. The proposed
+and planned long tail is hard. Giving the models documents lifts the
+whole list, the tail most of all.
 
 \begin{table}[htbp]
 \centering
 \caption{\label{tbl:status-difficulty}Composition of the reference list
-by asset lifecycle status, from Proposed to Retired, and detection
+by asset lifecycle status and detection
 likelihood. Experiment 1 includes all models; Experiment 2 is the
 single-shot with-documents arm. Source: author.}
 {\small\setlength{\tabcolsep}{4pt}\input{../../report/inputs/generated/tab_status_difficulty_en.tex}}
@@ -859,9 +854,7 @@ future work (§\ref{sec:future}). Aggregating the screen across each
 model's five repetitions yields the reference-free reliability grade of
 Figure~\ref{fig:reliability}: the inaccurate models are also the
 unreliable ones, so the grade separates good sources from bad before any
-reference is consulted — though the cutoffs were tuned in-sample on
-these same runs, so this is an existence proof rather than a validated
-detector. Treating models as information sources and runs as information
+reference is consulted. Treating models as information sources and runs as information
 packages, this same source-reliability grade is a natural input to
 fusion: a low-reliability model can be down-weighted or excluded before
 its runs are pooled (the fusion discussion that follows).
@@ -899,9 +892,6 @@ conjunction remains future work.
 \addcontentsline{toc}{subsection}{What system do the findings imply?}
 
 We now have a benchmark that scores model replies on four dimensions.
-This rest stop asks what it brings to the search for a method that
-produces evergreen, research-quality datasets — before §\ref{sec:discussion}
-and §\ref{sec:future} take up the perspectives in detail.
 
 First, scoring the output is not enough: a method benchmark must also
 score the resources a method spends. To the §\ref{sec:quality} output
@@ -928,11 +918,6 @@ research programme.
 
 \section{Discussion}\label{sec:discussion}
 
-This section examines the limits and the potential of the benchmark we
-offer: what the F1 metric can and cannot support, the three levels at
-which a result is scored, the variance sources the design leaves
-unquantified, and the single-case scope.
-
 \textbf{F1 is a useful but opaque aggregate.} Row-level F1 is the
 primary metric in §\ref{sec:exp1} and §\ref{sec:exp2}: the field's
 standard comparability unit for structured recall, computable without
@@ -944,8 +929,7 @@ excelling on one dimension while failing silently on others — a
 well-articulated prompt against a stale corpus can return complete,
 internally consistent, but outdated values. The §\ref{sec:quality}
 four-dimensional framework diagnoses \emph{where} a system fails once
-F1 has ranked it; read F1 comparisons as aggregate capability rankings,
-the quality framework as the diagnostic lens.
+F1 has ranked it.
 
 F1 also conflates two failure modes that look identical in the output
 table: facts the model never found, and facts it found but expressed in
@@ -974,11 +958,10 @@ three questions that an aggregate F1 ranking elides. \emph{Method
 quality} is a property of the process, not of any one output it
 produces: whether the procedure is auditable, reproducible, and
 cost-predictable independent of which model runs it
-(§\ref{sec:ext-system}). The cost-versus-F1 relation
-(Figure~\ref{fig:cost-quality}) does not define this axis; it
-\emph{relates} it to the next one, plotting the time and money a method
-spends against the table quality it achieves, so that a method spending
-more without achieving more is dominated regardless of its rank.
+(§\ref{sec:ext-system}). Figure~\ref{fig:cost-quality} plots what a
+method spends against the F1 it achieves, so a method that spends more
+without achieving more is dominated.
+
 \emph{Run quality} scores one table — a single model's single run —
 on the four §\ref{sec:quality} dimensions, the cell-level accuracy of
 its matched rows together with its coherence, provenance, and currency.
@@ -1005,8 +988,7 @@ compliance, yet the declined responses are not a missing data point to
 be imputed. Read against the §\ref{sec:quality} provenance dimension,
 the refusal is the correct response: the dimension polices
 confidently-stated fabrication, so a system that declines rather than
-fabricates is clearing, not failing, the auditability test. The other
-models' fluent but unsourced tables are the contrasting failure mode.
+fabricates is clearing, not failing, the auditability test.
 
 \textbf{External coherence is harder to measure.} The §\ref{sec:quality}
 coherence criterion distinguishes internal consistency (within the
@@ -1030,23 +1012,18 @@ equalises the agents, a reference-free screen and simple fusion rules
 work here — not generalisable benchmarks. The prompt templates, the
 matcher parameters, and the quality bar were all developed against this
 reference; transferring them to another country or asset class is a
-replication study, not a configuration change. That is what makes the
-agenda of §\ref{sec:future} a research programme: each step is open to
-replication and extension.
+replication study, not a configuration change.
 
 \section{Future research}\label{sec:future}
 
 A method scores all green on the §\ref{sec:quality} quality bar when it
 finds all the projects, only the projects, each justified by two primary
-sources, with correct attributes. Our experiments show how far current
-methods fall short. When a method identifies an asset, its attribute
+sources, with correct attributes. When a method identifies an asset, its attribute
 values are often plausible; the dominant failure is coverage. Systems
 tend to enumerate either more assets with weaker attribute descriptions
 or fewer with stronger ones, and outputs are confident regardless of
 documentation quality — a model that cannot find a plant does not
-flag the gap, it simply omits it. Provenance, coherence, and currency
-fail systematically across both the memory-only and agentic regimes
-(§\ref{sec:discussion}). Closing the gap requires solving open problems
+flag the gap, it simply omits it. Closing the gap requires solving open problems
 in information architecture, not prompting more carefully. We frame the
 research programme as five open questions, ordered from the estimation
 core outward.
@@ -1066,8 +1043,9 @@ hiding small, under-documented projects. We ask whether the
 independence structure recoverable from generation metadata suffices
 for reliable latent-truth estimation, and what role the regulator's
 installed-capacity-per-fuel total plays as an
-external anchor when internal source agreement cannot be trusted. The
-harder companion question concerns magnitude: the projects most likely
+external anchor when internal source agreement cannot be trusted.
+
+The harder companion question concerns magnitude: the projects most likely
 to be missed are the smallest, so missed count and missed capacity
 diverge. Standard capture–recapture estimates a count; we ask whether
 stratified estimation recovers a defensible lower bound on unseen
@@ -1082,15 +1060,14 @@ and historical-query use cases need richer temporal structure
 (§\ref{sec:annex-temporality}). The engineering target — a claim log
 where each entry records both when the assertion was made and what
 period of the world it describes, covering plans, forecasts, and
-scenario projections — is well-scoped. The scientific question is prior
+scenario projections — is well-scoped.
+
+The scientific question is prior
 to it: whether a language model can reliably decompose a source
 sentence into modality-tagged claims (attribute facts, occurrence
 records, institutional acts, forecasts, and scenario projections), and
 whether the fold rules that integrate them into a current-state view
-can be stated and validated. A single regulatory decision typically
-generates claims of three distinct modalities from one sentence; a
-later event that confirms or contradicts a prior forecast is itself a
-new claim that retroactively scores it. We ask whether this modality
+can be stated and validated. We ask whether this modality
 structure is learnable from source documents at scale, and whether a
 representation that separates assertion time from fact-validity time
 makes its errors locatable in the sense required for research-grade
@@ -1122,7 +1099,9 @@ recording its source, date, confidence, and conflict-resolution history,
 and the narrative layer carries the temporal dimension deferred in
 §\ref{sec:quality}: plant lifecycle events, PDP-cycle reclassifications,
 developer changes, and contested status periods kept as annotated
-history rather than overwritten state. A cell (one plant, one attribute,
+history rather than overwritten state.
+
+A cell (one plant, one attribute,
 one value) maps to a knowledge-graph triple of subject, predicate, and
 object, so fusing tables from competing sources resembles fusing
 overlapping triple sets, where the same levers apply: conflict
@@ -1136,9 +1115,9 @@ projections. One design lesson the articulation findings already
 license: extracting structure from text is the lossy, measured
 direction; rendering text from structure is cheap. That asymmetry argues
 for extracting claims once at ingest and rendering derived
-representations at each output, a design principle with implications
-for how agentic pipelines maintain long-term structured memory. The
-benchmark can settle the representation question empirically: build a
+representations at each output.
+
+The benchmark can settle the representation question empirically: build a
 narrative-authoritative and a claim-authoritative version from the same
 harvested corpus, derive a table from each, and score both against the
 same reference with the same matcher. We frame this contribution as an
@@ -1154,24 +1133,21 @@ the method replicates but whether its write path — extraction, entity
 resolution, and quality grading — generalises out-of-distribution, and
 which parameters are universal versus locally tuned. National power
 planning corpora vary in language, regulatory structure, and status
-classification convention; each new country is a replication study in
-its own right.
+classification convention.
 
 \section{Conclusion}\label{sec:conclusion}
 
+This paper contributes a computable benchmark for producing evergreen,
+research-grade statistical datasets, and it shows we are far from there.
 As of mid-2026, AI systems queried with or without web access do not
-reliably produce research-grade statistical inventories. That the task
-is hard is established twice. In the memory-only baseline
-(§\ref{sec:exp1}), fourteen models score row-level F1 between
-\ExpOneFOneMin{} and \ExpOneFOneMax{} with high within-model variance, below an available
-ceiling: group-seeded Wikipedia lists alone cover 92\% of the built
-fleet and sat in the training corpus for years, yet the models failed to
-retrieve them. At the commercial frontier (§\ref{sec:exp2}), agents with
-web access and extended reasoning enumerate at best around half the
-fleet and fall short on the quality dimensions measured here (row-level
-accuracy, coverage, and citation-based provenance); the rubric-scored
-dimensions (coherence, provenance support, temporality) were not
-measured.
+reliably produce these inventories; that the task is hard is established
+twice. In the memory-only baseline (§\ref{sec:exp1}), fourteen models
+score row-level F1 between \ExpOneFOneMin{} and \ExpOneFOneMax{} with
+high within-model variance, producing lists far less complete than the
+Wikipedia pages already in their training data. At the commercial
+frontier (§\ref{sec:exp2}), agents with web access and extended
+reasoning enumerate at best around half the fleet, and fall short on
+accuracy, coverage, and provenance.
 
 What changes the picture is the documents condition. Handing the same
 agents a curated document set in a single query equalises three of the
