@@ -1,0 +1,72 @@
+%erg 0.1
+Title: Bibliography: cull ten references (on the long side) — drop least load-bearing, keep anchors + closely-related work; due-diligence note
+Created: 2026-06-15
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-15T09:39Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Reading-3 (tracker [[0605]]). The bibliography is on the long side. Author:
+cull ten. `report/refs.bib` has 112 entries but only **37 are cited** (the
+rendered bibliography = the cited set); each is cited once. So "cull ten"
+= reduce the cited set from 37 to ~27.
+
+## Method (editorial judgment — propose, then author confirms)
+
+1. Audit the 37 cited keys: for each, what claim/sentence it supports and
+   how load-bearing it is. (`grep -oE '\\cite[a-z]*\{[^}]*\}'
+   slides/manuscript/main.tex` → the keys; locate each `\cite`.)
+2. Pick ten to drop, honouring the house Related-Work rules
+   (`.claude/rules/writing.md`):
+   - **Keep** field-defining anchors and closely-related projects
+     unconditionally — e.g. PyPSA-VN / pypsa-asean, powerplantmatching,
+     GPPD, GEM/GCPT (domain), and the core RAG / benchmark anchors. These
+     are NOT candidates.
+   - **Cut** the least load-bearing: redundant within a paragraph,
+     tangential asides, or claims that stand without the citation.
+   - Preserve the per-paragraph mix (anchor + recent survey + frontier);
+     do not strip a paragraph to zero citations.
+3. For each cut, either drop the citation but keep the claim (if it stands)
+   or tighten the sentence; do not leave a dangling claim that needs a
+   source.
+4. Leave the now-uncited entries in `refs.bib` (uncited → not rendered) —
+   no need to delete from the .bib.
+5. **Record the ten dropped candidates in a companion due-diligence note**
+   (e.g. `docs/related-work-due-diligence.md` or the existing note), NOT
+   in the paper (house rule). Include the rationale per drop.
+
+## Author confirmation
+
+Culling specific citations is an editorial call. The executor proposes the
+ten with rationale in the PR body / due-diligence note; surface the list
+for author review rather than silently removing borderline anchors.
+
+## Relevant files
+
+- `slides/manuscript/main.tex` (the `\cite` sites).
+- `report/refs.bib` (entries; leave uncited ones in place).
+- `docs/…` due-diligence note (dropped-candidates log).
+
+## Test
+
+- Red first: `@pytest.mark.adherence` — the rendered/cited count drops by
+  ~10 (cited-key count ≤ 27); no `\cite` references a key absent from
+  `refs.bib` (no dangling cites); manuscript still builds (`tectonic -r 2`).
+
+## Verification
+
+- [ ] Cited references reduced from 37 to ~27 (ten culled).
+- [ ] Field anchors + closely-related projects retained; no paragraph left
+      citation-empty against the house rule.
+- [ ] No dangling `\cite`; manuscript builds.
+- [ ] Ten dropped candidates recorded in the due-diligence note with
+      rationale.
+- [ ] `make check` passes.
+
+## Exit criteria
+
+- ~27 cited references; anchors kept; dropped candidates logged; `make
+  check` green.
