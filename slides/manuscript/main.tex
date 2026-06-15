@@ -130,7 +130,7 @@ AI systems can yet produce research-grade statistical data.
 Computable benchmarks, tasks whose success criteria a machine can check,
 are how knowledge engineering and AI research have long measured
 progress, from knowledge-base construction with language models
-\citep{Petroni-Fabio2019:lm-as-kb, Singhania-Sneha2022:lm-kbc} to the
+\citep{Petroni-Fabio2019:lm-as-kb} to the
 benchmark suites that rank today's systems \citep{Hendrycks-Dan2021:mmlu,
 Ni-Shiwen2025:llm-benchmark-survey}; this paper extends the practice to
 national statistical registers.
@@ -276,7 +276,7 @@ We benchmark model-produced datasets on four dimensions: accuracy, coherence,
 provenance, and temporality. The decomposition draws on three
 traditions: data-quality engineering
 \citep{Wang-Richard1996:beyond-accuracy}, official-statistics governance
-\citep{IMF2003:dqaf, UN2014:fundamental-principles}, and
+\citep{IMF2003:dqaf}, and
 philosophy-of-science empirical adequacy
 \citep{vanFraassen1980:scientific-image}.
 
@@ -289,15 +289,14 @@ philosophy-of-science empirical adequacy
   non-assets and duplicates?). For a simple inventory table, this
   can be measured against a manually curated reference table using
   these two rates and their harmonic mean, the F1 score
-  \citep{Hendrycks-Dan2021:mmlu, Wu-Xianjie2025:tablebench, Tenckhoff-Sonke2026:llmstructbench}.
+  \citep{Hendrycks-Dan2021:mmlu}.
   At the cell level, accuracy asks whether the attributes attached to
   each asset are correct: capacity, fuel type, location, operator,
   commissioning year, status, and so on. A system can therefore be good
   at finding the right assets but weak at describing them, or conversely
   reliable on attributes once the correct asset has been identified.
   Plausibility is not truth: confidently-stated fabrications are the
-  failure mode this dimension polices
-  \citep{Lin-Stephanie2022:truthfulqa}.
+  failure mode this dimension polices.
 \item
   \emph{Coherence} asks whether the dataset is internally and externally
   consistent. Internally, statistical tables carry control constraints:
@@ -307,8 +306,7 @@ philosophy-of-science empirical adequacy
   magnitude, locations, technology types, and commissioning dates should
   all be plausible. A coherent dataset identifies conflicts between sources
   rather than silently overwriting them. A weak working test is whether
-  repeated runs of the same system agree with one another
-  \citep{Wang2022:self-consistency}; the stronger requirement is
+  repeated runs of the same system agree with one another; the stronger requirement is
   inferential closure: the system derives and exposes all
   consequences of the available documents and accounting rules. This
   paper measures weak-internal coherence; the external axis is deferred
@@ -409,8 +407,7 @@ integration:
   \emph{External tool use} (a standardised tool-connection protocol
   \citep{Yao-Shunyu2023:react}) generalises code execution to an
   extensible registry of external services, with benchmarks on coding
-  \citep{Jimenez-Carlos2024:swe-bench}, OS control
-  \citep{Xie-Tianbao2024:osworld}, and general-assistant tasks
+  \citep{Jimenez-Carlos2024:swe-bench} and general-assistant tasks
   \citep{Mialon-Gregoire2024:gaia}.
 \item
   \emph{Agency} is the closure of that surface, when the tool-use set
@@ -1085,7 +1082,7 @@ inflates apparent overlap and biases dark-figure estimates downward,
 hiding small, under-documented projects. We ask whether the
 independence structure recoverable from generation metadata suffices
 for reliable latent-truth estimation, and what role the regulator's
-installed-capacity-per-fuel total \citep{HaDuong2005} plays as an
+installed-capacity-per-fuel total plays as an
 external anchor when internal source agreement cannot be trusted. The
 harder companion question concerns magnitude: the projects most likely
 to be missed are the smallest, so missed count and missed capacity
@@ -1094,7 +1091,7 @@ stratified estimation recovers a defensible lower bound on unseen
 installed capacity. Source reliability and latent-truth estimation are
 jointly determined — no pipeline can grade sources first and fuse
 second
-\citep{Sun-2025:skill-aggregation,ManriqueVallier-Daniel2016:lcmcr}.
+\citep{ManriqueVallier-Daniel2016:lcmcr}.
 
 \textbf{Temporal representation: modality decomposition and forecast
 resolution.} The paper scopes to snapshot currency; scenario-projection
@@ -2603,8 +2600,7 @@ The UN \emph{International Recommendations for Energy Statistics}
 \citep{UNSD2012:ires} extends this to coverage and timeliness criteria,
 noting that data quality includes not only accuracy but also currency: a
 figure is not merely right or wrong, it has a validity window.
-Eurostat's energy balance methodology
-\citep{Eurostat2019:energy-balance-guide} adds the EU-specific
+Eurostat's energy balance methodology adds the EU-specific
 harmonisation layer: because member-state estimates are subsequently
 revised when Eurostat reconciles supply-use tables, a snapshot of the
 European fleet at any given date inherits a structured revision
