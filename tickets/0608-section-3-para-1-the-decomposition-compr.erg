@@ -1,0 +1,42 @@
+%erg 0.1
+Title: Section 3 para 1: 'The decomposition compresses three traditions' -> 'draws on'
+Created: 2026-06-15
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-15T07:51Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Reading-3 (tracker [[0605]]). §3 para 1 (`slides/manuscript/main.tex:278`):
+
+> The decomposition compresses three traditions: data-quality
+> engineering …, official-statistics governance …, and
+> philosophy-of-science empirical adequacy …
+
+"compresses" overstates; the author wants "draws on".
+
+## Actions
+
+1. Replace "compresses" → "draws on" at `:278` ("The decomposition draws
+   on three traditions: …"). Keep the three citations intact.
+
+## Relevant files
+
+- `slides/manuscript/main.tex:278`.
+
+## Test
+
+- Red first: `@pytest.mark.adherence` negative guard — assert "compresses
+  three traditions" is absent from §3 (CI polarity: forbid the old word;
+  do not pin the replacement).
+
+## Verification
+
+- [ ] §3 para 1 reads "draws on three traditions"; citations intact.
+- [ ] `make check` passes.
+
+## Exit criteria
+
+- "compresses" → "draws on" at `:278`; `make check` green.

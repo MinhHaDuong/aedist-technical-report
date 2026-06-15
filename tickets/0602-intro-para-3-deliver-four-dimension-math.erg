@@ -7,6 +7,43 @@ Author: HDMX-coding-agent
 2026-06-15T07:19Z HDMX-coding-agent created
 
 --- body ---
+## SCOPE EXPANSION (author, 2026-06-15): this is the §3 ticket — split out a Scoring Annex A
+
+The four-dimension score is not just to be documented but RESTRUCTURED:
+
+- **Split the Evaluation material into a standalone Scoring annex = Annex
+  A in its own right.** Source material is the `\subsection*{Evaluation}`
+  currently inside the Exp-1 spec annex (`main.tex:1766`, `sec:annex-exp1`).
+- **§3 references that annex as THE IMPLEMENTATION — not as a "detail".**
+  Wording must frame the scoring as implemented in the Scoring annex
+  (e.g. "the scoring is implemented in Annex …"), never "details in
+  Annex …".
+- **The Scoring annex describes, in order:**
+  1. the HIERARCHICAL nature of the scoring (cell → row/run → model
+     levels — the two/three-level structure already hinted at
+     `main.tex:901–902`, `:1031–1046`);
+  2. each of the four dimensions IN TURN — q1 accuracy (= F1), q2
+     coherence, q3 provenance, q4 temporality — with the formula,
+     transcribed to MATCH the code (`score_mechanical.py`, `coherence.py`,
+     `metrics.py`);
+  3. it OWNS **figure S1** (identify the first `\thefigure = S\arabic`
+     figure after `main.tex:1272`; confirm it is the scoring-related
+     figure, not the recognition matrix).
+- **Because the annex now carries the detail, shorten the S1 caption
+  substantially.**
+- Mark the annex **version 0.1 of the benchmark, to be improved**.
+- **Annex-ordering caveat:** making Scoring the new Annex A reorders the
+  appendix (current order A=Exp1-spec, B=Exp2-spec, C=recognition, …).
+  Confirm the `\appendix` section order, fix knock-on annex-letter
+  references via `\ref` only (house rule: never hardcode annex letters),
+  and re-check all `\ref{sec:annex-…}` call sites.
+
+The "## Context"/"## Actions" below remain valid for the maths content
+and the corroboration/citation-hedge fixes; this section upgrades the
+delivery from "a four-paragraph section somewhere" to "a dedicated,
+hierarchical Scoring Annex A that owns S1 and is referenced from §3 as
+the implementation".
+
 ## Context
 
 Intro paragraph 3 (`slides/manuscript/main.tex:146–150`) makes two

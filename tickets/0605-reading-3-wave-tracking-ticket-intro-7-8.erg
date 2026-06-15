@@ -44,8 +44,26 @@ is merged and verified — same discipline as the reading-2 tracker 0578.
 - [[0607]] — §3 opener: "Datasets can be assessed on four dimensions" →
   "We benchmark model-produced datasets on four dimensions" (active,
   benchmark-framed; aligns with 0602).
+- [[0608]] — §3 para 1: "The decomposition compresses three traditions" →
+  "draws on".
+- [[0609]] — Slides count drift: `macros_slides` `\NumRefPlants` 173 vs
+  manuscript 177 — reconcile living deck to current reference (archived
+  talk untouched).
+- [[0610]] — §3: drop the redundant closing paragraph (restates the four
+  dimensions).
 
 (More children may be appended as the reading continues.)
+
+## Cross-cutting policy (reading-3)
+
+- **Standalone text + captions; code only in annexes** (canonical
+  re-articulation of finding 22, see [[0606]]): main text and captions
+  are standalone at the maths/ideas level with `\ref` to annexes; only
+  annexes reference the code implementation. Goes in docs/editorial-brief.md.
+- **§3 restructure** ([[0602]]): split the Evaluation material into a
+  standalone Scoring Annex A (hierarchical scoring + four dimensions in
+  turn + owns figure S1, shortened caption), referenced from §3 as the
+  implementation. Reorders the appendix — watch annex-letter refs.
 
 ## Wave plan (mirrors 0578)
 
