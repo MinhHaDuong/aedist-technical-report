@@ -558,3 +558,40 @@ out-of-sample validation are deferred (ticket 0657).
 **Ticket:** tickets/0648-reconcile-abstract-s7-screen-signal.erg
 
 **Status:** active
+
+## document-pack-not-the-answer
+
+**Decision:** §6 defines the Experiment 2 document pack in the main text: a
+near-ideal retrieval simulation of eighteen ministerial (PDP7/7A/8) and
+national-utility (EVN) lists (\fpath{data/rag_corpus/}), extracted and
+reformatted. The prose states the reference was compiled from these same
+sources yet the pack is not guaranteed to contain every reference plant —
+"handing the agent the sources is not handing it the answer."
+
+**Rationale:** Both student reviewers warned the documents result could
+reduce to "LLMs extract better when handed the answer." Naming the pack as
+the reference's source set (not the reference itself) makes the
+documents-arm gain interpretable; the pack's own coverage of the reference
+is a post-arXiv measurement (ticket 0662).
+
+**Ticket:** tickets/0649-define-document-pack-s6.erg
+
+**Status:** active
+
+## related-work-budget-frozen
+
+**Decision:** Related Work is not expanded with the literatures reviewers
+suggested (data fusion, entity resolution, RAG-eval, web-agent benchmarks,
+official-statistics frameworks). The bibliography is already large; new
+citations are added only when a specific argument requires a closely-related
+must-cite work, per the citation-budget rule in `writing.md`.
+
+**Rationale:** Author decision (2026-06-15): bibliography size is a binding
+constraint. Breadth-for-breadth's-sake citation does not serve the reader and
+violates the strict-citation-budget rule. The dropped candidates live in the
+peer-review texts (`slides/manuscript/attic/peer-reviews-2026-06-15/`), not
+the paper.
+
+**Ticket:** tickets/0653-expand-related-work.erg (declined)
+
+**Status:** active
