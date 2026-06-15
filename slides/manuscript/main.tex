@@ -125,9 +125,8 @@ are sourced, reproducible, and auditable, and fluent but unsourced
 text does not qualify.
 
 This paper uses a concrete task — building a complete, sourced
-inventory of Vietnam's thermal power plants — as a lens for
-evaluating whether AI systems can yet produce research-grade
-statistical data.
+inventory of Vietnam's thermal power plants — to evaluate whether
+AI systems can yet produce research-grade statistical data.
 Computable benchmarks, tasks whose success criteria a machine can check,
 are how knowledge engineering and AI research have long measured
 progress, from knowledge-base construction with language models
@@ -154,18 +153,17 @@ models answering from memory and four agentic systems with web access,
 neither model memory nor web access yields a complete, well-sourced
 register, and a harness that lets the agents plan and execute a
 multi-step reply degrades rather than improves the result for most of
-them. The benchmark earns its keep by being usable without the gold
-reference: reference-free coherence criteria suffice to screen out the
-weakest runs and the weakest models, so the cheap part of the quality
-score can stand in for the expensive part when triaging which outputs
-deserve human attention.
+them. Reference-free coherence correlates with accuracy (Figure~\ref{fig:reliability}),
+so the cheap part of the quality score screens out the weakest runs and
+models and can stand in for the expensive part when triaging which outputs
+deserve attention.
 
-We situate the work against the existing open
-power-plant databases (§\ref{sec:related-empirical}), define a
-four-dimensional quality bar (§\ref{sec:quality}), survey AI
+The paper surveys the existing open
+power-plant databases (§\ref{sec:related-empirical}), defines a
+four-dimensional quality bar (§\ref{sec:quality}), surveys AI
 capabilities from chatbots to agentic systems (§\ref{sec:capability}),
-measure what model memory alone delivers across 14 language models
-(§\ref{sec:exp1}), and test the commercial frontier of mid-2026
+measures what model memory alone delivers across 14 language models
+(§\ref{sec:exp1}), and tests the commercial frontier of mid-2026
 (§\ref{sec:exp2}). Post-hoc analyses prompted by the conference
 presentation extend the experiments (§\ref{sec:extensions}). The
 Discussion (§\ref{sec:discussion})
