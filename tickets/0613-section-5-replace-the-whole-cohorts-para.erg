@@ -1,0 +1,105 @@
+%erg 0.1
+Title: Section 5: replace the whole Cohorts paragraph with a one-sentence cohort summary (14 models, four labs, ref Figure 2)
+Created: 2026-06-15
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-15T08:01Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Reading-3 (tracker [[0605]]). Two coupled things in §5 and across the body:
+a specific paragraph replacement, and a sweep of experimental-history
+bookkeeping into the annex.
+
+## A. Replace the whole "Cohorts." paragraph
+
+Current (`slides/manuscript/main.tex:496–500`):
+
+> \textbf{Cohorts.} The sweep dispatched 16 models. Two were dropped
+> before analysis, leaving the 14-model analysis cohort that backs every
+> per-model number, Figure~… Every figure caption below names the cohort
+> it draws on.
+
+Replace the ENTIRE paragraph with one sentence (author's words):
+
+> We present results for a cohort of \NumCensusModels{} models of
+> assorted sizes, from five leading AI labs (see
+> Figure~\ref{fig:capability-timeline}).
+
+Notes:
+- Use the macro `\NumCensusModels` (=14), not a typed "14".
+- "see Figure 2" → `\ref{fig:capability-timeline}` (house rule: no
+  hardcoded figure numbers).
+- **FIVE labs** (author confirmed 2026-06-15, not four): consistent with
+  Figure 2's "five leading AI labs" (`:469`). The Exp 1 cohort spans all
+  five (Anthropic, OpenAI/GPT-OSS, DeepSeek, Mistral, Alibaba/Qwen) —
+  verify the five-lab span against the cohort in
+  `experiments/models.yaml` / the analysis cohort before finalizing.
+
+## B. Sweep experimental-history bookkeeping into the annex
+
+Author: "The experimental history considerations belong to the annex.
+Talking about 16 runs in the main manuscript only confuses the reader.
+Sweep."
+
+- The "16 models dispatched / 2 dropped" detail (and any like it —
+  dispatch counts, dropped/excluded models, run-history, sweep mechanics)
+  moves OUT of the main body (§1–§9 + Conclusion) and INTO the relevant
+  annex (Exp 1 spec `sec:annex-exp1` / Exp 2 spec `sec:annex-exp2`).
+  Verify the detail is preserved in the annex (don't just delete it).
+- SWEEP the whole body for this class: phrasings about how many models
+  were dispatched/dropped, pilot/excluded runs, harness run-bookkeeping.
+  The main text keeps the analysis cohort (\NumCensusModels) and the
+  findings; the provenance of how the cohort was assembled lives in the
+  annex (this aligns with the standalone-text policy, [[0606]]).
+
+## C. Iron out the cohort-description redundancy (author-flagged)
+
+The §5 "\textbf{Experiment 1 — Parametric baseline.}" paragraph
+(`main.tex:519`) ALSO describes the cohort: "We query the fourteen … they
+are listed on Figure~\ref{fig:reliability} and include Claude, DeepSeek,
+Mistral and Qwen at various sizes from workstation to frontier" (set by
+reading-2 finding 30). With the new one-sentence Cohorts summary (A), the
+cohort is now described twice in §5.
+- Reconcile so the cohort is introduced ONCE. Options: fold the new
+  one-sentence summary into the Experiment-1 paragraph, or keep the
+  summary and trim the duplicate clause from `:519`. Author/executor
+  picks; the result must not state the cohort size/labs/sizes twice.
+- Watch consistency: the summary references Figure 2 (labs), the `:519`
+  sentence references Figure 5 (reliability list) — keep both figure
+  pointers if both are wanted, but say the cohort facts once.
+
+## Relevant files
+
+- `slides/manuscript/main.tex:496–500` (Cohorts paragraph), `:519`
+  (Experiment-1 paragraph, redundancy) + body sweep.
+- `sec:annex-exp1` / `sec:annex-exp2` — destination for the moved detail.
+- Check redundancy with the line-519 cohort sentence (reading-2 finding
+  30: "they are listed on Figure~\ref{fig:reliability} and include
+  Claude, DeepSeek, Mistral, Qwen at various sizes"). After the
+  replacement, the two cohort descriptions must not redundantly repeat —
+  reconcile.
+
+## Test
+
+- Red first: `@pytest.mark.adherence` negative guards — the §5 "Cohorts."
+  paragraph signature ("The sweep dispatched 16 models") is absent from
+  the body; "16 models" / dispatch-count bookkeeping does not appear
+  before `\appendix` (allowed after). CI polarity: forbid the bookkeeping
+  in the body; do not pin the new sentence.
+
+## Verification
+
+- [ ] Cohorts paragraph replaced by the one-sentence summary
+      (macro-sourced count, `\ref` figure, four/five reconciled).
+- [ ] Experimental-history bookkeeping swept out of the body into the
+      annex (preserved there, not lost).
+- [ ] No redundancy with the line-519 cohort sentence.
+- [ ] `make check` passes; manuscript builds.
+
+## Exit criteria
+
+- §5 cohort is one sentence; experimental-history detail lives only in the
+  annex; `make check` green.
