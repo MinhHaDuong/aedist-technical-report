@@ -58,17 +58,35 @@ def _derive_cohort_counts() -> tuple[int, int]:
 
 
 def test_cohort_counts_match_artifacts():
-    """The cohort paragraph's 16/14 match an independent re-derivation."""
+    """The analysis-cohort count matches an independent re-derivation, and the
+    run-set bookkeeping (16 models dispatched) is NOT in the body.
+
+    Ticket 0613 swept the run-set / dispatch-count bookkeeping (16 models
+    dispatched, two dropped) out of the §5 body into the Exp-1 annex; the body
+    now states only the \\NumCensusModels analysis cohort. Per the CI polarity
+    rule (ticket 0557) this guard is mechanical: the analysis count is
+    re-derived from the scoring CSV (\\NumCensusModels expands to it via the
+    macro table, so the literal appears in the normalized body), and the
+    run-set count is asserted *absent* from the body — a negative guard, not a
+    positive prose pin.
+    """
     if not (TOML.exists() and XEVAL_CSV.exists()):
         pytest.skip("cohort artifacts not present")
     n_run, n_analysis = _derive_cohort_counts()
     assert (n_run, n_analysis) == (16, 14), (
         f"expected cohorts 16/14, derived {n_run}/{n_analysis}"
     )
-    text = body()
-    # The cohort paragraph must name both counts.
-    assert f"{n_run} models" in text, "cohort paragraph must state the 16-model run set"
-    assert f"{n_analysis}-model" in text, "cohort paragraph must state the 14-model analysis cohort"
+    body_text = body().split("\\appendix", 1)[0]
+    # Analysis cohort (\NumCensusModels) is named in the body — macro-expanded.
+    assert f"cohort of {n_analysis} models" in body_text, (
+        f"§5 cohort summary must state the {n_analysis}-model analysis cohort "
+        "(via \\NumCensusModels)"
+    )
+    # Run-set / dispatch bookkeeping moved to the annex (ticket 0613).
+    assert f"{n_run} models" not in body_text, (
+        f"run-set bookkeeping ('{n_run} models') must not appear in the body — "
+        "swept to the Exp-1 annex (ticket 0613)"
+    )
 
 
 def test_zero_good_run_models_match_artifact():
