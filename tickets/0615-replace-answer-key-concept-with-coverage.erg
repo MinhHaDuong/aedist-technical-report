@@ -1,0 +1,75 @@
+%erg 0.1
+Title: Replace 'answer key' concept with 'coverage bar'; Figure 3 caption defines it (Wikipedia 130 = 73% of reference)
+Created: 2026-06-15
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-15T08:11Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Reading-3 (tracker [[0605]]). The concept term keeps evolving: "seeded
+recall bar" → "answer key" (reading-2 finding 35) → now **"coverage bar"**.
+This ticket renames the concept and reshapes the Figure 3 caption that
+defines it. Supersedes the "answer key" term set by reading-2 / 0581.
+
+## A. Rename "answer key" → "coverage bar"
+
+All occurrences in `slides/manuscript/main.tex` (re-grep; current sites):
+- `:535` subsection heading "\textbf{An answer key already in the training
+  corpus.}" → "\textbf{A coverage bar already in the training corpus.}"
+- `:514`, `:537`, `:554`, `:563`, `:566`, `:568` — "the answer key" →
+  "the coverage bar" (fix grammar: "the answer key's" → "the coverage
+  bar's", "The answer key has two regimes" → "The coverage bar has two
+  regimes", etc.).
+Sweep the whole file (and any test that pins "answer key") — the term
+must not survive anywhere.
+
+## B. Figure 3 caption (fig:direct-base) — define the coverage bar, shorten
+
+Current tail (`:512–516`):
+
+> … marks Wikipedia's light-reviewed coverage of all \NumRefPlants{}
+> reference plants (\WikiReviewedPct\%, \WikiReviewed/\NumRefPlants) — the
+> answer key every model should recover, since that content sat in the
+> training corpus. Models grouped on the vertical axis.
+
+Replace from "Wikipedia's …" to the end with (author's words,
+macro-sourced):
+
+> … marks Wikipedia's coverage of \WikiReviewed{} assets
+> (\WikiReviewedPct\% of our reference list) — the coverage bar that
+> models could be expected to pass.
+
+Then **END the caption** there. This drops the "answer key every model
+should recover …" clause AND "Models grouped on the vertical axis."
+Notes:
+- Use macros `\WikiReviewed` (=130) and `\WikiReviewedPct` (=73); do not
+  type the numbers.
+- Em dash is the literal Unicode "—" (U+2014), never "--" (house rule).
+
+## Relevant files
+
+- `slides/manuscript/main.tex` — term sweep + caption `:505–516`.
+- any `tests/` pinning "answer key".
+
+## Test
+
+- Red first: `@pytest.mark.adherence` negative guard — "answer key" is
+  absent from `main.tex`; the Figure 3 caption ends on "coverage bar that
+  models could be expected to pass." (no trailing "Models grouped …").
+  CI polarity: forbid the old term; structural anchor on the caption end.
+
+## Verification
+
+- [ ] No "answer key" anywhere in `main.tex` (or pinning tests);
+      "coverage bar" reads grammatically.
+- [ ] Figure 3 caption defines the coverage bar (macro-sourced 130 / 73%)
+      and ends there; trailing sentences dropped.
+- [ ] `make check` passes; manuscript builds.
+
+## Exit criteria
+
+- "coverage bar" replaces "answer key" everywhere; Figure 3 caption
+  reshaped and shortened; `make check` green.
