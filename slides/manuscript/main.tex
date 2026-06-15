@@ -152,18 +152,16 @@ so the cheap part of the quality score screens out the weakest runs and
 models and can stand in for the expensive part when triaging which outputs
 deserve attention.
 
-The paper surveys the existing open
-power-plant databases (§\ref{sec:related-empirical}), defines a
+The paper surveys open
+power-plant databases (§\ref{sec:related-empirical}), defines the
 four-dimensional quality bar (§\ref{sec:quality}), surveys AI
-capabilities from chatbots to agentic systems (§\ref{sec:capability}),
-measures what model memory alone delivers across 14 language models
-(§\ref{sec:exp1}), and tests the commercial frontier of mid-2026
-(§\ref{sec:exp2}). Post-hoc analyses prompted by the conference
-presentation extend the experiments (§\ref{sec:extensions}). The
-Discussion (§\ref{sec:discussion})
+capabilities (§\ref{sec:capability}), measures model memory alone
+(§\ref{sec:exp1}), and tests the mid-2026 frontier
+(§\ref{sec:exp2}); post-hoc analyses extend the experiments
+(§\ref{sec:extensions}). The Discussion (§\ref{sec:discussion})
 examines why a single aggregate score cannot certify fitness for use,
-and §\ref{sec:future} turns the lessons of the methods literature into
-a research programme before we conclude.
+and §\ref{sec:future} turns the methods literature into a research
+programme.
 
 \section{Related Work — Empirical landscape}\label{sec:related-empirical}
 
@@ -180,10 +178,8 @@ Coal Plant Tracker \citep{GEM2026:gcpt}; \emph{powerplantmatching}
 sources for European grids through deterministic entity-resolution
 rules. All three solve the aggregation problem for documented,
 large-capacity units in well-resourced contexts. Two community sources
-complement these curated trackers: OpenStreetMap, which covers only
-physically existing infrastructure, and Wikipedia, which maintains
-structured lists of power stations. Both serve below as recognition
-layers in Figure~\ref{fig:longtail}.
+complement these curated trackers: OpenStreetMap and Wikipedia, both
+used below as recognition layers (see Figure~\ref{fig:longtail}).
 
 The closest prior country-specific compilation is
 \citet{Hsu-YuEn2020:vietnam-power-plants}, a 2020 snapshot that merges
