@@ -1,0 +1,54 @@
+%erg 0.1
+Title: Section 5: recast '..., but not one that...' as a question '. Does that ...?'
+Created: 2026-06-15
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-15T07:59Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Reading-3 (tracker [[0605]]). §5 opener (`slides/manuscript/main.tex:490–492`):
+
+> Submitting a direct query to a large language model produces an
+> inventory-shaped answer, but not one that meets statistical or
+> scientific quality standards. Numbers shift between runs, citations are
+> absent or fabricated, and there is no way to tell which cells one
+> should trust.
+
+The author wants the assertive ", but not one that meets …" clause
+recast as a question, which the following sentences then answer:
+
+> Submitting a direct query to a large language model produces an
+> inventory-shaped answer. Does that meet statistical or scientific
+> quality standards? Numbers shift between runs, citations are absent or
+> fabricated, and there is no way to tell which cells one should trust.
+
+## Actions
+
+1. Split the first sentence at "answer" and turn the clause into a
+   question: "… produces an inventory-shaped answer. Does that meet
+   statistical or scientific quality standards?" Keep the following
+   evidence sentences (they answer it).
+
+## Relevant files
+
+- `slides/manuscript/main.tex:490–492`.
+
+## Test
+
+- Red first: `@pytest.mark.adherence` negative guard — assert the clause
+  "but not one that meets statistical or scientific quality standards" is
+  absent from §5 (CI polarity: forbid the old phrasing; do not pin the
+  question wording).
+
+## Verification
+
+- [ ] §5 opens with the statement + the "Does that meet … ?" question;
+      evidence sentences intact.
+- [ ] `make check` passes.
+
+## Exit criteria
+
+- §5 opener recast as statement + question; `make check` green.
