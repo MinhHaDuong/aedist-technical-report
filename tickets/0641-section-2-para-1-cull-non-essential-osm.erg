@@ -1,0 +1,25 @@
+%erg 0.1
+Title: Section 2 para 1: cull non-essential OSM/Wikipedia claims + remove no-provenance assertion; drop Petroni + Ni-survey bib entries
+Created: 2026-06-15
+Author: HDMX-coding-agent
+Closed: section 2 para 1 OSM/Wikipedia culled; Petroni/Ni dropped
+
+--- log ---
+2026-06-15T18:43Z HDMX-coding-agent created
+
+2026-06-15T18:43Z HDMX-coding-agent closed — section 2 para 1 OSM/Wikipedia culled; Petroni/Ni dropped
+--- body ---
+## Context
+Shave §2 para 1 (Open power-plant databases). Author directives 2026-06-15.
+
+## Actions (done)
+- OSM/Wikipedia: culled non-essential claims — dropped the \texttt{power=plant}/Overpass
+  detail, the 'presence questions / no forward-looking pipeline / no per-cell
+  sourcing' elaboration, and the 'without provenance' assertions. Kept the
+  essential: two community sources, OSM = built infrastructure, Wikipedia = lists,
+  both recognition layers in Figure 1.
+- Dropped Petroni (lm-as-kb) and the Ni benchmark survey bib entries — orphaned by
+  the intro trim (0639), author confirmed 'drop Petroni'. Both were uncited.
+
+## Exit criteria
+- §2 para 1 carries only essential OSM/Wikipedia claims; no dead bib entries; builds.
