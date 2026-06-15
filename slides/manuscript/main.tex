@@ -631,9 +631,8 @@ Figure~\ref{fig:reliability} plots this grade against reference-based
 accuracy. The cohort splits cleanly: nine models deliver four or five
 good runs and F1 means of 0.41--0.67, while five models deliver at most
 one good run (three of them none at all) and F1 means of 0.02--0.28;
-the inaccurate models are also the unreliable ones (Spearman ρ = 0.78
-between the two axes), so the label-free grade screens them out before
-any reference is consulted.
+the inaccurate models are also the unreliable ones, so the label-free
+grade screens them out before any reference is consulted.
 
 The disqualified set is essentially stable
 under the gate's tuning choices — indicator set and pass threshold —
@@ -868,8 +867,9 @@ exploratory analysis of the Experiment 1 outputs suggests the weakest
 runs can be rejected without ground truth at all. Degenerate runs are
 template-like: near-constant capacity and status columns (one run emits
 496 rows, every one 1200 MW and ``Operating''). Within-run capacity
-variability — the number of distinct capacity values — correlates
-with reference-based F1 at Spearman ρ = \ScreenPooledSpearman{} across the 70 runs. An
+variability — the number of distinct capacity values — tracks
+reference-based F1 across the 70 runs: the degenerate runs cluster at
+the low end. An
 in-sample threshold rule rejects 23 of the 26 weakest runs with no false
 rejection: an existence proof rather than a validated detector, as
 the cutoffs were tuned on the same 70 runs. The
@@ -1205,10 +1205,9 @@ through a document pipeline rather than an arms race.
 
 Two levers already deliver without any new data
 collection. The reference-free screen rejects the weakest outputs
-without ground truth (Spearman ρ = \ScreenPooledSpearman{} against reference-based F1,
-pooled across models and in-sample, so an existence proof rather than a
-validated detector; the model-level grade it aggregates to is
-Figure~\ref{fig:reliability}). Fusion recovers coverage: pooling runs across
+without ground truth (an existence proof rather than a
+validated detector, as it was tuned in-sample; the model-level grade it
+aggregates to is Figure~\ref{fig:reliability}). Fusion recovers coverage: pooling runs across
 models finds plants no single model reliably finds, and requiring two
 models to agree nearly eliminates false positives (§\ref{sec:fusion}).
 If the constraint is indeed the documents, the path to research-grade
@@ -1843,7 +1842,7 @@ every run clears it); the simple mean suffices because a model that
 systematically zeros a free criterion averages to ≈0 and reads dark red,
 the §\ref{sec:quality} ``too weak to clear the bar'' signal. The
 §\ref{sec:exp1} internal-coherence screen (the reference-free
-ρ=\ScreenPooledSpearman{} veto, \texttt{cap\_distinct\ ≤\ 4\ OR\ status\_distinct\ ≤\ 1}) is
+veto, \texttt{cap\_distinct\ ≤\ 4\ OR\ status\_distinct\ ≤\ 1}) is
 \textbf{merged into the Coherence dimension} as its positive complement
 (\texttt{1\ −\ veto}, the ``Internal coherence'' row), so higher is
 better in lockstep with every other sub-score rather than occupying a
@@ -1860,13 +1859,11 @@ reference-free dimensions enter the good-run conjunction) and the pass
 threshold τ (a dimension counts as failed when its score is
 ≤ τ). The table below sweeps both — three indicator sets ×
 four thresholds — and reports, for each cell, the number of
-disqualified models (reliability \(\leq 1\)), whether that set equals
-the baseline floor, and the Spearman correlation between reliability and
-accuracy. The outcome barely moves across the grid: five models are
+disqualified models (reliability \(\leq 1\)) and whether that set equals
+the baseline floor. The outcome barely moves across the grid: five models are
 disqualified under the discriminating and all-reference-free sets at
 every threshold, four (qwen3.6-flash escapes) under the narrower
-coherence-only set, and the correlation stays at ρ = 0.78--0.80
-throughout; the headline reading of Figure~\ref{fig:reliability} does
+coherence-only set; the headline reading of Figure~\ref{fig:reliability} does
 not hinge on the gate's tuning. Source artifact:
 \texttt{experiments/derived/exp1\_reliability\_sensitivity.csv}.
 

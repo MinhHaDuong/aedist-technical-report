@@ -132,40 +132,32 @@ def test_abstract_register_follows_author_brief():
     )
 
 
-def test_rho_caveat_wherever_rho_appears():
-    """Ticket 0532 round 2, demoted to conditional-negative form (ticket 0557):
-    IF ρ = 0.92 appears in the conclusion, the Discussion, or the screening
-    subsection (sec:ext-screen — the screen prose moved there from the
-    Discussion in ticket 0562), the pooled / in-sample qualification must
-    accompany it in that section. The exact caveat phrasings are editorial
-    decisions recorded in docs/editorial-brief.md (rho-caveat-conclusion,
-    rho-caveat-discussion); CI only forbids an unqualified ρ.
+def test_spearman_rho_regression_absent_from_manuscript():
+    """Ticket 0598: the Spearman ρ regression presentation is dropped from the
+    whole manuscript — body AND annex. The screening conclusion (a
+    reference-free reliability grade triages the weak models without ground
+    truth) is now carried by Figure~\\ref{fig:reliability}, not by a
+    coefficient. This is a pure negative guard (CI polarity rule, ticket
+    0557): forbid the jargon and the regression literals; pin no positive
+    replacement wording.
 
-    Ticket 0586 dropped the within-model validation annex (sec:annex-screen)
-    and retargeted the ρ caveat to the model-level reliability figure
-    (fig:reliability), which shows the same screen with more statistical
-    power. The in-sample caveat requirement is preserved; only the required
-    cross-reference changed."""
-    conclusion = section("sec:conclusion")
-    if "ρ = 0.92" in conclusion:
-        assert "pooled" in conclusion and "in-sample" in conclusion, (
-            "conclusion cites ρ = 0.92 without the pooled/in-sample caveat"
-        )
-        assert "\\ref{fig:reliability}" in conclusion, (
-            "conclusion cites ρ = 0.92 without pointing to the model-level "
-            "reliability figure (fig:reliability)"
-        )
-    for label in ("sec:discussion", "sec:ext-screen"):
-        text = section(label)
-        if "ρ = 0.92" not in text:
-            continue
-        assert "existence proof" in text, (
-            f"{label} cites ρ = 0.92 without the existence-proof qualification"
-        )
-        assert "in-sample" in text or "tuned on the same" in text, (
-            f"{label} cites ρ = 0.92 without the in-sample (cutoffs tuned "
-            "on the same runs) caveat"
-        )
+    Supersedes the former conditional caveat guard (the now-retired
+    rho-caveat-conclusion / rho-caveat-discussion brief entries): there is no
+    ρ claim left to qualify, so the conditional can never fire — a negative
+    guard is the correct retirement, keeping the literal from creeping back."""
+    text = body_raw()
+    assert "Spearman" not in text, (
+        "the Spearman ρ regression must not appear in main.tex (ticket 0598 "
+        "dropped it; the screening conclusion is carried by fig:reliability)"
+    )
+    assert "ρ = 0.92" not in text and "ρ=0.92" not in text, (
+        "the ρ = 0.92 screen-correlation literal must not appear in main.tex "
+        "(ticket 0598)"
+    )
+    assert "\\ScreenPooledSpearman" not in text, (
+        "the \\ScreenPooledSpearman macro call must not appear in main.tex "
+        "(ticket 0598 dropped the ρ regression presentation)"
+    )
 
 
 def _sentences_containing(text: str, phrase: str) -> list[str]:

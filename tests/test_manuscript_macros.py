@@ -220,8 +220,9 @@ def _unexpanded_body() -> str:
 def test_body_uses_the_macros():
     text = _unexpanded_body()
     # \ScreenTauCap left the body with Annex E (ticket 0586); \ScreenPooledSpearman
-    # (the ρ = 0.92 screen correlation) is the surviving body Screen* macro.
-    for name in ("\\ScreenPooledSpearman", "\\NumRefPlants", "\\ExpOneFOneMean", "\\AggUnionGainX"):
+    # left the manuscript entirely (ticket 0598 dropped the Spearman ρ regression
+    # presentation — the screening conclusion is now carried by fig:reliability).
+    for name in ("\\NumRefPlants", "\\ExpOneFOneMean", "\\AggUnionGainX"):
         assert name in text, f"manuscript body no longer uses {name} — literal crept back?"
 
 
