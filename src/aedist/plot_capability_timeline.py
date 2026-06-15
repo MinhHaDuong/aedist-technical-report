@@ -12,8 +12,10 @@ outer surface of commercially attainable capability — pushing outward.
 It does not claim that any lab is "ahead" or that the order is forced.
 
 Data source: ``data/capability_timeline.csv`` (one row per (lab, feature)
-cell). Cells with an empty ``date`` field render as a "TBD" annotation
-at the right margin of the row, so honest gaps stay visible.
+cell). Cells with an empty ``date`` field carry no marker; the per-lab
+shipping detail (including confirmed absences) lives in the rollout annex
+rather than as a right-margin annotation, so the data area uses the full
+width (ticket 0611).
 
 Usage:
     uv run python -m aedist.plot_capability_timeline \\
@@ -106,7 +108,7 @@ def bucket_by_stage(
 
 
 def render(rows: list[dict[str, str]], output: Path) -> None:
-    by_stage, missing_by_stage = bucket_by_stage(rows)
+    by_stage, _missing_by_stage = bucket_by_stage(rows)
 
     fig, ax = plt.subplots(figsize=SLIDE_FIGSIZE_FULL)
 
@@ -128,27 +130,11 @@ def render(rows: list[dict[str, str]], output: Path) -> None:
                 zorder=3,
             )
 
-    # Annotate dateless cells at the right margin, labelling by source_kind
-    # so confirmed absences (absent) read differently from open gaps (TBD).
-    right_x = mdates.date2num(date(2025, 12, 31))
-    for stage, by_kind in missing_by_stage.items():
-        y = y_for_stage[stage]
-        parts = []
-        for kind in ("absent", "TBD"):
-            labs = by_kind.get(kind, [])
-            if labs:
-                parts.append(f"{kind}: {', '.join(labs)}")
-        if not parts:
-            continue
-        ax.text(
-            right_x,
-            y,
-            "  " + " | ".join(parts),
-            fontsize=7,
-            va="center",
-            color="gray",
-            zorder=2,
-        )
+    # Dateless cells (confirmed absences and open gaps) are not annotated in
+    # the plot: the right-margin labels narrowed the data area, and the
+    # per-lab shipping detail lives in the rollout annex instead (ticket
+    # 0611). ``bucket_by_stage`` still surfaces ``missing_by_stage`` for
+    # callers that want the data.
 
     ax.set_yticks([y_for_stage[s] for s in stages_sorted])
     ax.set_yticklabels([FEATURE_LABELS[s] for s in stages_sorted])
