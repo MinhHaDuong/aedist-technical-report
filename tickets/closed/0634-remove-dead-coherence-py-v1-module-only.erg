@@ -2,10 +2,12 @@
 Title: Remove dead coherence.py (v1 module; only its own test imports it, production scorer uses score_mechanical)
 Created: 2026-06-15
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1110
 
 --- log ---
 2026-06-15T11:30Z HDMX-coding-agent created
 
+2026-06-15T12:11Z HDMX-coding-agent closed — autoclosed — PR #1110
 --- body ---
 ## Context
 
