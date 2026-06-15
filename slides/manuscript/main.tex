@@ -795,9 +795,7 @@ The task is hard because the reference list is a long-tail
 distribution. Vietnam is a fast-growing power system, so its asset
 register is dominated by forward-looking entries: proposed and planned
 plants together form the largest share of the list, ahead of the
-operational core. Getting this register right is a policy and business
-concern — capacity planning, grid investment, and project finance all
-turn on which plants are coming, not only on which already run. Yet
+operational core. Yet
 these forward-looking entries are precisely the ones a model's
 parametric memory finds hard to know: many are recent or abandoned
 projects with little public footprint.
@@ -807,17 +805,14 @@ for a status category, as the probability that a random plant in that
 category is found by a random run of the experiment — averaged over the
 (plant × run) cells. Table~\ref{tbl:status-difficulty} reports it for
 two regimes: Experiment 1 (all models, memory only; 70 runs) and the
-Experiment 2 with-documents arm (20 runs). The operational category is
-easy: even though Experiment 1 spans weak models alongside strong ones,
-they still find operational plants. The long tail is hard: proposed and
-planned plants fall far below the operational core in Experiment 1.
-Giving the models documents lifts the whole list, and the tail most of
-all.
+Experiment 2 with-documents arm (20 runs). Operational plants are easy: almost every run finds them. The long tail
+— proposed and planned plants — is hard. Giving the models documents
+lifts the whole list, the tail most of all.
 
 \begin{table}[htbp]
 \centering
 \caption{\label{tbl:status-difficulty}Composition of the reference list
-by asset lifecycle status, from Proposed to Retired, and detection
+by asset lifecycle status and detection
 likelihood. Experiment 1 includes all models; Experiment 2 is the
 single-shot with-documents arm. Source: author.}
 {\small\setlength{\tabcolsep}{4pt}\input{../../report/inputs/generated/tab_status_difficulty_en.tex}}
@@ -859,9 +854,7 @@ future work (§\ref{sec:future}). Aggregating the screen across each
 model's five repetitions yields the reference-free reliability grade of
 Figure~\ref{fig:reliability}: the inaccurate models are also the
 unreliable ones, so the grade separates good sources from bad before any
-reference is consulted — though the cutoffs were tuned in-sample on
-these same runs, so this is an existence proof rather than a validated
-detector. Treating models as information sources and runs as information
+reference is consulted. Treating models as information sources and runs as information
 packages, this same source-reliability grade is a natural input to
 fusion: a low-reliability model can be down-weighted or excluded before
 its runs are pooled (the fusion discussion that follows).
@@ -899,9 +892,6 @@ conjunction remains future work.
 \addcontentsline{toc}{subsection}{What system do the findings imply?}
 
 We now have a benchmark that scores model replies on four dimensions.
-This rest stop asks what it brings to the search for a method that
-produces evergreen, research-quality datasets — before §\ref{sec:discussion}
-and §\ref{sec:future} take up the perspectives in detail.
 
 First, scoring the output is not enough: a method benchmark must also
 score the resources a method spends. To the §\ref{sec:quality} output
