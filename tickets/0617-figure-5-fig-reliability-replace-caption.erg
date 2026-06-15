@@ -1,0 +1,68 @@
+%erg 0.1
+Title: Figure 5 (fig:reliability): replace caption (reliability-accuracy scatter, weak lower-left/strong top-right, screen on reliability alone, ref annex)
+Created: 2026-06-15
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-15T08:29Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Reading-3 (tracker [[0605]]). Figure 5 (`fig:reliability`,
+`slides/manuscript/main.tex:654–667`). Current caption is long, defines
+both axes inline, and carries a filename
+(`\texttt{experiments/derived/exp1\_cross\_eval.csv}`) — the latter
+violates the standalone-caption policy [[0606]].
+
+## Action — replace the whole caption (author's words)
+
+> Reliability–accuracy scatter for Experiment 1. The weak models sit in
+> the lower-left quadrant, the strong ones top-right. We can screen out
+> weak models on the reliability axis alone — it does not require
+> computing accuracy against the list we are asking for. Source: author;
+> see \ref{sec:annex-exp1}.
+
+Notes:
+- "Annex [REFERENCE]" → `\ref{sec:annex-exp1}` (no hardcoded annex
+  letter; house rule).
+- Drop the inline axis definitions (X = good-run count; Y = mean F1) and
+  the three-zero-good-runs detail FROM THE CAPTION, but ensure they live
+  in `sec:annex-exp1` (move, don't lose — standalone-caption policy).
+- No filename in the caption.
+- Grammar/typography: "it does not require to compute" → "it does not
+  require computing"; use an en/em dash, not " - "; em dash literal
+  "—" (U+2014).
+
+## Coordination — supports [[0598]]
+
+0598 drops the Spearman ρ regression and makes the screening point via
+THIS figure's bimodal separation. This caption is the figure-side of that
+argument (weak lower-left / strong top-right; screen on reliability
+alone). Keep the two consistent at raid time: the figure shows the
+separation, the caption states the screening claim, no ρ coefficient.
+
+## Relevant files
+
+- `slides/manuscript/main.tex:654–667` (caption).
+- `sec:annex-exp1` — destination for the axis definitions + edge-case
+  detail dropped from the caption.
+
+## Test
+
+- Red first: `@pytest.mark.adherence` — Figure 5 caption contains no
+  `\texttt` filename and refs `sec:annex-exp1`; negative guard on the
+  dropped inline definitions if a stable signature exists.
+
+## Verification
+
+- [ ] Caption replaced with the short quadrant/screening version, `\ref`
+      to Exp 1 annex, no filename, grammar fixed.
+- [ ] Axis definitions + edge case preserved in the annex.
+- [ ] Consistent with 0598 (no ρ; figure carries the screening evidence).
+- [ ] `make check` passes; manuscript builds.
+
+## Exit criteria
+
+- Figure 5 caption is the short reliability–accuracy/screening version
+  with annex ref; detail in the annex; `make check` green.
