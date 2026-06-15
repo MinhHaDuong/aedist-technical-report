@@ -1,0 +1,25 @@
+%erg 0.1
+Title: Define the §6 "curated document pack" in the main text
+Created: 2026-06-15
+Author: claude
+
+--- log ---
+2026-06-15T20:05Z claude created from peer-review tracker 0644
+
+--- body ---
+## Context
+Both students: the documents-condition finding is central, but the document pack
+is described only in annexes. If it is essentially the evidence base used to build
+the reference, the headline reduces to "LLMs extract better when handed the right
+sources." Define the pack in §6 main text: contents, size (pages/tokens), source
+types, languages, and its relation to the reference's evidence base. Tracker: 0644.
+Reviews: openai_student (concern 6), mistral_student (§6/§7).
+
+## Action
+- Add a concise main-text description of the document pack in §6 (lifted from the
+  annex), stating overlap (if any) with the reference's source set, and clarifying
+  it does not supply the reference answer.
+
+## Exit criteria
+- [ ] §6 defines the document pack and its relation to the reference evidence base
+- [ ] manuscript builds; adherence tests pass

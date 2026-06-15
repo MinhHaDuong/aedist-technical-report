@@ -1,0 +1,23 @@
+%erg 0.1
+Title: Provenance verification layer — verify sampled citations
+Created: 2026-06-15
+Author: claude
+Label: deferred
+
+--- log ---
+2026-06-15T20:14Z claude created from peer-review tracker 0644 (deferred)
+
+--- body ---
+## Context
+Provenance is currently "verifiable not verified" (citations counted, never
+checked). A fabricated but well-formatted citation passes the current q3 scoring.
+Reviewers want a verified layer. Tracker: 0644. (Prose relabel to "proxy" is 0645;
+this is the actual verification work.)
+
+## Actions
+1. Manually verify a random sample (e.g., 10%) of Source1/Source2 cells: fraction
+   that actually support the claim; fraction inadmissible (Wikipedia/mirrors/tertiary).
+2. Report verified vs verifiable provenance.
+
+## Exit criteria
+- [ ] Sampled citation verification reported; provenance scoring upgraded

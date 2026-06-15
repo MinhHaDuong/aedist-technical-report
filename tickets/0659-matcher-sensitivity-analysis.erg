@@ -1,0 +1,23 @@
+%erg 0.1
+Title: Matcher / entity-resolution sensitivity analysis
+Created: 2026-06-15
+Author: claude
+Label: deferred
+
+--- log ---
+2026-06-15T20:15Z claude created from peer-review tracker 0644 (deferred)
+
+--- body ---
+## Context
+Headline F1 depends on matcher choices (rapidfuzz threshold tuned in-sample,
+capacity-difference weight, combined-unit rows, one-to-many phase aggregation).
+Entity resolution is part of the scientific task, not a peripheral detail.
+Reviewers want sensitivity reported. Tracker: 0644.
+
+## Actions
+1. Report F1 sensitivity to: strict vs relaxed name matching; allowing one-to-many
+   phase aggregation; built-fleet-only; excluding proposed/planned; a manually
+   adjudicated FP/FN sample.
+
+## Exit criteria
+- [ ] Headline F1 sensitivity to matcher/grain choices reported in the main body

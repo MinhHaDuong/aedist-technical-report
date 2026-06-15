@@ -1,0 +1,23 @@
+%erg 0.1
+Title: Independent expert audit of the reference + inter-annotator agreement
+Created: 2026-06-15
+Author: claude
+Label: deferred
+
+--- log ---
+2026-06-15T20:10Z claude created from peer-review tracker 0644 (deferred)
+
+--- body ---
+## Context
+All four reviewers: the 177-row reference is single-author compiled with no
+independent adjudication; the weakest part (proposed/planned tail) is exactly what
+the paper's difficulty claims rest on. Needs an independent audit. Tracker: 0644.
+
+## Actions
+1. Stratified-sample 30–50 reference rows by status; have >=1 independent domain
+   expert adjudicate inclusion/exclusion, lifecycle status, and plant/phase grain.
+2. Report row-existence and key-cell agreement rates in the main text.
+
+## Exit criteria
+- [ ] Independent audit done; inter-annotator agreement reported
+- [ ] "gold" claim either supported by the audit or relabeled

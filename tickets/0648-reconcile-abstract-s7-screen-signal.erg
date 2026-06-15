@@ -1,0 +1,29 @@
+%erg 0.1
+Title: Reconcile abstract↔§7 on what tracks F1 (capacity variability, not coherence indicators)
+Created: 2026-06-15
+Author: claude
+
+--- log ---
+2026-06-15T20:04Z claude created from peer-review tracker 0644
+
+--- body ---
+## Context
+openai_student spotted a genuine contradiction: the abstract says "internal
+coherence metrics correlate with accuracy," but §7 says "the internal-coherence
+indicators we already compute carry no such signal" — it is within-run capacity
+(and status) variability that tracks F1 and screens weak runs. The abstract/intro
+wording is therefore inaccurate. Tracker: 0644. Review: openai_student (concern 4).
+
+## Action
+- Fix abstract/intro wording: the reference-free screen rests on within-run
+  capacity/status variability, not the internal-coherence indicators; align with
+  §7 and Figure 5.
+
+## Test (red first)
+- Read-level consistency check: the abstract must not claim internal coherence
+  correlates with accuracy while §7 denies it. Optionally add a conditional-negative
+  adherence test pinning the inconsistency, not a positive phrasing.
+
+## Exit criteria
+- [ ] Abstract/intro statement matches §7 / Figure 5
+- [ ] manuscript builds; adherence tests pass

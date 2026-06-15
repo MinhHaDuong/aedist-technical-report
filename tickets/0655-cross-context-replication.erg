@@ -1,0 +1,23 @@
+%erg 0.1
+Title: Cross-context replication on a second country (generalizability)
+Created: 2026-06-15
+Author: claude
+Label: deferred
+
+--- log ---
+2026-06-15T20:11Z claude created from peer-review tracker 0644 (deferred)
+
+--- body ---
+## Context
+N=1; matcher params, prompts, and quality bar were tuned in-sample for Vietnam.
+Generality is claimed but untested. Tracker: 0644. (Prose scoping of the claim is
+0645; this ticket is the actual replication.)
+
+## Actions
+1. Apply the same pipeline (same prompts, matcher params, quality bar) to a second
+   country's thermal fleet (e.g., Indonesia / Thailand / Philippines).
+2. Report transfer without retuning; identify universal vs locally-tuned parameters.
+
+## Exit criteria
+- [ ] Second-country replication reported
+- [ ] Generality claim calibrated to the evidence

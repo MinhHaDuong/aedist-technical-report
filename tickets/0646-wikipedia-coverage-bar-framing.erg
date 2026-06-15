@@ -1,0 +1,28 @@
+%erg 0.1
+Title: Reframe the Wikipedia coverage bar as availability/upper-bound, not a recall ceiling
+Created: 2026-06-15
+Author: claude
+
+--- log ---
+2026-06-15T20:02Z claude created from peer-review tracker 0644
+
+--- body ---
+## Context
+All four reviewers flag circularity: the author's group seeded reference-derived
+content into Wikipedia (2019), then Wikipedia coverage is used as the
+parametric-recall "ceiling" in §5/Figure 3. Reviewers: treat it as an
+availability indicator / upper bound, not a neutral recall expectation; prefer
+built-fleet-only coverage (where the contamination argument is strongest);
+acknowledge the forward-looking tail postdates the 2019 injection. Tracker: 0644.
+Reviews: openai_grinchy (obj 2), mistral_grinchy (obj 2), openai_student
+(concern 2), mistral_student (§5).
+
+## Action
+- Reword §5 prose + Figure 3 caption + abstract: Wikipedia coverage is an
+  availability/upper bound, not "models should recover this".
+- Prefer the built-fleet coverage framing; note the forward-looking tail is not
+  in Wikipedia. Wording/framing only — no data change.
+
+## Exit criteria
+- [ ] §5 / Figure 3 / abstract no longer assert Wikipedia coverage as an expected recall ceiling
+- [ ] manuscript builds; adherence tests pass

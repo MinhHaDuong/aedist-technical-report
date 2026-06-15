@@ -1,0 +1,26 @@
+%erg 0.1
+Title: Figure 1 entity-grain clarification + Figure 4/§5 cost–coverage consistency
+Created: 2026-06-15
+Author: claude
+
+--- log ---
+2026-06-15T20:06Z claude created from peer-review tracker 0644
+
+--- body ---
+## Context
+(a) Figure 1: GEM shows 157 matched reference rows but 119 distinct plants — one
+GEM row matches multiple reference phases, mixing entity grains; the "more
+comprehensive than all others" claim should be softened/qualified by grain.
+(b) Figure 4 caption ("more expensive models discover more / more stable") vs §5
+text ("no monotonic cost–F1 relation") appear to disagree; reconcile (both can be
+locally true — state precisely). Tracker: 0644. Reviews: openai_grinchy (obj 1),
+openai_student (concern 7, §5, minor #3), mistral_grinchy (obj 8).
+
+## Action
+- Clarify entity grain in Figure 1 caption / §2; soften the comprehensiveness claim.
+- Reconcile Figure 4 caption with §5 cost–coverage wording.
+
+## Exit criteria
+- [ ] Figure 1 grain made explicit; comprehensiveness claim qualified
+- [ ] Figure 4 caption and §5 text consistent
+- [ ] manuscript builds; adherence tests pass
