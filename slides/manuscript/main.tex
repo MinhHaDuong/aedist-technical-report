@@ -351,7 +351,7 @@ philosophy-of-science empirical adequacy
   changes are flagged. The fuller requirement (supporting queries of
   the form ``what was the installed fleet in 2018?'') applies to
   scenario-projection use cases; it is addressed structurally in
-  §\ref{sec:ext-system} and discussed in \ref{sec:annex-temporality}.
+  §\ref{sec:future} and discussed in \ref{sec:annex-temporality}.
 \end{enumerate}
 
 Of the four dimensions, accuracy is the only one whose measurement
@@ -907,8 +907,8 @@ four frontier models to agree nearly eliminates false positives — F1
 with \FusionRTwoETwoOneDFP{} on the Experiment 2 single-shot arm (full results in
 \ref{sec:annex-fusion}). Both levers reuse existing runs; the
 structural answer to the ceiling no single model breaks is a stateful
-pipeline that invests in the corpus rather than the model
-(the stateful-pipeline discussion that follows). To our knowledge, no published benchmark or
+pipeline built around the corpus (the architecture sketch is taken up
+in §\ref{sec:future}). To our knowledge, no published benchmark or
 system targets open-world enumeration of a national asset class with
 per-cell provenance at this granularity. Nor did we find a published
 demonstration of the conjunction of per-cell provenance with per-cell
@@ -918,41 +918,33 @@ conjunction remains future work.
 \subsection*{What system do the findings imply?}\label{sec:ext-system}
 \addcontentsline{toc}{subsection}{What system do the findings imply?}
 
-The single-model ceiling motivates a stateful architecture: one that
-keeps an organised memory between runs instead of starting from scratch
-at each prompt. Once the agents share a good document set, single-shot
-performance converges (§\ref{sec:exp2}) and the binding constraint
-appears to shift from model capability to document quality. Effort
-may therefore be better spent on the corpus and the sourcing process
-— assembling, curating, and resolving the documents — than on a
-stronger model. That is the investment a stateful pipeline makes: a
-managed, auditable knowledge base
-rather than a one-shot prompt against whatever model is current.
+We now have a benchmark that scores model replies on four dimensions.
+This rest stop asks what it brings to the search for a method that
+produces evergreen, research-quality datasets — before §\ref{sec:discussion}
+and §\ref{sec:future} take up the perspectives in detail.
 
-The
-§\ref{sec:quality} quality dimensions measure \emph{output}: accuracy,
-coherence, provenance, temporality. Such a system adds a second
-axis, \emph{method quality}: whether the process is auditable,
+First, scoring the output is not enough: a method benchmark must also
+score the resources a method spends. To the §\ref{sec:quality} output
+dimensions — accuracy, coherence, provenance, temporality — it adds a
+second axis, \emph{method quality}: whether the process is auditable,
 reproducible, and cost-predictable independent of which model runs it.
-It is stateful: it maintains a sourced narrative knowledge
-base, where each asset record carries its full lifecycle history and
-conflict-resolution record. The statistical table is a snapshot drawn
-from the narrative inventory at a reference date, not a direct model
-output. Each cell is a claim,
-recording its source, date, confidence, and conflict-resolution history.
-The narrative layer carries the temporal dimension deferred in
-§\ref{sec:quality}: plant lifecycle events, PDP-cycle reclassifications,
-developer changes, and contested status periods are recorded as
-annotated history rather than as overwritten state.
+§\ref{sec:discussion} builds on this distinction to separate the levels
+at which a result is scored.
 
-Each cell in a power-plant inventory (one plant, one attribute, one
-value) maps to a knowledge-graph triple: subject, predicate, object.
-Fusing tables from competing sources thus resembles fusing
-overlapping triple sets, and the same methods apply: conflict
-resolution, source authority, and temporal versioning. Cases that
-rule-based schema-fixed systems cannot handle cleanly — assets
-mid-lifecycle, contested sources, multilingual records, conditional
-projections — are where language-model reasoning is most useful.
+Read against that bar, the experiments place today's methods. In
+§\ref{sec:exp1} the parametric method (recall from model memory) sits
+far below the Wikipedia coverage bar. In §\ref{sec:exp2} the
+one-dimensional method — a single-shot query handed a curated document
+set, in effect retrieval-augmented generation — improves coverage, but
+the gain is model-dependent and the multi-turn protocol does not extend
+it; with shared documents the weakest agents may approach the Wikipedia
+coverage bar, yet none reaches exhaustive research-dataset quality.
+
+The benchmark is results-based, so it guides future work beyond
+retrieval augmentation rather than prescribing an architecture:
+§\ref{sec:discussion} reads what the F1 metric and the four dimensions
+can and cannot support, and §\ref{sec:future} turns the gap into a
+research programme.
 
 \section{Discussion}\label{sec:discussion}
 
@@ -1141,21 +1133,36 @@ whether faithfulness and factuality under temporal supersession admit a
 single estimator rather than two metrics that each presuppose the other
 solved.
 
-\textbf{Knowledge-base architecture.} The system sketch in
-§\ref{sec:ext-system} leaves open which representation should be
-canonical: the narrative asset page, the knowledge graph, or an
-append-only claim log of which both are projections. One design lesson
-the articulation findings already license: extracting structure from
-text is the lossy, measured direction; rendering text from structure is
-cheap. That asymmetry argues for extracting claims once at ingest and
-rendering derived representations at each output — a design principle
-with implications for how agentic pipelines maintain long-term
-structured memory. The benchmark can settle the representation question
-empirically: build a narrative-authoritative and a claim-authoritative
-version from the same harvested corpus, derive a table from each, and
-score both against the same reference with the same matcher. We frame
-this contribution as an evaluation instrument, not a settled
-architecture.
+\textbf{Knowledge-base architecture.} The single-model ceiling motivates
+a stateful pipeline that invests in the corpus between runs rather than
+in a stronger model: a managed, auditable knowledge base where the
+statistical table is a snapshot drawn from a sourced narrative inventory
+at a reference date, not a direct model output. Each cell is a claim
+recording its source, date, confidence, and conflict-resolution history,
+and the narrative layer carries the temporal dimension deferred in
+§\ref{sec:quality}: plant lifecycle events, PDP-cycle reclassifications,
+developer changes, and contested status periods kept as annotated
+history rather than overwritten state. A cell (one plant, one attribute,
+one value) maps to a knowledge-graph triple of subject, predicate, and
+object, so fusing tables from competing sources resembles fusing
+overlapping triple sets, where the same levers apply: conflict
+resolution, source authority, and temporal versioning. The cases
+rule-based schema-fixed systems cannot handle cleanly (assets
+mid-lifecycle, contested sources, multilingual records, conditional
+projections) are where language-model reasoning earns its place. This
+leaves open which representation should be canonical: the narrative asset
+page, the knowledge graph, or an append-only claim log of which both are
+projections. One design lesson the articulation findings already
+license: extracting structure from text is the lossy, measured
+direction; rendering text from structure is cheap. That asymmetry argues
+for extracting claims once at ingest and rendering derived
+representations at each output, a design principle with implications
+for how agentic pipelines maintain long-term structured memory. The
+benchmark can settle the representation question empirically: build a
+narrative-authoritative and a claim-authoritative version from the same
+harvested corpus, derive a table from each, and score both against the
+same reference with the same matcher. We frame this contribution as an
+evaluation instrument, not a settled architecture.
 
 \textbf{Transfer across regulatory contexts.} The prompt templates, the
 matcher parameters, and the quality bar were developed against the
@@ -2420,7 +2427,7 @@ This experiment tests whether removing the §\ref{sec:exp1} handicaps (no
 web, no tools, no documents), by handing the task to a commercially
 available deep-research surface, clears the §\ref{sec:quality} quality
 bar. It does not test custom workflows or local models; that is
-§\ref{sec:ext-system}. It does not test how the four dimensions trade off
+§\ref{sec:future}. It does not test how the four dimensions trade off
 under a fixed budget; that is future work (§\ref{sec:future}) once the
 composite-quality scorers exist. It does not test browser-automated
 surfaces (ChatGPT.com, Claude.ai chat UI) — only direct vendor APIs.
@@ -2474,7 +2481,7 @@ matrix (\ref{sec:annex-recognition}) shows that the operational core
 forms dense rows while proposed plants form sparse ones, and the
 density profile predicts which plants are structurally recoverable by
 pooling alone. The design consequence of the single-model ceiling is
-drawn in §\ref{sec:ext-system}; the paragraphs below quantify what
+drawn in §\ref{sec:future}; the paragraphs below quantify what
 run-level fusion already delivers.
 
 \textbf{Pooling runs by simple union more than doubles recall relative
@@ -2666,11 +2673,11 @@ separable temporality criteria for an energy-asset database:
 The present paper scopes to T1. T2 is acknowledged as the stronger
 requirement for IAM and scenario-projection use cases; it is not in
 scope here. A GEM-style event log may become necessary when implementing
-the verified-provenance layer (§\ref{sec:ext-system}, future work) — each
+the verified-provenance layer (§\ref{sec:future}) — each
 verification act is itself a timestamped event — but that design
 choice is not addressed in this paper.
 
-The narrative inventory component of §\ref{sec:ext-system} handles
+The narrative inventory component of §\ref{sec:future} handles
 longitudinal aspects pragmatically: plant histories, PDP-cycle
 reclassifications, and developer-name changes appear as free-text
 annotations rather than as structured event records. This is a
