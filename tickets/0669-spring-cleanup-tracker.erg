@@ -1,0 +1,37 @@
+%erg 0.1
+Title: Post-release spring cleanup — repo reorganization
+Created: 2026-06-15
+Author: claude
+Blocked-by: 0663
+
+--- log ---
+2026-06-15T22:06Z claude created post-release reorganization tracker
+
+--- body ---
+## Context
+After the report is disseminated (tracker 0663), reorganize the repo. The root
+is crowded (12 dirs + 12 top-level files), the manuscript lives unnaturally
+under `slides/`, `publications/` is under-used, and `data/`/`derived/` are
+duplicated at the root and under `experiments/` (with a symlink
+`experiments/data/rag_corpus -> ../../data/rag_corpus`). Author decisions
+(2026-06-15):
+- Rehome publication artifacts under `publications/`: `report/`, the decks
+  (`slides/`), and the manuscript as `publications/Economia-2026-Manuscrit/`.
+- Move `data/` and `derived/` under `experiments/` (single pipeline-I/O home;
+  drop the symlink).
+
+**Blocked-by 0663:** do NOT move files until HAL/arXiv/release deposits are
+done — they reference the manuscript at its current path.
+
+## Children
+- 0670 Rehome `report/`, `slides/` decks, and the manuscript under `publications/`
+- 0671 Move root `data/` + `derived/` under `experiments/`
+- 0672 Tidy crowded project root (top-level files)
+
+## Related (not a child)
+- 0297 `measurements.jsonl` at root leaves via the MART-v2 migration (0297 +
+  0475/0476/0477/0489/0493) — track there, not here.
+
+## Exit criteria
+- [ ] All three children closed; `make` (root + slides/manuscript) builds clean
+- [ ] No dangling paths (asset includes, Makefile DAG, tests, CI) after the moves

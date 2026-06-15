@@ -1,0 +1,26 @@
+%erg 0.1
+Title: arXiv deposit via HAL
+Created: 2026-06-15
+Author: claude
+Blocked-by: 0664
+
+--- log ---
+2026-06-15T22:02Z claude created from dissemination tracker 0663
+
+--- body ---
+## Context
+Push the manuscript to arXiv from the HAL record (HAL→arXiv transfer), so the
+preprint has an arXiv id. Requires the HAL deposit (0664) to exist first.
+The deferred experiment tickets (0654–0662) are explicitly post-arXiv, so the
+manuscript is in a coherent "preprint now, experiments later" state. Tracker: 0663.
+
+## Actions
+1. From the HAL record, enable the arXiv transfer (category: cs.CL / cs.AI or
+   econ.GN as fits); confirm the arXiv metadata and license.
+2. Review the arXiv submission before release; record the arXiv id.
+
+## Invariants
+- The arXiv version must match the HAL/tag PDF (commit 2da83d04) exactly.
+
+## Exit criteria
+- [ ] arXiv id assigned and recorded (memory + Ha-Duong.bib)

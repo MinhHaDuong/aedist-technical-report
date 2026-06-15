@@ -1,0 +1,24 @@
+%erg 0.1
+Title: GitHub release on tag economia-2026-report with the diffused PDF
+Created: 2026-06-15
+Author: claude
+
+--- log ---
+2026-06-15T22:03Z claude created from dissemination tracker 0663
+
+--- body ---
+## Context
+Cut a GitHub release on the existing tag `economia-2026-report` (commit
+2da83d04) and attach the diffused PDF, mirroring the `economia-2026-cergy`
+release. Lets participants/readers download the exact diffused file.
+Tracker: 0663. Independent of the HAL chain.
+
+## Actions
+1. Rebuild the PDF from the tag (`tectonic -r 2`) to attach a clean artifact.
+2. `gh release create economia-2026-report <pdf> --title "..." --notes "..."`
+   (forge-agnostic: a release on the report tag with the PDF asset).
+3. Note in the release the preprint status and that experiments are deferred
+   (tracker 0644 children 0654–0662).
+
+## Exit criteria
+- [ ] Release published on tag economia-2026-report with the PDF attached
