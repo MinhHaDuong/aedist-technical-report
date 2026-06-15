@@ -1,0 +1,82 @@
+%erg 0.1
+Title: Section 4 / Figure 2 (capability-timeline): floats page with Fig 2 + glossary; simplified caption (ref annex); widen by dropping right gray annotation
+Created: 2026-06-15
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-15T07:58Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Reading-3 (tracker [[0605]]). Three author notes on §4
+(`sec:capability`) and Figure 2 (`fig:capability-timeline`, emitter
+`src/aedist/plot_capability_timeline.py`).
+
+## A. Floats page: Figure 2 + the glossary only
+
+§4 currently mixes body text, the Glossary quote block
+(`main.tex:372–388`, "\textbf{Glossary.} Parametric memory …"), and
+Figure 2 (`\begin{figure}` at `:466`, no placement specifier). The author
+wants Figure 2 AND the glossary on their own dedicated **floats page**
+(nothing else on it).
+- Implement as a `[p]` float page carrying both: make Figure 2 a `[p]`
+  float and place the glossary on the same page (e.g. the glossary as a
+  boxed float / `\begin{figure}[p]` companion or a minipage on the float
+  page). Executor picks the cleanest LaTeX that keeps both on one
+  floats-only page and leaves the §4 body text flowing normally.
+
+## B. Simplified caption
+
+Replace Figure 2's caption with:
+
+> AI timeline: when did labs ship which feature in a public commercial
+> product? Source: author, see \ref{sec:annex-rollout}.
+
+- Use `\ref{sec:annex-rollout}` — NOT a hardcoded "Annex E". The author
+  wrote "Annex E" but the rollout annex letter shifts when [[0602]] adds
+  the Scoring Annex A; the `\ref` resolves to the live letter (house
+  rule: never hardcode annex letters).
+- The detail the simplified caption drops (per-row explanation, "sets the
+  experimental conditions", chat→multi-agent ladder) must already live in
+  `sec:annex-rollout`; verify it does (standalone-caption + ref-annex
+  policy, [[0606]]). Add to the annex anything the caption sheds that is
+  not already there.
+
+## C. Widen the figure: drop the right-margin gray annotation
+
+`plot_capability_timeline.py:131–149` annotates dateless cells with a
+gray "TBD"-style label at the right margin (`right_x`, `color="gray"`).
+Drop that annotation block so the plot can use the full width.
+- Remove the right-margin gray annotations; widen the data area
+  accordingly; keep honest gaps visible some other way only if needed
+  (author wants them gone for width).
+- Regenerate `fig_capability_timeline.pdf` via the `make`/`render.mk`
+  target (do not hand-edit the artifact); commit the regenerated PDF.
+
+## Relevant files
+
+- `slides/manuscript/main.tex` — §4 body, glossary `:372–388`, Figure 2
+  `:466–478`.
+- `src/aedist/plot_capability_timeline.py` — emitter (C).
+- `sec:annex-rollout` — must carry the detail the caption drops (B).
+
+## Test
+
+- Red first: `@pytest.mark.adherence` — Figure 2 caption matches the
+  simplified form's structural markers (refs `sec:annex-rollout`, no
+  hardcoded "Annex E"); negative guard that the emitter no longer emits
+  the right-margin gray annotation (signature check on the script).
+
+## Verification
+
+- [ ] Figure 2 + glossary sit on a dedicated floats page; §4 body flows.
+- [ ] Caption simplified, `\ref{sec:annex-rollout}` (no hardcoded letter);
+      dropped detail present in the annex.
+- [ ] Right gray annotation gone; figure widened; PDF regenerated.
+- [ ] `make check` passes; manuscript builds.
+
+## Exit criteria
+
+- §4 has a Fig 2 + glossary floats page; caption simplified with annex
+  ref; figure widened; `make check` green.
