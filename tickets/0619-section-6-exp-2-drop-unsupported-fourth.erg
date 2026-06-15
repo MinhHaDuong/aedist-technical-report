@@ -1,0 +1,61 @@
+%erg 0.1
+Title: Section 6 (Exp 2): drop unsupported 'fourth slot ... under-indexed by Western search' sentence
+Created: 2026-06-15
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-15T08:31Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Reading-3 (tracker [[0605]]). §6 (Exp 2) claims, of the Qwen (CN) agent:
+
+> The fourth slot is hypothesis-relevant rather than decorative:
+> Chinese-language investor and trade documents on Vietnamese power
+> assets are under-indexed by Western search.
+> (`slides/manuscript/main.tex:703–705`)
+
+Author: drop it — "no evidence of that" (the under-indexed-by-Western-
+search claim is unsupported).
+
+## The claim appears TWICE — drop both for consistency
+
+The same unsupported claim is echoed in the annex (`:2003–2005`,
+"…hypothesis-relevant: Chinese-language investor and trade documents on
+Vietnamese power assets are under-indexed by Western search."). Since the
+objection is lack of evidence, the claim should not survive in the annex
+either (rename/refactor-sweep discipline: fix the whole logical unit).
+
+## Actions
+
+1. Delete the §6 sentence (`:703–705`). Keep the Qwen agent in the list;
+   just remove the under-indexed rationale. If the sentence opener ("The
+   fourth slot is hypothesis-relevant rather than decorative:") is load-
+   bearing for the surrounding prose, trim cleanly so the agent list
+   reads naturally without the rationale.
+2. Drop / neutralise the annex echo (`:2003–2005`) — same unsupported
+   claim. If the annex needs a reason the CN agent is included, state only
+   what is evidenced (a vendor/geography spread across the cohort), not
+   the under-indexed assertion.
+
+## Relevant files
+
+- `slides/manuscript/main.tex:703–705` (§6 body), `:2003–2005` (annex).
+
+## Test
+
+- Red first: `@pytest.mark.adherence` negative guard — "under-indexed by
+  Western search" is absent from `main.tex` (both sites). CI polarity:
+  forbid the unsupported claim.
+
+## Verification
+
+- [ ] §6 sentence dropped; agent list still reads naturally.
+- [ ] Annex echo dropped/neutralised — claim gone everywhere.
+- [ ] `make check` passes; manuscript builds.
+
+## Exit criteria
+
+- The under-indexed-by-Western-search claim appears nowhere; `make check`
+  green.
