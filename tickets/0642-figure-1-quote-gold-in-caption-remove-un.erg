@@ -1,0 +1,22 @@
+%erg 0.1
+Title: Figure 1: quote 'gold' in caption; remove unreadable top/bottom text + enlarge row labels
+Created: 2026-06-15
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-15T18:49Z HDMX-coding-agent created
+
+--- body ---
+## Context
+Figure 1 (fig:longtail) polish. Author directives 2026-06-15.
+
+## Actions (done)
+- Caption: quote the term --- 'a gold reference register' -> 'a ``gold'' reference register'.
+- Emitter plot_longtail_recognition.py: REMOVED the top text (set_title with the
+  Gold/GEM/Wiki/OSM counts --- already in the caption) and the bottom text
+  (set_xlabel 'n reference plants, sorted by visibility...' --- caption covers it);
+  enlarged the layer row labels 9 -> 13pt (were tiny/unreadable at column width).
+  Regenerated fig_longtail_recognition.pdf.
+
+## Exit criteria
+- 'gold' quoted; Figure 1 has no top/bottom text, readable row labels; build clean.

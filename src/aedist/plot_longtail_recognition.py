@@ -272,13 +272,8 @@ def render_longtail(rows: list[dict], output: Path, output_macros: Path | None =
         interpolation="nearest",
     )
     ax.set_yticks(range(len(_LAYER_ROWS)))
-    ax.set_yticklabels(_LAYER_ROWS, fontsize=9)
+    ax.set_yticklabels(_LAYER_ROWS, fontsize=13)
     ax.set_xticks([])
-    ax.set_xlabel(
-        f"{n} reference plants, sorted by visibility (documented head left, "
-        "under-documented tail right)",
-        fontsize=9,
-    )
     # Faint separators between layer rows.
     for y in range(1, len(_LAYER_ROWS)):
         ax.axhline(y - 0.5, color=COLOR_NEUTRAL, linewidth=0.4)
@@ -286,12 +281,6 @@ def render_longtail(rows: list[dict], output: Path, output_macros: Path | None =
         spine.set_color(COLOR_REFERENCE)
         spine.set_linewidth(0.6)
 
-    ax.set_title(
-        f"Recognition long tail: Gold {counts['gold']}/{n}, "
-        f"GEM {counts['gem']}/{n}, Wikipedia {counts['wiki']}/{n}, "
-        f"OSM {counts['osm']}/{n}",
-        fontsize=9,
-    )
     fig.tight_layout()
     output.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(output, bbox_inches="tight")
