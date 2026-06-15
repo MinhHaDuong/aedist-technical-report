@@ -901,9 +901,7 @@ conjunction remains future work.
 \subsection*{What system do the findings imply?}\label{sec:ext-system}
 \addcontentsline{toc}{subsection}{What system do the findings imply?}
 
-We now have a benchmark that scores model replies on four dimensions.
-
-First, scoring the output is not enough: a method benchmark must also
+Scoring the output is not enough: a method benchmark must also
 score the resources a method spends. To the §\ref{sec:quality} output
 dimensions — accuracy, coherence, provenance, temporality — it adds a
 second axis, \emph{method quality}: whether the process is auditable,
@@ -920,11 +918,9 @@ the gain is model-dependent and the multi-turn protocol does not extend
 it; with shared documents the weakest agents may approach the Wikipedia
 coverage bar, yet none reaches exhaustive research-dataset quality.
 
-The benchmark is results-based, so it guides future work beyond
-retrieval augmentation rather than prescribing an architecture:
-§\ref{sec:discussion} reads what the F1 metric and the four dimensions
-can and cannot support, and §\ref{sec:future} turns the gap into a
-research programme.
+The benchmark is results-based: it guides future work beyond retrieval
+augmentation rather than prescribing an architecture, and §\ref{sec:future}
+turns the gap into a research programme.
 
 \section{Discussion}\label{sec:discussion}
 
@@ -1141,9 +1137,7 @@ fitted in-sample and should be validated before the pipeline is applied
 to a different country or asset class. The open question is not whether
 the method replicates but whether its write path — extraction, entity
 resolution, and quality grading — generalises out-of-distribution, and
-which parameters are universal versus locally tuned. National power
-planning corpora vary in language, regulatory structure, and status
-classification convention.
+which parameters are universal versus locally tuned.
 
 \section{Conclusion}\label{sec:conclusion}
 
@@ -1177,11 +1171,9 @@ aggregates to is Figure~\ref{fig:reliability}). Fusion recovers coverage: poolin
 models finds plants no single model reliably finds, and requiring two
 models to agree nearly eliminates false positives (§\ref{sec:fusion}).
 The path to research-grade
-quality runs through the sourcing pipeline: assembling, curating, and
-resolving documents in an auditable knowledge base from which
-statistical tables derive as dated snapshots, with human-in-the-loop
-resolution and multi-run fusion, not through a stronger model or a
-single heroic prompt. For the many countries whose statistical systems
+quality runs through the sourcing pipeline: an auditable knowledge base
+from which tables derive as dated snapshots, with humans in the loop and
+multi-run fusion, not a stronger model or a single heroic prompt. For the many countries whose statistical systems
 cannot yet supply machine-readable asset inventories, that is where the
 investment should go.
 
