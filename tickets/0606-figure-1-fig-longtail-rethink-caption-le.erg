@@ -1,0 +1,103 @@
+%erg 0.1
+Title: Figure 1 (fig:longtail): rethink caption (lead with 177-record gold register, no filenames, drop last sentence); decide GEM-not-in-GOLD + matcher-shippability
+Created: 2026-06-15
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-15T07:37Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Reading-3 (tracker [[0605]]). Four author notes on Figure 1
+(`fig:longtail`, `slides/manuscript/main.tex:234–247`, emitter
+`src/aedist/plot_longtail_recognition.py`, counts in
+`report/inputs/generated/macros_longtail.tex`: `\LongtailReference`=177,
+`\LongtailGem`=157). Two are concrete caption edits; two are decisions
+that need investigation.
+
+## A. Caption rewrite (concrete)
+
+Current caption leads with "The reference inventory covers plants that no
+other public source holds." and ends "Counts re-derived from
+\texttt{data/reference/tab\_longtail\_layers.csv}."
+
+1. **Lead with the goal message.** First sentence should be: the task
+   goal is a "gold" reference register of Vietnam's thermal power sector
+   with \LongtailReference{} records (177), more comprehensive than all
+   other publicly available inventories. Use the macro, not a typed 177.
+2. **Drop the last sentence** ("Counts re-derived from \texttt{…csv}").
+3. **No filenames in the caption** — this removes the same `\texttt{…csv}`.
+   Keep the layer explanation (reference / GEM \LongtailGem{} / Wikipedia
+   / OSM) and the unique-tail value point; just reorder so the gold-register
+   message leads.
+
+## B. No filenames in main body AND captions (POLICY CHANGE — flag)
+
+The author wants NO filenames anywhere in the main body OR captions. This
+**reverses finding 22 / ticket 0591's caption exemption** (which allowed
+captions to reference code/paths). Action:
+- Remove the filename from the Figure 1 caption (covered by A).
+- Sweep ALL figure/table captions in `main.tex` for `\texttt{…}`/`\fpath{}`
+  filenames and remove/relocate them (the source CSV belongs in the
+  Makefile DAG / annex, not the caption). `power=plant` at `:192` is an
+  OSM tag, not a filename — leave it.
+- Record the policy in `docs/editorial-brief.md` (supersedes the 0591
+  caption exemption); update any guard accordingly.
+- If the caption sweep is large, split it into its own child of 0605.
+
+## C. DECIDE: hiding plants in GEM but not in GOLD?
+
+Figure 1 is reference-anchored: rows = the 177 gold plants, checked
+against GEM/Wiki/OSM. Plants present in GEM but ABSENT from gold are not
+shown. Question: does this hide gold's own gaps / overstate the
+"more comprehensive than all other inventories" claim?
+- Investigate `plot_longtail_recognition.py` + the reference vs GEM data:
+  how many GEM plants are not in gold? Are any genuine omissions?
+- Propose: either (a) keep reference-anchored and justify in caption, or
+  (b) add a note/inset on GEM-only plants. **Author decides.** May spawn
+  a sub-child of 0605 if a figure change is needed.
+
+## D. DECIDE: shippable with visible matcher issues?
+
+The recognition layers are computed via the matcher (the LP/MILP matcher;
+see finding 23 / 0591). If visible mismatches appear in the rendered
+figure, is it shippable?
+- Inspect `fig_longtail_recognition.pdf` for visible matcher errors.
+- Propose: ship as-is with a caveat, fix the matcher (links to the matcher
+  limitation work), or annotate. **Author decides.** May spawn a sub-child.
+
+## Relevant files
+
+- `slides/manuscript/main.tex:234–247` (caption), plus all caption sites
+  for the filename sweep (B).
+- `src/aedist/plot_longtail_recognition.py` — emitter (C, D).
+- `report/inputs/generated/macros_longtail.tex` — `\LongtailReference`,
+  `\LongtailGem`.
+- `docs/editorial-brief.md` — record the caption-filename policy change.
+
+NOTE (separate): slides count mismatch — `\NumRefPlants` is 177 in
+`macros.tex` but 173 in `macros_slides.tex`. Out of scope for this figure
+ticket; flag to author (may need its own ticket).
+
+## Test
+
+- Red first: `@pytest.mark.adherence` negative guards — no `\texttt`/`\fpath`
+  filename in any figure/table caption of `main.tex`; Figure 1 caption
+  does not contain the CSV filename. (CI polarity: forbid filenames in
+  captions; do not pin the new caption wording.)
+
+## Verification
+
+- [ ] Figure 1 caption leads with the gold-register/177-record message
+      (macro-sourced), last sentence dropped, no filename.
+- [ ] No filenames in any main.tex caption; brief policy recorded.
+- [ ] GEM-not-in-GOLD question investigated; decision recorded (and
+      sub-child filed if a figure change is chosen).
+- [ ] Matcher-shippability question investigated; decision recorded.
+- [ ] `make check` passes; manuscript builds.
+
+## Exit criteria
+
+- Caption reworked per A/B; C and D investigated with a recorded author
+  decision (or sub-children filed); `make check` green.
