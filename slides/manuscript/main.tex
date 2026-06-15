@@ -478,16 +478,13 @@ floor — what a bare model produces from memory — and
 \section{Experiment 1: parametric baseline}\label{sec:exp1}
 
 Submitting a direct query to a large language model produces an
-inventory-shaped answer, but not one that meets statistical or
-scientific quality standards. Numbers shift between runs, citations are
-absent or fabricated, and there is no way to tell which cells one should
-trust.
+inventory-shaped answer. Does that meet statistical or scientific
+quality standards? Numbers shift between runs, citations are absent or
+fabricated, and there is no way to tell which cells one should trust.
 
-\textbf{Cohorts.} The sweep dispatched 16 models. Two were dropped before
-analysis, leaving the 14-model analysis cohort that backs
-every per-model number, Figure~\ref{fig:direct-base},
-Figure~\ref{fig:cost-quality}, and Figure~\ref{fig:reliability}. Every
-figure caption below names the cohort it draws on.
+We present results for a cohort of \NumCensusModels{} models of assorted
+sizes, from five leading AI labs (see
+Figure~\ref{fig:capability-timeline}).
 
 \begin{figure}[p]
 \centering
@@ -504,21 +501,18 @@ marks Wikipedia's coverage of \WikiReviewed{} assets
 models could be expected to pass.}\label{fig:direct-base}
 \end{figure}
 
-\textbf{Experiment 1 — Parametric baseline.} We query the fourteen
-analysis-cohort language models; they are
-listed on Figure~\ref{fig:reliability} and include Claude, DeepSeek,
-Mistral and Qwen at various sizes from workstation to frontier, with a
-fixed inventory-specification prompt (the baseline single-shot prompt, reproduced
-verbatim in \ref{sec:annex-exp1}). No documents are
-provided; models draw exclusively on parametric knowledge and receive a
-system instruction forbidding web search. Each model is queried five
-times at temperature zero, yielding \ExpOneNRuns{} runs against a \NumRefPlants-plant
+\textbf{Experiment 1 — Parametric baseline.} We query the
+analysis-cohort language models (per-model results in
+Figure~\ref{fig:reliability}) with a fixed inventory-specification prompt
+(the baseline single-shot prompt, reproduced verbatim in
+\ref{sec:annex-exp1}). No documents are provided; models draw
+exclusively on parametric knowledge and receive a system instruction
+forbidding web search. Each model is queried five times at temperature
+zero, yielding \ExpOneNRuns{} runs against a \NumRefPlants-plant
 reference inventory of Vietnamese thermal power plants (coal and gas,
-all lifecycle statuses). Runs are evaluated by matching extracted plant
-names against the reference using fuzzy string matching, yielding
-row-level precision, recall, and F1; fuel type, operational status, and
-province accuracy are scored at the cell level for matched rows. Cost in
-USD and wall-clock time are recorded per run.
+all lifecycle statuses). Each run is then scored on the quality
+dimensions of §\ref{sec:quality}. Cost in USD and wall-clock time are
+recorded per run.
 
 \textbf{A coverage bar already in the training corpus.} These scores
 need an upper bound the reader can judge them against. We call that
