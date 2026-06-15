@@ -45,9 +45,11 @@ Usage::
 """
 
 import argparse
+import csv
 import logging
 from pathlib import Path
 
+from .config import SOURCE_CONCORDANCE_CSV
 from .exp1_cost_quality import N_REFERENCE_PLANTS, load_cost_quality_rows
 from .util import (
     COLOR_REFERENCE,
@@ -58,6 +60,17 @@ from .util import (
 )
 
 log = logging.getLogger(__name__)
+
+
+def _wiki_coverage_count() -> int:
+    """Wikipedia reviewed coverage of the reference from the 0486 artifact.
+
+    Reads the committed concordance CSV so this line tracks \\WikiReviewed
+    (single source of truth shared with the Exp2 coverage figure).
+    """
+    with open(SOURCE_CONCORDANCE_CSV, newline="", encoding="utf-8") as fh:
+        total = next(r for r in csv.DictReader(fh) if r["status"] == "All")
+    return int(total["wiki_matched"])
 
 
 # Family assignment for the 2-panel split. Panel A holds Western families
@@ -99,6 +112,15 @@ def _configure_axes(ax, xscale: str, xmax: float) -> None:
         linestyle="--",
         linewidth=1.0,
         alpha=0.7,
+        zorder=1,
+    )
+    # Wikipedia coverage bar (ticket 0622): light-grey dotted line at Wikipedia's
+    # reviewed coverage of the reference (\\WikiReviewed, single source of truth).
+    ax.axhline(
+        _wiki_coverage_count(),
+        color="0.6",
+        linestyle=":",
+        linewidth=1.0,
         zorder=1,
     )
     if xscale == "log":

@@ -254,7 +254,48 @@ def test_main_writes_figure(tmp_path, monkeypatch):
     assert figure_path.stat().st_size > 0
 
 
-# --- adherence-style checks on the manuscript caption ----------------------
+# --- adherence-style checks on the emitter and manuscript caption ----------
+
+@pytest.mark.adherence
+def test_cost_quality_has_wikipedia_line() -> None:
+    """0622: plot_cost_quality must draw a Wikipedia coverage axhline via _wiki_coverage_count."""
+    import inspect
+
+    from aedist import plot_cost_quality
+
+    src = inspect.getsource(plot_cost_quality)
+    assert "_wiki_coverage_count" in src, (
+        "plot_cost_quality must define/call _wiki_coverage_count for the Wikipedia bar (ticket 0622)."
+    )
+    assert "wiki_matched" in src, (
+        "plot_cost_quality must read wiki_matched from the concordance CSV."
+    )
+
+
+def test_cost_quality_wikipedia_axhline_present(tmp_path) -> None:
+    """0622: _configure_axes must draw a dotted Wikipedia coverage line."""
+    rows = build_cost_quality_rows(SAMPLE_METRICS)
+    figure_path = tmp_path / "fig.pdf"
+    write_pdf(rows, figure_path)
+    # The figure renders without error; check axes for the dotted line.
+    # Re-render into memory so we can inspect the axes.
+    import matplotlib
+    import matplotlib.pyplot as plt
+    matplotlib.use("Agg")
+    from aedist.plot_cost_quality import _configure_axes
+
+    fig, ax = plt.subplots()
+    _configure_axes(ax, "linear", 30.0)
+    hlines = [
+        line for line in ax.lines
+        if hasattr(line, "get_xdata") and list(line.get_xdata()) == [0.0, 1.0]
+    ]
+    dotted = [line for line in hlines if line.get_linestyle() in (":", "dotted")]
+    assert dotted, (
+        "No dotted axhline in _configure_axes; the Wikipedia coverage bar is missing (ticket 0622)."
+    )
+    plt.close(fig)
+
 
 @pytest.mark.adherence
 def test_caption_has_no_stale_pilot_numbers():
