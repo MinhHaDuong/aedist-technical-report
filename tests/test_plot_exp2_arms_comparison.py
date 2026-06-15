@@ -227,3 +227,45 @@ def test_exp1_slugs_resolve_in_mart() -> None:
             f"Exp1 slug {slug!r} for agent {agent!r} not found in mart summary; "
             f"available slugs: {sorted(summary)}"
         )
+
+
+@pytest.mark.adherence
+def test_exp2_coverage_uses_wiki_not_gem() -> None:
+    """0622: the Exp2 coverage emitter reads wiki_matched, not gem_matched,
+    for the ceiling line (GEM replaced by Wikipedia in ticket 0622)."""
+    import inspect
+
+    from aedist import plot_exp2_arms_comparison
+
+    src = inspect.getsource(plot_exp2_arms_comparison)
+    assert "_gem_coverage" not in src, (
+        "plot_exp2_arms_comparison still references _gem_coverage; "
+        "ticket 0622 replaced it with _wiki_coverage."
+    )
+    assert "_wiki_coverage" in src, (
+        "plot_exp2_arms_comparison must define/call _wiki_coverage for the Wikipedia bar."
+    )
+    assert "wiki_matched" in src, (
+        "plot_exp2_arms_comparison must read wiki_matched from the concordance CSV."
+    )
+
+
+def test_exp2_coverage_wikipedia_line_drawn(tmp_path) -> None:
+    """0622: the coverage panel must draw a Wikipedia coverage axhline."""
+    csv_path = tmp_path / "runs.csv"
+    _write_csv(csv_path, _minimal_rows())
+    rows = _load_csv(csv_path)
+    fig = make_figure(rows, tmp_path / "fig.pdf", panel="coverage", exp1_summary={})
+    ax = fig.axes[0]
+    # axhlines appear as Line2D with xdata spanning (0,1) and linewidth ~1
+    hlines = [
+        line for line in ax.lines
+        if hasattr(line, "get_xdata") and list(line.get_xdata()) == [0.0, 1.0]
+    ]
+    # There should be at least 3 horizontal lines: y=0 (solid), reference (dashed), Wikipedia (dotted)
+    assert len(hlines) >= 3, (
+        f"Expected at least 3 axhlines in the coverage panel (zero, reference, Wikipedia), "
+        f"got {len(hlines)}: {[(ln.get_ydata(), ln.get_linestyle()) for ln in hlines]}"
+    )
+    dotted = [line for line in hlines if line.get_linestyle() in (":", "dotted")]
+    assert dotted, "No dotted axhline found; the Wikipedia coverage bar is missing."
