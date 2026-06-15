@@ -1,0 +1,62 @@
+%erg 0.1
+Title: Global caption sweep: text and captions standalone at maths/ideas level; code/filenames only in annexes (canonical finding-22)
+Created: 2026-06-15
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-15T10:41Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Reading-3 (tracker [[0605]]). One of the THREE global sweeps that run
+FIRST (with [[0620]] terms and [[0615]] coverage-bar), before the region
+edits. Extracted from [[0606]]-B so it can be raided as a standalone
+sweep.
+
+Canonical re-articulation of finding 22 (author, 2026-06-15): the main
+text and the figure/table captions must be **standalone at the maths /
+ideas level**, with `\ref` to the annexes for detail. **Only the annexes
+may reference the code implementation** (file paths, function/module
+names, config keys, filenames).
+
+## Actions
+
+1. Sweep `slides/manuscript/main.tex`:
+   - **Captions** (figure + table): remove every `\texttt{…}`/`\fpath{…}`
+     filename / code identifier; if the detail is load-bearing, move it to
+     the relevant annex and `\ref` it. Keep content values that are not
+     code (OSM tag `power=plant`, a Wikipedia revision id, quoted status
+     vocabulary).
+   - **Main-text body** (§1–§9 + Conclusion): same — no code references;
+     relocate to annexes. (This overlaps 0591's §1–§9 code-ref work but
+     extends the standard to captions, which 0591 exempted.)
+   - **Annexes:** code references are allowed; do not strip them there.
+2. Record the policy in `docs/editorial-brief.md` (supersedes 0591's
+   caption exemption).
+
+## Coordination
+
+- The caption-REWRITE tickets ([[0611]], [[0616]], [[0617]], [[0623]],
+  [[0625]], and 0606-A) already drop filenames in their new captions and
+  are Blocked-by this sweep — they land policy-compliant. This sweep
+  handles the captions those tickets do not replace.
+- Run before region tickets (sweeps-first).
+
+## Test
+
+- Red first: `@pytest.mark.adherence` — no `\texttt`/`\fpath` filename in
+  ANY figure/table caption of `main.tex`; no code identifier in §1–§9
+  body (annex exempt). Class-regex guard, not per-instance pins.
+
+## Verification
+
+- [ ] No filenames/code refs in any caption or §1–§9 body; annex refs
+      intact.
+- [ ] Editorial-brief policy recorded (supersedes 0591 caption exemption).
+- [ ] `make check` passes; manuscript builds.
+
+## Exit criteria
+
+- Text + captions standalone at the maths/ideas level; code only in
+  annexes; `make check` green.

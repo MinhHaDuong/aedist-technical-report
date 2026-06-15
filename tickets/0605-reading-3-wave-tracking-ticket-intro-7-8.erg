@@ -136,6 +136,10 @@ is merged and verified — same discipline as the reading-2 tracker 0578.
   different matchers (GEM/Wiki LP-reconciliation vs OSM name-only fuzzy);
   audit artifact-vs-real, then fix sub-child or documented non-finding.
 
+- [[0633]] — Global caption sweep (text+captions standalone at maths/ideas
+  level; code/filenames only in annexes; canonical finding-22). Extracted
+  from 0606-B; one of the 3 global sweeps. [[0601]] SUPERSEDED by 0623.
+
 (More children may be appended as the reading continues.)
 
 ## Cross-cutting policy (reading-3)
@@ -148,6 +152,19 @@ is merged and verified — same discipline as the reading-2 tracker 0578.
   standalone Scoring Annex A (hierarchical scoring + four dimensions in
   turn + owns figure S1, shortened caption), referenced from §3 as the
   implementation. Reorders the appendix — watch annex-letter refs.
+
+## Execution (Teams worklist, sweeps-first)
+
+Driven via the Teams shared worklist; workers worktree-isolated, PR-not-merge,
+lead gate-merges in dep order. Buckets:
+- **Sweeps (roots, run first):** 0620 (terms), 0615 (coverage bar), 0633
+  (captions). Whole-file; merge sequentially with rebase.
+- **Region/figure mechanical (blockedBy the 3 sweeps):** 0598, 0599, 0603
+  (+0598), 0604, 0607, 0608, 0610, 0611, 0612, 0613, 0614, 0616, 0617 (+0598),
+  0618, 0619, 0621, 0623, 0625, 0626, 0627, 0629 (+0599,0628), 0631 (+0630).
+- **Emitter/slides (no sweep dep):** 0622, 0624 (+0622), 0609.
+- **Interactive (this session, held):** 0630, 0606 (+0632), 0628 (+0627),
+  0602 (+0607,0608,0610), 0632.
 
 ## Wave plan (mirrors 0578)
 
