@@ -1,0 +1,25 @@
+%erg 0.1
+Title: Shave section 3: drop weak-internal-coherence deferral, 'reliable on attributes' clause, 'Strong provenance means more than' opener
+Created: 2026-06-15
+Author: HDMX-coding-agent
+Closed: §3/§4 shaved
+
+--- log ---
+2026-06-15T18:51Z HDMX-coding-agent created
+
+2026-06-15T18:55Z HDMX-coding-agent closed — §3/§4 shaved
+--- body ---
+## Context
+Shave §3 (Quality dimensions). Author directives 2026-06-15: drop three non-essential bits.
+
+## Actions (done)
+- Accuracy item: dropped 'or conversely reliable on attributes once the correct asset has been identified.'
+- Coherence item: dropped 'This paper measures weak-internal coherence; the external axis is deferred to the Discussion.'
+- Provenance item: dropped the opener 'Strong provenance means more than attaching a plausible citation:' (sentence now opens 'The cited source must actually support the value claimed').
+
+## Exit criteria
+- Three §3 phrases gone; build clean.
+
+## Additional edits (same shave pass)
+- §3: 'dataset and its sources' -> 'model reply'; dropped 'The screening logic of this paper follows from that asymmetry:' opener; dropped 'and the cell-run-model hierarchy as version 0.1 of the benchmark' + blended the scoring-annex sentence into the previous paragraph.
+- §4: 'varies along four axes:' -> 'varies on:'; dropped 'The first two are properties of the model; the last two are properties of the software that wraps it.'
