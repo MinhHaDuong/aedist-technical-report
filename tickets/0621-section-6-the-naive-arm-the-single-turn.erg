@@ -1,0 +1,70 @@
+%erg 0.1
+Title: Section 6: 'The naive arm...' -> 'The single-turn arm...'; positively explain the Exp1 difference (web search ON, direct vendor API vs OpenRouter; provider uncontrolled in both)
+Created: 2026-06-15
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-15T08:42Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Reading-3 (tracker [[0605]]). §6 (Exp 2) paragraph at
+`slides/manuscript/main.tex:721–725`:
+
+> The naive arm is an independent sweep, not a [comparable] baseline.
+> Read with that caveat, setting each agent's naive-arm mean F1 …
+
+Author: rename to "The single-turn arm …" and, instead of saying it is
+"not comparable", POSITIVELY explain how it differs from the Exp 1
+baseline:
+- web search is **ON** (Exp 1 had it off);
+- it is a **direct vendor-API call**, whereas Exp 1 went through
+  OpenRouter;
+- but the ultimate provider actually running the LLM is **uncontrolled in
+  both cases** (OpenRouter routes; vendor-direct still runs on the
+  vendor's shifting infra) — so the difference is stated as the two
+  explicit changes, not as an unquantified "not comparable" hand-wave.
+
+## Actions
+
+1. "The naive arm" → "The single-turn arm" (consistent with the rename in
+   [[0620]]).
+2. Replace the "independent sweep, not a comparable baseline / read with
+   that caveat" framing with the positive explanation above: name the two
+   controlled differences (web search ON; direct API vs OpenRouter) and
+   note the provider is uncontrolled either way. Keep it factual and
+   short; this is the honest comparison, not a disclaimer.
+
+## Ground truth
+
+- The OpenRouter-vs-vendor-direct facts are documented in the annex
+  (`:1981` "OpenRouter is not used here — vendor-direct invocation …",
+  `:1677`, `:1719`). Keep the §6 version a one/two-sentence positive
+  statement and let the annex carry the mechanics (standalone-text policy
+  [[0606]]).
+
+## Relevant files
+
+- `slides/manuscript/main.tex:721–725`.
+- annex OpenRouter/vendor-direct notes (`:1677`, `:1719`, `:1981`).
+
+## Test
+
+- Red first: `@pytest.mark.adherence` negative guard — the "independent
+  sweep, not a … baseline" / "Read with that caveat" phrasing is absent
+  from §6 (CI polarity: forbid the not-comparable hand-wave; do not pin
+  the new positive wording).
+
+## Verification
+
+- [ ] "The single-turn arm" replaces "The naive arm"; the comparison is
+      stated positively (web search ON; direct API vs OpenRouter; provider
+      uncontrolled in both).
+- [ ] Consistent with the [[0620]] rename.
+- [ ] `make check` passes; manuscript builds.
+
+## Exit criteria
+
+- §6 single-turn-arm paragraph explains the Exp-1 difference positively;
+  `make check` green.

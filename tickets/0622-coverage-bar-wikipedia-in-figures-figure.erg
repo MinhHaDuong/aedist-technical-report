@@ -1,0 +1,76 @@
+%erg 0.1
+Title: Coverage bar (Wikipedia) in figures: Figure 6 plot Wikipedia not GEM + caption; Figure 4 add Wikipedia bar (light grey)
+Created: 2026-06-15
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-15T08:42Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Reading-3 (tracker [[0605]]). The "coverage bar" concept ([[0615]]) is
+Wikipedia's coverage of the reference (\WikiReviewed = 130 = 73%). The
+author wants that bar shown in the figures, in place of / in addition to
+the current reference lines.
+
+## A. Figure 6 (fig:exp2-arms coverage): plot Wikipedia, not GEM
+
+Emitter `src/aedist/plot_exp2_arms_comparison.py` currently draws a GEM
+ceiling line: `_gem_coverage()` (`:192–202`, reads `gem_matched` from the
+concordance CSV) → `ax.axhline(_gem_n, color="0.6", linestyle=":")`
+(`:261`). Replace the GEM line with a **Wikipedia coverage** line
+(\WikiReviewed = 130; reviewed-coverage count), same light-grey dotted
+style.
+- Switch the data source from GEM-matched to Wikipedia-reviewed coverage
+  (use the same committed artifact / a `wiki_*` column, or the macro
+  source — derive-from-artifact, single source of truth).
+- **Fix the caption** (`fig:exp2-arms`, `main.tex` ~`:757–764`): the
+  "dotted grey line is the best independent public database" (GEM) →
+  describe it as Wikipedia's coverage / the coverage bar. Coordinate with
+  [[0601]] (that ticket also edits this caption — keep consistent).
+
+## B. Figure 4 (fig:cost-quality): ADD a Wikipedia bar (same light grey)
+
+Emitter `src/aedist/plot_cost_quality.py` draws a reference line at the
+full reference count (`:96` axhline). ADD a second horizontal line at the
+Wikipedia coverage (\WikiReviewed = 130), same light-grey dotted style as
+Figure 6's, so the coverage bar is visible on the cost–coverage scatter.
+- Coordinate with [[0616]] (Figure 4 caption rework) — the new caption
+  should mention the Wikipedia coverage bar.
+
+## Consistency
+
+- Same visual style for the Wikipedia line in both figures (light grey
+  "0.6", dotted). Numbers from one source of truth (the Wikipedia
+  coverage macro/artifact, \WikiReviewed = 130).
+- Regenerate both PDFs via `render.mk`; commit them.
+
+## Relevant files
+
+- `src/aedist/plot_exp2_arms_comparison.py` (`_gem_coverage` → Wikipedia,
+  `:192`, `:261`).
+- `src/aedist/plot_cost_quality.py` (add Wikipedia axhline, `:96` area).
+- `slides/manuscript/main.tex` — fig:exp2-arms caption (A), fig:cost-quality
+  caption (B, via 0616).
+- `report/inputs/generated/fig_exp2_arms_coverage.pdf`,
+  `fig_direct_cost_quality.pdf` (regenerate).
+
+## Test
+
+- Red first: `@pytest.mark.adherence`/unit — the Exp2 coverage emitter no
+  longer reads GEM for the ceiling line (signature check), and a Wikipedia
+  coverage line is drawn in both emitters; figure captions reference
+  Wikipedia/coverage bar not GEM.
+
+## Verification
+
+- [ ] Figure 6 shows the Wikipedia coverage bar (not GEM); caption fixed.
+- [ ] Figure 4 shows an added Wikipedia coverage bar (light grey).
+- [ ] Both PDFs regenerated; numbers from one source.
+- [ ] `make check` passes; manuscript builds.
+
+## Exit criteria
+
+- Wikipedia coverage bar shown in Figures 4 and 6 (GEM line replaced in
+  6); captions consistent; `make check` green.
