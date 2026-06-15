@@ -185,8 +185,12 @@ class TestManuscriptConsistency:
     _CSV_PATH = Path("report/inputs/generated/tab_exp2_wiki_compliance.csv")
 
     def test_optimised_arm_count_matches(self):
-        """The phrase 'N of the 20 optimised-arm runs' in main.tex must agree
-        with the CSV count of optimised rows having any banned citation."""
+        """The phrase 'N of the 20 multi-turn-arm runs' in main.tex must agree
+        with the CSV count of optimised rows having any banned citation.
+
+        The manuscript renamed the query-mode label optimised → multi-turn
+        (ticket 0620); the CSV ``arm`` value stays ``optimised`` (data schema,
+        unchanged), so only the prose-side phrase moved."""
         if not self._CSV_PATH.exists():
             pytest.skip("CSV not yet generated")
 
@@ -203,10 +207,10 @@ class TestManuscriptConsistency:
 
         # Parse main.tex independently (normalized: line-wraps joined)
         text = body()
-        pattern = re.compile(r"(\d+)\s+of the 20 optimised-arm runs")
+        pattern = re.compile(r"(\d+)\s+of the 20 multi-turn-arm runs")
         match = pattern.search(text)
         assert match is not None, (
-            "main.tex must contain '... N of the 20 optimised-arm runs'"
+            "main.tex must contain '... N of the 20 multi-turn-arm runs'"
         )
         prose_count = int(match.group(1))
 
