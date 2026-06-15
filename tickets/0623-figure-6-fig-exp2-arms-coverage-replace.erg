@@ -1,0 +1,69 @@
+%erg 0.1
+Title: Figure 6 (fig:exp2-arms coverage): replace caption (5-bar map, single-shot/multi-turn, RAG, ref Exp2 annex) — supersedes 0601
+Created: 2026-06-15
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-15T08:54Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Reading-3 (tracker [[0605]]). Replace the whole caption of Figure 6
+(`fig:exp2-arms`, the coverage figure, `slides/manuscript/main.tex`
+~`:756–764`) with the author's 5-bar map (uses the new single-shot/
+multi-turn terms from [[0620]] and "RAG" for the documents arms):
+
+> Average number of recognized assets (coverage) across five runs
+> (whiskers) for four SOTA models. Dashed bar 1 is Experiment 1,
+> single-shot no web: Opus worked better that way. Bars 2 and 4 are
+> single-shot queries, 3 and 5 are multi-turn: the multi-turn harness
+> failed to help. Bars 4 and 5 are RAG: providing documents did increase
+> coverage. Source: author; see \ref{sec:annex-exp2}.
+
+Bar → arm map (verify against the emitter `plot_exp2_arms_comparison.py`):
+bar 1 = Exp 1 memory baseline (hatched); bar 2 = arm 1 (single-shot,
+no-docs); bar 3 = arm 2 (multi-turn, no-docs); bar 4 = arm 3 (single-shot,
+docs/RAG); bar 5 = arm 4 (multi-turn, docs/RAG).
+
+Notes:
+- "[REF to EXP 2]" → `\ref{sec:annex-exp2}` (no hardcoded annex letter).
+- Use single-shot/multi-turn ([[0620]]); literal em dash if any.
+- Confirm the bar order in the rendered figure matches the caption's
+  numbering before finalizing (don't assert "bar 4 = RAG single-shot" if
+  the emitter orders them differently).
+
+## Supersedes / coordinates
+
+- **Supersedes [[0601]]** for this caption: 0601 flagged the blue/red
+  colour claim and "two of them"→"rightmost two". The new caption has no
+  blue/red claim and names the RAG arms explicitly, so it subsumes 0601's
+  caption edits — mark 0601 done-by-0623 (or fold) at raid time. (0601's
+  colour point is about the *figure encoding* — keep that check if it was
+  about the bars' colours, but the caption no longer asserts blue/red.)
+- **Coordinates with [[0622]]**: if the Wikipedia coverage bar/line is
+  added to Figure 6, add a short clause to this caption naming it.
+- **Coordinates with [[0624]]**: font-size fix (same figure).
+
+## Relevant files
+
+- `slides/manuscript/main.tex` ~`:756–764` (caption).
+- `src/aedist/plot_exp2_arms_comparison.py` (bar-order ground truth).
+
+## Test
+
+- Red first: `@pytest.mark.adherence` — caption refs `sec:annex-exp2`, no
+  hardcoded annex letter, no `\texttt` filename; uses single-shot/
+  multi-turn (not naive/optimised).
+
+## Verification
+
+- [ ] Figure 6 caption replaced with the 5-bar-map version; bar→arm
+      numbering verified against the figure; `\ref{sec:annex-exp2}`.
+- [ ] Consistent with 0620 (terms), 0622 (Wikipedia line), 0624 (fonts).
+- [ ] `make check` passes; manuscript builds.
+
+## Exit criteria
+
+- Figure 6 caption is the author's 5-bar map with annex ref; `make check`
+  green.

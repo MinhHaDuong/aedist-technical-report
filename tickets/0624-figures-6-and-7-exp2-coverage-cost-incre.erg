@@ -1,0 +1,63 @@
+%erg 0.1
+Title: Figures 6 and 7 (Exp2 coverage + cost): increase font sizes — unreadable at column width
+Created: 2026-06-15
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-15T08:55Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Reading-3 (tracker [[0605]]). Figures 6 (`fig:exp2-arms`, coverage) and 7
+(`fig:exp2-arms-cost`, cost) are unreadable at column width — fonts too
+small. Both are produced by `src/aedist/plot_exp2_arms_comparison.py`
+(panels coverage + cost), included at `\linewidth`.
+
+Current font sizes are small (`plot_exp2_arms_comparison.py`): bar value
+labels `fontsize=6.0` (`:334`), x-tick labels `7.5` (`:342`), y-ticks
+`7.5` (`:346`), axis title `9` (`:345`), condition legend `8.5` (`:389`),
+in-plot annotations `8` (`:263`, `:276`), suptitle `13` (`:388`).
+
+## Actions
+
+1. Increase the font sizes so the figures are legible at one-column width
+   (the 6.0 / 7.5 / 8 / 8.5 / 9 values are the offenders — bump
+   proportionally; the 6.0 bar labels especially). Prefer setting a
+   sensible base via `rcParams`/a single scale factor over hand-tuning
+   each call, so both panels stay consistent.
+2. Keep the layout from overflowing — if larger fonts crowd the bars,
+   adjust figure size / spacing so nothing clips. Verify against the
+   rendered PDF at `\linewidth`.
+3. Regenerate `fig_exp2_arms_coverage.pdf` and `fig_exp2_arms_cost.pdf`
+   via the `render.mk` target; commit both.
+
+## Coordination
+
+- [[0622]] (Wikipedia line) and [[0623]] (Figure 6 caption) touch the same
+  figure/emitter — sequence/stack to avoid emitter conflicts; the
+  GEM→Wikipedia annotation text (`:263`) is also a font/label site.
+
+## Relevant files
+
+- `src/aedist/plot_exp2_arms_comparison.py` — all the `fontsize=`/
+  `labelsize=` sites above.
+- `report/inputs/generated/fig_exp2_arms_coverage.pdf`,
+  `fig_exp2_arms_cost.pdf` (regenerate).
+
+## Test
+
+- Red first: a unit/adherence check that the emitter's base font size is
+  ≥ a legible threshold (e.g. no `fontsize` below N in the script), so the
+  regression (tiny fonts) cannot silently return.
+
+## Verification
+
+- [ ] Figures 6 and 7 legible at column width; no clipping/overflow.
+- [ ] Both PDFs regenerated and committed.
+- [ ] `make check` passes; manuscript builds.
+
+## Exit criteria
+
+- Exp 2 coverage + cost figures readable at `\linewidth`; `make check`
+  green.
