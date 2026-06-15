@@ -672,17 +672,6 @@ Monitor, covers only \GemReviewedPct\% of the reference after light review
 (\ref{sec:annex-exp1}); the frontier agents are therefore measured
 against an inventory no single open database fully reproduces.
 
-The quality dimensions this section measures are the
-\emph{operational and accuracy} ones: row-level F1 against the
-reference, coverage (plants enumerated), and per-row provenance counts
-(Source 1 / Source 2 citation presence,
-Figure~\ref{fig:coverage-certainty} in \ref{sec:annex-exp2}). The
-§\ref{sec:quality} dimensions that require \emph{peer cross-evaluation}
-— coherence, provenance support, and temporality scored on a rubric by
-judging agents — are out of scope here; this section's claims rest on
-the F1, coverage, and citation-count metrics, which are computed
-mechanically without a judging model.
-
 \textbf{Experiment 2 — frontier agents (\ref{sec:annex-exp2}).} We
 conduct an experiment with four cloud AI agents at the May-2026
 commercial frontier, each with extended reasoning and web access,
@@ -690,10 +679,7 @@ queried over direct vendor APIs (no browser automation): Anthropic
 Claude Opus 4.6 (US, web\_search + adaptive thinking), OpenAI GPT-5.5
 (US, Responses API + web\_search + reasoning), Mistral Large 2512 (FR,
 Agents API + web\_search connector), and Qwen3.7 Max via DashScope (CN,
-web\_search inside thinking mode). The fourth slot is
-hypothesis-relevant rather than decorative: Chinese-language investor
-and trade documents on Vietnamese power assets are under-indexed by
-Western search. Each agent is run through a 2×2 factorial,
+web\_search inside thinking mode). Each agent is run through a 2×2 factorial,
 crossing \emph{query mode} (single-shot vs multi-turn) with \emph{documents}
 (absent vs a curated reference pack), N=5 per cell, four arms in all
 (Table~\ref{tbl:exp2-2x2}). The \emph{single-shot} mode sends a single
@@ -708,11 +694,14 @@ corpus matters more than the model. This section reads the two
 no-documents arms; the documents axis is detailed in
 \ref{sec:annex-exp2}.
 
-The single-shot arm is an independent sweep, not a
-re-run of the §\ref{sec:exp1} parametric protocol, so its scores are not
-directly comparable to §\ref{sec:exp1}'s per-model numbers;
-within-Experiment-2 comparisons all use this common arm-1 sweep as their
-baseline. Read with that caveat, setting each agent's single-shot-arm mean F1
+The single-shot arm differs from the §\ref{sec:exp1} parametric baseline
+in two controlled ways: web search is on (it was off in §\ref{sec:exp1}),
+and the call goes direct to each vendor's API rather than through
+OpenRouter (\ref{sec:annex-exp2}). The provider actually running the
+model is uncontrolled either way — OpenRouter routes, and a vendor-direct
+call still lands on the vendor's shifting infrastructure. Within
+Experiment 2, comparisons use this common arm-1 sweep as their baseline.
+Setting each agent's single-shot-arm mean F1
 (Table~\ref{tbl:exp2-2x2}) against the same lab's flagship in the
 §\ref{sec:exp1} parametric sweep, only Mistral improved
 (\ExpTwoFOneMistralMemory{} to \ExpTwoFOneMistralNaive): Anthropic
@@ -1990,9 +1979,8 @@ Anthropic is pinned to Opus 4.6 (not 4.7): identical call shape at
 lower per-call cost. Kimi K2.6 is disqualified — vendor docs
 document \texttt{thinking} and \texttt{\$web\_search} as mutually
 exclusive, fatal for §\ref{sec:exp2}'s ``extended reasoning AND web
-access'' requirement. Geographic / corpus spread (US × 2 + FR + CN) is
-hypothesis-relevant: Chinese-language investor and trade documents on
-Vietnamese power assets are under-indexed by Western search.
+access'' requirement. The cohort spans a vendor and geographic spread
+(US × 2 + FR + CN).
 
 \subsection*{Baseline reference for cross-comparison}
 \addcontentsline{toc}{subsection}{Baseline reference for cross-comparison}
