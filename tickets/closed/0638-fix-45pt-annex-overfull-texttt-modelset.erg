@@ -2,10 +2,12 @@
 Title: Fix 45pt annex overfull: texttt{modelset_exp1_journal} -> fpath (breakable)
 Created: 2026-06-15
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1128
 
 --- log ---
 2026-06-15T18:23Z HDMX-coding-agent created
 
+2026-06-15T18:29Z HDMX-coding-agent closed — autoclosed — PR #1128
 --- body ---
 ## Context
 Render-and-adjust pass found a 45pt overfull hbox in the Exp-2 annex
