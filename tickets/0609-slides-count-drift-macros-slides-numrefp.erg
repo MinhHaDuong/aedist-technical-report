@@ -1,0 +1,65 @@
+%erg 0.1
+Title: Slides count drift: macros_slides NumRefPlants 173 vs manuscript 177 — reconcile living deck to current reference
+Created: 2026-06-15
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-15T07:51Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Reading-3 (tracker [[0605]]). The reference-plant count has drifted across
+generated macros:
+
+- `report/inputs/generated/macros.tex:5` — `\NumRefPlants` = **177**
+- `report/inputs/generated/macros_slides.tex:5` — `\NumRefPlants` = **173**
+- (manuscript `macros_manuscript.tex` / `macros_longtail.tex`
+  `\LongtailReference` = 177 — manuscript is internally consistent.)
+
+The living slides deck carries a stale 173. The current reference is 177.
+
+## Caveat (do not break the archived talk)
+
+The Econom'IA 2026 talk was delivered and archived (tag
+`economia-2026-cergy`, HAL `hal-05644906`, release PDF). That archived
+artifact is frozen as-presented and must NOT be retro-edited. This ticket
+fixes the **living** slides source so future builds match the current
+reference — it does not touch the archived release.
+
+## Actions
+
+1. Find why `macros_slides.tex` emits 173 (which emitter / data snapshot)
+   vs 177 in `macros.tex`. They should share one source of truth for the
+   reference count.
+2. Reconcile the living slides macro to the current reference (177),
+   regenerating via the proper `make` target — do not hand-edit the
+   generated file. Verify 177 is the correct current reference count
+   against the reference data (derive-from-artifact).
+3. If the slides intentionally pin an as-presented number somewhere in
+   prose (the talk said ~163/173), confirm with the author before
+   changing that prose; the macro itself should track current data.
+
+## Relevant files
+
+- `report/inputs/generated/macros_slides.tex`, `macros.tex` (generated —
+  fix the emitter, not the file).
+- the emitter/`make` target that produces `macros_slides.tex`.
+
+## Test
+
+- Red first: `@pytest.mark.adherence` guard re-deriving `\NumRefPlants`
+  from the reference data and asserting the slides and manuscript macros
+  agree (single source of truth).
+
+## Verification
+
+- [ ] `macros_slides.tex` `\NumRefPlants` == manuscript value (177),
+      regenerated from the emitter.
+- [ ] Archived talk release untouched.
+- [ ] `make check` passes.
+
+## Exit criteria
+
+- Slides and manuscript reference counts agree (177), sourced from one
+  generator; archived talk untouched; `make check` green.

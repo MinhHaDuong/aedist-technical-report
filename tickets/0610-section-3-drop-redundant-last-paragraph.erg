@@ -1,0 +1,51 @@
+%erg 0.1
+Title: Section 3: drop redundant last paragraph
+Created: 2026-06-15
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-15T07:52Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Reading-3 (tracker [[0605]]). §3's last paragraph
+(`slides/manuscript/main.tex:363–368`):
+
+> The task is not simply to generate a plausible inventory-shaped answer.
+> The statistical object is a dated, sourced, internally reconciled set
+> of claims … Accuracy determines whether the claims are correct;
+> coherence determines whether they can coexist; provenance determines
+> whether they are auditable; and temporality determines what period of
+> the world they describe.
+
+It restates the four dimensions already defined in the enumerate list and
+the preceding reference-free-asymmetry paragraph. Redundant — drop it.
+
+## Actions
+
+1. Delete the §3 closing paragraph (`:363–368`). Confirm §3 then ends on
+   the reference-free-asymmetry paragraph (`:354–361`), which carries the
+   screening logic forward to §\ref{sec:exp1} — a clean hand-off to §4.
+
+## Relevant files
+
+- `slides/manuscript/main.tex:363–368`.
+
+## Test
+
+- Red first: `@pytest.mark.adherence` negative guard — assert the
+  paragraph's signature phrase ("not simply to generate a plausible
+  inventory-shaped answer") is absent (CI polarity: forbid the dropped
+  text).
+
+## Verification
+
+- [ ] §3 closing paragraph removed; §3 ends cleanly on the
+      reference-free-asymmetry paragraph.
+- [ ] No dangling \ref created by the deletion.
+- [ ] `make check` passes; manuscript builds.
+
+## Exit criteria
+
+- Redundant §3 final paragraph gone; `make check` green.

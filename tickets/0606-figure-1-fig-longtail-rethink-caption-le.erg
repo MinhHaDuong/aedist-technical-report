@@ -32,11 +32,24 @@ other public source holds." and ends "Counts re-derived from
    / OSM) and the unique-tail value point; just reorder so the gold-register
    message leads.
 
-## B. No filenames in main body AND captions (POLICY CHANGE — flag)
+## B. Standalone text + captions; only annexes reference code (canonical re-articulation of finding 22)
 
-The author wants NO filenames anywhere in the main body OR captions. This
-**reverses finding 22 / ticket 0591's caption exemption** (which allowed
-captions to reference code/paths). Action:
+Author's clean re-articulation (2026-06-15; finding 22 was "poorly
+articulated"): **the main text and the figure/table captions must be
+standalone at the MATHS / IDEAS level, with references to the annexes for
+detail. Only the annexes may reference the code implementation** (file
+paths, function/module names, config keys). So:
+- Main text + captions: self-contained on the maths and ideas, using
+  `\ref` to annexes where detail is needed; NO code/filenames.
+- Annexes: may reference the code implementation.
+
+This refines (does not merely "reverse") finding 22 / ticket 0591: 0591
+removed code from the *body* but left captions exempt; the true intent is
+that captions are held to the same standalone standard, with code
+references confined to annexes. Record this as the canonical policy in
+`docs/editorial-brief.md` (supersedes the 0591 caption exemption).
+
+Action:
 - Remove the filename from the Figure 1 caption (covered by A).
 - Sweep ALL figure/table captions in `main.tex` for `\texttt{…}`/`\fpath{}`
   filenames and remove/relocate them (the source CSV belongs in the
