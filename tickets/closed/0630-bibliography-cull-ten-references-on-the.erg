@@ -2,11 +2,13 @@
 Title: Bibliography: cull ten references (on the long side) — drop least load-bearing, keep anchors + closely-related work; due-diligence note
 Created: 2026-06-15
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1119
 
 --- log ---
 2026-06-15T09:39Z HDMX-coding-agent created
 
 2026-06-15T11:30Z AUTHOR DECISION: final TEN culls = lm-kbc, llmstructbench, tablebench, truthfulqa, self-consistency, UN-fundamental-principles, Eurostat-energy-balance, osworld, skill-aggregation, HaDuong2005 (self-cite). MMLU carries F1 alone (BOTH table-benchmarks cut — 'a well-known indicator does not need much'). Keep gaia; keep IMF-DQAF. Log dropped in due-diligence note.
+2026-06-15T14:07Z HDMX-coding-agent closed — autoclosed — PR #1119
 --- body ---
 ## Context
 
