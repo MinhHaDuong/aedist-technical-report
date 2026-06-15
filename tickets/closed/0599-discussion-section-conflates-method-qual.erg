@@ -2,11 +2,13 @@
 Title: Discussion section conflates method quality and table quality
 Created: 2026-06-14
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1107
 
 --- log ---
 2026-06-14T09:48Z HDMX-coding-agent created
 
 2026-06-15T07:28Z Context add (author): the method/model distinction is established at the END OF THE PREVIOUS SECTION — sec:ext-system (end of §7, ~main.tex:966: 'method quality: whether the process is auditable, reproducible, cost-predictable independent of which model runs it'). §8's three-levels paragraph should BUILD ON that distinction, not re-conflate method with table quality.
+2026-06-15T12:25Z HDMX-coding-agent closed — autoclosed — PR #1107
 --- body ---
 ## Context
 
