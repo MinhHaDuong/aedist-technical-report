@@ -1,0 +1,85 @@
+%erg 0.1
+Title: Investigate Figure 1 recognition-layer holes: OSM-not-Wiki/GEM and Wiki-not-GEM look like matcher false-negatives, not real coverage gaps
+Created: 2026-06-15
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-15T10:27Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Reading-3 (tracker [[0605]]). The author noticed "holes" in Figure 1
+(`fig:longtail`): plants marked present in OSM but absent from Wikipedia
+and GEM, and plants in Wikipedia but not GEM. These look like **matcher
+false-negatives**, not genuine coverage gaps. Investigate before any fix
+(audit-before-instrumenting rule).
+
+## Leading hypothesis (partly confirmed from the emitter)
+
+The layers are computed with DIFFERENT matchers
+(`src/aedist/plot_longtail_recognition.py` docstring `:12–16`, `:79–84`):
+- **GEM, Wikipedia** — "reviewed match, per concordance", via the LP
+  reconciliation (`derive_layer_rows`, shared with the concordance script).
+- **OSM** — "name-only fuzzy matching, no LP reconciliation, no capacity",
+  an ASCII-folded `partial_ratio` threshold.
+
+Different matchers / thresholds per layer naturally produce non-monotonic
+membership (a plant "in" a weaker-matched layer but "out" of a
+stronger-matched one) that reads as holes. So the holes may be an artifact
+of inconsistent matching across layers, not reality.
+
+## Investigation plan
+
+1. From `data/reference/tab_longtail_layers.csv`, pull the discrepant
+   rows:
+   - `in_osm=1 AND in_gem=0 AND in_wiki=0` (OSM-only);
+   - `in_wiki=1 AND in_gem=0` (Wiki-not-GEM).
+2. For a sample of each, manually check the underlying source data: does
+   the plant actually appear in the "missing" source (GEM tracker /
+   Wikipedia list) under a name/diacritic variant? If yes → matcher
+   false-negative (the LP/concordance match missed it). If genuinely
+   absent → real coverage difference.
+3. Quantify: what fraction of the holes are matcher artifacts vs real?
+4. Diagnose the mechanism: ASCII-folding/threshold differences,
+   diacritic handling (the "Cà Mau"-class the LP matcher floors, finding
+   23/0591), or the OSM name-only path vs GEM/Wiki LP path.
+
+## Outcome / next step
+
+- If the holes are mostly matcher artifacts: recommend harmonising the
+  matching across layers (one reconciliation path for all three, or a
+  consistent threshold), and/or correcting the layer-membership CSV.
+  File a fix sub-child of 0605 (and coordinate with [[0606]] decision D,
+  the Figure 1 matcher-shippability question, and the matcher work behind
+  finding 23 / 0591).
+- If mostly real: document it in the caption/annex so the holes are not
+  read as errors, and close as a non-finding.
+- Report the fraction either way (no silent caps).
+
+## Relevant files
+
+- `src/aedist/plot_longtail_recognition.py`, `tabulate_source_concordance.py`
+  (the two matching paths).
+- `data/reference/tab_longtail_layers.csv` (the membership table).
+- GEM / Wikipedia / OSM source data the layers match against.
+
+## Test
+
+- If a fix follows: a guard that the three layers use a consistent
+  matching path (or an explicit, documented threshold per layer), and a
+  spot-check that known false-negative plants now match.
+
+## Verification
+
+- [ ] Discrepant rows enumerated; sample manually adjudicated
+      (artifact vs real) with counts.
+- [ ] Root cause stated (matcher asymmetry vs reality), evidence-backed.
+- [ ] Fix sub-child filed (if artifacts) OR documented non-finding (if
+      real).
+
+## Exit criteria
+
+- The source of Figure 1's cross-layer holes is established with evidence
+  (fraction artifact vs real) and the next action (fix sub-child or
+  documented non-finding) is decided.

@@ -131,6 +131,11 @@ is merged and verified — same discipline as the reading-2 tracker 0578.
   due-diligence note with the ODM coal dataset (derivative of GCPT+Wikipedia,
   not cited). Coordinates with 0630.
 
+- [[0632]] — Investigate Figure 1 recognition-layer holes (OSM-not-Wiki/GEM,
+  Wiki-not-GEM): likely matcher false-negatives from the layers using
+  different matchers (GEM/Wiki LP-reconciliation vs OSM name-only fuzzy);
+  audit artifact-vs-real, then fix sub-child or documented non-finding.
+
 (More children may be appended as the reading continues.)
 
 ## Cross-cutting policy (reading-3)
