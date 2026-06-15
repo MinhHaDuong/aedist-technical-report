@@ -6,6 +6,7 @@ Author: HDMX-coding-agent
 --- log ---
 2026-06-15T07:19Z HDMX-coding-agent created
 
+2026-06-15T11:30Z AUTHOR DECISIONS: Scoring = Annex A, FIRST (semantic — it delivers the promised benchmark; figure numbering follows, S1 = fig:quality-floor). Keep annex FOCUSED on scoring: the 4 dimensions + hierarchy + S1 only. COST is OUT (methods-quality scoring, not the benchmark's run/model scoring). Reliability-sensitivity stays in the Exp1 annex (gate-robustness diagnostic, not the benchmark definition). Transcribe q2 from score_mechanical.py + score_coherence_level.py, NOT the dead coherence.py. Include corroboration-drop + citation-hedge-move (parts b).
 --- body ---
 ## SCOPE EXPANSION (author, 2026-06-15): this is the §3 ticket — split out a Scoring Annex A
 

@@ -1,0 +1,49 @@
+%erg 0.1
+Title: Remove dead coherence.py (v1 module; only its own test imports it, production scorer uses score_mechanical)
+Created: 2026-06-15
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-15T11:30Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Spun out of the 0602 investigation (author: "if coherence.py is dead why
+keep it?"). `src/aedist/coherence.py` (check_row_coherence,
+check_cross_row_coherence, check_aggregate_coherence, check_coherence) is
+a v1 table-based coherence module that the PRODUCTION scorer does not
+call — `score_mechanical.py:score_coherence` + `score_coherence_level.py`
+do the real coherence scoring. The only importer of `aedist.coherence` is
+its own `tests/test_coherence.py` (no `src/` file imports it).
+
+## Actions
+
+1. Confirm dead: `grep -rn 'aedist.coherence\|from .coherence import\|import coherence'
+   src/ experiments/` → expect zero production importers (only
+   tests/test_coherence.py). Verify the scorer path
+   (score_mechanical/score_coherence_level) does not depend on it.
+2. If confirmed unused in production: delete `src/aedist/coherence.py`
+   AND `tests/test_coherence.py`. (A test that exists only to test dead
+   code is also dead.)
+3. If anything DOES depend on it that the grep missed, do not delete —
+   instead add a module docstring explaining why it is retained, and
+   report the dependency.
+4. `make check` must stay green after removal (the ruff-adherence + full
+   suite).
+
+## Relevant files
+
+- `src/aedist/coherence.py` (remove), `tests/test_coherence.py` (remove).
+
+## Verification
+
+- [ ] Zero production importers of `aedist.coherence` (re-confirmed).
+- [ ] Module + its test removed (or retained-with-docstring if a real
+      dependency surfaces).
+- [ ] `make check` passes.
+
+## Exit criteria
+
+- Dead v1 coherence module gone (or justified in a docstring); `make
+  check` green.

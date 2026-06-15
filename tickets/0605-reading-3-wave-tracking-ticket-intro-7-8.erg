@@ -166,6 +166,15 @@ lead gate-merges in dep order. Buckets:
 - **Interactive (this session, held):** 0630, 0606 (+0632), 0628 (+0627),
   0602 (+0607,0608,0610), 0632.
 
+## Author decisions — interactive set (2026-06-15)
+
+- **0632** → non-finding, ACCEPTED: 4 longtail holes all real (0 matcher FNs); document, no matcher fix; close at wave wrap.
+- **0606 C/D** → keep Fig 1 reference-anchored (GEM-only tail = 13 cancelled/proposed → deferred to [[0498]], which survives); ship + one OSM-fuzzy-matching caption caveat.
+- **0628 B** → FEASIBLE (exp2_recognition arm3, no new pipeline); disclose denominator simply as "(X runs)".
+- **0630** → final 10 culls locked (incl. self-cite HaDuong2005 + both table-benchmarks; MMLU carries F1).
+- **0602** → Scoring = Annex A first (semantic); annex focused on the 4 dims + hierarchy + S1 (=fig:quality-floor); COST out (methods-quality); reliability-sensitivity stays in Exp1 annex; transcribe q2 from score_mechanical+score_coherence_level (not dead coherence.py).
+- Spun out: **[[0634]]** remove dead coherence.py.
+
 ## Wave plan (mirrors 0578)
 
 1. Author declares reading-3 finished.
