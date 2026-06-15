@@ -218,11 +218,14 @@ def test_status_en_header_matches_detection_framing():
     Ticket 0628: two detection columns now — Experiment 1 (all models) and
     Experiment 2 arm 3 (single-shot with documents, 1D)."""
     header = next(r for r in _en_rows() if r and r[0] == "Status")
-    assert header[-2] == "Avg. detection prob. (Exp 1)", (
-        "EN Exp-1 detection column must be labelled '(Exp 1)' (ticket 0628)"
+    # CI-polarity: pin the stable markers (the arm tags + a detection-framing
+    # word), not the exact header phrasing — the wording is free to change for
+    # column-width fit (ticket 0637), the framing is what must hold (ticket 0628).
+    assert "(Exp 1)" in header[-2] and "detection" in header[-2].lower(), (
+        "EN Exp-1 detection column must read as detection + carry '(Exp 1)' (ticket 0628)"
     )
-    assert header[-1] == "Avg. detection prob. (Exp 2, 1D)", (
-        "EN Exp-2 arm-3 detection column must be labelled '(Exp 2, 1D)' (ticket 0628)"
+    assert "(Exp 2, 1D)" in header[-1] and "detection" in header[-1].lower(), (
+        "EN Exp-2 arm-3 detection column must read as detection + carry '(Exp 2, 1D)' (ticket 0628)"
     )
     raw = EN_BODY.read_text(encoding="utf-8")
     assert "Recognition rate" not in raw, (
