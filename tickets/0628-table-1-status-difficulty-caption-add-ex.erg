@@ -1,0 +1,92 @@
+%erg 0.1
+Title: Table 1 (status-difficulty): caption + add Exp2 arm-3 detection-likelihood column; split §7.1 text (register shape vs detection-likelihood definition; 'hard to know' not 'cannot')
+Created: 2026-06-15
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-15T09:14Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Reading-3 (tracker [[0605]]). Table 1 = `tbl:status-difficulty` (§7.1,
+caption `slides/manuscript/main.tex:872`, body
+`\input tab_status_difficulty_en.tex`, emitter
+`src/aedist/tabulate_status_difficulty.py`). Current columns: Status, n,
+Share of list, Avg. detection prob. (Exp 1, all models). Three parts.
+
+## A. Caption (concrete)
+
+Replace the caption (`:872`) with:
+
+> Composition of the reference list by asset lifecycle status, from
+> Proposed to Retired, and detection likelihood. Experiment 1 includes
+> all models; Experiment 2 is the single-shot with-documents arm.
+> Source: author.
+
+(Use "single-shot with-documents" per [[0620]]; this is arm 3 / 1D.)
+
+## B. Add an Exp 2 arm-3 detection-likelihood column (ENGINEERING — heaviest part)
+
+The table now has ONE detection column (Exp 1, all models). Add a SECOND:
+detection likelihood from **Exp 2 arm 3** (single-shot, with documents,
+1D). So the table contrasts Exp 1 (all models, memory-only) vs Exp 2
+docs-arm per-status detection.
+- The emitter currently reads Exp 1 only (`exp1_recognition`,
+  `experiments/outputs/exp1_batch2/*.record.json`). Wire in the Exp 2
+  arm-3 records and compute per-status detection probability the SAME way
+  (mean over (plant × run) cells). Check whether an `exp2_recognition`
+  path exists or must be built; if the arm-3 recognition data is not
+  readily available, this part may split into its own sub-child of 0605.
+- Regenerate BOTH `tab_status_difficulty_en.tex` and the FR version via
+  the `render.mk` target; commit them. Numbers are macro/artifact-sourced
+  (derive-from-artifact); do not hand-type.
+- Column header for the new one e.g. "Avg. detection prob. (Exp 2, docs)"
+  and rename the existing to "(Exp 1, all models)" so the two are
+  distinguished.
+
+## C. Split the §7.1 text into two themes
+
+Currently §7.1 (`:863–868`) mixes the register shape and the detection
+result. Separate them:
+1. **The register (shape of the list):** it is a fast-growing country
+   situation — proposed and planned plants dominate the list; state the
+   policy and business relevance of getting this right. Soften the
+   absolute: `:865` "parametric memory \emph{cannot} know them" →
+   "**hard to know**" (not an absolute "cannot").
+2. **Detection likelihood:** define it explicitly — the probability that a
+   random plant in a status category is found by a random run in the
+   experiment (random plant × random run). Then the finding: the
+   operational category is easy (note Exp 1 includes weak models, yet they
+   still find operational plants), while the long tail (proposed/planned)
+   is hard. With the two columns (B), contrast Exp 1 vs Exp 2-docs.
+
+## Relevant files
+
+- `slides/manuscript/main.tex:863–875` (§7.1 text + caption).
+- `src/aedist/tabulate_status_difficulty.py` (+ `exp1_recognition`, and an
+  Exp 2 arm-3 recognition source) — column B.
+- `report/inputs/generated/tab_status_difficulty_{en,fr}.tex` (regenerate).
+
+## Test
+
+- Red first: extend `tests/test_tabulate_status_difficulty.py` —
+  re-derive BOTH detection columns from the committed artifact and assert
+  the Exp 2 arm-3 column is present and matches; adherence guard that
+  §7.1 no longer says "cannot know" (→ "hard to know").
+
+## Verification
+
+- [ ] Caption replaced (A).
+- [ ] Table has Exp 1 (all models) + Exp 2 (docs arm) detection columns,
+      regenerated from data, both EN/FR (B).
+- [ ] §7.1 split into register-shape (policy/business, "hard to know") and
+      detection-likelihood-definition (random plant × random run; ops easy,
+      tail hard) (C).
+- [ ] `make check` passes; manuscript builds.
+
+## Exit criteria
+
+- Table 1 caption + two detection columns; §7.1 text split; "hard to
+  know" not "cannot"; `make check` green. (Split B to a sub-child if the
+  Exp 2 arm-3 recognition data needs new pipeline work.)
