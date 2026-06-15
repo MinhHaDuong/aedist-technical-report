@@ -1,0 +1,68 @@
+%erg 0.1
+Title: Section 6 (Exp 2): drop the second paragraph about quality dimensions we don't measure
+Created: 2026-06-15
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-15T08:30Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Reading-3 (tracker [[0605]]). §6 (Experiment 2, `sec:exp2`) second
+paragraph (`slides/manuscript/main.tex:684–692`):
+
+> The quality dimensions this section measures are the \emph{operational
+> and accuracy} ones: row-level F1 …, coverage …, and per-row provenance
+> counts … The §\ref{sec:quality} dimensions that require \emph{peer
+> cross-evaluation} — coherence, provenance support, and temporality …
+> are out of scope here; this section's claims rest on the F1, coverage,
+> and citation-count metrics, computed mechanically without a judging
+> model.
+
+Author: drop this paragraph (the which-dimensions-we-don't-measure
+scope caveat).
+
+## Actions
+
+1. Delete the §6 second paragraph (`:684–692`).
+
+## Checks before deleting (don't break refs / caveats)
+
+- **Orphaned figure ref:** the paragraph cites
+  `Figure~\ref{fig:coverage-certainty}`. Confirm that figure is still
+  referenced elsewhere (or intentionally annex-only); if this is its only
+  in-body mention, ensure dropping the paragraph does not orphan it
+  (relocate the ref if needed). Re-run the crossref adherence test.
+- **Brief-pinned caveat:** check `docs/editorial-brief.md` for any
+  scope/limitation entry that depends on this paragraph (the "Exp 2 only
+  measures operational/accuracy dimensions" caveat). If the caveat is
+  brief-governed, keep it satisfied — relocate a one-clause version
+  rather than silently dropping a pinned hedge (CI polarity rule).
+- The §6 title already says "fall short on the **measured** quality
+  dimensions" — the scope is implied there, which is why the paragraph
+  is droppable; verify that framing survives.
+
+## Relevant files
+
+- `slides/manuscript/main.tex:684–692`.
+- `docs/editorial-brief.md` (scope caveat check).
+
+## Test
+
+- Red first: `@pytest.mark.adherence` negative guard — the paragraph
+  signature ("require \emph{peer cross-evaluation}" / "are out of scope
+  here") is absent from §6; crossref test stays green (no dangling
+  `fig:coverage-certainty`).
+
+## Verification
+
+- [ ] §6 second paragraph removed.
+- [ ] No orphaned `fig:coverage-certainty` ref; crossref test green.
+- [ ] Any brief-pinned scope caveat still satisfied.
+- [ ] `make check` passes; manuscript builds.
+
+## Exit criteria
+
+- §6 second paragraph gone, no broken refs or dropped pinned caveat;
+  `make check` green.
