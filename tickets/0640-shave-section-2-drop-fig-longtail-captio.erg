@@ -1,0 +1,25 @@
+%erg 0.1
+Title: Shave section 2: drop fig:longtail caption last sentence + OSM caveat; cut weakest prose sentence
+Created: 2026-06-15
+Author: HDMX-coding-agent
+Closed: section 2 shaved
+
+--- log ---
+2026-06-15T18:37Z HDMX-coding-agent created
+
+2026-06-15T18:38Z HDMX-coding-agent closed — section 2 shaved
+--- body ---
+## Context
+Shave section 2 (Related Work). Author directives 2026-06-15.
+
+## Actions (done)
+- fig:longtail caption: dropped the last sentence (the \ref{sec:annex-recognition}
+  provenance pointer) AND the OSM matcher caveat (no caveat/hedging in captions —
+  saved as a standing rule). Caption now ends on the head/tail thinning message.
+- §2 prose: cut the weakest sentence — the 'Two ancillary payoffs: the task
+  doubles as a benchmark ... validates AI engineering patterns' aside (tangential,
+  the benchmark framing is already the paper's spine).
+- §2 prose OSM description KEPT (author: drop OSM details in caption, not prose).
+
+## Exit criteria
+- §2 shaved; caption caveat-free; build clean.
