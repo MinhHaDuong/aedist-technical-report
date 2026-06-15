@@ -1,0 +1,89 @@
+%erg 0.1
+Title: Section 7 'What system do the findings imply?': reframe as a rest-stop synthesis (benchmark -> method search; results+resources scoring; exp1/exp2/future); relocate extras to 8/9
+Created: 2026-06-15
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-15T09:37Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Reading-3 (tracker [[0605]]). §7's last subsection "What system do the
+findings imply?" (`sec:ext-system`, `slides/manuscript/main.tex:949–987`)
+is currently a developed argument (stateful architecture, narrative
+knowledge base, KG triples, method-quality-as-process). The author wants
+it REFRAMED as a short "rest stop" — a synthesis that connects the
+benchmark to the search for a method to produce evergreen,
+research-quality datasets — and the surplus material relocated.
+
+## A. Rewrite the subsection as a rest stop
+
+Frame (opening question): we now have a benchmark that scores model
+replies on four dimensions — what does it bring to the search for a
+method that produces evergreen research-quality datasets?
+
+Then, concisely:
+1. **Augment results scoring with resources scoring → a method
+   benchmark.** (Scoring the output is not enough; score the resources/
+   process a method spends — links to §8's method-quality level, [[0599]].)
+2. **Exp 1:** the parametric method is far from the coverage bar
+   (Wikipedia, [[0615]]).
+3. **Exp 2:** the 1D method (single-shot + documents = RAG, [[0620]])
+   improves, but results are model-dependent; it may reach the Wikipedia
+   coverage bar yet not exhaustive research-dataset quality.
+4. **For the future:** the benchmark is results-based and guides future
+   work beyond RAG; the next two sections (§\ref{sec:discussion},
+   §\ref{sec:future}) discuss the perspectives.
+
+Keep it a rest stop: short, a transition into §8/§9. Use single-shot/
+multi-turn + coverage-bar terms; `\ref` for section/figure refs.
+
+## B. Relocate the surplus — no duplication
+
+The current rich content must not be deleted wholesale; move the worthy
+ideas to where they fit in §8 or §9, WITHOUT duplicating what is already
+there:
+- stateful architecture / managed auditable knowledge base, narrative
+  knowledge base, statistical-table-as-snapshot, KG-triples & fusion →
+  §9 Future research axes (knowledge-base architecture / fusion;
+  finding 41 already structures these — fold in, don't repeat).
+- method-quality-as-process (auditable, reproducible, cost-predictable
+  independent of model) → §8 method-quality level ([[0599]] already
+  introduces it — extend, don't duplicate).
+- the "binding constraint shifts to document quality" point: keep at most
+  once; do not reintroduce the vague Conclusion phrasing dropped by
+  finding 42.
+Check §8 and §9 after moving so nothing is stated twice.
+
+## Coordination
+
+- [[0599]] (§8 method/run/model scoring), finding 41 / §9 axes, [[0615]]
+  (coverage bar), [[0620]] (single-shot/multi-turn). Sequence at raid time
+  (this touches §7, §8, §9).
+
+## Relevant files
+
+- `slides/manuscript/main.tex:949–987` (rewrite); §8 `sec:discussion`,
+  §9 `sec:future` (relocation targets).
+
+## Test
+
+- Red first: `@pytest.mark.adherence` — the subsection contains the
+  rest-stop markers (the benchmark→method question; refs to §8 and §9)
+  and is materially shorter; negative guard that the relocated passages do
+  not appear twice (no duplicated KG-triple / stateful-architecture
+  sentence across §7/§8/§9). CI polarity: structural anchors + dedup
+  guard, not pinned positive prose.
+
+## Verification
+
+- [ ] Subsection is a short rest stop with the 4-point synthesis and
+      forward refs to §8/§9.
+- [ ] Surplus relocated to §8/§9 without duplication.
+- [ ] `make check` passes; manuscript builds.
+
+## Exit criteria
+
+- §7's closing subsection reads as a rest stop bridging to §8/§9; surplus
+  rehomed without duplication; `make check` green.
