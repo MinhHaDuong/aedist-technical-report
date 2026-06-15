@@ -509,11 +509,9 @@ thermal reference: each bar is one run; family-coloured segments to the
 right are correctly identified plants (TP), red segments to the left are
 unmatched plants (FP: extracted but not in the reference). The dashed
 green line marks the \NumRefPlants-plant reference; the light-grey dotted line
-marks Wikipedia's light-reviewed coverage of all \NumRefPlants{} reference plants
-(\WikiReviewedPct\%, \WikiReviewed/\NumRefPlants) —
-the answer key every model should recover, since that content sat
-in the training corpus. Models grouped on the vertical
-axis.}\label{fig:direct-base}
+marks Wikipedia's coverage of \WikiReviewed{} assets
+(\WikiReviewedPct\% of our reference list) — the coverage bar that
+models could be expected to pass.}\label{fig:direct-base}
 \end{figure}
 
 \textbf{Experiment 1 — Parametric baseline.} We query the fourteen
@@ -532,9 +530,9 @@ row-level precision, recall, and F1; fuel type, operational status, and
 province accuracy are scored at the cell level for matched rows. Cost in
 USD and wall-clock time are recorded per run.
 
-\textbf{An answer key already in the training corpus.} These scores
+\textbf{A coverage bar already in the training corpus.} These scores
 need an upper bound the reader can judge them against. We call that
-upper bound the \emph{answer key}: the share of the reference a model
+upper bound the \emph{coverage bar}: the share of the reference a model
 could have recovered from public training text alone, because the
 content was already there to read. Before the experiment, the author's
 group published a
@@ -551,7 +549,7 @@ increasing its coverage; verifiable in the page history, revision
 \texttt{902510278}), and \emph{List of coal power stations in Vietnam}
 was split off on 5 July 2019 (provenance and diff documented with the
 reference dataset). Both events predate the 2026-era
-model cohort by roughly six and a half years, so the answer key's
+model cohort by roughly six and a half years, so the coverage bar's
 validity is not in doubt for the cohort; we report the comparison
 directionally because the project does not record per-model cutoff
 dates.
@@ -560,12 +558,12 @@ One caveat on coverage: the
 built fleet (operating, retired) has been on these pages since mid-2019,
 while much of the forward-looking
 pipeline is PDP8-era (post-2019) content added after the June 2019
-injection, so those rows may postdate some cutoffs. The answer key is
+injection, so those rows may postdate some cutoffs. The coverage bar is
 therefore firm for the built fleet and an upper-bound
 heuristic for the pipeline tail. Wikipedia coverage of the reference is
-thus the answer key a competent parametric model ought to recover, and
+thus the coverage bar a competent parametric model ought to recover, and
 grading recall against it is not circular, because it measures retrieval,
-not justification. The answer key has two regimes (light-reviewed,
+not justification. The coverage bar has two regimes (light-reviewed,
 \ref{sec:annex-exp1}): the built fleet is covered at a 92\% mean
 (operating 95\%, construction 80\%, permitted 100\%), while the
 forward-looking pipeline sits at 55\% (proposed and announced; 73\%
