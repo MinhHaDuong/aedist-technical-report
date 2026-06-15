@@ -1,0 +1,108 @@
+%erg 0.1
+Title: Intro para 3: deliver four-dimension math in annex (v0.1); drop unmeasured corroboration claim; move citation hedge to main text
+Created: 2026-06-15
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-15T07:19Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Intro paragraph 3 (`slides/manuscript/main.tex:146–150`) makes two
+promises the body must honour:
+
+> The computable metric is a four-dimension quality score: per-row
+> scoring … on accuracy, coherence, provenance, and temporality, with
+> citation coverage and **corroboration measured**. The paper counts and
+> checks the presence of citations; it does not verify each cited source
+> against each cell.
+
+Two problems:
+
+**(a) The four-dimension score is promised but its math is not delivered.**
+§3 (`sec:quality`, `:275`) defines the four dimensions only qualitatively.
+The author wants an explicit annex section that writes out the maths for
+each dimension, aligned to the current code, marked as v0.1 of the
+benchmark (to be improved).
+
+**(b) "corroboration measured" is unsupported, and the hedge is misplaced.**
+Ground truth (verified 2026-06-15): NO `corroborat*` in any scoring
+module — `grep -rli corroborat src/` hits only `plot_exp2_coverage_certainty.py`
+(a plot), never `score_*.py`. The code does not measure corroboration.
+The very next sentence already concedes "it does not verify each cited
+source against each cell" — i.e. the intro contradicts itself. Drop the
+corroboration claim; move the citation-hedge sentence out of the intro
+into the main text.
+
+## Ground truth (already established — re-confirm, do not re-derive blind)
+
+- Corroboration: absent from `src/aedist/score_*.py`. Author's suspicion
+  confirmed → drop the claim.
+- The four dimension scorers DO exist and are the source of truth for the
+  maths:
+  - q1 accuracy (= F1): `src/aedist/score_mechanical.py:score_accuracy`
+    + `src/aedist/metrics.py` (`_accuracy`); F1 over matched rows.
+  - q2 coherence: `src/aedist/coherence.py` (`check_row_coherence`,
+    `check_cross_row_coherence`, `check_aggregate_coherence`) +
+    `score_mechanical.py:score_coherence`; the 3-part coherence + run veto
+    (see `plot_exp1_reliability.py:51` for the 12-dimension decomposition).
+  - q3 provenance: `score_mechanical.py:score_provenance`
+    (verifiable vs verified distinction, §3 `:325–331`).
+  - q4 temporality: `score_mechanical.py:score_temporality`.
+
+## Actions
+
+1. **(a)** Add an annex (sub)section — four paragraphs, one per dimension
+   — giving the explicit formula for q1=F1 (accuracy), q2=coherence,
+   q3=provenance, q4=temporality, transcribed to MATCH the current code
+   (read the modules above; derive-from-artifact, do not invent maths).
+   Add a sentence framing this as **version 0.1 of the benchmark, to be
+   improved**. Cross-reference it from §3 (`sec:quality`) and verify the
+   intro's "four-dimension quality score" now resolves to real maths.
+2. **(b)** Delete "and corroboration measured" from intro para 3 (and any
+   downstream echo). Verify once more against `src/` that nothing computes
+   corroboration before dropping.
+3. **(b)** Move the sentence "The paper counts and checks the presence of
+   citations; it does not verify each cited source against each cell" out
+   of the intro into the main text — natural home is §3's provenance
+   subsection (`:321–331`, verifiable vs verified). The intro should not
+   carry this operational hedge.
+
+## Relevant files
+
+- `slides/manuscript/main.tex` — intro `:146–150`; §3 `sec:quality`
+  `:275–368`; the target annex (new section or extend an existing one).
+- `src/aedist/score_mechanical.py`, `coherence.py`, `metrics.py` — the
+  formulas to transcribe (ground truth).
+- `docs/editorial-brief.md` — record the decision (corroboration not
+  claimed; benchmark math is v0.1).
+
+## Test
+
+- Red first: `@pytest.mark.adherence` negative guard — assert "corroborat"
+  does not appear in `main.tex` (it is an unmeasured claim). Plus a loose
+  structural anchor: the annex math section exists (presence of the four
+  dimension formula markers), NOT a pinned positive sentence (CI polarity
+  rule). Optionally a code-alignment guard if a stable signature exists.
+
+## Verification
+
+- [ ] Annex has an explicit four-paragraph dimension-maths section
+      (q1=F1 … q4=temporality) aligned with the code, marked v0.1.
+- [ ] Intro's four-dimension promise resolves to that maths (xref added).
+- [ ] "corroboration" gone from main.tex; re-confirmed absent in code.
+- [ ] Citation-hedge sentence moved from intro into §3 main text.
+- [ ] Brief entry recorded; `make check` passes; manuscript builds.
+
+## Invariants
+
+- The transcribed maths must match the code exactly (no aspirational
+  formula). No empirical-number changes; numbers stay macro-sourced.
+- Do not weaken §3's verifiable-vs-verified provenance distinction.
+
+## Exit criteria
+
+- The benchmark's four-dimension score is defined with real maths in an
+  annex (v0.1), the intro no longer claims corroboration, and the citation
+  hedge lives in the main text — `make check` green.
