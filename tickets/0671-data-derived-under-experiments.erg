@@ -1,0 +1,48 @@
+%erg 0.1
+Title: Move root data/ and derived/ under experiments/
+Created: 2026-06-15
+Author: claude
+Blocked-by: 0663
+
+--- log ---
+2026-06-15T22:08Z claude created from spring-cleanup tracker 0669
+
+--- body ---
+## Context
+`data/` and `derived/` exist both at the root and under `experiments/`, with a
+symlink `experiments/data/rag_corpus -> ../../data/rag_corpus`. Author decision:
+treat data & derived as pipeline I/O and keep a single home under `experiments/`.
+Frees two root dirs. Tracker: 0669. **Post-release only** (0663).
+
+## Current state
+- root `data/`: rag_corpus/, reference/, capability_timeline.csv, README.md
+- root `derived/`: audit/, fusion_proto/, verification/, verification_multi/,
+  *.json (sourced_evidence_summary, variance_decomposition)
+- `experiments/data/`: converter_test/, rag_corpus -> ../../data/rag_corpus, web_portal_test.md
+- `experiments/derived/`: arm{1..4}_flat/, rag_consistency/, verification/, aggregation_sweep.csv, README.md
+
+## Relevant files / what breaks
+- The `rag_corpus` symlink — collapse to a single real dir under experiments/.
+- `experiments/experiments.toml` (`sweeps.rag.corpus`), `experiments/acquire.mk`
+  (`CORPUS_OUTPUT`), and any `make` recipe reading `data/` or `derived/`.
+- `src/aedist/plot_*.py` and tabulators reading `data/reference/*.csv` or
+  `derived/*` (e.g. capability_timeline.csv, variance_decomposition.json).
+- The manuscript only includes `report/inputs/generated/…`, but the emitters
+  (render.mk → plot/tabulate scripts) read `data/`/`derived/` — fix their paths.
+- `.gitignore` rules for derived outputs.
+
+## Actions
+1. Decide the merged layout (e.g. `experiments/data/{reference,rag_corpus,…}`,
+   `experiments/derived/…`); `git mv` root trees in, replacing the symlink with
+   the real corpus.
+2. Update all readers/writers (toml, *.mk, scripts) to the new paths.
+3. Rebuild the artifact chain: `make tables` / render targets regenerate cleanly.
+
+## Invariants
+- Generated artifacts under `report/inputs/generated/` are byte-identical after
+  regeneration (paths changed, data did not).
+- `make -B -n` clean-room check passes; no script reads a stale `data/`/`derived/` root path.
+
+## Exit criteria
+- [ ] Single data/ and derived/ home under experiments/; symlink gone
+- [ ] Pipeline regenerates identical artifacts; tests green

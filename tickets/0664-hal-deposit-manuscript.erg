@@ -1,0 +1,27 @@
+%erg 0.1
+Title: HAL deposit of the AEDIST technical report (SWORD)
+Created: 2026-06-15
+Author: claude
+
+--- log ---
+2026-06-15T22:01Z claude created from dissemination tracker 0663
+
+--- body ---
+## Context
+Deposit the diffused manuscript (tag `economia-2026-report`, commit 2da83d04)
+on HAL, mirroring the talk's deposit (hal-05644906). The `/update-publist`
+IDH skill performs HAL deposit via SWORD and is gated on author payload
+review before any outward call. Tracker: 0663.
+
+## Relevant files
+- `publications/.../main.pdf` (currently `slides/manuscript/main.pdf`) — the artifact to deposit
+- `~/CNRS/html/src/Ha-Duong.bib` — publication metadata source
+- `/update-publist` skill — HAL SWORD + homepage
+
+## Actions
+1. Build the final PDF from the tag; confirm metadata (title, authors, abstract).
+2. Run `/update-publist <pdf> --hal-only`; review the SWORD payload before sending.
+3. Record the returned HAL id.
+
+## Exit criteria
+- [ ] Manuscript live on HAL; HAL id recorded (memory + Ha-Duong.bib)

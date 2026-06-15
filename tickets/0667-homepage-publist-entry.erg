@@ -1,0 +1,27 @@
+%erg 0.1
+Title: Homepage / Ha-Duong.bib entry for the report
+Created: 2026-06-15
+Author: claude
+Blocked-by: 0664
+
+--- log ---
+2026-06-15T22:04Z claude created from dissemination tracker 0663
+
+--- body ---
+## Context
+Add the report to the personal publication list and homepage, mirroring the
+talk's `Ha-Duong2026:economia` entry. Needs the HAL id (0664) and, ideally,
+the arXiv id (0665). `/update-publist --page-only` regenerates the page.
+Tracker: 0663.
+
+## Relevant files
+- `~/CNRS/html/src/Ha-Duong.bib` — add the report entry (HAL + arXiv ids, tag)
+- `/update-publist` skill — page regeneration
+
+## Actions
+1. Add a bib entry (e.g. `Ha-Duong2026:aedist-report`) with HAL + arXiv ids and
+   the GitHub release URL.
+2. `/update-publist <pdf> --page-only`; verify the rendered page.
+
+## Exit criteria
+- [ ] Report listed on the homepage with HAL + arXiv links

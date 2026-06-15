@@ -1,0 +1,34 @@
+%erg 0.1
+Title: Tidy the crowded project root (top-level files)
+Created: 2026-06-15
+Author: claude
+Blocked-by: 0663
+
+--- log ---
+2026-06-15T22:09Z claude created from spring-cleanup tracker 0669
+
+--- body ---
+## Context
+After the dir moves (0670 report/slides/manuscript → publications/; 0671
+data/derived → experiments/), the root is much lighter. Finish by tidying the
+remaining top-level files. Tracker: 0669. **Post-release only** (0663).
+
+## Current top-level files
+ADR.md, CITATION.cff, measurements.jsonl, AGENTS.md, pyproject.toml, STATE.md,
+README.md, Makefile, MASTERPLAN.md, LICENCE, CLAUDE.md, uv.lock
+
+## Actions
+1. Keep at root (tooling/convention requires it): README.md, LICENCE,
+   Makefile, pyproject.toml, uv.lock, CITATION.cff, CLAUDE.md, AGENTS.md, STATE.md.
+2. Candidates to relocate into `docs/`: ADR.md, MASTERPLAN.md (and any other
+   long-form planning docs) — update cross-references (CLAUDE.md/AGENTS.md/README links).
+3. `measurements.jsonl` leaves root via the MART-v2 migration — see 0297; do NOT
+   move it here, just confirm it is gone or ticket-tracked.
+
+## Invariants
+- No broken links to the relocated docs (grep the repo for their names).
+- Build + tests unaffected (these are docs, not pipeline inputs).
+
+## Exit criteria
+- [ ] Root holds only tooling/convention files + the dirs; planning docs in docs/
+- [ ] measurements.jsonl removal confirmed (via 0297) or explicitly tracked

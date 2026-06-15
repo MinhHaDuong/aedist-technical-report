@@ -1,0 +1,50 @@
+%erg 0.1
+Title: Rehome report/, slides/ decks, and the manuscript under publications/
+Created: 2026-06-15
+Author: claude
+Blocked-by: 0663
+
+--- log ---
+2026-06-15T22:07Z claude created from spring-cleanup tracker 0669
+
+--- body ---
+## Context
+Move the publication artifacts into `publications/` (which today holds only
+`journal-article/`). Target layout:
+- `report/`                     → `publications/report/`
+- `slides/{slides,slides-en}.{tex,pdf}`, `slides/Makefile`, `slides/inputs/`
+                                → `publications/slides/`
+- `slides/manuscript/`          → `publications/Economia-2026-Manuscrit/`
+Do the three moves together: the manuscript's asset paths are relative to both
+`report/` and its own location, so they must be updated once, atomically.
+Tracker: 0669. **Post-release only** (0663) — deposits reference the old path.
+
+## Relevant files / what breaks
+- `slides/manuscript/main.tex` — asset includes `../../report/inputs/generated/…`
+  become `../report/inputs/generated/…` once both move under `publications/`.
+  Sweep every `\includegraphics`/`\input`/`\InputIfFileExists`.
+- `slides/Makefile` and the manuscript build rule (`make -C slides manuscript/main.pdf`).
+- `experiments/render.mk` — `MANUSCRIPT_MACRO_FRAGMENTS` consolidation writes to
+  `report/inputs/generated/` → repoint to `publications/report/inputs/generated/`.
+- `tests/test_manuscript_*.py`, `test_no_inline_plots.py`, `test_manuscript_crossref/
+  em_dash/macros.py` — all hardcode `slides/manuscript/main.tex`; repoint.
+- `.claude/rules/writing.md` (project) — references `slides/manuscript/main.tex`.
+- CI workflows referencing `slides/` or `report/` paths.
+- `.gitignore` entries for `inputs/generated`, `report/inputs/generated`.
+- Root `Makefile` targets that build `report.pdf` / call into `slides/`.
+- `slides/manuscript/attic/` (incl. peer-reviews-2026-06-15) moves with the manuscript.
+
+## Actions
+1. `git mv` the three trees to their `publications/` homes.
+2. Update all asset paths, Makefiles (root + slides + render.mk), test paths,
+   CI, .gitignore, and the project writing rule in one commit.
+3. Rebuild: root `make` and the manuscript (`tectonic -r 2`) — both clean.
+
+## Invariants
+- Manuscript builds byte-clean (0 undefined refs; overfull unchanged).
+- Full adherence suite green (the manuscript tests now point at the new path).
+- Makefile DAG intact: `make -B -n` shows correct prereqs (clean-room test).
+
+## Exit criteria
+- [ ] report/, slides/ decks, manuscript rehomed under publications/
+- [ ] root `make` + manuscript build clean; all tests green; no dangling paths
