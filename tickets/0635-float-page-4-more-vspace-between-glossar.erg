@@ -1,0 +1,28 @@
+%erg 0.1
+Title: Float page §4: more vspace between glossary and Figure 2
+Created: 2026-06-15
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-15T16:15Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Follow-up to [[0611]]: the §4 floats page (Figure 2 + Glossary on a `[p]`
+page) had only a bare `\vfill` between the glossary `quote` block and the
+`\includegraphics`, leaving them too close. Author: add more vspace
+between the glossary and the figure.
+
+## Action
+
+Added `\vspace{1.5cm}` after the glossary `\end{quote}` (before the
+`\vfill`) in `slides/manuscript/main.tex` — a guaranteed minimum gap on
+top of the flexible fill. Author can tune the 1.5cm.
+
+## Verification
+- [ ] Floats page shows clear separation between glossary and Figure 2.
+- [ ] Manuscript builds (`tectonic -r 2`).
+
+## Exit criteria
+- More vspace between glossary and Figure 2 on the §4 floats page; builds.
