@@ -1,0 +1,72 @@
+%erg 0.1
+Title: Figure 4 (fig:cost-quality): Y is coverage not accuracy — fix axis/title; replace caption (coverage vs cost, May 2026, ref Exp1 annex)
+Created: 2026-06-15
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-15T08:19Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Reading-3 (tracker [[0605]]). Figure 4 (`fig:cost-quality`, emitter
+`src/aedist/plot_cost_quality.py`).
+
+## A. Coverage, not accuracy (author question — confirmed)
+
+Ground truth: the Y axis IS coverage, not accuracy. `plot_cost_quality.py`
+ylabel is "Assets correctly identified" (`:174`), docstring "Y axis:
+per-model count of correctly identified plants (true positives)" (`:16`).
+So any "accuracy"/"quality" wording in the figure TITLE/suptitle (check
+`plot_cost_quality.py:176` `fig.suptitle(...)`) is wrong — it should say
+**coverage**.
+- Fix the suptitle (and ylabel if it should read "Coverage (assets
+  correctly identified)") so the figure is labelled coverage, not
+  accuracy/quality. Regenerate `fig_direct_cost_quality.pdf` via the
+  `make`/`render.mk` target; commit the regenerated PDF.
+
+## B. Replace the caption (author's words)
+
+Current caption (`:618–630`) is long and carries filenames
+(`\texttt{modelset\_exp1\_batch2}`, `\texttt{…cost\_quality.csv}`) — both
+violate the standalone-caption policy [[0606]]. Replace the WHOLE caption
+with:
+
+> Coverage (Y) vs. cost (log-scale X), Experiment 1. Prices and models as
+> of May 2026. More expensive models discover more assets and return more
+> stable results. Source: author; see \ref{sec:annex-exp1}.
+
+Notes:
+- "[REF EXPERIMENT 1 ANNEX]" → `\ref{sec:annex-exp1}` (no hardcoded annex
+  letter; house rule).
+- No filenames in the caption (the CSV/modelset detail lives in the
+  annex).
+- Grammar: "returns" → "return" (subject "models" is plural).
+- Em dashes literal "—" (U+2014) if any.
+- Keep the dashed reference line / panel content as-is in the figure; this
+  is a caption + label change, not a data change.
+
+## Relevant files
+
+- `slides/manuscript/main.tex:618–630` (caption).
+- `src/aedist/plot_cost_quality.py` (suptitle/ylabel, A).
+- `report/inputs/generated/fig_direct_cost_quality.pdf` (regenerate).
+- `sec:annex-exp1` — destination for the dropped detail (confirm present).
+
+## Test
+
+- Red first: `@pytest.mark.adherence` — caption contains no `\texttt`
+  filename and refs `sec:annex-exp1`; emitter no longer labels the figure
+  "accuracy"/"quality" (signature check for "coverage").
+
+## Verification
+
+- [ ] Figure title/axis says coverage, not accuracy; PDF regenerated.
+- [ ] Caption replaced with the short coverage-vs-cost version, `\ref`
+      to Exp 1 annex, no filenames, grammar fixed.
+- [ ] `make check` passes; manuscript builds.
+
+## Exit criteria
+
+- Figure 4 labelled coverage; caption short + annex-ref; `make check`
+  green.
