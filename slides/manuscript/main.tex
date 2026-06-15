@@ -361,24 +361,6 @@ reference. The experiments exercise this logic directly
 
 \section{AI capability landscape: from chatbots to agentic systems}\label{sec:capability}
 
-\begin{quote}
-\textbf{Glossary.} \emph{Parametric memory} --- facts a language model
-has internalised in its weights during training, recalled without
-consulting any external document. \emph{RAG (retrieval-augmented
-generation)} --- supplementing the model's parametric memory at
-inference time with passages fetched from an external corpus, so answers
-can be grounded and cited. \emph{Agent} --- a model wrapped in a runtime
-that lets it take multi-step actions (search the web, call tools, run
-code, dispatch sub-agents) rather than emit a single reply. \emph{Token}
---- the sub-word unit a model reads and generates; billing and length
-limits are measured in tokens. \emph{Temperature} --- the
-sampling-randomness knob; temperature 0 makes decoding
-near-deterministic, isolating prompt-driven variation from sampling
-noise. \emph{F1} --- the harmonic mean of precision and recall; here,
-row-level F1 scores how well an extracted plant list matches the
-reference inventory.
-\end{quote}
-
 Between 2022 and 2025, AI capability advanced as an industry-wide
 \emph{envelope}: the set of capabilities commercially attainable at a
 given date, across labs. The systems that define this envelope vary
@@ -455,18 +437,31 @@ experiments exercise articulation through structured prompts
 reproduced verbatim in \ref{sec:annex-exp1} and
 \ref{sec:annex-exp2}.
 
-\begin{figure}
+\begin{figure}[p]
 \centering
+\begin{quote}
+\textbf{Glossary.} \emph{Parametric memory} --- facts a language model
+has internalised in its weights during training, recalled without
+consulting any external document. \emph{RAG (retrieval-augmented
+generation)} --- supplementing the model's parametric memory at
+inference time with passages fetched from an external corpus, so answers
+can be grounded and cited. \emph{Agent} --- a model wrapped in a runtime
+that lets it take multi-step actions (search the web, call tools, run
+code, dispatch sub-agents) rather than emit a single reply. \emph{Token}
+--- the sub-word unit a model reads and generates; billing and length
+limits are measured in tokens. \emph{Temperature} --- the
+sampling-randomness knob; temperature 0 makes decoding
+near-deterministic, isolating prompt-driven variation from sampling
+noise. \emph{F1} --- the harmonic mean of precision and recall; here,
+row-level F1 scores how well an extracted plant list matches the
+reference inventory.
+\end{quote}
+
+\vfill
+
 \includegraphics[width=\linewidth]{../../report/inputs/generated/fig_capability_timeline.pdf}
-\caption{Empirical capability rollout across five leading AI labs. Each
-capability is a feature of the lab's public commercial product, not a
-property of the underlying model. Each row is a capability feature (1
-chat LLM → 8 multi-agent recursion); each marker places when the named
-lab first shipped that feature in a consumer-facing product. The figure
-sets the experimental conditions: a lab's position on each row is the
-capability set its system brings to §\ref{sec:exp1} and
-§\ref{sec:exp2}. Source: author's compilation; per-lab primary
-announcements documented in
+\caption{AI timeline: when did labs ship which feature in a public
+commercial product? Source: author, see
 \ref{sec:annex-rollout}.}\label{fig:capability-timeline}
 \end{figure}
 
@@ -2513,7 +2508,16 @@ in V2.5; R1 reasoning) and the model components that would enter a
 deep-research loop (V3.1's search-agent claims, V3.2's
 thinking-in-tools), but has not packaged the composer as a public
 product within the cutoff — capability components present, product
-surface absent.
+surface absent. The same pattern holds for the rest of DeepSeek's
+unfilled rows: code execution (feature 3), external tool use (feature
+6), and multi-agent recursion (feature 8) remain developer- or API-side
+capabilities with no consumer-product surface on chat.deepseek.com at
+the cutoff. Alibaba shows the two confirmed absences on its consumer
+surface (chat.qwen.ai): code execution (feature 3) and multi-agent
+recursion (feature 8) ship only as developer-facing Qwen-Agent and Qwen
+Code components, not as a consumer product. These confirmed absences are
+the cells that carry no marker in
+Figure~\ref{fig:capability-timeline}.
 
 \textbf{Two axes absent by construction.} The figure goes quiet after
 mid-2025 because leading labs had filled all eight features, not because
