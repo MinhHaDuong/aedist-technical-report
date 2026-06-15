@@ -593,18 +593,9 @@ in the Discussion.
 \begin{figure}
 \centering
 \includegraphics[width=\linewidth]{../../report/inputs/generated/fig_direct_cost_quality.pdf}
-\caption{Paying more per call does not buy a proportionally better
-inventory. Plants correctly identified vs cost per call across the
-Experiment 1 lineup, split by architectural family across two panels
-with shared axes: \textbf{panel (a)} Claude, GPT, Mistral; \textbf{panel
-(b)} Qwen, DeepSeek. Each of the fourteen
-models contributes a filled square at
-its pooled median true-positive count and a marker at every individual
-rep, plotted at the rep's own per-call cost (cents USD, log scale); the
-dashed line at \NumRefPlants{} marks the full Vietnam thermal inventory. Marker
-shapes, colour palette, the per-rep cohort split, and the audit artifact
-are detailed in
-\ref{sec:annex-exp1}.}\label{fig:cost-quality}
+\caption{Coverage (Y) vs.\ cost (log-scale X), Experiment 1. Prices and models as
+of May 2026. More expensive models discover more assets and return more
+stable results. Source: author; see \ref{sec:annex-exp1}.}\label{fig:cost-quality}
 \end{figure}
 
 \textbf{A reference-free reliability grade separates the cohort.} The
@@ -630,17 +621,12 @@ zeroes) is the quality-floor heatmap, also in \ref{sec:annex-exp1}.
 \begin{figure}
 \centering
 \includegraphics[width=\linewidth]{../../report/inputs/generated/fig_exp1_reliability.pdf}
-\caption{Inaccurate models are also unreliable — and a reference-free
-screen can reject them. Model-level reliability vs accuracy for
-Experiment 1 (14 models × 5 runs). X axis: reliability, the count of
-good runs out of five, where a run is bad if it scores zero on at least
-one of the twelve reference-free quality dimensions and good otherwise — computable without any
-reference data. Y axis: accuracy, the mean row-level F1 against the
-\NumRefPlants-plant reference over the good runs; for the three models with zero
-good runs (claude-haiku-4.5, gpt-oss-20b, qwen3.6-35b-a3b), no good run
-exists, so the mean is taken over \textbf{all} five runs. Source
-artifact and gate
-sensitivity are detailed in \ref{sec:annex-exp1}.}\label{fig:reliability}
+\caption{Reliability–accuracy scatter for Experiment 1. The weak models sit in
+the lower-left quadrant, the strong ones top-right. We can screen out
+weak models on the reliability axis alone — it does not require
+computing accuracy against the list we are asking for; the three models with zero
+good runs (claude-haiku-4.5, gpt-oss-20b, qwen3.6-35b-a3b) anchor the
+lower-left. Source: author; see \ref{sec:annex-exp1}.}\label{fig:reliability}
 \end{figure}
 
 \section{Experiment 2: frontier agents fall short on the measured quality dimensions}\label{sec:exp2}
@@ -718,29 +704,24 @@ reference inventory itself is published.
 \begin{figure}
 \centering
 \includegraphics[width=\linewidth]{../../report/inputs/generated/fig_exp2_arms_coverage.pdf}
-\caption{No agent comes close to the full fleet. Each agent's bars show
-how many plants it found: the blue part counts plants that are really in
-the reference, the red part below the line counts plants it named that
-are not. The hatched bar on the left of each group is the same agent
-working from memory alone (Experiment 1); the four bars to its right add
-web search and, for two of them, a reference document pack. The dashed
-green line is the full \NumRefPlants-plant reference; the dotted grey line
-is the best independent public database. The complete arm-by-arm
-breakdown is in \ref{sec:annex-exp2}.}\label{fig:exp2-arms}
+\caption{Average number of recognized assets (coverage) across five runs
+(whiskers) for four SOTA models. Dashed bar 1 is Experiment 1,
+single-shot no web: Opus worked better that way. Bars 2 and 4 are
+single-shot queries, 3 and 5 are multi-turn: the multi-turn harness
+failed to help. Bars 4 and 5 are RAG: providing documents did increase
+coverage. The dotted line marks Wikipedia's reviewed coverage of the
+reference. Source: author; see \ref{sec:annex-exp2}.}\label{fig:exp2-arms}
 \end{figure}
 
 \begin{figure}
 \centering
 \includegraphics[width=\linewidth]{../../report/inputs/generated/fig_exp2_arms_cost.pdf}
-\caption{The longer, multi-turn protocol costs far more for little extra
-coverage. Each bar is one agent's average dollar cost for a single run;
-the whiskers show the spread across runs. Reading left to right within a
-group: the agent from memory alone (hatched), then single-shot and
-multi-turn variants with and without a reference document pack. The
-multi-turn variants run several rounds of search and drafting, which is
-where most of the cost comes from. Coverage for the same runs is in
-Figure~\ref{fig:exp2-arms}; the full breakdown is in
-\ref{sec:annex-exp2}.}\label{fig:exp2-arms-cost}
+\caption{Costs. May 2026 conditions, linear Y scale. Claude in Experiment 2
+costs several times more for worse coverage than Experiment 1 (see
+Figure~\ref{fig:cost-quality}). Providing documents or using a
+multi-turn harness increases the average cost. The harness also
+increases cost variability, as it lets the model redefine its own
+prompt. Source: author; see \ref{sec:annex-exp2}.}\label{fig:exp2-arms-cost}
 \end{figure}
 
 \textbf{Coverage: the best agent enumerates barely half the fleet.} For
