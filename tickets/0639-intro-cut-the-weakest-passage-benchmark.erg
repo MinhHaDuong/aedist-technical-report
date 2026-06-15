@@ -1,0 +1,31 @@
+%erg 0.1
+Title: Intro: cut the weakest passage (benchmark-genre framing) to shave ~4 lines
+Created: 2026-06-15
+Author: HDMX-coding-agent
+Closed: weakest intro passage cut
+
+--- log ---
+2026-06-15T18:27Z HDMX-coding-agent created
+
+2026-06-15T18:31Z HDMX-coding-agent closed — weakest intro passage cut
+--- body ---
+## Context
+Challenge: remove the weakest part of the intro to shave ~4 lines.
+
+## Judgment + action (done)
+Weakest passage = para-2 benchmark-genre sentence ("Computable benchmarks
+... are how knowledge engineering and AI research have long measured
+progress, from ... to ...; this paper extends the practice to national
+statistical registers"). Generic boilerplate, redundant with the
+contribution paragraph, tangential 3-cite list. Cut it; para 2 is now the
+crisp task statement alone. ~4-5 rendered lines shaved; build clean.
+
+## Citation consequence (flag for author)
+- Hendrycks MMLU: still cited (\S3, line ~297) — retained.
+- Petroni (lm-as-kb) and Ni (llm-benchmark-survey): were cited ONLY here
+  -> now UNCITED (drop out of the rendered bib). Petroni was kept as an
+  anchor in the 0630 cull; if the author wants it retained, re-cite it in
+  one clause. Bib is otherwise 2 lighter.
+
+## Exit criteria
+- Weakest intro passage removed; ~4 lines shaved; no dangling cite; builds.
