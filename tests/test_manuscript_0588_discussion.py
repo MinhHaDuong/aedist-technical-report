@@ -37,6 +37,29 @@ def test_consistent_reading_summary_sentence_dropped() -> None:
     )
 
 
+def test_method_quality_not_defined_via_table_quality() -> None:
+    """Ticket 0599: method quality must not be defined through table quality.
+
+    Reading-2 finding 40: the scoring-levels paragraph defined \\emph{method
+    quality} as the cost-versus-table-quality relation while \\emph{run
+    quality} was the quality of one table — so the two shared the
+    table-quality axis and "perpendicular" was internally inconsistent. Method
+    quality is a process/resource property (auditable, reproducible,
+    cost-predictable, independent of which model runs it; set at the end of
+    §ext-system). Pure negative guard: the conflating signature must not
+    reappear. Positive intent lives in docs/editorial-brief.md
+    (three-scoring-levels-perpendicular), per the CI polarity rule (0557).
+    """
+    disc = section("sec:discussion")
+    forbidden = re.compile(r"against the quality of the table it returns", re.IGNORECASE)
+    assert not forbidden.search(disc), (
+        "§8 (sec:discussion) must not define method quality 'against the "
+        "quality of the table it returns' — that conflates method quality "
+        "with table/run quality, the two axes the paragraph calls "
+        "perpendicular (ticket 0599, finding 40)"
+    )
+
+
 def test_discussion_scoring_levels_cite_their_anchors() -> None:
     """The scoring-levels discussion cites the figures/subsection it rests on.
 
