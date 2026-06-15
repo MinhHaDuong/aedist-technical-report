@@ -1,0 +1,87 @@
+%erg 0.1
+Title: Related Work: cite yuenhsu Vietnam_Power_Plants (PDP7 prior compilation) in §2 + @misc; seed due-diligence note with ODM coal dataset (derivative, not cited)
+Created: 2026-06-15
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-15T10:23Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Reading-3 (tracker [[0605]]). Two external Vietnam power-plant inventories
+were surfaced for possible citation. Decision: cite one, log the other.
+
+## A. Cite yuenhsu/Vietnam_Power_Plants in §2 + @misc
+
+`https://github.com/yuenhsu/Vietnam_Power_Plants` — Yu En Hsu & Linh
+Nguyen Phan Bao (Syracuse, Maxwell School; Ajello Fellowship; adv. Pete
+Wilcoxen), 2020 snapshot. Merges WRI GPPD (pre-2016) + a 2018 market
+report + **PDP7** (planned plants through 2030). It is the closest PRIOR
+public compilation that also attempted the forward/planned tail — which is
+this paper's distinctive contribution — so it clears the "cite
+closely-related work" bar.
+
+1. Add a `@misc` entry to `report/refs.bib` (key e.g.
+   `Hsu-YuEn2020:vietnam-power-plants`): authors, year 2020, title,
+   `howpublished = {GitHub repository}`, `url`, `urldate` (accessed
+   2026-06-15). No DOI/license available — `@misc` is the right register
+   (same as other data-repo citations).
+2. One-clause mention in §2 "Open power-plant databases" paragraph
+   (`sec:related-empirical`, ~`main.tex:178–200`, near the existing
+   "closest external inventory" discussion): cite it as the closest
+   PDP7-era prior compilation that reached for the planned tail, then
+   distinguish ours: PDP8-era, per-cell provenance, coal+gas, maintained
+   — vs its 2020/PDP7 snapshot, partly GPPD-derived, no per-cell sourcing,
+   unmaintained. Lean the citation on the PDP7 planned-tail angle (the
+   pre-2016 half is just GPPD, already cited).
+
+## B. Seed the due-diligence note with the ODM coal dataset (NOT cited)
+
+`https://data.vietnam.opendevelopmentmekong.net/.../thermal-coal-plants-in-vietnam-by-october-2020`
+— Open Development Vietnam, Oct-2020 snapshot, CC BY-SA 4.0; coal-only;
+statuses operational/under-construction/canceled/suspended. Sources:
+"Vietnamese Wikipedia; Global Coal Plant Tracker; governmental reports and
+media" — i.e. derivative of GEM GCPT (already cited `GEM2026:gcpt`) +
+Wikipedia (already a recognition layer). NOT cited: adds no independent
+coverage; coal-only; stale.
+
+1. Add to the related-work due-diligence note (`docs/related-work/…` —
+   the note [[0630]] also uses; create/extend it): entry "ODM thermal
+   coal plants 2020 — surveyed, not cited: derivative of GCPT + Wikipedia,
+   coal-only, 2020 snapshot."
+2. Record the supporting observation: existing public Vietnam inventories
+   are largely **derivative re-packs of GCPT and Wikipedia**, not
+   independently sourced research-grade datasets — evidence for the
+   paper's "first sourced / more comprehensive" framing. Optionally feed a
+   one-clause version into §2 (no new citation needed for the observation).
+
+## Coordination
+
+- [[0630]] (cull ten) touches the same bib + due-diligence note — sequence
+  so the add (this) and the culls (0630) reconcile; net effect is still a
+  smaller bibliography (cull ten, add one).
+
+## Relevant files
+
+- `report/refs.bib` (new `@misc`).
+- `slides/manuscript/main.tex` §2 `sec:related-empirical` (~`:178–200`).
+- `docs/related-work/…` due-diligence note.
+
+## Test
+
+- Red first: `@pytest.mark.adherence` — the new `@misc` key resolves (no
+  dangling `\cite`); manuscript builds; the ODM dataset does NOT appear in
+  `refs.bib` (logged in the note instead).
+
+## Verification
+
+- [ ] yuenhsu cited in §2 (distinguished as PDP7-era prior compilation),
+      `@misc` in refs.bib, builds clean.
+- [ ] ODM dataset recorded in the due-diligence note (not cited), with the
+      derivative-re-pack observation.
+- [ ] `make check` passes.
+
+## Exit criteria
+
+- yuenhsu cited + distinguished; ODM logged-not-cited; `make check` green.
