@@ -1,0 +1,26 @@
+%erg 0.1
+Title: Expand Exp2 — RAG baseline, broader systems, advanced fusion, multilingual/temporal
+Created: 2026-06-15
+Author: claude
+Label: deferred
+
+--- log ---
+2026-06-15T20:17Z claude created from peer-review tracker 0644 (deferred)
+
+--- body ---
+## Context
+Reviewers: Exp2 lacks a pure-RAG (non-agentic) baseline to isolate the agentic
+contribution; tests only four cloud-API agents (no browser surfaces, local models,
+or multi-agent frameworks); fusion is naive (union / 2-of-4) and ignores correlated
+sources. Multilingual (Vietnamese-doc) and temporal (as-of-2018) arms would test
+key assumptions. Tracker: 0644.
+
+## Actions
+1. Add a pure-RAG baseline with the same document set (isolate the agentic contribution).
+2. Broaden the agent set (browser surfaces / local models / multi-agent) as feasible.
+3. Test sophisticated fusion (confidence-weighted vote, capture–recapture) that
+   accounts for correlated sources.
+4. Optional: multilingual and temporal-query arms.
+
+## Exit criteria
+- [ ] Exp2 extended with a RAG baseline + advanced fusion; the agentic contribution isolated

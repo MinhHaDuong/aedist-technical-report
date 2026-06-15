@@ -1,0 +1,21 @@
+%erg 0.1
+Title: Re-run Experiment 1 with status vocabulary aligned to the reference
+Created: 2026-06-15
+Author: claude
+Label: deferred
+
+--- log ---
+2026-06-15T20:16Z claude created from peer-review tracker 0644 (deferred)
+
+--- body ---
+## Context
+The Exp1 prompt omits "Proposed"/"Planned" (the largest reference status classes),
+mechanically depressing status accuracy and possibly recall. The caveat is surfaced
+in prose by 0651; this ticket is the actual re-run fix. Tracker: 0644.
+
+## Actions
+1. Re-run Experiment 1 with a prompt status vocabulary aligned to the reference
+   (include Proposed/Planned); report the change in status accuracy and recall.
+
+## Exit criteria
+- [ ] Aligned-vocabulary Exp1 re-run reported; the status-accuracy artifact quantified

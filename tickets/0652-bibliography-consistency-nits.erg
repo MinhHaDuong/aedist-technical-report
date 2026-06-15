@@ -1,0 +1,25 @@
+%erg 0.1
+Title: Bibliography and consistency nits
+Created: 2026-06-15
+Author: claude
+
+--- log ---
+2026-06-15T20:08Z claude created from peer-review tracker 0644
+
+--- body ---
+## Context
+openai_student minor list: Balasubramanian cited as 2020 in §9 vs 2026 in the
+references; PyPSA-ASEAN (§1) vs bib entry "PyPSA-ME" mismatch; "fourteen models"
+(§5) vs sixteen (Annex B) needs a one-line explanation in the main text. Keep
+terminology distinct (coverage / recall / F1; "corroboration" reserved for
+verified independent support). Tracker: 0644. Review: openai_student (minor
+#1,#2,#4,#5,#6).
+
+## Action
+- Fix the Balasubramanian year; harmonize the PyPSA naming; add a one-line
+  14-vs-16 explanation in §5; tighten coverage/recall/F1 usage where trivially
+  fixable.
+
+## Exit criteria
+- [ ] Citation years/names consistent; 14-vs-16 explained in main text
+- [ ] manuscript builds; adherence tests pass

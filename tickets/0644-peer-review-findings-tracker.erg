@@ -1,0 +1,48 @@
+%erg 0.1
+Title: External peer-review findings (2026-06-15) — triage and address
+Created: 2026-06-15
+Author: claude
+
+--- log ---
+2026-06-15T20:00Z claude created tracking ticket from 4 external reviews
+
+--- body ---
+## Context
+Four external peer reviews of `slides/manuscript/main.pdf` were obtained via
+OpenRouter — OpenAI `gpt-5.5` and Mistral `mistral-large-2512`, each in two
+personas: a grinchy senior nitpicker and a bright doctoral student. Full texts:
+`slides/manuscript/attic/peer-reviews-2026-06-15/`. Consensus verdict: major
+revision (one reject). Reviewers liked the task framing and the fusion result;
+the recurring threats are captured in the children below.
+
+This is a **tracking ticket**. Triage per author instruction: prose fixes are
+done now (children 0645–0653); new-experiment work is deferred (children
+0654–0661, `deferred` label). The tracker stays open until all children close
+and an integration re-read confirms the front-matter claims match what is
+measured.
+
+## Children — fix prose now
+- 0645 Calibrate overclaims in abstract/intro/conclusion; relabel q3/q4 as proxy metrics
+- 0646 Reframe the Wikipedia coverage bar as availability/upper-bound
+- 0647 Scope the multi-turn result to the harness, not agentic workflows broadly
+- 0648 Reconcile abstract↔§7 on what tracks F1 (capacity variability, not coherence indicators)
+- 0649 Define the §6 document pack in the main text
+- 0650 Figure 1 entity-grain clarification + Figure 4/§5 cost–coverage consistency
+- 0651 Surface Exp1 caveats: status-vocabulary mismatch + prompt-impossibility/refusal scoring
+- 0652 Bibliography/consistency nits
+- 0653 Expand Related Work with missing literatures (within budget)
+
+## Children — defer (new experiments / data)
+- 0654 Independent expert audit of the reference + inter-annotator agreement
+- 0655 Cross-context replication on a second country
+- 0656 Quantify provider-side variance (MoE non-determinism + interday drift)
+- 0657 Out-of-sample validation of the reference-free reliability screen
+- 0658 Provenance verification layer (verify sampled citations)
+- 0659 Matcher/entity-resolution sensitivity analysis
+- 0660 Re-run Exp1 with status vocabulary aligned to the reference
+- 0661 Expand Exp2 (RAG baseline, broader systems, advanced fusion, multilingual/temporal)
+
+## Exit criteria
+- [ ] All prose children (0645–0653) closed via merge requests
+- [ ] All deferred children (0654–0661) filed with `deferred` label and handoff context
+- [ ] Integration re-read once prose children merge: abstract/intro/conclusion claims match what is measured

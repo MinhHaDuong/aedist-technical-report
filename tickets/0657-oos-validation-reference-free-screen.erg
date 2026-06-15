@@ -1,0 +1,24 @@
+%erg 0.1
+Title: Out-of-sample validation of the reference-free reliability screen
+Created: 2026-06-15
+Author: claude
+Label: deferred
+
+--- log ---
+2026-06-15T20:13Z claude created from peer-review tracker 0644 (deferred)
+
+--- body ---
+## Context
+The Figure 5 screen is tuned in-sample (an existence proof, not a validated
+detector). Reviewers want out-of-sample validation, with the feature set stated
+explicitly and confidence intervals given only five repeats per model.
+Tracker: 0644. (Abstract↔§7 wording fix is 0648; this is the actual validation.)
+
+## Actions
+1. Tune on Experiment 1, test on Experiment 2 (or hold out models); report a
+   correlation/regression of F1 vs each reference-free feature, with CIs.
+2. State which features carry the signal (capacity/status variability), separating
+   them from the internal-coherence indicators.
+
+## Exit criteria
+- [ ] OOS validation reported; the screen upgraded from existence proof or clearly scoped

@@ -1,0 +1,23 @@
+%erg 0.1
+Title: Quantify provider-side variance — MoE non-determinism + interday drift
+Created: 2026-06-15
+Author: claude
+Label: deferred
+
+--- log ---
+2026-06-15T20:12Z claude created from peer-review tracker 0644 (deferred)
+
+--- body ---
+## Context
+Within-model variance and interday drift up to ΔF1 = 0.289 may be provider-side
+instability (routing, checkpoint updates), not "prompt-driven variance."
+Reviewers want this as a first-class error source. See project rule
+"MoE models require repeat=3". Tracker: 0644.
+
+## Actions
+1. Compare F1 variance for MoE vs dense models under T=0 / seed=42.
+2. Treat interday drift as a separate error term (error bars) or run all sweeps in
+   a single session; add/strengthen a canary gate.
+
+## Exit criteria
+- [ ] Provider-side variance characterized and reported as a first-class term in figures/tables

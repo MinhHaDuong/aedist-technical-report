@@ -1,0 +1,32 @@
+%erg 0.1
+Title: Calibrate overclaims in abstract/intro/conclusion; relabel q3/q4 as proxy metrics
+Created: 2026-06-15
+Author: claude
+
+--- log ---
+2026-06-15T20:01Z claude created from peer-review tracker 0644
+
+--- body ---
+## Context
+All four reviewers: the front matter (abstract, intro, conclusion) claims more
+than the experiments measure. (a) the benchmark is presented as "reusable" while
+methods were tuned in-sample on N=1 (Vietnam); (b) provenance is "verifiable not
+verified" and external coherence is unmeasured, yet the paper implies full
+data-quality scoring; (c) the contamination-as-ceiling design makes it closer to
+a dated capability audit than a reusable benchmark. The §8 caveats already
+exist — the fix is to surface them into the front matter and scope the claims.
+Tracker: 0644. Reviews: openai_grinchy (obj 1,9), mistral_grinchy (obj 1,9),
+openai_student (concern 1,3; §1).
+
+## Action
+- In abstract+intro+conclusion, scope "computable/reusable benchmark" to
+  "demonstrated on the Vietnam case; cross-context transfer is future work".
+- Relabel q3/q4 score components as proxy metrics (provenance = citation
+  presence/verifiable, not verified; temporality shallow); state external
+  coherence is not measured.
+- Record the standing decisions in `docs/editorial-brief.md`; keep edits as
+  negative-guard-safe surfacing (CI polarity rule).
+
+## Exit criteria
+- [ ] Front matter no longer implies out-of-distribution validity or full 4-dimension scoring
+- [ ] editorial-brief.md entries added; manuscript builds; adherence tests pass

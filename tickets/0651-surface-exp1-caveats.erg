@@ -1,0 +1,25 @@
+%erg 0.1
+Title: Surface Exp1 caveats — status-vocabulary mismatch and prompt-impossibility/refusal scoring
+Created: 2026-06-15
+Author: claude
+
+--- log ---
+2026-06-15T20:07Z claude created from peer-review tracker 0644
+
+--- body ---
+## Context
+Both students: (a) the Exp1 prompt omits "Proposed" (the reference's largest
+status class), mechanically depressing status accuracy — surface prominently as a
+known limitation (the re-run is deferred, 0660). (b) The prompt demands
+"primary-sourced, never fabricate URLs" with web disabled; refusals are
+epistemically correct but score F1=0, mixing task compliance with epistemic
+caution — note this caveat. Tracker: 0644. Reviews: openai_student (§5),
+mistral_student (§5).
+
+## Action
+- Add/sharpen caveats in §5 (and §8 if needed) for the status-vocabulary mismatch
+  and the refusal-as-F1=0 artifact. Prose/caveat only; the re-runs are 0660/0661.
+
+## Exit criteria
+- [ ] Both caveats stated prominently in §5
+- [ ] manuscript builds; adherence tests pass

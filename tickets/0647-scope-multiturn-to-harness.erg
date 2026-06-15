@@ -1,0 +1,24 @@
+%erg 0.1
+Title: Scope the multi-turn result to the harness/budgets, not agentic workflows broadly
+Created: 2026-06-15
+Author: claude
+
+--- log ---
+2026-06-15T20:03Z claude created from peer-review tracker 0644
+
+--- body ---
+## Context
+Three reviewers: the multi-turn degradation (3 of 4 agents) is confounded by the
+specific self-prompting harness — DeepSeek classifier dependency, fixed
+ENCOURAGE/VERIFY strings, budget caps, prompt drift, agent self-imposed rules.
+State the finding as "this self-prompting multi-turn harness under these budgets
+did not improve F1," not a general indictment of agentic/multi-step workflows.
+Tracker: 0644. Reviews: openai_student (concern 5), mistral_student (§6),
+mistral_grinchy (obj 4).
+
+## Action
+- Reword §6 + conclusion to scope the claim to the tested harness and budgets.
+
+## Exit criteria
+- [ ] §6 / conclusion no longer generalize multi-turn degradation to agentic workflows at large
+- [ ] manuscript builds; adherence tests pass
