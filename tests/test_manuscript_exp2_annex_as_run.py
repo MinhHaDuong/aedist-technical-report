@@ -64,9 +64,12 @@ def test_no_stale_pre_run_markers():
 
 
 def test_as_run_two_arms_and_n5():
+    # The query-mode arms are named single-shot / multi-turn (ticket 0620,
+    # retiring the naive/optimised register words). Structural anchor: both
+    # arm labels and the as-run N=5 are present.
     annex = _exp2_annex().lower()
-    assert "naive" in annex, "naive arm not named"
-    assert "optimised" in annex or "optimized" in annex, "optimised arm not named"
+    assert "single-shot" in annex, "single-shot arm not named"
+    assert "multi-turn" in annex, "multi-turn arm not named"
     assert "n=5" in annex, "as-run N=5 not stated"
 
 

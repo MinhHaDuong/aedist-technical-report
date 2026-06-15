@@ -517,7 +517,7 @@ models could be expected to pass.}\label{fig:direct-base}
 analysis-cohort language models; they are
 listed on Figure~\ref{fig:reliability} and include Claude, DeepSeek,
 Mistral and Qwen at various sizes from workstation to frontier, with a
-fixed inventory-specification prompt (the naive prompt, reproduced
+fixed inventory-specification prompt (the baseline single-shot prompt, reproduced
 verbatim in \ref{sec:annex-exp1}). No documents are
 provided; models draw exclusively on parametric knowledge and receive a
 system instruction forbidding web search. Each model is queried five
@@ -701,25 +701,25 @@ web\_search inside thinking mode). The fourth slot is
 hypothesis-relevant rather than decorative: Chinese-language investor
 and trade documents on Vietnamese power assets are under-indexed by
 Western search. Each agent is run through a 2×2 factorial,
-crossing \emph{query mode} (naive vs optimised) with \emph{documents}
+crossing \emph{query mode} (single-shot vs multi-turn) with \emph{documents}
 (absent vs a curated reference pack), N=5 per cell, four arms in all
-(Table~\ref{tbl:exp2-2x2}). The \emph{naive} mode sends a single-shot
-prompt with web search on, the null comparator; the \emph{optimised}
-mode runs a multi-turn protocol in which the agent first designs its
+(Table~\ref{tbl:exp2-2x2}). The \emph{single-shot} mode sends a single
+prompt with web search on, the null comparator; the \emph{multi-turn}
+mode runs a protocol in which the agent first designs its
 own prompt and settings, then executes under a per-session cap of 50K
 tokens / \$3, orchestrated by a simple harness: an independent
 classifier model driving a loop with the tested agent as the tool. The
-naive-vs-optimised contrast isolates the protocol's contribution over
+single-shot-vs-multi-turn contrast isolates the protocol's contribution over
 raw model capability; the documents contrast tests whether a curated
 corpus matters more than the model. This section reads the two
 no-documents arms; the documents axis is detailed in
 \ref{sec:annex-exp2}.
 
-The naive arm is an independent sweep, not a
+The single-shot arm is an independent sweep, not a
 re-run of the §\ref{sec:exp1} parametric protocol, so its scores are not
 directly comparable to §\ref{sec:exp1}'s per-model numbers;
 within-Experiment-2 comparisons all use this common arm-1 sweep as their
-baseline. Read with that caveat, setting each agent's naive-arm mean F1
+baseline. Read with that caveat, setting each agent's single-shot-arm mean F1
 (Table~\ref{tbl:exp2-2x2}) against the same lab's flagship in the
 §\ref{sec:exp1} parametric sweep, only Mistral improved
 (\ExpTwoFOneMistralMemory{} to \ExpTwoFOneMistralNaive): Anthropic
@@ -743,7 +743,7 @@ chance at discovering those sources themselves: the prompts reference
 Global Energy Monitor only as a status-vocabulary standard, never as a
 source to consult or merge; the public lists sit in
 their training corpora (§\ref{sec:exp1}), web search is on, and the
-optimised arm's multi-turn protocol explicitly encourages source
+multi-turn arm's protocol explicitly encourages source
 discovery. The one thing the protocol never discloses is where the
 reference inventory itself is published.
 
@@ -776,18 +776,18 @@ Figure~\ref{fig:exp2-arms}; the full breakdown is in
 \end{figure}
 
 \textbf{Coverage: the best agent enumerates barely half the fleet.} For
-agents in the naive arm (arm 1): Anthropic median \ExpTwoRowsAnthropicNaive{} rows (4/5 usable,
+agents in the single-shot arm (arm 1): Anthropic median \ExpTwoRowsAnthropicNaive{} rows (4/5 usable,
 one zero-row run); Mistral median \ExpTwoRowsMistralNaive{} rows (range \ExpTwoRowsMinMistralNaive{}--\ExpTwoRowsMaxMistralNaive{}); OpenAI median
 \ExpTwoRowsOpenAINaive{} rows (range \ExpTwoRowsMinOpenAINaive{}--\ExpTwoRowsMaxOpenAINaive{}); Qwen median \ExpTwoRowsQwenNaive{} rows (range \ExpTwoRowsMinQwenNaive{}--\ExpTwoRowsMaxQwenNaive{}) — all
-against the \NumRefPlants-plant reference. The optimised arm (arm 2) does not
+against the \NumRefPlants-plant reference. The multi-turn arm (arm 2) does not
 change the picture: OpenAI median \ExpTwoRowsOpenAIOptimised{} rows versus arm 1 median \ExpTwoRowsOpenAINaive{} rows
 (modest improvement; individual runs \ExpTwoRowsMinOpenAIOptimised{}--\ExpTwoRowsMaxOpenAIOptimised{} vs \ExpTwoRowsMinOpenAINaive{}--\ExpTwoRowsMaxOpenAINaive{}); Qwen median \ExpTwoRowsQwenOptimised{}
 rows versus arm 1 median \ExpTwoRowsQwenNaive{} rows (regression; Qwen's self-designed
 protocol imposed a strict dual-source admissibility filter that
-constrains coverage from Turn 1). The optimised protocol costs 2--4×
-more per run than naive across all agents
+constrains coverage from Turn 1). The multi-turn protocol costs 2--4×
+more per run than single-shot across all agents
 (Figure~\ref{fig:exp2-arms-cost}); OpenAI's ratio is most
-extreme (median \$\ExpTwoCostOpenAIOptimised{} optimised vs \$\ExpTwoCostOpenAINaive{} naive). On row-level F1
+extreme (median \$\ExpTwoCostOpenAIOptimised{} multi-turn vs \$\ExpTwoCostOpenAINaive{} single-shot). On row-level F1
 (Table~\ref{tbl:exp2-2x2}, no-documents rows), the multi-turn protocol
 degraded three of the four agents (Anthropic \ExpTwoFOneAnthropicNaive{}
 to \ExpTwoFOneAnthropicOptimised, Mistral \ExpTwoFOneMistralNaive{} to
@@ -801,14 +801,14 @@ agents on structured-output coverage at this granularity.
 Every Source 1, Source 2, and Notes cell across all 40 runs was parsed
 to measure citation coverage and corroboration (see
 Figure~\ref{fig:coverage-certainty} in \ref{sec:annex-exp2} for the full
-figure). OpenAI optimised is the
+figure). OpenAI multi-turn is the
 only agent to achieve both high coverage (79--96 rows) and near-complete
 corroboration (77--88 rows with Source 2 — approaching the full
 diagonal). Qwen clusters near the diagonal at low coverage (22--45 rows
-naive; 22--42 rows optimised), meaning nearly every plant it enumerates
-carries a second source. Mistral naive produces near-zero corroboration
+single-shot; 22--42 rows multi-turn), meaning nearly every plant it enumerates
+carries a second source. Mistral single-shot produces near-zero corroboration
 across all five runs (0 or 1 Source 2 citation per run) despite finding
-48--74 rows. The most striking provenance gap is in the naive arm: all
+48--74 rows. The most striking provenance gap is in the single-shot arm: all
 five Mistral runs and several Anthropic runs return tables with Source 1
 citations but no Source 2. We did not find published per-row provenance
 analyses of this kind for frontier deep-research agents.
@@ -921,7 +921,7 @@ The experiments in §\ref{sec:exp1} and §\ref{sec:exp2} establish that
 the gap is real: recall from model memory is incomplete and volatile;
 frontier agents with web access improve coverage but not provenance or
 reproducibility. The Q\&A at the conference — ``did you fuse the
-results?'' — points directly to the path forward. A naive union
+results?'' — points directly to the path forward. A simple union
 already helps: pooling runs across models more than doubles recall
 relative to the single-run mean (\AggUnionGainX×) at no new collection cost
 (aggregation sweep in \ref{sec:annex-fusion}). Full treatment
@@ -932,7 +932,7 @@ to the research programme (§\ref{sec:future}).
 The mirror-image lever buys precision: requiring at least two of the
 four frontier models to agree nearly eliminates false positives — F1
 = \FusionRTwoEOneFFrac{} with \FusionRTwoEOneFP{} false positives on the Experiment 1 cohort, F1 = \FusionRTwoETwoOneDFFrac{}
-with \FusionRTwoETwoOneDFP{} on the Experiment 2 naive arm (full results in
+with \FusionRTwoETwoOneDFP{} on the Experiment 2 single-shot arm (full results in
 \ref{sec:annex-fusion}). Both levers reuse existing runs; the
 structural answer to the ceiling no single model breaks is a stateful
 pipeline that invests in the corpus rather than the model
@@ -1354,8 +1354,8 @@ reconciliation is out of scope for this paper.}
 
 \textbf{Analysis-cohort prompt.} The fourteen-model analysis
 cohort (\texttt{modelset\_exp1\_batch2}, the cohort behind every
-per-model number in §\ref{sec:exp1}) received the full naive
-prompt — \fpath{experiments/sota/protocol_07_naive_prompt.md} —
+per-model number in §\ref{sec:exp1}) received the full baseline
+single-shot prompt — \fpath{experiments/sota/protocol_07_naive_prompt.md} —
 verbatim as the sole user message, at temperature 0, seed 42,
 \texttt{max\_tokens} 65536, web access off; this was verified against
 the archived per-run records. The prompt in full:
@@ -1951,9 +1951,9 @@ prompt. The gap between this ceiling and the quality bar defined in
 
 \emph{This annex describes Experiment 2 as actually run: a 2×2
 factorial (query mode × documents) over the four agents below, N=5 per
-cell, 80 production sessions in all. The two no-documents arms (naive
-and optimised, 40 sessions) ran first; the two documents conditions
-(the same naive and optimised surfaces with a reference document pack
+cell, 80 production sessions in all. The two no-documents arms (single-shot
+and multi-turn, 40 sessions) ran first; the two documents conditions
+(the same single-shot and multi-turn surfaces with a reference document pack
 attached, 40 sessions) were added during execution and complete the
 factorial. The four arms are reported jointly in §\ref{sec:exp2}'s
 Figure~\ref{fig:exp2-arms} and below. Row-level F1 against the
@@ -2004,7 +2004,7 @@ Vietnamese power assets are under-indexed by Western search.
 \subsection*{Baseline reference for cross-comparison}
 \addcontentsline{toc}{subsection}{Baseline reference for cross-comparison}
 
-The naive one-shot baseline that §\ref{sec:exp2} compares against is
+The single-shot baseline that §\ref{sec:exp2} compares against is
 \textbf{not} §\ref{sec:exp1}'s \texttt{modelset\_exp1\_journal} sweep.
 It is the pre-existing \fpath{experiments/outputs/direct_complete/}
 artifact from \fpath{sweep_direct_complete} over
@@ -2014,9 +2014,9 @@ rep per model, read directly and not re-run.
 \subsection*{Phase structure}
 \addcontentsline{toc}{subsection}{Phase structure}
 
-\textbf{Phase A — Reflexive prompt design (optimised arm).} The
-optimised arm opens with a design call. Each agent is shown the same
-inventory specification the naive arm sends (the task, the four
+\textbf{Phase A — Reflexive prompt design (multi-turn arm).} The
+multi-turn arm opens with a design call. Each agent is shown the same
+inventory specification the single-shot arm sends (the task, the four
 §\ref{sec:quality} quality-dimension paragraphs, the source-admissibility
 and confidence rules, all reproduced verbatim as the analysis-cohort
 prompt in \ref{sec:annex-exp1}), then asked to design how it will
@@ -2029,7 +2029,7 @@ confidence discipline, and stopping criteria; the Phase B deliverable
 schema is fixed. The metaprompt that frames this design call is
 reproduced below verbatim, with one elision: the shared inventory
 specification it wraps (deliverable structure, quality dimensions,
-source-quality and confidence rules) is identical to the naive-arm
+source-quality and confidence rules) is identical to the single-shot-arm
 prompt in \ref{sec:annex-exp1} and is marked but not repeated.
 
 \begin{promptbox}
@@ -2054,7 +2054,7 @@ The designed Phase B prompt must be operational, not philosophical.
 
 [\,Elided: the Phase B deliverable specification, quality dimensions,
 source-quality management, calibrated confidence vocabulary, and
-asset-row rules — identical to the naive-arm prompt reproduced in
+asset-row rules — identical to the single-shot-arm prompt reproduced in
 \ref{sec:annex-exp1}.\,]
 
 \textbf{\# FORMAT}
@@ -2130,7 +2130,7 @@ self-evaluation pairing. We moved the classifier to an independent
 third-party model — so the orchestrating harness is deliberately not one
 of the four agents under test, and never grades its own vendor's output.
 
-\textbf{Phase B-0 — Single-rep smoke (optimised arm).} Each designed
+\textbf{Phase B-0 — Single-rep smoke (multi-turn arm).} Each designed
 prompt runs once (N=1) end-to-end through the multi-turn auto-reply loop
 (see ``Phase B dialogue policy''). The four single-rep outputs surface
 adapter parser bugs, prompt failures, refusals, and real per-session
@@ -2219,16 +2219,16 @@ production sessions):
 \begin{itemize}
 \tightlist
 \item
-  \textbf{Naive} — the naive prompt
+  \textbf{Single-shot} — the baseline single-shot prompt
   (\fpath{experiments/sota/protocol_07_naive_prompt.md}) sent
   verbatim as the sole user message, no system prompt, web search on,
   one model response per session. This carries the v2 task statement and
-  quality criteria but none of the optimised methodology (budget
+  quality criteria but none of the multi-turn methodology (budget
   rules, planning headroom, source admissibility, calibrated confidence
   vocabulary). It is the null comparator: the contrast against the
-  optimised setting isolates the protocol scaffolding's contribution.
+  multi-turn setting isolates the protocol scaffolding's contribution.
   The file at this
-  path was revised after all naive sessions had run (2026-05-24):
+  path was revised after all single-shot sessions had run (2026-05-24):
   the five anthropic-direct run records archive the as-sent user
   message (the earlier, shorter version, identical across runs),
   and the three web-product sessions (2026-05-22--23) predate the
@@ -2236,7 +2236,7 @@ production sessions):
   prompt. The expanded current version is the Experiment 1
   analysis-cohort prompt reproduced in \ref{sec:annex-exp1}.
 \item
-  \textbf{Optimised} — Phase A design call followed by the Phase B
+  \textbf{Multi-turn} — Phase A design call followed by the Phase B
   multi-turn state machine above (Phase B-0 then Phase B-full).
 \end{itemize}
 
@@ -2259,16 +2259,16 @@ Two design decisions shape how the results are read:
 \tightlist
 \item
   \textbf{A documents axis was added.} Beyond the two no-documents
-  arms, two further conditions — the same naive and optimised surfaces
+  arms, two further conditions — the same single-shot and multi-turn surfaces
   with a reference document pack attached — were run during execution,
   expanding the corpus from 40 to 80 sessions and forming the 2×2
   factorial (query mode × documents) of §\ref{sec:exp2}'s
   Figure~\ref{fig:exp2-arms}. In the F1 analysis the documents arms are
   never aggregated with the no-documents arms.
 \item
-  \textbf{Claude's optimised arm is excluded from the
+  \textbf{Claude's multi-turn arm is excluded from the
   bibliography-quality table (0 of 5 runs).} None of Claude's five
-  optimised-arm sessions yielded a bibliography parseable by the
+  multi-turn-arm sessions yielded a bibliography parseable by the
   structure analyser, so the cell is blank in the bibliography-quality
   table. This is a \emph{bibliography-parsability} exclusion only: those
   same five sessions remain row-level-F1-scorable (N=5) via the LP
@@ -2281,7 +2281,7 @@ Two design decisions shape how the results are read:
 \caption{\label{tbl:exp2-2x2}Experiment 2 — row-level F1 and per-run
 API cost (USD) by agent across the 2×2 factorial (query mode ×
 documents), N=5 per cell. The §\ref{sec:exp2} narrative focuses on the
-two no-documents arms (naive vs optimised). The two documents = yes
+two no-documents arms (single-shot vs multi-turn). The two documents = yes
 rows per agent complete the 2×2 factorial. Values generated from
 \texttt{experiments/derived/tab\_exp2\_2x2.csv}'s pipeline.}
 {\small\setlength{\tabcolsep}{4pt}
@@ -2354,9 +2354,9 @@ zero parsed inventory rows excluded: Mistral arm 2 all 5 runs, Anthropic
 arm 2 runs 2/4/5, and Anthropic arm 1 run 4). X-axis: inventory rows
 enumerated. Y-axis: rows with a Source 2 citation present. The dashed
 diagonal marks full double-sourcing (every row corroborated). Filled
-diamonds: optimised arm (arm 2); open circles: naive arm (arm 1).
-Colours encode agents. OpenAI optimised alone sustains high values on
-both axes; Anthropic optimised shows a corroboration ceiling despite
+diamonds: multi-turn arm (arm 2); open circles: single-shot arm (arm 1).
+Colours encode agents. OpenAI multi-turn alone sustains high values on
+both axes; Anthropic multi-turn shows a corroboration ceiling despite
 growing coverage; Qwen clusters near the diagonal at low
 volume.}\label{fig:coverage-certainty}
 \end{figure}
@@ -2380,9 +2380,9 @@ admissible sources — the risk is both training-data and web-search
 contamination. We audited compliance mechanically: URL-domain matching
 over every Source 1 and Source 2 cell and every bibliography entry of
 all 40 no-documents runs. We detected banned-domain citations in 5 of the
-20 optimised-arm runs, concentrated in Mistral (runs 1--4) and OpenAI
+20 multi-turn-arm runs, concentrated in Mistral (runs 1--4) and OpenAI
 (run 1); we did not detect banned-domain citations in the Anthropic or
-Qwen optimised runs. In the naive arm, where the prompt carries no
+Qwen multi-turn runs. In the single-shot arm, where the prompt carries no
 source ban, 1 of the 20 runs (OpenAI run 5) cited a banned domain. This
 audit is mechanical only: paraphrased Wikipedia content without a URL is
 not detected.
@@ -2466,8 +2466,8 @@ applying a simple ≥2-models presence rule — a plant is admitted if at
 least two of the four models name it — sharpens the precision/recall
 trade-off in both experiments (Figure~\ref{fig:fusion-mvp}). Applying the rule separately to
 Experiment 1 (the same four models, answering from memory, × 5 repeats)
-and the Experiment 2 naive arm (E1 vs E2) gives: under ≥2-models in E1,
-F1 = \FusionRTwoEOneFFrac{} (TP = \FusionRTwoEOneTP, FP = \FusionRTwoEOneFP); under ≥2-models in the E2 naive arm, F1
+and the Experiment 2 single-shot arm (E1 vs E2) gives: under ≥2-models in E1,
+F1 = \FusionRTwoEOneFFrac{} (TP = \FusionRTwoEOneTP, FP = \FusionRTwoEOneFP); under ≥2-models in the E2 single-shot arm, F1
 = \FusionRTwoETwoOneDFFrac{} (TP = \FusionRTwoETwoOneDTP, FP = \FusionRTwoETwoOneDFP). The vote gate trades a little recall for a
 large precision gain, the mirror image of the union recipe above.
 Source artifact: \texttt{report/inputs/generated/fusion\_mvp.csv}.
@@ -2477,10 +2477,10 @@ Source artifact: \texttt{report/inputs/generated/fusion\_mvp.csv}.
 \includegraphics[width=\linewidth]{../../report/inputs/generated/fig_fusion_mvp.pdf}
 \caption{A two-model agreement rule buys precision cheaply: \FusionRTwoEOneTP--\FusionRTwoETwoOneDTP{}
 confirmed plants against \FusionRTwoEOneFP--\FusionRTwoETwoOneDFP{} false positives, with no new API calls.
-Naive presence fusion across the 4-frontier-model Experiment 1 cohort
-and Experiment 2 naive arm (N=20 runs each: 4 models × 5 repeats). Top
+Simple presence fusion across the 4-frontier-model Experiment 1 cohort
+and Experiment 2 single-shot arm (N=20 runs each: 4 models × 5 repeats). Top
 panel (E1 parametric): UNION and ≥2-models fusion rules vs best single
-model. Bottom panel (E2 naive arm): same rules. TP = plants matched
+model. Bottom panel (E2 single-shot arm): same rules. TP = plants matched
 against the reference; FP = unmatched plants (extracted but not in the
 reference). Under ≥2-models in E1: F1=\FusionRTwoEOneFFrac{}, TP=\FusionRTwoEOneTP, FP=\FusionRTwoEOneFP. Under
 ≥2-models in E2-1D: F1=\FusionRTwoETwoOneDFFrac{}, TP=\FusionRTwoETwoOneDTP, FP=\FusionRTwoETwoOneDFP.}\label{fig:fusion-mvp}
