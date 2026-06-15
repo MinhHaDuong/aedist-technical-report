@@ -24,6 +24,16 @@ decides severity — the checks report, they don't filter.
 
 Design: expandable. Add new checks by appending to the relevant
 function. Each check is a simple predicate on one or more rows.
+
+---
+
+Retention note (ticket 0634, 2026-06-15):
+This module was suspected dead (only tests/test_coherence.py appeared to
+import it). Removal was blocked by a real production dependency:
+``src/aedist/tabulate_coherence.py`` imports ``IssueLevel`` and
+``check_coherence`` from this module and is invoked by the
+``experiments/render.mk`` target ``tab_coherence.tex``.  Do not delete
+this module until ``tabulate_coherence.py`` is removed or refactored.
 """
 
 from __future__ import annotations
