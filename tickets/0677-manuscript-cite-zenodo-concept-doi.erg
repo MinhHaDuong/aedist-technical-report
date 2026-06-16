@@ -1,0 +1,40 @@
+%erg 0.1
+Title: Cite the Zenodo concept DOI in the manuscript's Data & Code Availability (preprint/v2)
+Created: 2026-06-16
+Author: HDMX-coding-agent
+Blocked-by: 0665
+
+--- log ---
+2026-06-16T09:30Z HDMX-coding-agent created — durable reminder for the ~2-month preprint pass; auto-surfaces in `erg ready` when 0665 (arXiv) closes.
+
+--- body ---
+## Context
+
+The code+data reproducibility archive was deposited on Zenodo 2026-06-16
+(ticket 0676): **concept DOI 10.5281/zenodo.20715179** (all versions, always
+resolves to the latest snapshot). The current manuscript's "Data & Code
+Availability" still points only to the mutable GitHub URL — added by closed
+ticket 0509, before the deposit existed. GitHub is not a persistent
+identifier; the mission requires locatable, citable data.
+
+Blocked-by 0665 deliberately: the citation upgrade belongs to the
+preprint/v2 manuscript pass that accompanies the arXiv push, NOT to 0665
+itself (0665 posts the tag PDF byte-identical). When 0665 closes this becomes
+ready and the reminder fires. See the publication-strategy Imagine [[0675]].
+
+## What to do (in the preprint/v2 manuscript pass)
+
+1. In `slides/manuscript/main.tex` "Data & Code Availability", cite the Zenodo
+   **concept** DOI (10.5281/zenodo.20715179) — not the version DOI — so the
+   line stays correct across future snapshots. Keep the GitHub URL as the
+   human-browsable source if desired, but the citable identifier is the DOI.
+2. Cut a fresh Zenodo **version** for the v2 snapshot (Zenodo "New version" on
+   record 20715180) at the preprint tag, under the same concept DOI.
+3. Set `CITATION.cff` `preferred-citation.doi` to the assigned arXiv id
+   (replacing the `10.XXXXX/arXiv.XXXXX` placeholder) once 0665 mints it.
+
+## Exit criteria
+
+- [ ] Manuscript "Data & Code Availability" cites the Zenodo concept DOI
+- [ ] CITATION.cff preferred-citation DOI = the arXiv id (no placeholder)
+- [ ] A v2 Zenodo version exists for the preprint snapshot (same concept DOI)
