@@ -1,4 +1,4 @@
-Last updated: 2026-06-16T06:01Z
+Last updated: 2026-06-16T08:09Z
 
 ## North star
 
@@ -9,15 +9,15 @@ Produce research-quality energy infrastructure datasets from open sources, valid
 Preprint (`slides/manuscript/main.tex`) diffused to Econom'IA 2026 participants; tagged `economia-2026-report` (2da83d04, 65 pp) and **released on GitHub with the PDF (0666)**. Prior: reading-2/3 waves + a 4-reviewer external panel (tracker 0644 — prose findings fixed, experiments deferred post-arXiv). **Dissemination tracker 0663**: HAL deposit (0664, gated/SWORD) is the next step → arXiv-via-HAL (0665), homepage (0667), CIRED (0668). **Spring-cleanup tracker 0669** (publications/ rehome, data+derived→experiments, root tidy) is parked behind dissemination. Standing auth: merge-review-merge cadence; new judgment calls stay needs-human.
 
 ## Status
-<!-- generated 2026-06-16T06:01Z -->
+<!-- generated 2026-06-16T08:09Z -->
 
-**Tickets:** 37 ready · 48 blocked — `erg ready tickets/` for full list
+**Tickets:** 37 ready · 49 blocked — `erg ready tickets/` for full list
 **Recent commits:**
-  13a39aba Merge pull request #1149 from MinhHaDuong/quickpr/docs-archive-original-synopsis-draft-syn-20260616-055056
-  cc8b26f4 docs: archive original synopsis draft (synopsis-v0)
-  674a00c5 Merge pull request #1148 from MinhHaDuong/end-session-housekeeping
-  e10605e8 chore: end-session housekeeping — archive 0639-0643, refresh STATE
-  4150e577 Merge pull request #1147 from MinhHaDuong/close-0666-release
+  ac4ebe19 Merge pull request #1153 from MinhHaDuong/worktree-t0673
+  40c84165 ticket(0673): close and archive — PR #1153
+  8cf420cd test(0673): land NumRefPlants single-source adherence guard
+  9cdc9a8b Merge pull request #1150 from MinhHaDuong/quickpr/tickets-open-0673-land-the-numrefplants--20260616-055417
+  020ce284 fix(0673): drop invalid Ticket-ref erg header (PR-body convention, not a file header)
 
 ## Next: general reading skills (prose-quality pass)
 
