@@ -1,0 +1,81 @@
+%erg 0.1
+Title: Imagine — post-release publication strategy: retroplan, paper portfolio, submission sequencing
+Created: 2026-06-16
+Author: HDMX-coding-agent
+Label: deferred
+
+--- log ---
+2026-06-16T08:30Z HDMX-coding-agent created — captures the 2026-06-16 imagining-ahead conversation; session deferred to spring cleaning
+
+--- body ---
+## Context
+
+Imagine-phase handoff for the post-release planning session the author
+framed on 2026-06-16 ("spring cleaning will include retroplanning,
+deciding submission strategy, what to undefer, creating the tracker for
+both manuscript and data paper, sequencing work, updating MASTERPLAN and
+tickets"). We are still in post-release; do NOT execute yet. This ticket
+holds the discussion notes so the session starts warm.
+
+Distinct from [[0669]] (repo reorg — rehome dirs, move data) and from
+[[0663]] (dissemination of THIS report). This is the *publication
+programme* planning above both.
+
+## Prior framing (the discussion held a few days ago)
+
+`docs/2026-06-09-review.md` **§1 "Publication strategy"** is the anchor —
+read it first. It already covers: who will actually cite this; candidate
+outlets in order of fit for an exploratory "mark the land" report; the
+data paper venue options (*Scientific Data* descriptor vs *Data in
+Brief*); Paper B's natural target (*Information Fusion*); and the
+arXiv-now choice (cs.AI cross-listed econ.GN, CC BY, HAL deposit) with a
+TL;DR priority list. The 2026-06-16 conversation builds on it.
+
+## Discussion notes to carry in (2026-06-16)
+
+1. **Submission strategy is the keystone — sequence everything off it.**
+   Target venue(s) fix format, length budget, what must be undeferred,
+   and the deadline to retroplan from. It also sets the arXiv tripwire
+   (see [[0665]]).
+2. **Name the paper portfolio explicitly before building trackers.**
+   At least three latent papers, sharing the reference dataset:
+   - Paper A — methods / benchmark (tracker [[0464]]).
+   - Data paper — the 177-plant reference superset ([[0517]], blocked by
+     0498 per-plant reconciliation).
+   - Paper B — information fusion / deterministic swarm ([[0516]]).
+   The data paper and methods paper share the reference, so order
+   matters (data paper first as the dataset's citable home, which the
+   methods paper then cites?). Fix: how many papers, the unit of each,
+   and the dependency edges — THEN create the two trackers.
+3. **Undeferring is a triage, not a list-reopen.** Sort the deferred
+   backlog (post-arXiv experiments 0654–0662 per tracker 0644; methods
+   0201/0464; next-paper material [[0564]]) into three bins — *this
+   article / next article / dropped* — against the chosen venue's scope.
+4. **arXiv: deferred with a tripwire** (recorded on [[0665]]) — article
+   ~2 months out; post one canonical arXiv record (the article), but if
+   the article slips past ~mid-August, post this report to arXiv then.
+5. **MASTERPLAN has no dissemination/publications layer** — it describes
+   the benchmark phases only. This session grows one, so the portfolio
+   and submission timeline live in the durable plan, not just trackers.
+
+## Deliverables for the session (when it runs)
+
+- [ ] Submission-strategy decision: venues + order, retroplanned from a deadline.
+- [ ] Paper-portfolio map with dependency edges.
+- [ ] Two new trackers created: manuscript/methods paper + data paper
+      (decide whether Paper B gets one now or stays in [[0516]]).
+- [ ] Undefer triage result (this/next/dropped).
+- [ ] MASTERPLAN updated with a dissemination/publications layer.
+- [ ] 0665 arXiv decision confirmed or revised.
+
+## Links
+
+- `docs/2026-06-09-review.md` §1 — publication-strategy framing (anchor)
+- [[0669]] spring-cleanup (repo reorg) · [[0663]] dissemination tracker
+- [[0517]] data paper · [[0516]] Paper B · [[0464]] methods Paper A ·
+  [[0465]] info-fusion follow-up · [[0564]] next-paper material · [[0665]] arXiv
+
+## Exit criteria
+
+- The session above has run: portfolio fixed, trackers created, undefer
+  triage done, MASTERPLAN dissemination layer added.

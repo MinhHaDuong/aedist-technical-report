@@ -31,6 +31,9 @@ done — they reference the manuscript at its current path.
 ## Related (not a child)
 - 0297 `measurements.jsonl` at root leaves via the MART-v2 migration (0297 +
   0475/0476/0477/0489/0493) — track there, not here.
+- 0675 Publication-strategy Imagine (retroplan, paper portfolio, submission
+  sequencing) — the planning half of spring cleaning; this tracker is the
+  repo-reorg half. Separate sessions.
 
 ## Exit criteria
 - [ ] All three children closed; `make` (root + slides/manuscript) builds clean
