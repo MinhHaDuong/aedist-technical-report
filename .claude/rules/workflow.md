@@ -43,20 +43,6 @@ In an `EnterWorktree` session, `Edit`/`Write`/`Read` tools accept any absolute p
 
 Never close forge tickets or merge requests without explicit user confirmation, even when acceptance criteria appear met. Recommend closures but always ask first, especially never close merge requests belonging to other sessions or worktrees.
 
-## Ruff post-edit hook strips unused imports
-
-**The trap:** adding an import in one Edit, then its usage in a second Edit — ruff fires between them and deletes the import. The second edit then fails with `NameError`.
-
-Rules:
-- Import + first usage go in the **same Edit**, always. No exceptions.
-- **Same-message parallel Edits do NOT protect you.** The hook runs after *each* Edit call, including between two Edit calls issued in the same assistant message. An import-Edit followed by a usage-Edit in one message still gets the import stripped before the usage lands.
-- When import and usage can't share one Edit block (import list at top, usage far below): add the **usage first**, import **last** — the import survives because its usage already exists when the hook fires.
-- When adding a new stdlib/third-party import to an existing file, write the import line and at least one call site in a single edit block.
-- When renaming a symbol: `replace_all` old→new FIRST (which may leave the old import temporarily unused), then add the new import in a second edit — but only once all usages are already updated.
-- If the hook fires and strips your import anyway, do not re-add the import alone — re-add import + usage together (or import alone if usages now exist).
-
-**Why:** The ruff hook runs after every Edit. This trap hit twice in ticket 0302, and twice again in the 0439 session (2026-06-05) where both Edits were in the same message — proving the parallel-Edits loophole is imaginary. The failure mode is subtle because the NameError appears at test time, not at edit time.
-
 ## JSON EOF newline policy
 
 All single-object JSON files written by this project end with exactly one trailing newline (`\n`).
