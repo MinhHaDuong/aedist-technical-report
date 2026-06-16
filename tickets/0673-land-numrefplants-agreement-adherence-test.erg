@@ -1,0 +1,61 @@
+%erg 0.1
+Title: Land the NumRefPlants single-source adherence test that ticket 0609 mandated but PR #1111 dropped
+Created: 2026-06-16
+Author: HDMX-coding-agent
+Ticket-ref: tickets/closed/0609-slides-count-drift-macros-slides-numrefp.erg
+
+--- log ---
+2026-06-16T06:00Z HDMX-coding-agent created — found during /lair worktree sweep
+
+--- body ---
+## Context
+
+Closed ticket [[0609]] called (Test section) for an
+`@pytest.mark.adherence` guard re-deriving `\NumRefPlants` from the
+reference data and asserting the slides and manuscript macros agree
+(single source of truth). PR #1111 autoclosed 0609 having landed only
+the *data* fix (`macros_slides.tex` 173→177); the drift-prevention test
+— the whole point of "fix it so it can't recur" — never made it onto
+main. A finished version of that test was found uncommitted in a stale
+agent worktree during the 2026-06-16 `/lair` sweep and preserved as a
+`wip(0609)` commit on branch **t0609** (pushed to origin).
+
+The test passes against current main: `macros_slides.tex`,
+`macros_manuscript.tex`, and `reference_plant_count()` all agree at 177.
+
+## Relevant files
+
+- `tests/test_reference_count.py` — add `test_slides_and_manuscript_numrefplants_agree`.
+- origin branch `t0609` — carries the finished test (and a now-redundant
+  macros_slides.tex 173→177 diff; main already has 177, so drop that half).
+
+## Actions
+
+1. Branch off current `origin/main`.
+2. Cherry-pick *only* the `tests/test_reference_count.py` addition from
+   branch `t0609` (the `macros_slides.tex` change is redundant — main is
+   already 177). Helper `_read_numrefplants` + the adherence test.
+3. Run `make check-fast` (the new test is unit/adherence, no subprocess).
+
+## Test
+
+- The deliverable *is* the test: `test_slides_and_manuscript_numrefplants_agree`
+  (already written on t0609). Confirm it is GREEN on current main and would
+  go RED if either generated macro's `\NumRefPlants` drifted from
+  `reference_plant_count()`.
+
+## Verification
+
+- [ ] `test_slides_and_manuscript_numrefplants_agree` present in `tests/test_reference_count.py`.
+- [ ] `make check` green.
+- [ ] No stray `macros_slides.tex` diff (main already at 177).
+
+## Invariants
+
+- Do not retro-edit the archived Econom'IA talk artifacts.
+- Generated macros stay generator-sourced; this ticket only adds a guard.
+
+## Exit criteria
+
+- The single-source NumRefPlants adherence guard 0609 specified is on main
+  and green; t0609 wip branch can then be deleted.
