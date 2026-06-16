@@ -2,13 +2,13 @@
 Title: arXiv deposit via HAL
 Created: 2026-06-15
 Author: claude
-Blocked-by: 0664
 Label: deferred
 
 --- log ---
 2026-06-15T22:02Z claude created from dissemination tracker 0663
 2026-06-16T08:30Z HDMX-coding-agent note Deferred to the article preprint (~2 months out): this report and the article will overlap heavily, so post ONE canonical arXiv record (the article) rather than report-then-replace. TRIPWIRE: if the article preprint is not clearly on track by ~mid-August 2026, post THIS report to arXiv then (this ticket) instead of waiting — arXiv `replace` handles the later article. Decision + reasoning: see the publication-strategy Imagine [[0675]] and docs/2026-06-09-review.md §1.
 
+2026-06-16T08:52Z HDMX-coding-agent note blocker 0664 closed — Blocked-by removed.
 --- body ---
 ## Context
 Push the manuscript to arXiv from the HAL record (HAL→arXiv transfer), so the
