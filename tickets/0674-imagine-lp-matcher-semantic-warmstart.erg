@@ -1,0 +1,73 @@
+%erg 0.1
+Title: Imagine — warmer le LP-matcher par embeddings sémantiques (name+province+tech+capacité)
+Created: 2026-05-26
+Author: HDMX-coding-agent
+Label: deferred
+Blocked-by: 0312
+
+--- log ---
+2026-05-26T00:00Z HDMX-coding-agent created from user research idea
+2026-06-16T06:00Z HDMX-coding-agent note Landed during /lair arbitration. Renumbered 0344→0674 (0344 collided with closed exp2-rebuild ticket on main). Deferred to post-arXiv; related to 0659 (current-matcher sensitivity reporting) but distinct — this proposes a better matcher.
+
+--- body ---
+## Idée
+
+Pré-allouer les paires (reference, system) du LP-matcher en utilisant une
+distance d'embedding sur un vecteur de caractéristiques composite :
+`name + province + tech + capacity`. L'allocation chaude (warm-start) fournit
+au solveur LP un point de départ proche de l'optimum et/ou élague l'espace des
+arêtes candidates avant la résolution exacte.
+
+## Hypothèses à vérifier
+
+1. La matrice de coûts actuelle du LP-matcher repose principalement sur la
+   similarité de chaîne (nom). Ajouter province / tech / capacité comme
+   composantes d'un embedding pourrait :
+   - lever les ambiguïtés sur les unités multiples d'un même site,
+   - réduire les faux positifs entre centrales homonymes de provinces
+     différentes,
+   - rejeter les hallucinations qui dévient sur capacité ou techno.
+2. Un warm-start (ou un pre-pruning des arêtes ≥ seuil d'embedding) peut
+   accélérer la résolution sur les gros lots et améliorer la qualité du
+   matching sur les cas durs identifiés dans `exp1_mismatched_audit.csv`
+   (cf. ticket 0312).
+
+## Questions ouvertes
+
+- [ ] Embedding par-champ puis concaténation pondérée, ou un seul embedding
+      sur une chaîne sérialisée "Nom | Province | Techno | XX MW" ?
+- [ ] Modèle d'embedding : multilingual (Vietnamese + French + English)
+      requis. Candidats : `bge-m3`, `multilingual-e5-large`, `paraphrase-
+      multilingual-mpnet`. Coût local vs cloud ?
+- [ ] Comment normaliser la capacité (numérique) pour la mélanger à un
+      embedding (textuel) ? Bucketing logarithmique, distance |Δ MW| séparée
+      pondérée, ou inclusion comme token "1200MW" dans la chaîne ?
+- [ ] Province : appariement strict (catégoriel) vs souple (embedding
+      d'un toponyme). Le strict évite déjà des faux positifs ; vaut-il le
+      coût ?
+- [ ] Pre-pruning (seuil d'embedding pour exclure les arêtes) vs warm-start
+      (init des variables LP avec une solution heuristique). Le premier est
+      plus simple à implémenter avec scipy.optimize.linear_sum_assignment.
+- [ ] Comment évaluer le gain : F1 sur les fixtures du ticket 0312 + temps
+      mur sur le plus gros lot system.csv observé.
+
+## Livrable Imagine
+
+- [ ] Note de conception (`docs/design/lp-matcher-semantic-warm.md` ou
+      `experiments/notes/`) qui :
+  - choisit entre pre-pruning et warm-start (justifié),
+  - spécifie la fonction de coût combinée (embedding + Levenshtein + |Δ MW| +
+      province match), avec poids initiaux à régler,
+  - liste deux ou trois modèles d'embedding candidats avec coût attendu,
+  - propose un protocole d'évaluation sur les fixtures 0312 + le set actif
+      EXP1.
+- [ ] Décision : tickete-on l'exécution (Plan → Execute) ou on classe
+      comme deferred si le gain attendu est marginal ?
+
+## Liens
+
+- Ticket 0312 — fixtures TDD du LP-matcher (pré-requis pour évaluer le gain)
+- Ticket 0659 — analyse de sensibilité du matcher actuel (rapporte la
+  sensibilité du matcher string/rapidfuzz pour les reviewers ; distinct de
+  cette idée, qui propose un *meilleur* matcher).
+- Note méthodo : `src/aedist/reconcile.py` — implémentation actuelle
