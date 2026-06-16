@@ -1,0 +1,69 @@
+%erg 0.1
+Title: Add .claude/rules-map.toml: declare manuscript/slides doctype + lang
+Created: 2026-06-16
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-16T09:59Z HDMX-coding-agent created
+
+--- body ---
+## Context
+ImperialDragonHarness PR #404 added a global per-file rule-injection hook
+(`~/.claude/scripts/inject_rule_on_edit.py`, PreToolUse Edit|Write). It resolves
+a file's doctype/lang and injects matching global rule bodies. For `.tex` it
+sniffs `\documentclass` (report→techreport, beamer→slides), but **language is
+not detectable from markup**, and doctype for non-.tex prose (`.qmd`, `.md`)
+needs declaring. This ticket adds AEDIST's per-project manifest so the
+doctype/lang axes light up here once the global rule bodies exist
+(blocked-by the global content ticket IDH-0256, but the manifest can land
+independently — it just maps, and missing rule bodies skip silently).
+
+This repo is a French technical report + French beamer slides (no babel
+declaration in the .tex; confirmed FR by content). Manuscript at
+`slides/manuscript/main.tex` (`\documentclass{report}`), slides under
+`slides/` (`\documentclass{beamer}`).
+
+## Relevant files
+- `.claude/rules-map.toml` — NEW. The manifest the global hook reads
+  (`<repo>/.claude/rules-map.toml`). Holds path→axis MAPPINGS only, never rule
+  text.
+- Reference for the format/semantics: `~/.claude/rules/README.md` § "Per-file
+  rule injection (axis model)".
+
+## Actions
+1. Create `.claude/rules-map.toml`:
+   ```toml
+   default_lang = "fr"
+   [[map]]
+   glob = "slides/manuscript/**/*.tex"
+   doctype = "techreport"
+   lang = "fr"
+   [[map]]
+   glob = "slides/**/*.tex"
+   doctype = "slides"
+   lang = "fr"
+   ```
+   (The `\documentclass` sniff already yields techreport/slides; the manifest
+   mainly supplies `lang=fr`, plus an explicit doctype override for robustness.)
+2. Verify the globs match the real paths (first-match-wins: list the more
+   specific manuscript glob before the broad `slides/**`).
+
+## Test
+- Adherence test `tests/test_rules_map.py`: parse `.claude/rules-map.toml` with
+  tomllib, assert it is valid TOML, `default_lang` is set, and each `[[map]]`
+  entry has a string `glob`. (Cheap structural guard; the injection behavior is
+  tested upstream in IDH.)
+
+## Verification
+- [ ] `.claude/rules-map.toml` exists and is valid TOML.
+- [ ] manuscript glob precedes the broad slides glob (first-match-wins).
+- [ ] Editing `slides/manuscript/main.tex` resolves lang=fr (verify once
+      IDH-0256 lands `rules/lang/fr.md`, or by dry-running the hook).
+
+## Invariants
+- Mapping only — no rule text in this file.
+- Globs are author-controlled; keep them simple (the hook caps glob complexity).
+
+## Exit criteria
+- `.claude/rules-map.toml` committed, valid, structurally guarded by a test,
+  `make check-fast` green.
