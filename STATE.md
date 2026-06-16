@@ -1,23 +1,25 @@
-Last updated: 2026-06-16T08:09Z
+Last updated: 2026-06-16T10:39Z
 
 ## North star
 
 Produce research-quality energy infrastructure datasets from open sources, validated by a methods benchmark. **Not which model is best, but which method produces trustworthy statistics with locatable errors.** PyPSA-ASEAN remains the long-term target; the benchmark de-risks v1 pipeline design choices. See MASTERPLAN.md.
 
-## Current milestone: dissemination → arXiv
+## Current milestone: dissemination DONE → publication programme
 
-Preprint (`slides/manuscript/main.tex`) diffused to Econom'IA 2026 participants; tagged `economia-2026-report` (2da83d04, 65 pp) and **released on GitHub with the PDF (0666)**. Prior: reading-2/3 waves + a 4-reviewer external panel (tracker 0644 — prose findings fixed, experiments deferred post-arXiv). **Dissemination tracker 0663**: HAL deposit (0664, gated/SWORD) is the next step → arXiv-via-HAL (0665), homepage (0667), CIRED (0668). **Spring-cleanup tracker 0669** (publications/ rehome, data+derived→experiments, root tidy) is parked behind dissemination. Standing auth: merge-review-merge cadence; new judgment calls stay needs-human.
+Working paper `economia-2026-report` (2da83d04, 65 pp) disseminated and **release sequence closed (tracker 0663, 2026-06-16)**: HAL deposit (`hal-05658462`, in moderation), GitHub release with PDF (0666), homepage entry (0667), CIRED colleague email **sent** (0668), and a **Zenodo code+data DOI** — concept `10.5281/zenodo.20715179` (0676). Only **arXiv (0665) deferred** to the article preprint; calendar tripwire ~mid-August (if the article slips, post the report then). Reminder 0678 (cite the concept DOI in v2) auto-fires when 0665 closes. Prior: reading-2/3 waves + 4-reviewer external panel (tracker 0644 — prose fixed, experiments deferred post-arXiv).
+
+Next: the **publication-strategy Imagine (0675)** — retroplan, paper portfolio (methods A / data paper 0517 / Paper B 0516), submission sequencing, MASTERPLAN dissemination layer. **Spring-cleanup (0669, now unblocked)** — publications rehome, data+derived→experiments, root tidy. Standing auth: merge-review-merge cadence; new judgment calls stay needs-human.
 
 ## Status
-<!-- generated 2026-06-16T08:09Z -->
+<!-- generated 2026-06-16T10:39Z -->
 
-**Tickets:** 37 ready · 49 blocked — `erg ready tickets/` for full list
+**Tickets:** 40 ready · 45 blocked — `erg ready tickets/` for full list
 **Recent commits:**
-  ac4ebe19 Merge pull request #1153 from MinhHaDuong/worktree-t0673
-  40c84165 ticket(0673): close and archive — PR #1153
-  8cf420cd test(0673): land NumRefPlants single-source adherence guard
-  9cdc9a8b Merge pull request #1150 from MinhHaDuong/quickpr/tickets-open-0673-land-the-numrefplants--20260616-055417
-  020ce284 fix(0673): drop invalid Ticket-ref erg header (PR-body convention, not a file header)
+  76ccd9b3 Merge pull request #1162 from MinhHaDuong/fix-dup-ticket-0677
+  59f2e4cb tickets: renumber 0677→0678 (cite-zenodo-doi) — resolve dup-ID collision
+  b39851bb Merge pull request #1160 from MinhHaDuong/quickpr/tickets-open-0677-manuscript-cite-zenodo-20260616-095947
+  fa563965 Merge pull request #1161 from MinhHaDuong/worktree-t0677-rules-map
+  12d45deb tickets: open 0677 — manuscript cite Zenodo concept DOI (Blocked-by 0665), link 0675
 
 ## Next: general reading skills (prose-quality pass)
 
