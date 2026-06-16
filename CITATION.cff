@@ -8,7 +8,8 @@ authors:
 license: CC-BY-4.0
 repository-code: "https://github.com/MinhHaDuong/aedist-technical-report"
 preferred-citation:
-  type: article
+  # "report" (working paper), NOT "article": the manuscript is not peer-reviewed.
+  type: report
   title: "Can Frontier AI Build a Statistical Register? A Benchmark and Research Programme on Vietnam's Thermal Power Fleet"
   authors:
     - family-names: Ha-Duong
