@@ -1,4 +1,4 @@
-Last updated: 2026-06-16T00:00Z
+Last updated: 2026-06-16T06:01Z
 
 ## North star
 
@@ -9,12 +9,15 @@ Produce research-quality energy infrastructure datasets from open sources, valid
 Preprint (`slides/manuscript/main.tex`) diffused to Econom'IA 2026 participants; tagged `economia-2026-report` (2da83d04, 65 pp) and **released on GitHub with the PDF (0666)**. Prior: reading-2/3 waves + a 4-reviewer external panel (tracker 0644 — prose findings fixed, experiments deferred post-arXiv). **Dissemination tracker 0663**: HAL deposit (0664, gated/SWORD) is the next step → arXiv-via-HAL (0665), homepage (0667), CIRED (0668). **Spring-cleanup tracker 0669** (publications/ rehome, data+derived→experiments, root tidy) is parked behind dissemination. Standing auth: merge-review-merge cadence; new judgment calls stay needs-human.
 
 ## Status
-<!-- generated 2026-06-16T00:00Z -->
-**Tickets:** 38 ready — `erg ready tickets/` for full list
+<!-- generated 2026-06-16T06:01Z -->
+
+**Tickets:** 37 ready · 48 blocked — `erg ready tickets/` for full list
 **Recent commits:**
-  4150e577 Merge #1147 — close 0666 (GitHub release published)
-  ebd8c30d Merge #1146 — dissemination (0663) + spring-cleanup (0669) trackers
-  (this session: reading-3, peer-review calibration 0644, widow shaving, tag + release)
+  13a39aba Merge pull request #1149 from MinhHaDuong/quickpr/docs-archive-original-synopsis-draft-syn-20260616-055056
+  cc8b26f4 docs: archive original synopsis draft (synopsis-v0)
+  674a00c5 Merge pull request #1148 from MinhHaDuong/end-session-housekeeping
+  e10605e8 chore: end-session housekeeping — archive 0639-0643, refresh STATE
+  4150e577 Merge pull request #1147 from MinhHaDuong/close-0666-release
 
 ## Next: general reading skills (prose-quality pass)
 
