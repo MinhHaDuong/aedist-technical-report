@@ -1,0 +1,53 @@
+%erg 0.1
+Title: Zenodo DOI deposit — reproducibility archive of code+data (tag economia-2026-report)
+Created: 2026-06-16
+Author: HDMX-coding-agent
+Closed: Zenodo reproducibility deposit published — concept DOI 10.5281/zenodo.20715179 (version .20715180); recorded in Ha-Duong.bib; 0663 updated
+
+--- log ---
+2026-06-16T09:00Z HDMX-coding-agent created — release-reflection gap (REALF + mission): the paper was disseminated but code+data had no persistent identifier, only a GitHub URL. Child of dissemination tracker 0663.
+
+2026-06-16T09:51Z HDMX-coding-agent closed — Zenodo reproducibility deposit published — concept DOI 10.5281/zenodo.20715179 (version .20715180); recorded in Ha-Duong.bib; 0663 updated
+--- body ---
+## Context
+
+The mission (MASTERPLAN) is auditable, reproducible data whose errors are
+**locatable** — by others, which requires a persistent, citable deposit, not
+a mutable GitHub URL. The manuscript's "Data & Code Availability" pointed only
+to github.com/MinhHaDuong/aedist-technical-report. The dissemination tracker
+[[0663]] covered paper channels (HAL/release/homepage/CIRED) but had no
+code+data DOI child. This ticket closes that gap with a frozen Zenodo snapshot
+of the release tag — the interim reproducibility artifact, complementary to the
+eventual reconciled-reference **data paper** [[0517]] (which is the citable home
+of the reference dataset itself, blocked by 0498).
+
+## What was done
+
+1. `git archive` of tag `economia-2026-report` (commit 2da83d04) → 37.3 MB zip
+   (data/, derived/, measurements.jsonl, experiments/outputs/, src/, report/,
+   slides/, manuscript sources). Verified no secrets (`.env` gitignored).
+2. Zenodo draft deposition 20715180, upload_type=software, CC-BY-4.0, creator
+   Ha-Duong ORCID 0000-0001-9988-2100, related ids isSupplementTo HAL
+   hal-05658462 + isDerivedFrom the GitHub tag. Reserved DOI
+   **10.5281/zenodo.20715180**.
+3. Published 2026-06-16 after author review (permanent-DOI gate). Zenodo
+   minted **version DOI 10.5281/zenodo.20715180** and **concept DOI (all
+   versions) 10.5281/zenodo.20715179**. The next version (preprint snapshot)
+   slots in under the same concept DOI via Zenodo "New version".
+4. Concept DOI recorded in `~/CNRS/html/src/Ha-Duong.bib` as
+   `Ha-Duong2026:AEDISTcode` (mirroring `Ha-Duong2026:CIREDdigitalLogs`),
+   with a `data=` relation from the working-paper entry.
+
+## Follow-ups (not this ticket)
+
+- The next manuscript version (v2, with arXiv per [[0665]]) should cite the
+  Zenodo DOI in "Data & Code Availability" instead of the bare GitHub URL.
+- `CITATION.cff` mislabels the working paper as `preferred-citation: type:
+  article` with a placeholder DOI — fix to a non-"article" type (see the
+  no-"article"-for-working-paper rule). Separate ticket if not folded in.
+
+## Exit criteria
+
+- [x] Zenodo DOI minted (concept 10.5281/zenodo.20715179, version .20715180)
+- [x] DOI recorded in Ha-Duong.bib
+- [x] 0663 child list updated

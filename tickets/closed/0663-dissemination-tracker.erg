@@ -1,0 +1,43 @@
+%erg 0.1
+Title: Post-tag dissemination of the AEDIST technical report
+Created: 2026-06-15
+Author: claude
+Closed: Release/dissemination sequence complete — HAL (0664), GitHub release (0666), homepage (0667), CIRED email sent (0668), Zenodo code+data DOI (0676). arXiv (0665) spun out standalone-deferred to the article preprint (tripwire mid-August, see 0675)
+
+--- log ---
+2026-06-15T22:00Z claude created dissemination tracker after tag economia-2026-report
+
+2026-06-16T09:51Z HDMX-coding-agent closed — Release/dissemination sequence complete — HAL (0664), GitHub release (0666), homepage (0667), CIRED email sent (0668), Zenodo code+data DOI (0676). arXiv (0665) spun out standalone-deferred to the article preprint (tripwire mid-August, see 0675)
+--- body ---
+## Context
+The manuscript was diffused to Econom'IA 2026 participants and tagged
+`economia-2026-report` (commit 2da83d04, 65 pp, widow-free, peer-review
+calibrated). This tracker covers the formal dissemination channels. The
+talk's precedent is the tag `economia-2026-cergy` (HAL hal-05644906, GitHub
+release with PDF, Ha-Duong.bib entry) — mirror that for the report.
+
+This is a **tracking ticket**. Children below; the GitHub release (0666) is
+independent, the rest chain off the HAL deposit (0664).
+
+## Children
+- 0664 HAL deposit of the manuscript (SWORD) — **CLOSED 2026-06-16**
+  (hal-05658462, at moderation)
+- 0665 arXiv via HAL — **DEFERRED** to the article preprint; tripwire
+  ~mid-August (see 0675). Spun out as a standalone deferred ticket so this
+  release tracker can close; no longer gates it.
+- 0666 GitHub release on tag `economia-2026-report` with the diffused PDF —
+  **CLOSED** (published 2026-06-16: releases/tag/economia-2026-report)
+- 0667 Homepage / Ha-Duong.bib entry — **CLOSED 2026-06-16** (live with
+  clickable HAL link hal-05658462)
+- 0668 CIRED dissemination — **CLOSED 2026-06-16** (colleague email **sent**
+  2026-06-16; HAL deposit surfaces in the CIRED collection post-moderation)
+- 0676 Zenodo DOI deposit of code+data snapshot — **CLOSED 2026-06-16**
+  (concept DOI 10.5281/zenodo.20715179; added after the release reflection
+  caught the missing persistent identifier for code+data)
+
+## Exit criteria
+- [x] Active dissemination complete: HAL (0664), GitHub release (0666),
+      homepage (0667), CIRED email sent (0668), Zenodo code+data DOI (0676)
+- [x] HAL id + Zenodo concept DOI recorded in Ha-Duong.bib
+- Release sequence closed; arXiv (0665) continues standalone-deferred, to be
+  done with the article preprint (tripwire ~mid-August, tracked via 0675)
