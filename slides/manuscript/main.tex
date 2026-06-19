@@ -1117,7 +1117,11 @@ mid-lifecycle, contested sources, multilingual records, conditional
 projections) are where language-model reasoning earns its place. This
 leaves open which representation should be canonical: the narrative asset
 page, the knowledge graph, or an append-only claim log of which both are
-projections. One design lesson the articulation findings already
+projections. The narrative-page option now has an open interchange
+format: the Open Knowledge Format \citep{GoogleCloud2026:okf} encodes
+such a wiki as a directory of Markdown files with YAML frontmatter, the
+file path carrying concept identity and inter-file links carrying
+relations. One design lesson the articulation findings already
 license: extracting structure from text is the lossy, measured
 direction; rendering text from structure is cheap. That asymmetry argues
 for extracting claims once at ingest and rendering derived
