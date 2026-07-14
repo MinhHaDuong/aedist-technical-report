@@ -1,0 +1,31 @@
+%erg 0.1
+Title: Track optional AEDIST machine-user PAT follow-up
+Created: 2026-07-14
+Author: Minh Ha-Duong
+
+--- log ---
+2026-07-14T00:00Z Minh Ha-Duong created
+
+--- body ---
+## Context
+AEDIST's inline machine-user GitHub PAT (HDMX-coding-agent) was found revoked
+(GitHub HTTP 401) during the KEYS= secret migration (ticket 0679) and removed.
+AEDIST now authenticates via the valid central token
+(~/.config/keys/github.env), which is the personal MinhHaDuong identity.
+Commits are still authored as HDMX-coding-agent (AGENT_GIT_NAME/EMAIL), so
+author != pusher. Functional, but not a dedicated machine-user auth.
+
+## Decision / options
+- (a) Leave as-is: auth as personal MinhHaDuong, author as machine user. No action.
+- (b) Mint a fresh HDMX-coding-agent machine-user PAT (repo + workflow scopes),
+  store it in the central store (e.g. its own
+  ~/.config/keys/github-hdmx.env with AGENT_GH_TOKEN), and point AEDIST's
+  KEYS= at it via explicit selection (github-hdmx:AGENT_GH_TOKEN or a
+  provider:SRC=DST rename).
+
+## Exit criteria
+- [ ] Decision recorded (a or b)
+- [ ] If (b): machine-user PAT minted, stored centrally, AEDIST KEYS= updated,
+  GitHub auth verified HTTP 200 as the machine user
+
+Leave OPEN — author action.
