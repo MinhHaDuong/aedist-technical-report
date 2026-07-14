@@ -77,6 +77,8 @@ report/inputs/feeds/*
 
 # Migration backups
 *.jsonl.bak-*
+# Secret-store migration backups of .env (ticket 0679) — never track these
+.env.bak-*
 
 # Derived markdown artifacts from SOTA experiment runs (ticket 0291)
 # These are extracted from raw JSON during post-processing, not primary data
