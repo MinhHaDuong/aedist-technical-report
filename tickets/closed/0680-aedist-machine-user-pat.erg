@@ -2,9 +2,12 @@
 Title: Track optional AEDIST machine-user PAT follow-up
 Created: 2026-07-14
 Author: Minh Ha-Duong
+Closed: decision (a) — leave as-is; central-token auth (HTTP 200), no dedicated machine-user PAT minted
 
 --- log ---
 2026-07-14T00:00Z Minh Ha-Duong created
+2026-07-14T21:05Z Minh Ha-Duong note decision (a) recorded: leave as-is; central-token auth (HTTP 200), no dedicated machine-user PAT minted
+2026-07-14T21:05Z Minh Ha-Duong closed — decision (a): leave as-is, central-token auth; no machine-user PAT minted
 
 --- body ---
 ## Context
@@ -24,8 +27,12 @@ author != pusher. Functional, but not a dedicated machine-user auth.
   provider:SRC=DST rename).
 
 ## Exit criteria
-- [ ] Decision recorded (a or b)
+- [x] Decision recorded (a or b) — (a), 2026-07-14
 - [ ] If (b): machine-user PAT minted, stored centrally, AEDIST KEYS= updated,
-  GitHub auth verified HTTP 200 as the machine user
+  GitHub auth verified HTTP 200 as the machine user — N/A under (a)
 
-Leave OPEN — author action.
+## Decision
+(a) Leave as-is. AEDIST authenticates GitHub via the central
+~/.config/keys/github.env token (personal MinhHaDuong identity, HTTP 200);
+commits stay authored as HDMX-coding-agent. No dedicated machine-user PAT will
+be minted. Closing this tracker.
