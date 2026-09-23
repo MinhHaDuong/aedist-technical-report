@@ -2,6 +2,13 @@
 
 > `CLAUDE.md` contains only `@AGENTS.md` — do not modify it (enforced by pre-commit hook).
 
+The generic workflow (phases, worktrees, delegation, escalation, git discipline)
+lives in the harness rules under `~/.claude/rules/`, loaded into every session,
+and skills are listed in each session's skill catalog. This file holds only what
+is specific to this repo. Do not copy harness content back here: the copy drifts.
+The skills table this file used to carry named four skills that no longer
+existed, and agents routed to their nearest living neighbour.
+
 ## Configuration
 
 | Location | Purpose |
@@ -11,83 +18,45 @@
 | `.claude/rules/` | Project rules (TODO: replace with scoped hooks) |
 | `.claude/settings.json` | Project permissions and hooks |
 
-## Imperial Dragon workflow
+## Imagine
 
-Every task passes through five phases.
-Maintain awareness of the conversation's current phase to behave accordingly.
-Infer the initial phase and announce it (e.g., `[→ Imagine]`) at conversation start, then announce transitions inline: `[Phase → Phase] reason`.
+Beyond the harness advisor stance: turn codesmell metrics into design
+architecture improvements.
 
-### Imagine
-Engage with the user to form a vision.
+## Tickets
 
-Context: Worktree isolation, `imagine-` branch.
+A ticket ready to execute carries the first test in its body, states the
+definition of done literally, and hands off the context an executor needs.
 
-Deliverable: No production code commit, change only the conversation state and possibly tickets.
+## Execute
 
-Agent posture: Act as my high-level advisor. Challenge my thinking, question my assumptions, and expose blind spots. Stop defaulting to agreement. If my reasoning is weak, break it down and show me why.
+Use `make check-fast` during development, `make check` before the merge request.
+Maintain the Makefile DAG: prerequisites and targets must match each script's
+actual file reads and writes. Doc propagation belongs to the merge request.
 
-Conversation guidelines: Imagine specs. Gather information. Brainstorm freely. Ask questions. Surface motivations. Explore what success looks like. Generate portfolio of options with their probabilities. Go beyond conventional habits to explore new approaches. Take the high road. Transform codesmell metrics into design architecture improvements.
+## Verify in proportion to what can break
 
-### Plan
+Before merging, decide which checks the change needs and state them on the PR:
 
-Scope: Focus on one issue. Scope-creep guard: Create new tickets if investigation reveals sub-issues. Divide-and-conquer complexity: Transform a hard ticket into a tracking ticket and create sub-tickets. Use `Blocked-by:` to sequence work.
+- **Tickets only**: `tickets/erg check tickets/`.
+- **Docs, config, STATE**: `make lint`, and a read of the loaded or rendered result.
+- **Prose**: rebuild the document; `/review-pr-prose` for report text.
+- **Code, experiments**: tests for the changed behaviour, and `make check`.
 
-Deliverable: a ticket ready to execute. No production code commit, change only ticket(s). The ticket includes the first test in the ticket body, specifies the definition of done literally, provides guidance and hands-off helpful context.
+Anything beyond tickets gets at least one independent reviewer on a model other
+than the coder's (`/review` or `/review-pr`, scoped to the risk). Fix all
+issues, nits included; push back against "no need to fix now", and open a
+ticket only for oversized deferred work. Consider `/simplify` and codesmell
+checks for code. Up to three review/fix cycles, then escalate. Before merging,
+`/verify-gate` checks every exit criterion against concrete evidence (commit SHA
++ file:line, or a test id).
 
-Explore alternatives, design strategies, and prototype approaches using throwaway code, worktree isolated.
+## Chore tooling
 
-Consider interaction with other tickets and merge requests.
+For one-shot chore PRs (tickets/, docs/, .claude/, top-level docs, .github/workflows/, *.md) use `scripts/quickpr.sh "<message>" <files...>` — one command branches off main, commits, pushes, opens a PR with auto-merge, and restores the starting branch. Refuses src/, tests/, experiments/ so implementation work still goes through `/hunt` → `/roar`.
 
-### Execute
+## Autonomous mode
 
-Goal: deliver a merge request to close one ticket.
-
-Environment: fresh context in a worktree, the ticket is the only input. Worktree mandatory: never touch files on main.
-
-Method: Autonomous execution using test-driven development. Use `make check-fast` during development, `make check` before merge request.
-
-Constraint: Maintain the Makefile DAG, prerequisites and targets must match each script's actual file reads and writes. Doc propagation belongs to the merge request.
-
-### Verify
-
-Review each merge request before merging:
-
-1. **Review**: Route between `/review` (stock), `/review-pr` or `/review-pr-prose` (IDH).
-2. **Fix**: Fix all issues. Nits: fix them. Push back against "No need to fix now" mindset. Non-fixed open tickets for oversized deferred work.
-3. **Lint**: Consider `/simplify`, advanced linter and codesmells checks.
-4. **Iterate**: Up to three review/fix cycles.
-
-### Celebrate
-
-Cleanup worktrees and branches, summarize what was accomplished, reflect on lessons, consolidate memory, dream forward.
-
-## Skills
-
-### [Imperial Dragon Harness](https://github.com/MinhHaDuong/ImperialDragonHarness)
-
-| Skill | When | Purpose |
-|-------|------|---------|
-| `/start-ticket N` | Starting work on a GitHub issue | Create worktree, write first test, transition to Execute |
-| `/celebrate` | After completing a ticket | Reflect, update STATE, clean up |
-| `/end-session` | User ends a work session | Push branches, run tests, refresh STATE |
-| `/ticket-new` | Creating a ticket (à créer, IDH) | Write handoff document with test spec |
-| `/review-pr N` | Reviewing a merge request (code) | Multi-perspective agent review |
-| `/review-pr-prose N` | Reviewing a merge request (prose) | Simulated peer review panel |
-| `/memory` | Writing or sweeping persistent memory | Enforce caps, TTLs, staleness |
-| `/raid` | Unsupervised autonomous raid across multiple tickets | Picks targets, manages waves, enforces isolation |
-| `/update-publist` | Adding/updating a publication (à créer, IDH 0214) | Edit Ha-Duong.bib, deposit on HAL via SWORD |
-
-### Chore tooling
-
-For one-shot chore PRs (tickets/, docs/, .claude/, top-level docs, .github/workflows/, *.md) use `scripts/quickpr.sh "<message>" <files...>` — one command branches off main, commits, pushes, opens a PR with auto-merge, and restores the starting branch. Refuses src/, tests/, experiments/ so implementation work still goes through `/start-ticket` → `/celebrate`.
-
-## Autonomous workflow (details in /raid skill)
-
-The `/raid` skill runs tickets in waves with isolated worktrees and one ordered loop:
-1. Imagine: challenge ticket scope, motivation, and alternatives.
-2. Plan + Verify: produce plans, then independently check assumptions and feasibility.
-3. Execute + Verify: deliver a merge request, then fix all review findings.
-4. Audit: re-check for non-compliance, lint gaps, and scope creep.
-5. Gate + merge: approve only clean merge requests, merge in dependency order, then repeat.
-
-In autonomous mode, orchestrator never defers for human input. In the face of hard issues, it resorts first to a diverse team of agent experts. It then escalates to deep research. Thirdly, it works around the issue.
+In autonomous mode (`/raid`), the orchestrator never defers for human input. In
+the face of hard issues, it resorts first to a diverse team of agent experts. It
+then escalates to deep research. Thirdly, it works around the issue.
