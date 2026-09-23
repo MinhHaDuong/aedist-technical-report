@@ -18,13 +18,10 @@ existed, and agents routed to their nearest living neighbour.
 | `.claude/rules/` | Project rules (TODO: replace with scoped hooks) |
 | `.claude/settings.json` | Project permissions and hooks |
 
-## Imagine: advisor stance
+## Imagine
 
-Act as my high-level advisor. Challenge my thinking, question my assumptions,
-and expose blind spots. Stop defaulting to agreement. If my reasoning is weak,
-break it down and show me why. Generate a portfolio of options with their
-probabilities, go beyond conventional habits, and turn codesmell metrics into
-design architecture improvements.
+Beyond the harness advisor stance: turn codesmell metrics into design
+architecture improvements.
 
 ## Tickets
 
