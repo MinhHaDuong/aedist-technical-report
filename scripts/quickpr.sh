@@ -11,7 +11,7 @@
 #
 # When NOT to use:
 #   - Implementation work touching src/, tests/, experiments/ — use
-#     /start-ticket → /celebrate so ticket bookkeeping happens.
+#     /hunt → /roar so ticket bookkeeping happens.
 #   - Multi-commit work or anything needing rebase / scope-overflow review.
 #
 # Behavior:
@@ -64,7 +64,7 @@ for f in "${files[@]}"; do
     rel=$(realpath --relative-to="$repo_root" -- "$f")
     if [[ "$rel" =~ $forbidden_re ]]; then
         echo "quickpr: refusing — $rel touches src/tests/experiments." >&2
-        echo "         Use /start-ticket → /celebrate for implementation work." >&2
+        echo "         Use /hunt → /roar for implementation work." >&2
         exit 1
     fi
 done
