@@ -7,6 +7,7 @@ Author: claude
 2026-06-15T22:09Z claude created from spring-cleanup tracker 0669
 
 2026-06-16T09:51Z HDMX-coding-agent note blocker 0663 closed — Blocked-by removed.
+2026-09-23T20:30Z HDMX-coding-agent note CLAUDE.md removed from root (AGENTS.md loads natively); dropped from the keep list
 --- body ---
 ## Context
 After the dir moves (0670 report/slides/manuscript → publications/; 0671
@@ -15,13 +16,13 @@ remaining top-level files. Tracker: 0669. **Post-release only** (0663).
 
 ## Current top-level files
 ADR.md, CITATION.cff, measurements.jsonl, AGENTS.md, pyproject.toml, STATE.md,
-README.md, Makefile, MASTERPLAN.md, LICENCE, CLAUDE.md, uv.lock
+README.md, Makefile, MASTERPLAN.md, LICENCE, uv.lock
 
 ## Actions
 1. Keep at root (tooling/convention requires it): README.md, LICENCE,
-   Makefile, pyproject.toml, uv.lock, CITATION.cff, CLAUDE.md, AGENTS.md, STATE.md.
+   Makefile, pyproject.toml, uv.lock, CITATION.cff, AGENTS.md, STATE.md.
 2. Candidates to relocate into `docs/`: ADR.md, MASTERPLAN.md (and any other
-   long-form planning docs) — update cross-references (CLAUDE.md/AGENTS.md/README links).
+   long-form planning docs) — update cross-references (AGENTS.md/README links).
 3. `measurements.jsonl` leaves root via the MART-v2 migration — see 0297; do NOT
    move it here, just confirm it is gone or ticket-tracked.
 
