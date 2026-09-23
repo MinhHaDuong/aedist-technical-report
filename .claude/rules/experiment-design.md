@@ -1,3 +1,10 @@
+---
+paths:
+  - "experiments/**"
+  - "src/**"
+  - "scripts/**"
+---
+
 # Experiment design rules — AEDIST
 
 ## Design for genericity

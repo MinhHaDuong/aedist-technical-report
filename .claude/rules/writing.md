@@ -1,3 +1,11 @@
+---
+paths:
+  - "report/**"
+  - "publications/**"
+  - "slides/**"
+  - "docs/**"
+---
+
 # Writing rules — AEDIST
 
 ## General structure

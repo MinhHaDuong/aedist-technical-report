@@ -1,6 +1,6 @@
 """JSON EOF newline policy: all single-object JSON writers must append exactly one trailing newline.
 
-Project stance (see .claude/rules/workflow.md § "JSON EOF newline policy"):
+Project stance (see .claude/rules/json-output.md):
 - json.dump(x, f, ...) must be followed by f.write("\\n") on the next non-blank line.
 - .write_text(json.dumps(...)) must end with + "\\n".
 - .write_text(model.model_dump_json(...)) must end with + "\\n".
@@ -84,7 +84,7 @@ def test_write_text_json_has_trailing_newline():
 
     assert not all_violations, (
         f"{len(all_violations)} write_text JSON call(s) missing trailing newline "
-        f"(see .claude/rules/workflow.md § JSON EOF newline policy):\n"
+        f"(see .claude/rules/json-output.md):\n"
         + "\n".join(f"  {v}" for v in sorted(all_violations))
     )
 
@@ -124,6 +124,6 @@ def test_json_dump_to_file_has_trailing_newline():
 
     assert not all_violations, (
         f"{len(all_violations)} json.dump() call(s) not followed by .write('\\n') "
-        f"(see .claude/rules/workflow.md § JSON EOF newline policy):\n"
+        f"(see .claude/rules/json-output.md):\n"
         + "\n".join(f"  {v}" for v in sorted(all_violations))
     )

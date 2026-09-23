@@ -34,21 +34,3 @@ right three times where agent surveys were wrong twice.
 ## Prefer skills over commands
 
 New slash-invocable automation → `.claude/skills/<name>/SKILL.md`, never `.claude/commands/*.md` (legacy format). User-level skills go to `~/.claude/skills/` (IDH); project-level only for skills inseparable from this repo's harness (e.g. git-erg ticket-* skills). Skills must gracefully degrade when project-specific conventions are absent.
-
-## Worktree paths
-
-In an `EnterWorktree` session, `Edit`/`Write`/`Read` tools accept any absolute path. Edits at `/home/haduong/<repo>/<file>` go to the **main repo**, not the worktree. Always use worktree-rooted paths. Confirm with `pwd` and `git branch --show-current` before committing — if branch is `main`, stop.
-
-## Closing tickets and merge requests
-
-Never close forge tickets or merge requests without explicit user confirmation, even when acceptance criteria appear met. Recommend closures but always ask first, especially never close merge requests belonging to other sessions or worktrees.
-
-## JSON EOF newline policy
-
-All single-object JSON files written by this project end with exactly one trailing newline (`\n`).
-
-**Applies to:** `*.json` output files — `json.dump()` + `f.write("\n")`, and `.write_text(json.dumps(...) + "\n")`, and `.write_text(model.model_dump_json(...) + "\n")`.
-
-**Does not apply to:** JSONL writers (`to_jsonl_line() + "\n"` per record, no extra newline after the last line), or in-memory `json.dumps()` that is not written to a file.
-
-**Why:** Newline-only diffs (`No newline at end of file`) are non-semantic but noisy in reviews and audits. Verified by `tests/test_json_eof_newline.py` (`@pytest.mark.adherence`).
