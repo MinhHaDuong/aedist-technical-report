@@ -1,1 +1,0 @@
-@tickets/AGENTS.md

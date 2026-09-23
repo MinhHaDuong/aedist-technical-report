@@ -1,6 +1,6 @@
 # AI Agent Guidelines
 
-> `CLAUDE.md` contains only `@AGENTS.md` — do not modify it (enforced by pre-commit hook).
+> No `CLAUDE.md` here: Claude Code (2.1.277+) loads this file natively, plus the parent `~/CNRS/AGENTS.md`. Do not add a `CLAUDE.md` or `.claude/CLAUDE.md`; either one disables that fallback.
 
 The generic workflow (phases, worktrees, delegation, escalation, git discipline)
 lives in the harness rules under `~/.claude/rules/`, loaded into every session,
