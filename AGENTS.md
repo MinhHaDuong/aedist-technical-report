@@ -57,6 +57,9 @@ For one-shot chore PRs (tickets/, docs/, .claude/, top-level docs, .github/workf
 
 ## Autonomous mode
 
-In autonomous mode (`/raid`), the orchestrator never defers for human input. In
-the face of hard issues, it resorts first to a diverse team of agent experts. It
-then escalates to deep research. Thirdly, it works around the issue.
+In autonomous mode (`/raid`), the orchestrator does not stop for *how*
+questions: in the face of hard issues it resorts first to a diverse team of
+agent experts, then to deep research, then works around the issue. Questions of
+*what* follow the harness: a change of intent (exit criteria dropped, reworded
+or added; an expired premise) goes back to the author, as `/raid` and the
+harness escalation ladder require.
