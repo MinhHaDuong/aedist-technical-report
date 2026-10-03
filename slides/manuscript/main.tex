@@ -74,33 +74,11 @@ sur l'Environnement et le Développement, CNRS, France}
 
 \maketitle
 
-\textbf{Abstract.} The binding constraint on producing trustworthy
-statistical registers with AI is the quality of the source documents,
-not the capability of the model. Benchmarking the task on Vietnam's 177
-thermal power plants --- the asset-level data that open energy-system
-models need but that arrives late, incomplete, or under restrictive
-licences across much of the developing world --- fourteen language
-models drawing solely on memorised knowledge (70 runs) achieve row-level
-F1 from 0.00 to 0.68 (mean 0.38), well below an available ceiling: the
-reference content sat in the training corpus for years, and the models
-still fail to retrieve it. Attribute classification is uneven: province
-is recovered well, fuel and status remain mediocre. Four frontier agents
-with web access and extended reasoning improve coverage but still fall
-short of the four-dimensional quality bar --- accuracy, coherence,
-provenance, temporality --- consistently and reproducibly. However,
-providing agents with curated documents narrows the performance spread
-across models (max−min F1 from 0.26 to 0.18), equalising weak and
-strong: which documents are supplied matters more than which model runs
-the query. Within-run capacity variability predicts reference-based F1
-at Spearman ρ = 0.92 pooled (within-model signal positive but modest,
-\ref{sec:annex-screen}), offering a reference-free screen that rejects
-the weakest outputs without ground truth. Pooling the 14-model outputs
-already recovers plants no single model reliably finds. The results
-point toward a sourced, auditable knowledge base from which statistical
-tables derive as snapshot projections --- investing in the corpus and
-the sourcing process, not in a stronger model. To our knowledge, no
-prior benchmark targets open-world enumeration of a national asset class
-with per-cell provenance at this granularity.
+\textbf{Abstract.} This paper introduces a computable benchmark for evaluating whether frontier AI systems can produce research-grade statistical inventories, applied to Vietnam's thermal power fleet. The task is hard for today's agents. Fourteen language models answering from memory alone produce incomplete and unstable plant lists across Vietnam's 177 thermal power plants, the full lifecycle register spanning operating, proposed, planned, abandoned and retired assets. Performance is volatile across the cohort, with identical queries returning different plants each time. Attribute classification is uneven: province is recovered well, while fuel type and operational status remain mediocre. These results fall well below a readily available ceiling, since the reference content had been seeded into training corpora through Wikipedia pages, yet models still failed to retrieve it.
+
+We tested four frontier agents equipped with web access and extended reasoning. The evidence points toward a working conjecture rather than a settled finding. Under single-query prompting, providing curated documents equalised performance across the cohort, with three of the four agents converging toward similar levels; this pattern did not replicate under multi-turn protocol. The measured dimensions, accuracy, coverage and citation-based provenance, indicate that document quality matters more than model identity. Agents still fall short of the full quality bar, however; coherence, provenance support and temporality scoring are reserved for future cross-evaluation.
+
+A reference-free coherence screen based on within-run output variability correlates strongly with reference-based accuracy, suggesting that internal consistency measures can flag unreliable results without ground truth. The results suggest investing in the sourcing pipeline, assembling and curating documents for an auditable knowledge base, as the more promising path than pursuing stronger models alone.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
@@ -1088,31 +1066,11 @@ paper studies.
 
 \section{Conclusion}\label{sec:conclusion}
 
-As of mid-2026, AI systems queried with or without web access do not
-produce research-grade statistical inventories reliably --- and the
-binding constraint is the data, not the model. A baseline across 14
-models answering from memory finds row-level F1 from 0.00 to 0.68 with
-high within-model variance --- below an available ceiling, since the
-group-seeded Wikipedia lists alone cover 92\% of the built fleet
-(§\ref{sec:exp1}): the knowledge was demonstrably in the training
-corpus, and the models failed to retrieve it. Frontier agents with web
-access and extended reasoning improve coverage but fail to clear the
-four-dimensional quality bar consistently; handing the same agents a
-curated document set narrows the gap between weak and strong models more
-than any model choice does (§\ref{sec:exp2}). Two levers cost nothing in
-new data collection: an internal coherence screen --- within-run
-capacity variability, ρ = 0.92 pooled with reference-based F1
-(within-model signal positive but modest, \ref{sec:annex-screen}) ---
-rejects the weakest outputs without ground truth, and pooling runs
-across models recovers plants that no single model reliably finds
-(§\ref{sec:fusion}). The path to research-grade quality therefore runs
-through the sourcing pipeline --- assembling, curating, and resolving
-documents in an auditable knowledge base from which statistical tables
-derive as dated snapshots --- with human-in-the-loop resolution and
-multi-run fusion, not through a stronger model or a single heroic
-prompt. For the many countries whose statistical systems cannot yet
-supply machine-readable asset inventories, that is where the investment
-should go.
+As of mid-2026, no single AI system tested here produced a research-grade statistical inventory of Vietnam's thermal power fleet. The evidence points toward a conjecture: the bottleneck shifts from model capability to document quality, a pattern observed in single-query mode across three of the four agents but not replicated under multi-turn protocol. Memory-only models fail to retrieve information already present in their training corpora; frontier agents with web access improve coverage but do not clear the measured quality bar.
+
+Two findings carry particular weight. First, a reference-free coherence screen based on within-run output variability identifies unreliable models without any reference data, suggesting that internal consistency measures can serve as an early-warning filter. Second, the fact that document provision equalises performance across agents of different price points and architectures implies that the marginal return on sourcing effort exceeds the marginal return on model capability.
+
+The path to research-grade quality runs through the sourcing pipeline, not through stronger models. An auditable knowledge base, built from carefully assembled and curated documents, provides the substrate on which statistical tables can derive as dated snapshots. Human-in-the-loop resolution and multi-run fusion are the mechanisms through which this substrate becomes a reliable statistical register. For countries whose statistical systems cannot yet supply machine-readable asset inventories, investment in the sourcing pipeline is where it should be directed.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
