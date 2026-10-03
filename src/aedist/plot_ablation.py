@@ -18,7 +18,16 @@ from collections import defaultdict
 from pathlib import Path
 
 from .measurements import load
-from .util import COLOR_HALLUC, COLOR_MATCHED, COLOR_REFERENCE, COLOR_REFUSAL, normalize_model
+from .util import (
+    COLOR_HALLUC,
+    COLOR_MATCHED,
+    COLOR_REFERENCE,
+    COLOR_REFUSAL,
+    SLIDE_FIGSIZE_HEATMAP,
+    SLIDE_FIGSIZE_MATRIX,
+    SLIDE_FIGSIZE_PLACEHOLDER,
+    normalize_model,
+)
 
 log = logging.getLogger(__name__)
 
@@ -122,7 +131,7 @@ def _write_placeholder_pdf(output: Path, message: str) -> None:
     """Write a one-page placeholder PDF so downstream Make/LaTeX targets resolve."""
     import matplotlib.pyplot as plt
 
-    fig, ax = plt.subplots(figsize=(6, 2))
+    fig, ax = plt.subplots(figsize=SLIDE_FIGSIZE_PLACEHOLDER)
     ax.text(0.5, 0.5, message, ha="center", va="center", fontsize=11, color="gray")
     ax.set_axis_off()
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -145,7 +154,7 @@ def write_strip_pdf(rows: list[dict], output: Path, max_fp: int = 160) -> None:
         _write_placeholder_pdf(output, "Ablation data not yet collected")
         return
 
-    fig, ax = plt.subplots(figsize=(10, 7.5))
+    fig, ax = plt.subplots(figsize=SLIDE_FIGSIZE_HEATMAP)
 
     y_offset = 0.0
     variant_ticks = []
@@ -334,7 +343,7 @@ def write_heatmap_pdf(rows: list[dict], output: Path) -> None:
             if minus_f1 is not None and comp_f1 is not None:
                 matrix[ri, mi * 2 + 1] = (minus_f1 - comp_f1) * 100
 
-    fig, ax = plt.subplots(figsize=(7, 4))
+    fig, ax = plt.subplots(figsize=SLIDE_FIGSIZE_MATRIX)
 
     # Use diverging colormap, centered at 0
     vmax = max(30, np.nanmax(np.abs(matrix)))

@@ -16,7 +16,7 @@ from statistics import median
 
 from .figures_config import load_modelset
 from .measurements import SYNTHETIC_SUFFIXES, load
-from .util import COLOR_REFERENCE, normalize_model
+from .util import COLOR_REFERENCE, SLIDE_FIGSIZE_SCATTER, normalize_model
 
 log = logging.getLogger(__name__)
 
@@ -63,7 +63,7 @@ def write_pdf(
     import matplotlib.pyplot as plt
     import numpy as np
 
-    fig, ax = plt.subplots(figsize=(7, 5))
+    fig, ax = plt.subplots(figsize=SLIDE_FIGSIZE_SCATTER)
     fig.subplots_adjust(left=0.22)
 
     yticks = []

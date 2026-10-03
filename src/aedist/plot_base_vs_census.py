@@ -20,6 +20,7 @@ from pathlib import Path
 
 from .tabulate_base_vs_census import compute_table
 from .tabulate_utils import format_model_name
+from .util import SLIDE_FIGSIZE_BASE_VS_CENSUS
 
 log = logging.getLogger(__name__)
 
@@ -35,7 +36,7 @@ def _make_figure(table: dict, output: Path) -> None:
 
     rows = table["rows"]
     if not rows:
-        fig, ax = plt.subplots(figsize=(5.5, 3.6))
+        fig, ax = plt.subplots(figsize=SLIDE_FIGSIZE_BASE_VS_CENSUS)
         ax.axis("off")
         ax.text(
             0.5,
@@ -73,7 +74,7 @@ def _make_figure(table: dict, output: Path) -> None:
     sizes = [80 + 60 * math.log1p(max(row["delta_tokens_in"], 0.0)) for row in rows]
     labels = [format_model_name(row["slug"]) for row in rows]
 
-    fig, ax = plt.subplots(figsize=(5.5, 5.0))
+    fig, ax = plt.subplots(figsize=SLIDE_FIGSIZE_BASE_VS_CENSUS)
     ax.scatter(xs, ys, s=sizes, alpha=0.7, edgecolor="black", linewidth=0.5, zorder=3)
 
     lo = min([*xs, *ys, 0.0])

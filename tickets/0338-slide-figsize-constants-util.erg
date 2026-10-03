@@ -5,6 +5,7 @@ Author: claude
 
 --- log ---
 2026-05-26T10:00Z claude created suite panel review (Lucas Moreau LM-11)
+2026-06-01T00:00Z claude execute constants added, scripts refactored, adherence test created
 
 --- body ---
 ## Context
@@ -38,7 +39,7 @@ constante centrale. **Ordre suggéré** : 0338 d'abord (créer les constantes), 
 0338 ajoute la constante et migre les valeurs.
 
 ## Exit criteria
-- [ ] Constantes définies dans `aedist.util`
-- [ ] Scripts plot_*.py refactorés pour les utiliser
-- [ ] Test d'adhérence en place
-- [ ] `make check` passe
+- [x] Constantes définies dans `aedist.util`
+- [x] Scripts plot_*.py refactorés pour les utiliser
+- [x] Test d'adhérence en place
+- [x] `make check` passe

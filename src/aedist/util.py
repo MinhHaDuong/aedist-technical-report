@@ -101,6 +101,40 @@ assert set(_MODEL_FAMILY_PREFIX_MAP.values()) <= _mf_valid, (
 )
 
 
+# ── Standard figsize constants (Beamer 16:9 slides) ────────────────────────
+#
+# All figure sizes in (width, height) inches.  Rationale:
+#
+#   SLIDE_FIGSIZE_FULL = (10.0, 5.6) → 16:9 ≈ 1.79.  Safe upper bound for
+#       \includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio]
+#       without clipping.  The canonical "full-slide" size.
+#   SLIDE_FIGSIZE_WIDE = (11.2, 6.3) → 16:9 exactly, slightly larger.
+#   SLIDE_FIGSIZE_HALF = (5.5, 4.0) → fits next to text (column 0.55-0.6
+#       textwidth).  Ratio ~1.38 → "more square" is acceptable.
+#   SLIDE_FIGSIZE_POLAR_2x2 = (10.0, 8.0) → 2×2 polar (spider/radar) panels.
+#
+# For multi-panel figures that don't fit a single constant, new constants
+# are added in the same section — never inline figsize tuples.
+# See test_no_hardcoded_figsize.py for the adherence check.
+
+SLIDE_FIGSIZE_FULL = (10.0, 5.6)   # 16:9, safe upper bound
+SLIDE_FIGSIZE_WIDE = (11.2, 6.3)   # 16:9 exactly, slightly larger
+SLIDE_FIGSIZE_HALF = (5.5, 4.0)    # side-by-side with text, ratio ~1.38
+SLIDE_FIGSIZE_POLAR_2x2 = (10.0, 8.0)  # 2×2 polar / spider panels
+
+# ── Extended constants for multi-panel / non-standard layouts ───────────────
+SLIDE_FIGSIZE_2PANEL = (11.0, 4.5)  # 1×2 panels (wide, half-height)
+SLIDE_FIGSIZE_HEATMAP = (10.0, 7.5)  # ablation heatmap (strip plot layout)
+SLIDE_FIGSIZE_MATRIX = (7.0, 4.0)  # ablation matrix / heatmap compact
+SLIDE_FIGSIZE_TIMELINE = (9.0, 5.2)  # capability timeline
+SLIDE_FIGSIZE_SCATTER = (7.0, 5.0)  # general scatter plots
+SLIDE_FIGSIZE_DAG = (6.5, 5.5)  # DAG / network diagrams
+SLIDE_FIGSIZE_STRIP = (10.0, 3.2)  # 4-panel strip / trajectory
+SLIDE_FIGSIZE_PLACEHOLDER = (6.0, 2.0)  # placeholder / empty-state messages
+SLIDE_FIGSIZE_BASE_VS_CENSUS = (5.5, 5.0)  # base vs census scatter (square-ish)
+SLIDE_FIGSIZE_STRIP = (10.0, 3.2)  # 4-panel strip / trajectory
+
+
 @cache
 def _provider_for_model(slug: str) -> str | None:
     """Resolve the registry ``provider`` for a normalized model slug.

@@ -16,7 +16,7 @@ from pathlib import Path
 
 import yaml
 
-from .util import COLOR_NEUTRAL, glyph_for_method, model_family_color
+from .util import COLOR_NEUTRAL, SLIDE_FIGSIZE_SPIDER, glyph_for_method, model_family_color
 
 log = logging.getLogger(__name__)
 
@@ -184,7 +184,7 @@ def make_figure(rows: list[dict[str, str]], config: dict, output: Path) -> None:
     axes = config["axes"]
     profiles = _aggregate_profiles(rows, config)
 
-    fig, ax = plt.subplots(figsize=(7.4, 5.6), subplot_kw={"projection": "polar"})
+    fig, ax = plt.subplots(figsize=SLIDE_FIGSIZE_SPIDER, subplot_kw={"projection": "polar"})
     # Spin by 1/16 turn so cardinal points correspond to quality-axis centers.
     angles = np.linspace(0, 2 * np.pi, len(axes), endpoint=False) + (np.pi / 8)
     closed_angles = np.concatenate((angles, [angles[0]]))

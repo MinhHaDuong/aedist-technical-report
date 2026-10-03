@@ -17,7 +17,7 @@ from collections import defaultdict
 from pathlib import Path
 
 from .measurements import SYNTHETIC_SUFFIXES, load
-from .util import COLOR_ALERT, COLOR_HALLUC, FAMILY_COLORS, normalize_model
+from .util import COLOR_ALERT, COLOR_HALLUC, FAMILY_COLORS, SLIDE_FIGSIZE_SCATTER, normalize_model
 
 log = logging.getLogger(__name__)
 
@@ -126,7 +126,7 @@ def write_pdf(data: FamilyData, output: Path) -> None:
     import matplotlib.pyplot as plt
     import numpy as np
 
-    fig, ax = plt.subplots(figsize=(8, 5))
+    fig, ax = plt.subplots(figsize=SLIDE_FIGSIZE_SCATTER)
 
     fc = FAMILY_COLORS
     family_colors = {"Qwen 3.5": fc["qwen"], "Gemma 4": fc["gemma"]}

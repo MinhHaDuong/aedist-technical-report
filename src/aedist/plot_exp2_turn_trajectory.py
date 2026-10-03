@@ -20,7 +20,13 @@ import logging
 from pathlib import Path
 
 from .extract import count_best_table_rows
-from .util import COLOR_NEUTRAL, glyph_legend_handles, glyph_scatter_kwargs, model_family_color
+from .util import (
+    COLOR_NEUTRAL,
+    SLIDE_FIGSIZE_STRIP,
+    glyph_legend_handles,
+    glyph_scatter_kwargs,
+    model_family_color,
+)
 
 log = logging.getLogger(__name__)
 
@@ -113,7 +119,7 @@ def _load_view_turns(view_csv: Path) -> list[dict]:
 def make_figure_from_view(rows: list[dict], output: Path) -> None:
     import matplotlib.pyplot as plt
 
-    fig, axes = plt.subplots(1, 4, figsize=(10, 3.2), sharey=True)
+    fig, axes = plt.subplots(1, 4, figsize=SLIDE_FIGSIZE_STRIP, sharey=True)
 
     for ax, agent in zip(axes, _AGENT_ORDER, strict=True):
         color = model_family_color(_AGENT_MODEL[agent])
@@ -180,7 +186,7 @@ def make_figure_from_view(rows: list[dict], output: Path) -> None:
 def make_figure(probes_dir: Path, output: Path) -> None:
     import matplotlib.pyplot as plt
 
-    fig, axes = plt.subplots(1, 4, figsize=(10, 3.2), sharey=True)
+    fig, axes = plt.subplots(1, 4, figsize=SLIDE_FIGSIZE_STRIP, sharey=True)
 
     for ax, agent in zip(axes, _AGENT_ORDER, strict=True):
         color = model_family_color(_AGENT_MODEL[agent])

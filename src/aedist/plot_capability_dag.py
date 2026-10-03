@@ -23,6 +23,8 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 
+from .util import SLIDE_FIGSIZE_DAG
+
 logger = logging.getLogger(__name__)
 
 FEATURE_LABELS = {
@@ -82,7 +84,7 @@ def compute_matrix(
 def render(lab_dates: dict[str, dict[int, date]], output: Path) -> None:
     frac, counts = compute_matrix(lab_dates)
 
-    fig, ax = plt.subplots(figsize=(6.5, 5.5))
+    fig, ax = plt.subplots(figsize=SLIDE_FIGSIZE_DAG)
 
     masked = np.ma.masked_invalid(frac)
     ax.imshow(masked, cmap=plt.cm.Greens, vmin=0.0, vmax=1.0, aspect="equal", origin="upper")
