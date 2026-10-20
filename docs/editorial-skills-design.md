@@ -102,7 +102,7 @@ Each skill's first cut is an agent prompt implementing the mechanism above on a
 real target paragraph, with exemplars selected live from the `published/` tree.
 No vector store, no scorer. Apply to `slides/manuscript/main.tex` (English) to
 see how it works, then decide what to harden into a `SKILL.md`. The
-`/review-pr-prose` panel is the eventual host for the lenses; an
+`/gaze` prose panel is the eventual host for the lenses; an
 `editorial-brief.md` entry records each standing decision (review-time, not CI).
 
 ## Corrected objective (post-MVP, 2026-06-14) — the skill REDUCES

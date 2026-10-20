@@ -24,7 +24,7 @@ here are mechanical (re-derived from artifacts), content-fidelity (verbatim
 quotes of fixed external documents), or *negative/conditional* guards on
 forbidden phrasings. Positive authorial-wording pins are banned — the standing
 editorial decisions they encoded live in docs/editorial-brief.md, checked at
-review time by /review-pr-prose.
+review time by /gaze (prose mode).
 """
 
 import csv

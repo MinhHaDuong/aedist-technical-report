@@ -3,12 +3,12 @@
 Standing editorial decisions for `slides/manuscript/main.tex`. CI enforces
 only mechanical checks and *negative* guards (forbidden phrasings); the
 positive intent behind each decision lives here and is checked at review
-time by the `/review-pr-prose` panel against every manuscript diff (CI test
+time by the `/gaze` (prose mode) panel against every manuscript diff (CI test
 polarity rule, `.claude/rules/writing.md`, ticket 0557).
 
 Entry format: one H2 per decision, slug-style heading, with
 **Decision:** / **Rationale:** / **Ticket:** / **Status:**. The first
-three fields are the schema the `/review-pr-prose` brief auditor
+three fields are the schema the `/gaze` brief auditor
 consumes; **Status:** is bookkeeping local to this file. A decision is
 retired by flipping **Status:** to `retired (reason)`, never by
 deleting the entry.

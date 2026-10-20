@@ -27,7 +27,7 @@ Build 3 reusable IDH skills, applied after every substantial rewrite, for all te
 1. **descaffold** — strip instruction/scaffolding leak from prose (generalises 0592; mechanical-first).
 2. **voiceprint** — flag LLMisms / dry-academism vs the author's voice. PARKED (corpus, not recon): chemin-de-voix `author-voice-{en,fr}` is email-dominated — sampling by volume learns email register, not article voice. Needs an article-prose corpus (publication PDFs from minh.haduong.com, manuscripts) stratified away from the email majority (emails = contrast class only), reusing reading-1 work (closed 0532/0570), THEN author ratifies the trait list before it enforces.
 3. **caption-altitude** — figure captions one reading level below body, non-redundant (FR readability).
-Each = mechanical helper + LLM lens + editorial-brief entry + /review-pr-prose lens → then one global main.tex pass → arXiv sign-off. Follow-ups open: 0594 (report.tex Qwen), 0595 (test scanner). Backlog via `erg ready` (kb-design-note system paper, 0564, 0544).
+Each = mechanical helper + LLM lens + editorial-brief entry + /gaze (prose mode) lens → then one global main.tex pass → arXiv sign-off. Follow-ups open: 0594 (report.tex Qwen), 0595 (test scanner). Backlog via `erg ready` (kb-design-note system paper, 0564, 0544).
 
 ## Next: methods contribution
 
