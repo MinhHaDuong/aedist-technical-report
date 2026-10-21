@@ -40,11 +40,11 @@ Before merging, decide which checks the change needs and state them on the PR:
 
 - **Tickets only**: `tickets/erg check tickets/`.
 - **Docs, config, STATE**: `make lint`, and a read of the loaded or rendered result.
-- **Prose**: rebuild the document; `/review-pr-prose` for report text.
+- **Prose**: rebuild the document; `/gaze` (prose mode) for report text.
 - **Code, experiments**: tests for the changed behaviour, and `make check`.
 
 Anything beyond tickets gets at least one independent reviewer on a model other
-than the coder's (`/review` or `/review-pr`, scoped to the risk). Fix all
+than the coder's (`/review` or `/gaze`, scoped to the risk; `/verify-gate` gates the merge). Fix all
 issues, nits included; push back against "no need to fix now", and open a
 ticket only for oversized deferred work. Consider `/simplify` and codesmell
 checks for code. Up to three review/fix cycles, then escalate. Before merging,

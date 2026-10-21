@@ -144,7 +144,7 @@ the difficulty result, …) lives in `docs/editorial-brief.md` — one entry
 per standing decision with **Decision:** / **Rationale:** /
 **Ticket:** / **Status:** (the first three are the schema the
 review-panel brief auditor consumes) — and is checked at review time by
-the `/review-pr-prose` panel against each manuscript diff. Conditional
+the `/gaze` (prose mode) panel against each manuscript diff. Conditional
 negatives are the CI-side bridge: "IF ρ = 0.92 appears in the conclusion,
 the in-sample caveat must accompany it" guards the decision without
 pinning its wording.
