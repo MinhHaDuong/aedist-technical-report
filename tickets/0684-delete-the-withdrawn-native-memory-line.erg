@@ -1,0 +1,20 @@
+%erg 0.1
+Title: Delete the withdrawn native-memory line on Blocked-by reminder tickets
+Created: 2026-11-01
+Author: reviewer
+
+--- log ---
+2026-11-01T18:04Z reviewer created
+
+--- body ---
+## Context
+Filed from the harness (ticket 1374, author ruling 2026-11-01: "withdrawn everywhere").
+This project's Claude Code native memory index on padme
+(`~/.claude/projects/-home-haduong-CNRS-papiers-actif-AEDIST-technical-report/memory/MEMORY.md`)
+holds the line: "The ticket dependency graph is the only durable "remember later" primitive:
+a reminder is an OPEN ticket `Blocked-by` its trigger, which auto-fires in `erg ready` when the
+trigger closes." The author withdrew that practice in every project: no wait tickets; a
+post-merge measurement goes to a doctor's journal revisit.
+
+## Exit criteria
+- [ ] The line, and any note file it points to, is deleted from this project's native memory
