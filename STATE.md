@@ -1,4 +1,4 @@
-Last updated: 2026-06-16T10:39Z
+Last updated: 2026-11-04T15:00Z
 
 ## North star
 
@@ -6,20 +6,11 @@ Produce research-quality energy infrastructure datasets from open sources, valid
 
 ## Current milestone: dissemination DONE → publication programme
 
-Working paper `economia-2026-report` (2da83d04, 65 pp) disseminated and **release sequence closed (tracker 0663, 2026-06-16)**: HAL deposit (`hal-05658462`, in moderation), GitHub release with PDF (0666), homepage entry (0667), CIRED colleague email **sent** (0668), and a **Zenodo code+data DOI** — concept `10.5281/zenodo.20715179` (0676). Only **arXiv (0665) deferred** to the article preprint; calendar tripwire ~mid-August (if the article slips, post the report then). Reminder 0678 (cite the concept DOI in v2) auto-fires when 0665 closes. Prior: reading-2/3 waves + 4-reviewer external panel (tracker 0644 — prose fixed, experiments deferred post-arXiv).
+Working paper `economia-2026-report` (2da83d04, 65 pp) disseminated and **release sequence closed (tracker 0663, 2026-06-16)**: HAL deposit (`hal-05658462`, in moderation), GitHub release with PDF (0666), homepage entry (0667), CIRED colleague email **sent** (0668), and a **Zenodo code+data DOI** — concept `10.5281/zenodo.20715179` (0676). Only **arXiv (0665) deferred** to the article preprint; the mid-August 2026 tripwire is overdue and needs review. The preprint/v2 manuscript should cite the concept DOI (0678). Prior: reading-2/3 waves + 4-reviewer external panel (tracker 0644 — prose fixes remain open, experiments deferred post-arXiv).
 
 Next: the **publication-strategy Imagine (0675)** — retroplan, paper portfolio (methods A / data paper 0517 / Paper B 0516), submission sequencing, MASTERPLAN dissemination layer. **Spring-cleanup (0669, now unblocked)** — publications rehome, data+derived→experiments, root tidy. Standing auth: merge-review-merge cadence; new judgment calls stay needs-human.
 
-## Status
-<!-- generated 2026-06-16T10:39Z -->
-
-**Tickets:** 40 ready · 45 blocked — `erg ready tickets/` for full list
-**Recent commits:**
-  76ccd9b3 Merge pull request #1162 from MinhHaDuong/fix-dup-ticket-0677
-  59f2e4cb tickets: renumber 0677→0678 (cite-zenodo-doi) — resolve dup-ID collision
-  b39851bb Merge pull request #1160 from MinhHaDuong/quickpr/tickets-open-0677-manuscript-cite-zenodo-20260616-095947
-  fa563965 Merge pull request #1161 from MinhHaDuong/worktree-t0677-rules-map
-  12d45deb tickets: open 0677 — manuscript cite Zenodo concept DOI (Blocked-by 0665), link 0675
+Live counts: `erg ready tickets/` · `erg list` · `/dashboard`.
 
 ## Next: general reading skills (prose-quality pass)
 
@@ -31,4 +22,4 @@ Each = mechanical helper + LLM lens + editorial-brief entry + /gaze (prose mode)
 
 ## Next: methods contribution
 
-Ratified internal-coherence run-screen roadmap captured under **tracker 0464** (Paper A, manuscript MVP: 0201 scorer → 0466 model-grain floor heatmap → 0467 run-grain validation → 0468 table move → 0469 slides sync). The 0466 heatmap's coherence-veto column was rendering inverted (fixed by **0487/#883**, 2026-06-09); 0488 was closed void (its premise — missing coherence columns — was false; 0453 had already added them). **0464 remains blocked by 0201** (the full reference-free composite scorer, post-preprint, contested aggregation unresolved). Fil rouge = §2 conjunctive quality bar = zero-is-trash. Information fusion (run-as-unit) deferred to **tracker 0465** (Paper B: 0470/0471/0398/0399-consensus/0293).
+Ratified internal-coherence run-screen roadmap captured under **tracker 0464** (Paper A). The heatmap, validation, table move, and manuscript restructure (0466–0469) have landed; the 0201 scorer remains open. The 0466 heatmap's coherence-veto column was rendering inverted (fixed by **0487/#883**, 2026-06-09); 0488 was closed void (its premise — missing coherence columns — was false; 0453 had already added them). **0464 remains blocked by 0201** (the full reference-free composite scorer, post-preprint, contested aggregation unresolved). Fil rouge = §2 conjunctive quality bar = zero-is-trash. Information fusion (run-as-unit) deferred to **tracker 0465** (Paper B: 0470/0471/0398/0399-consensus/0293).
