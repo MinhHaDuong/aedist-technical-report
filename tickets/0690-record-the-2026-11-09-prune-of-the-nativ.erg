@@ -1,0 +1,21 @@
+%erg 0.1
+Title: Record the 2026-11-09 prune of the native Claude memory stores
+Created: 2026-11-09
+Author: HDMX-coding-agent
+
+--- log ---
+2026-11-09T16:38Z HDMX-coding-agent created
+
+--- body ---
+## Context
+On 2026-11-09 harness ticket 1481 pruned the Claude Code native memory stores of this project (`~/.claude/projects/-home-haduong-CNRS-papiers-actif-AEDIST-technical-report/memory/`), consolidated by ticket 0687. padme: 192 notes deleted, 5 kept. doudou: 193 deleted (including the withdrawn `feedback_durable_reminder_is_blocked_open_ticket`), 5 kept. Kept on both hosts, the notes SOURCES.md leaves out for audience, which stay the author's call: `feedback_autonomous_raid_doudou_pickup`, `feedback_no_ps_ef_in_claude`, `feedback_no_typo_callouts`, `reference_api_keys_location`, `user_platform`. Each native `MEMORY.md` now opens with a pointer to `memory/MEMORY.md` and keeps four free lines the repo does not carry (project description with the monorepo history, workstation hardware, API-key location, Linux-only).
+
+Invariant applied to every deleted note: its `git hash-object` is a blob reachable from origin of the harness (the public `projects/` exports) or of this repository, and this repository's memory names it with a disposition. No durable backup was kept; the harness history is the backup, and a scrub of the harness `projects/` history would void it. Full record: harness `memory/journal/2026/2026-11-09-native-store-prune-1481.md` (harness ticket 1481).
+
+## Work
+Add to `memory/SOURCES.md` a paragraph recording this prune, as padme did on 2026-11-07 (date, counts per host, what stayed and why, harness ticket 1481). Close at that commit.
+
+## Exit criteria
+- [ ] `memory/SOURCES.md` records the 2026-11-09 prune of the native stores on padme and doudou
+- [ ] at the next smelt or by 2026-11-23, the pruned native stores were recounted; regrowth is noted here
+- [ ] the author decided to keep or delete the five audience-excluded native notes (default: keep)
