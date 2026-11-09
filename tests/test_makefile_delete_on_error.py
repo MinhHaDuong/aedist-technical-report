@@ -12,6 +12,7 @@ a new phase makefile added later without the directive — directly or via a
 shared include like `paths.mk`/`common.mk` — fails this test.
 """
 
+import os
 import re
 import subprocess
 import sys
@@ -180,6 +181,12 @@ def test_orphaned_tracked_makefile_still_detected(tmp_path, monkeypatch):
     path (must be ignored). The fix must not weaken orphan detection on tracked
     files while it gains immunity to untracked worktree/attic artifacts.
     """
+    # A pre-commit hook exports GIT_DIR / GIT_INDEX_FILE: left in place, the
+    # `git init` below re-initialises the *real* repository (setting
+    # core.bare=true in its shared config) and `git add` stages the stub
+    # Makefile into the hook's index. Scrub every GIT_* variable first.
+    for var in [v for v in os.environ if v.startswith("GIT_")]:
+        monkeypatch.delenv(var)
     subprocess.run(["git", "init", "-q"], cwd=tmp_path, check=True)
     recipe = "all:\n\ttouch out\n"
 
