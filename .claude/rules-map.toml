@@ -3,10 +3,13 @@
 # Doctype comes from the \documentclass sniff (report -> techreport,
 # beamer -> slides, article -> article), so no entry overrides it; the
 # manifest supplies the language, which markup does not carry.
-# Repo prose (README, docs, ADR, memory, preprint, English deck) is English.
+# Most repo prose (README, most docs, memory, preprint, English deck) is
+# English; the French Markdown files are mapped one by one below.
 default_lang = "en"
 
-# French technical report, its glossary and verification fragments.
+# French technical report, its glossary and verification fragments. Some
+# generated English tables under report/inputs/generated/ also match; they
+# carry no doctype and are never hand-edited, so the label is harmless.
 [[map]]
 glob = "report/**/*.tex"
 lang = "fr"
@@ -15,4 +18,21 @@ lang = "fr"
 # slides/manuscript/main.tex fall through to default_lang.
 [[map]]
 glob = "slides/slides.tex"
+lang = "fr"
+
+# French Markdown documents (ADR-1 to ADR-6, French-body notes).
+[[map]]
+glob = "ADR.md"
+lang = "fr"
+
+[[map]]
+glob = "docs/alignment_analysis.md"
+lang = "fr"
+
+[[map]]
+glob = "docs/2026-05-26-panel-review-state.md"
+lang = "fr"
+
+[[map]]
+glob = "docs/HaDuong-2026-EconomIA-Abstract.md"
 lang = "fr"
