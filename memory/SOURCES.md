@@ -15,7 +15,7 @@ repository: **public** GitHub repository `MinhHaDuong/aedist-technical-report`
 | Native session directories of past worktrees of this project (15 slugs) | Claude Code session history | No `memory/` directory in any of them (2026-11-09). Transcripts (`*.jsonl`) are not memory sources: not read. |
 | `~/.codex/memories` | Codex | Absent (2026-11-09). |
 | `~/.pi/agent` | Pi | No `*.md` file mentions this project; five Pi session transcripts do, and are not memory sources: not read. |
-| [.claude/rules/](../.claude/rules/) (`experiment-design.md`, `json-output.md`, `workflow.md`, `writing.md`) | Project rules, loaded by Claude Code | Rules, not memory: linked from topics, not copied. |
+| [.claude/rules/](../.claude/rules/) (`experiment-design.md`, `workflow.md`, `writing.md`; `json-output.md` removed by ticket 0682, now harness `rules/coding-python.md`) | Project rules, loaded by Claude Code | Rules, not memory: linked from topics, not copied. |
 | [STATE.md](../STATE.md), [MASTERPLAN.md](../MASTERPLAN.md), [ADR.md](../ADR.md), [tickets/](../tickets/), [data/reference/PROVENANCE.md](../data/reference/PROVENANCE.md) | Canonical project documents | Linked, not copied. They govern over topics. |
 | Secret files excluded by [.gitignore](../.gitignore) (`.env`) | — | Not read. |
 

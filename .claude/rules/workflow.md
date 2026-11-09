@@ -27,4 +27,4 @@ right three times where agent surveys were wrong twice.
 
 ## Prefer skills over commands
 
-Rule: harness `rules/authoring-skills.md` (a new slash-invocable automation is a skill, not a legacy command). Local scope: user-level skills go to `~/.claude/skills/` (IDH); project-level only for skills inseparable from this repo's harness (e.g. git-erg ticket-* skills).
+Rule: harness `rules/authoring-skills.md` (a new slash-invocable automation is a skill, not a legacy command). Local scope: user-level skills go to `~/.claude/skills/` (IDH); project-level only for skills inseparable from this repo's harness (e.g. git-erg ticket-* skills). Skills must gracefully degrade when project-specific conventions are absent (not stated in the harness; kept here).

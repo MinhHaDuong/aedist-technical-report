@@ -10,7 +10,9 @@ paths:
 
 ## General structure
 
-Universal prose rules (no heading above a one-paragraph subsection, humble absence claims, label-based cross-references) live in the harness `rules/prose/_all.md` and `rules/doctype/article.md`; only the local enforcement is below.
+Humble absence claims and label-based cross-references live in the harness `rules/prose/_all.md`; only the local enforcement is below.
+
+**No heading above a one-paragraph subsection.** The harness states it for articles only (`rules/doctype/article.md`); here it applies to every path above, report and slides included.
 
 **Forward-reference, don't link outward.** When a concept is developed later in the same document, point the reader there rather than linking to an external working document.
 
@@ -77,8 +79,9 @@ macro).
 
 **Cite closely-related projects unconditionally.** Work a reader of this paper would obviously know (e.g., PyPSA-VN, powerplantmatching for an AEDIST-style paper) must be cited even if not strictly required by the argument.
 
-The gap paragraph and the no-in-repo-documents bibliography rule are in harness `rules/doctype/article.md`.
-Local addition the harness does not state: the gap statement is its own paragraph, never sharing space with topical coverage.
+The gap paragraph is in harness `rules/doctype/article.md`. Local addition the harness does not state: the gap statement is its own paragraph, never sharing space with topical coverage.
+
+**No in-repo documents in the bibliography**, in any document under the paths above (the harness states it for articles only): `docs/*.md`, internal planning notes, and uncommitted artefacts never appear in the references.
 
 ## Figures are artifacts, not inline plots
 
@@ -108,7 +111,7 @@ is guarded by `tests/test_manuscript_macros.py` (`@pytest.mark.adherence`).
 
 ## CI test polarity rule (ticket 0557)
 
-The rule itself (pin negative guards and mechanical checks, never positive authorial phrasing) is harness `rules/prose-adherence-tests.md`. Local anchor examples: the loose structural anchors allowed here are section-scoped marker classes (e.g. ≥2 primacy-marker sentences in §fusion) and fixed *external* terminology (e.g. the STANAG 2511 term pair). A positive pin bit on merge request #1014, the 2026-06-12 abstract rewrite.
+The rule itself (pin negative guards and mechanical checks, never positive authorial phrasing) is harness `rules/prose-adherence-tests.md`. Local mechanical checks include verbatim quotes of fixed external documents. Local anchor examples: the loose structural anchors allowed here are section-scoped marker classes (e.g. ≥2 primacy-marker sentences in §fusion) and fixed *external* terminology (e.g. the STANAG 2511 term pair). A positive pin bit on merge request #1014, the 2026-06-12 abstract rewrite.
 
 Positive editorial intent (claim X stays hedged, the abstract leads with
 the difficulty result, …) lives in `docs/editorial-brief.md` — one entry
