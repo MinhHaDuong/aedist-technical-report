@@ -17,6 +17,24 @@ existed, and agents routed to their nearest living neighbour.
 | `tickets/erg` | Tickets management binary. |
 | `.claude/rules/` | Project rules (TODO: replace with scoped hooks) |
 | `.claude/settings.json` | Project permissions and hooks |
+| `memory/` | Project memory: index, topics, journal (v8) |
+
+## Project memory
+
+Read [memory/MEMORY.md](memory/MEMORY.md) at task start when it exists. Open
+the topics that match the task; search topics and the journal with `rg` when
+the task or an obstacle calls for recall, and again when the task changes
+materially. Missing memory does not block work; report a known incomplete
+installation.
+
+This repository is public. At roar, commit significant facts here only when
+fit for a public reader; private material may enter only as age-encrypted
+`.age` ciphertext, and until this repository pins such a mechanism it stays
+out. Journal entries are append-only; corrections link back from new
+entries. Consolidation follows the harness smelt skill. `memory/MEMORY.md`
+is at most 100 lines including headings and blank lines. No timer, TTL or
+automatic rule proposal. Sources and dispositions:
+[memory/SOURCES.md](memory/SOURCES.md).
 
 ## Imagine
 
