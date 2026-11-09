@@ -2,9 +2,12 @@
 Title: Fix stale Qwen3-Max label in exp2 coverage-certainty plot (manuscript figure)
 Created: 2026-06-14
 Author: HDMX-coding-agent
+Closed: label fixed, guard added, figures regenerated
 
 --- log ---
 2026-06-14T07:31Z HDMX-coding-agent created
+2026-11-09T16:21Z HDMX-coding-agent evidence: qwen arm = qwen3.7-max-2026-05-20 (run records sota_exp3_arm1_batch1/run0*/qwen.json, arm2 qwen_phase_a.json); label fixed; PDFs en+fr regenerated, pdftotext shows Qwen3.7 Max; manuscript main.pdf rebuilt (0 Qwen3-Max); make check green but test_smoke_real_cli (environmental)
+2026-11-09T16:21Z HDMX-coding-agent closed — label fixed, guard added, figures regenerated
 
 --- body ---
 

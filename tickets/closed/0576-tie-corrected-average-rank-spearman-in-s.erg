@@ -2,9 +2,12 @@
 Title: Tie-corrected (average-rank) Spearman in screen_validation_within_model
 Created: 2026-06-12
 Author: HDMX-coding-agent
+Closed: midrank Spearman; 2dp and counts unchanged
 
 --- log ---
 2026-06-12T20:07Z HDMX-coding-agent created
+2026-11-09T15:29Z HDMX-coding-agent done: _spearman now Pearson-on-midranks (scipy-equal, tested). Regenerated: pooled_spearman_cap_distinct 0.917 -> 0.920 (3dp artifact only); \ScreenPooledSpearman 0.92 unchanged; per-model positive 11/14 unchanged; all other metrics byte-identical. Constant-input models stay in the 14 denominator. Hard stop not triggered.
+2026-11-09T15:29Z HDMX-coding-agent closed — midrank Spearman; 2dp and counts unchanged
 
 --- body ---
 ## Context
@@ -35,7 +38,7 @@ on an empty-value CSV row; guard or skip for the None case.
 
 ## Exit criteria
 
-- [ ] `_spearman()` matches scipy.stats.spearmanr on tied data (unit test)
-- [ ] Regenerated artifacts committed; published 2dp values verified
+- [x] `_spearman()` matches scipy.stats.spearmanr on tied data (unit test)
+- [x] Regenerated artifacts committed; published 2dp values verified
   unchanged or escalated
-- [ ] `make check` passes
+- [x] `make check` passes

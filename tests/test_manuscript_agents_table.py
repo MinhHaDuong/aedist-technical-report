@@ -123,3 +123,18 @@ def test_no_stale_qwen_version_in_report():
         f"Qwen agent is {EXP2_QWEN_SLUG!r} (Qwen3.7 Max) per models.yaml and "
         "the run records"
     )
+
+
+def test_no_stale_qwen_version_in_coverage_certainty_plot():
+    """Negative guard (ticket 0596): the exp2 coverage-certainty plot label map
+    must not emit the stale hyphenated ``Qwen3-Max`` for the Qwen 3.7 arm.
+    ``Qwen3-Max-Thinking`` (a different model) would stay permitted."""
+    path = REPO_ROOT / "src" / "aedist" / "plot_exp2_coverage_certainty.py"
+    text = path.read_text(encoding="utf-8")
+    stale = re.findall(r"Qwen3-Max(?!-Thinking)", text)
+    assert not stale, (
+        "stale 'Qwen3-Max' label in plot_exp2_coverage_certainty.py — the Exp 2 "
+        f"Qwen agent is {EXP2_QWEN_SLUG!r} (Qwen3.7 Max) per models.yaml and "
+        "the run records"
+    )
+    assert _expected_qwen_display() in text
