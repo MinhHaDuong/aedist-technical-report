@@ -1,0 +1,18 @@
+# Axis manifest (mapping only, no rule text): ~/.agents/rules/README.md
+# § Axis model; resolver: ~/.agents/scripts/prose_predicate.py. First match wins.
+# Doctype comes from the \documentclass sniff (report -> techreport,
+# beamer -> slides, article -> article), so no entry overrides it; the
+# manifest supplies the language, which markup does not carry.
+# Repo prose (README, docs, ADR, memory, preprint, English deck) is English.
+default_lang = "en"
+
+# French technical report, its glossary and verification fragments.
+[[map]]
+glob = "report/**/*.tex"
+lang = "fr"
+
+# French beamer deck. The English deck slides-en.tex and the preprint
+# slides/manuscript/main.tex fall through to default_lang.
+[[map]]
+glob = "slides/slides.tex"
+lang = "fr"
