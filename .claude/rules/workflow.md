@@ -14,13 +14,7 @@ Before building new diagnostic infrastructure (schema changes, sweep options, ne
 
 ## Derive prose from generated artifacts, never from agent enumeration
 
-When manuscript or report prose quotes empirical numbers, the numbers come
-from the committed generated artifact (CSV, macros file) produced by the
-pipeline — never from an upstream agent's grep notes, plan enumeration, or
-ticket annotations. Treat agent-surveyed counts as hypotheses to verify:
-(1) run the script, (2) inspect the artifact, (3) write the prose from it,
-(4) guard the literal with an adherence test that re-derives the number
-from the artifact via an independent parse.
+Rule: harness `rules/prose/_all.md` (every empirical number comes from a committed generated artifact; agent counts are hypotheses until the script runs). Local guard: an adherence test re-derives the number from the artifact via an independent parse (`tests/test_audit_exp2_wiki_citations.py` for the 0452 path).
 
 **Why:** Ticket 0452 (2026-06-06): both the Imagine and Plan agents
 surveyed the Exp2 corpus and concluded the Wikipedia-ban violations were
@@ -33,4 +27,4 @@ right three times where agent surveys were wrong twice.
 
 ## Prefer skills over commands
 
-New slash-invocable automation → `.claude/skills/<name>/SKILL.md`, never `.claude/commands/*.md` (legacy format). User-level skills go to `~/.claude/skills/` (IDH); project-level only for skills inseparable from this repo's harness (e.g. git-erg ticket-* skills). Skills must gracefully degrade when project-specific conventions are absent.
+Rule: harness `rules/authoring-skills.md` (a new slash-invocable automation is a skill, not a legacy command). Local scope: user-level skills go to `~/.claude/skills/` (IDH); project-level only for skills inseparable from this repo's harness (e.g. git-erg ticket-* skills). Skills must gracefully degrade when project-specific conventions are absent (not stated in the harness; kept here).
