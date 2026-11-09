@@ -28,9 +28,9 @@ import pytest
 
 pytestmark = pytest.mark.adherence
 
-MANUSCRIPT = (
-    Path(__file__).resolve().parent.parent / "slides" / "manuscript" / "main.tex"
-)
+REPO = Path(__file__).resolve().parent.parent
+MANUSCRIPT = REPO / "slides" / "manuscript" / "main.tex"
+REPORT_DIR = REPO / "report"
 
 _COMMENT_RE = re.compile(r"(?<!\\)%.*$", re.MULTILINE)
 # Exempt: generated value-macro identifiers carrying the old arm names.
@@ -67,4 +67,55 @@ def test_no_naive_optimised_query_mode_labels():
         "single-shot / multi-turn (ticket 0620). Macro identifiers "
         "(\\ExpTwo…Naive/Optimised) and the filename token "
         f"protocol_07_naive_prompt are exempt. First hits:\n{preview}"
+    )
+
+
+# ---- Generated tables (ticket 0636) -------------------------------------
+# The emitter-built tables the reader sees must not leak the retired words
+# either: ticket 0620 swept the prose only, and tab_exp2_2x2_agents.tex kept
+# "naive (single-shot)" rows. Scope: every generated table that main.tex or
+# a report/*.tex file includes (\input / \InputIfFileExists). Macro files
+# (macros_*.tex) are exempt: their identifiers are command names (see above).
+_GEN_INCLUDE_RE = re.compile(
+    r"\\(?:input|InputIfFileExists)\{(?:\.\./\.\./report/|)inputs/generated/(tab_[A-Za-z0-9_]+)(?:\.tex)?\}"
+    r"|\\(?:input)\{\.\./\.\./report/inputs/generated/(tab_[A-Za-z0-9_]+)(?:\.tex)?\}"
+)
+_TABLE_FORBIDDEN_RE = re.compile(
+    r"\b(?:naï?ve|naïf|optimi[sz](?:e|ed|ing|ation)?|optimisé)\b", re.IGNORECASE
+)
+
+
+def _included_generated_tables() -> list[Path]:
+    gen = REPO / "report" / "inputs" / "generated"
+    sources = [MANUSCRIPT, *sorted(REPORT_DIR.glob("*.tex"))]
+    names: set[str] = set()
+    for src in sources:
+        text = _COMMENT_RE.sub("", src.read_text(encoding="utf-8"))
+        for m in _GEN_INCLUDE_RE.finditer(text):
+            names.add(m.group(1) or m.group(2))
+    return sorted(p for n in names if (p := gen / f"{n}.tex").exists())
+
+
+def test_included_generated_tables_found():
+    """Positive control: the scan reaches the tables it is meant to guard."""
+    names = {p.name for p in _included_generated_tables()}
+    assert "tab_exp2_2x2_agents.tex" in names
+    assert "tab_exp2_bib_quality.tex" in names
+
+
+def test_no_naive_optimised_in_included_generated_tables():
+    """No "naive"/"optimised" word in any generated table main.tex or the
+    report includes (ticket 0636). The emitters must render single-shot /
+    multi-turn."""
+    hits = []
+    for path in _included_generated_tables():
+        raw = _COMMENT_RE.sub("", path.read_text(encoding="utf-8"))
+        for n, line in enumerate(raw.splitlines(), start=1):
+            if _TABLE_FORBIDDEN_RE.search(line):
+                hits.append(f"  {path.name}:{n}: {line.strip()}")
+    preview = "\n".join(hits[:10])
+    assert not hits, (
+        f"{len(hits)} line(s) in included generated tables use a retired "
+        'query-mode word ("naive"/"optimised"); fix the emitter in '
+        f"src/aedist/ and regenerate (ticket 0636). First hits:\n{preview}"
     )

@@ -31,10 +31,10 @@ _AGENT_LABEL_TO_CSV = {
     "Qwen": "qwen",
 }
 _CELL_TO_CSV_ARM = {
-    ("naive (single-shot)", "no"): "naive",
-    ("optimised (multi-turn)", "no"): "optimised",
-    ("naive (single-shot)", "yes"): "arm3",
-    ("optimised (multi-turn)", "yes"): "arm4",
+    ("single-shot", "no"): "naive",
+    ("multi-turn", "no"): "optimised",
+    ("single-shot", "yes"): "arm3",
+    ("multi-turn", "yes"): "arm4",
 }
 
 

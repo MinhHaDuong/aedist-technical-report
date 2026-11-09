@@ -341,7 +341,7 @@ _AGENT_DISPLAY = {
     "openai": "OpenAI",
     "qwen": "Qwen",
 }
-_MODE_DISPLAY = {"single": "naive (single-shot)", "multi": "optimised (multi-turn)"}
+_MODE_DISPLAY = {"single": "single-shot", "multi": "multi-turn"}
 
 
 def render_agents_tex(collapsed: dict) -> str:
