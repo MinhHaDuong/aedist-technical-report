@@ -22,10 +22,13 @@ stateful production demonstration.
 - Baseline prompt = modules 2+5 (goal + table, no persona), so the persona
   effect is measurable. Modules use the numbered scheme `1_persona` …
   `6_bibliography`, `A_Statistics` … `D_Completeness`.
-- Closed 2026-05-21: 16 models × 5 reps in
-  `experiments/outputs/ablation/direct/p1_base/`; the lineup is pinned in
-  `experiments.toml [sets.modelset_ablation_journal]`, do not recompute it
-  from the registry.
+- Closed 2026-05-21: 16 models × 5 reps (note). The note's output path
+  `experiments/outputs/ablation/direct/p1_base/` and set
+  `modelset_ablation_journal` no longer exist (checked 2026-11-09). The
+  journal baseline is now `[sweeps.sweep_exp1_baseline]` on
+  `[sets.modelset_exp1_journal]` in `experiments/experiments.toml`, its
+  outputs archived under `experiments/archive/outputs/exp1/baseline/`;
+  use the pinned set, do not recompute the lineup from the registry.
 
 ## Experiment 2 — two arms
 
@@ -34,9 +37,11 @@ stateful production demonstration.
   The contrast isolates the protocol's contribution.
 - Cross-evaluation (Phase C, ticket 0171) scores **both** arms plus the
   Exp 1 baseline as control; never scope it to one arm.
-- Optimized-arm outputs for analysis: `experiments/outputs/sota_exp2_brerun1/`
-  (ticket 0243). `sota_exp2_phase_b_full/` used the wrong classifier and
-  has routing errors: do not analyse it.
+- Optimized-arm outputs for analysis:
+  `experiments/archive/outputs/sota_exp2_brerun1/` (ticket 0243; archived
+  from `experiments/outputs/`, checked 2026-11-09). `sota_exp2_phase_b_full/`,
+  archived beside it, used the wrong classifier and has routing errors: do
+  not analyse it.
 
 ## Experiment 3 — reconstruction
 

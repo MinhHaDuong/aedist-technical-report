@@ -34,7 +34,7 @@ harness rules; project instructions in [AGENTS.md](../../AGENTS.md) and
   uncommitted work in a stale worktree may be a closed ticket's missing
   deliverable. Preserve it on a branch, run it, then adjudicate.
 
-## Parallel sessions and waves
+## Parallel sessions and waves (incidents met in this repository)
 
 - The author often works in a parallel session while a raid runs (merges,
   new blockers, STATE edits). Re-check each ticket on `origin/main` before

@@ -35,7 +35,9 @@ reading them. Policy of record: `docs/pipeline-phases.md` and the
 
 - Pydantic models silently drop unknown keys unless `extra="forbid"`: a
   `seed=42` in 57 sweeps never reached the API before ticket 0139; treat
-  pre-0139 MoE results as seed-uncontrolled. Before flipping `forbid` on a
+  pre-0139 MoE results as seed-uncontrolled. Still in force on 2026-11-09:
+  `JobSpec` in `src/aedist/schema.py` sets `extra="forbid"` and declares
+  `seed`. Before flipping `forbid` on a
   config-loading model, audit every config key against declared fields.
   Test schema extensions through their projection effect, not the
   constructor.
