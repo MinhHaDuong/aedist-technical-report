@@ -171,23 +171,42 @@ def _load_raw_runs(exp1_dir: Path, f1_map: dict[tuple[str, int], float | None]) 
     return runs
 
 
+def _midranks(arr: list[float]) -> list[float]:
+    """1-based ranks; tied values share the average of the positions they span."""
+    order = sorted(range(len(arr)), key=lambda i: arr[i])
+    ranks = [0.0] * len(arr)
+    i = 0
+    while i < len(order):
+        j = i
+        while j + 1 < len(order) and arr[order[j + 1]] == arr[order[i]]:
+            j += 1
+        avg = (i + j) / 2.0 + 1.0
+        for k in range(i, j + 1):
+            ranks[order[k]] = avg
+        i = j + 1
+    return ranks
+
+
 def _spearman(xs: list[float], ys: list[float]) -> float | None:
-    """Spearman rank correlation of two lists."""
+    """Spearman rank correlation with average-rank (midrank) tie handling.
+
+    Pearson correlation of the midranks, as scipy.stats.spearmanr computes it
+    (ticket 0576). The ``1 - 6*sum(d^2)/(n(n^2-1))`` shortcut is exact only
+    without ties. Returns None when n < 2 or either variable is constant.
+    """
     n = len(xs)
     if n < 2:
         return None
-
-    def rank(arr: list[float]) -> list[float]:
-        sorted_pairs = sorted(enumerate(arr), key=lambda x: x[1])
-        ranks = [0.0] * n
-        for i, (orig_idx, _) in enumerate(sorted_pairs):
-            ranks[orig_idx] = float(i + 1)
-        return ranks
-
-    rx = rank(xs)
-    ry = rank(ys)
-    d2 = sum((x - y) ** 2 for x, y in zip(rx, ry, strict=True))
-    return 1.0 - 6.0 * d2 / (n * (n**2 - 1))
+    rx = _midranks(xs)
+    ry = _midranks(ys)
+    mx = sum(rx) / n
+    my = sum(ry) / n
+    sxy = sum((a - mx) * (b - my) for a, b in zip(rx, ry, strict=True))
+    sxx = sum((a - mx) ** 2 for a in rx)
+    syy = sum((b - my) ** 2 for b in ry)
+    if sxx == 0.0 or syy == 0.0:
+        return None
+    return sxy / (sxx * syy) ** 0.5
 
 
 def _stratified_kendall_tau(
@@ -279,10 +298,11 @@ def within_model_accuracy_gap(rows: list[dict]) -> WithinModelAccuracyGap:
             continue
         xs, ys = zip(*valid, strict=False)  # valid has guaranteed >= 2 items from the check above
         rho = _spearman(list(xs), list(ys))
-        if rho is not None:
-            n_tot += 1
-            if rho > 0:
-                n_pos += 1
+        # A model with >= 2 scoreable runs counts in the denominator even when
+        # rho is undefined (constant cap_distinct or F1): no positive direction.
+        n_tot += 1
+        if rho is not None and rho > 0:
+            n_pos += 1
 
     # Pooled (across-model, tautological baseline)
     all_vetoed = [r["f1"] for r in rows if r["vetoed"] and r["f1"] is not None]

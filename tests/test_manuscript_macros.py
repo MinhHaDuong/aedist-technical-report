@@ -77,7 +77,10 @@ def test_screen_pooled_spearman_matches_artifact():
     """Ticket 0566: the manuscript's headline ρ (2 dp) tracks the pooled
     Spearman in the co-generated CSV (3 dp) — same drift-guard caveat as
     the two checks above."""
-    csv_val = float(_screen_metric("pooled_spearman_cap_distinct"))
+    raw = _screen_metric("pooled_spearman_cap_distinct")
+    if not raw.strip():
+        pytest.skip("pooled_spearman_cap_distinct is empty (undefined: < 2 scored runs)")
+    csv_val = float(raw)
     assert _macro("ScreenPooledSpearman") == f"{csv_val:.2f}"
 
 
