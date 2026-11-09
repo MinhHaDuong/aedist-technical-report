@@ -1,0 +1,20 @@
+%erg 0.1
+Title: memory/SOURCES.md names the home folder: keep it or switch to repo-relative wording
+Created: 2026-11-09
+Author: HDMX-coding-agent
+
+--- log ---
+2026-11-09T13:49Z HDMX-coding-agent created
+
+--- body ---
+## Context
+Left for the author by the memory v8 deployment (ticket 0687, PR #1187, 2026-11-09). The
+OpenAI review seat called it blocking that `memory/SOURCES.md` names the author's home folder
+and the filenames of excluded notes; gaze and verify-gate accepted keeping them as provenance,
+since `padme` and `/home/haduong` already appear in tracked files on main (241 and 7).
+
+## Decision
+- Keep as is, or rewrite SOURCES.md provenance in repo-relative / host-neutral wording.
+
+## Exit criteria
+- [ ] the author's choice is applied and noted in memory/journal
