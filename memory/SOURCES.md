@@ -99,7 +99,28 @@ deployed projects (JETP-observer, climate-finance-het, padme,
 sen-causal-reading) as the reference; none has a `memory/DREAM.md`
 (checked 2026-11-09). Harness ticket 1443 plans the later redesign.
 
+## Prune of the native stores, 2026-11-09
+
+After this adoption, harness ticket 1481 pruned the Claude Code native
+auto-memory of this project on both workstations: padme, 192 notes deleted
+and 5 kept; doudou, 193 deleted (its extra one being the withdrawn
+`feedback_durable_reminder_is_blocked_open_ticket.md`) and 5 kept. The five
+kept on each host are the notes left out for audience above; keeping or
+deleting them stays the author's call (ticket 0691, default keep). Each
+native `MEMORY.md` now opens with a pointer to [MEMORY.md](MEMORY.md) and
+keeps four lines this repository does not carry, left out for audience.
+
+Every deleted note satisfied one invariant: its `git hash-object` is a blob
+reachable from origin of the public harness export or of this repository,
+and this file names it with a disposition. No other backup was kept; the
+harness history is the backup, so a scrub of the harness `projects/` history
+would void it. The full record is the harness journal entry of ticket 1481.
+The row of the native store in the Sources table describes the store as
+inventoried, before this prune.
+
 ## Rollback
 
 Revert the adoption merge commit. Native stores, the harness export and the
-in-repo note were not modified; no journal entry predates this one.
+in-repo note were not modified by the adoption; no journal entry predates
+this one. The later prune of the native stores (above) is not undone by
+that revert.
