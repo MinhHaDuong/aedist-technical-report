@@ -6,6 +6,7 @@ Author: HDMX-coding-agent
 --- log ---
 2026-11-09T16:38Z HDMX-coding-agent created
 2026-11-09T20:04Z HDMX-coding-agent SOURCES.md paragraph landed on branch t0691-sources-prune; criteria 2 (recount by 2026-11-23) and 3 (author: keep/delete the five notes) stay open, so the ticket stays open
+2026-11-09T20:22Z HDMX-coding-agent author decision 2026-11-09: keep the five audience-excluded native notes on padme and doudou
 
 --- body ---
 ## Context
@@ -19,4 +20,4 @@ Add to `memory/SOURCES.md` a paragraph recording this prune, as padme did on 202
 ## Exit criteria
 - [x] `memory/SOURCES.md` records the 2026-11-09 prune of the native stores on padme and doudou
 - [ ] at the next smelt or by 2026-11-23, the pruned native stores were recounted; regrowth is noted here
-- [ ] the author decided to keep or delete the five audience-excluded native notes (default: keep)
+- [x] the author decided to keep or delete the five audience-excluded native notes (default: keep)
