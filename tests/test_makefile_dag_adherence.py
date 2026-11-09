@@ -188,6 +188,25 @@ MATCHING_IMPORT_RE = re.compile(
     r"^\s*(?:from (?:aedist\.|\.)matching\b|import aedist\.matching\b)", re.M
 )
 MATCHER_VAR = "$(MATCHER_SRCS)"
+# Indentation-tolerant: reconcile is often imported lazily inside a function
+# (plot_exp1_reliability.make_figure -> evaluate -> reconcile -> matching).
+LAZY_IMPORT_RE = re.compile(
+    r"^\s*(?:from (?:aedist\.|\.)(\w+)|import aedist\.(\w+))", re.M
+)
+
+
+def lazy_closure(module: str, sources: dict[str, str]) -> set[str]:
+    """Like import_closure, but also follows imports nested in functions."""
+    seen: set[str] = set()
+    stack = [module]
+    while stack:
+        mod = stack.pop()
+        for a, b in LAZY_IMPORT_RE.findall(sources.get(mod, "")):
+            dep = a or b
+            if dep in sources and dep not in seen:
+                seen.add(dep)
+                stack.append(dep)
+    return seen
 
 
 def matcher_importers(sources: dict[str, str]) -> set[str]:
@@ -205,7 +224,7 @@ def matcher_prereq_violations(
         scripts = set(EXECUTED_MODULE_RE.findall(recipe)) | listed_scripts(prereqs)
         reached = set(scripts)
         for mod in scripts:
-            reached |= import_closure(mod, sources)
+            reached |= lazy_closure(mod, sources)
         if not reached & seeds:
             continue
         covered = MATCHER_VAR in prereqs or all(
@@ -239,15 +258,18 @@ def test_matcher_check_catches_seeded_violation():
         "evaluate": "from .reconcile import reconcile\n",
         "plot_a": "from .evaluate import score\n",
         "plot_b": "import csv\n",
+        "plot_c": "def f():\n    from .evaluate import score\n",
     }
     mk = (
         "a.pdf: $(R)/src/aedist/plot_a.py\n"
         "\tuv run python -m aedist.plot_a\n"
         "b.pdf: $(R)/src/aedist/plot_b.py\n"
         "\tuv run python -m aedist.plot_b\n"
+        "c.pdf: $(R)/src/aedist/plot_c.py\n"
+        "\tuv run python -m aedist.plot_c\n"
     )
-    assert matcher_prereq_violations(mk, sources) == ["a.pdf"]
-    fixed = mk.replace("plot_a.py\n", "plot_a.py $(MATCHER_SRCS)\n", 1)
+    assert matcher_prereq_violations(mk, sources) == ["a.pdf", "c.pdf"]
+    fixed = mk.replace(".py\n", ".py $(MATCHER_SRCS)\n")
     assert matcher_prereq_violations(fixed, sources) == []
 
 

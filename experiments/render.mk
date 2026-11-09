@@ -309,7 +309,8 @@ $(ANALYSIS_EXP1_QUALITY_HEATMAP): $(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
 # Reliability-vs-accuracy screen figure (ticket 0506): section-4 main figure.
 # X = good runs out of 5 (12-dim reference-free gate), Y = mean F1 over good runs.
 $(ANALYSIS_EXP1_RELIABILITY_FIG): $(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
-		$(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp1_reliability.py
+		$(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp1_reliability.py \
+		$(MATCHER_SRCS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_exp1_reliability \
 	    --input $(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
@@ -319,7 +320,8 @@ $(ANALYSIS_EXP1_RELIABILITY_FIG): $(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
 # One invocation, two outputs (grouped &: rule): committed CSV + LaTeX table.
 $(ANALYSIS_EXP1_RELIABILITY_SENS_CSV) $(ANALYSIS_EXP1_RELIABILITY_SENS_TEX) &: \
 		$(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
-		$(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp1_reliability.py
+		$(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp1_reliability.py \
+		$(MATCHER_SRCS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_exp1_reliability \
 	    --input $(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
