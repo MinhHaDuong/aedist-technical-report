@@ -2,9 +2,11 @@
 Title: render.mk targets importing the matcher via reconcile.py lack the matching/ prerequisites
 Created: 2026-06-12
 Author: HDMX-coding-agent
+Closed: render.mk: 40 rules now list MATCHER_SRCS; test_matcher_prereqs_cover_import_closure guards drift; touching matching/lp.py now invalidates macros_exp2_matrix_naive.tex (make -n probe); make check: only env-bound test_smoke_real_cli fails (untrusted workspace for live claude CLI)
 
 --- log ---
 2026-06-12T08:00Z HDMX-coding-agent created
+2026-11-09T15:31Z HDMX-coding-agent closed — render.mk: 40 rules now list MATCHER_SRCS; test_matcher_prereqs_cover_import_closure guards drift; touching matching/lp.py now invalidates macros_exp2_matrix_naive.tex (make -n probe); make check: only env-bound test_smoke_real_cli fails (untrusted workspace for live claude CLI)
 
 --- body ---
 ## Context
