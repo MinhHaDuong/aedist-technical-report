@@ -32,6 +32,12 @@
 
 include $(dir $(lastword $(MAKEFILE_LIST)))paths.mk
 
+# Matcher sources (ticket 0554). Any rule whose script transitively imports
+# aedist.matching.* (usually via reconcile.py) lists $(MATCHER_SRCS), so a
+# matcher edit marks the artifact stale. Enforced statically by
+# tests/test_makefile_dag_adherence.py (test_matcher_prereqs_cover_import_closure).
+MATCHER_SRCS := $(wildcard $(ANALYSIS_REPO_ROOT)/src/aedist/matching/*.py)
+
 # --- P3 output artifact paths (render-only) ---------------------------------
 
 ANALYSIS_EXP2_ARM_COVERAGE_FIG := $(ANALYSIS_GEN)/fig_exp2_arms_coverage.pdf
@@ -159,7 +165,8 @@ ANALYSIS_CONVERTER_DOCS := $(wildcard $(ANALYSIS_CONVERTER_TEST)/*/Decision-1509
 # here — it is a committed source. These views are the render-time shaping of
 # that source and are produced by build_exp2_mart_views (the P3 projection).
 
-$(ANALYSIS_EXP2_MART_VIEWS): $(ANALYSIS_EXP2_MART_JSONL)
+$(ANALYSIS_EXP2_MART_VIEWS): $(ANALYSIS_EXP2_MART_JSONL) \
+		$(MATCHER_SRCS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.build_exp2_mart_views \
 	    --mart-jsonl $(ANALYSIS_EXP2_MART_JSONL) \
@@ -171,14 +178,16 @@ $(ANALYSIS_EXP2_MART_VIEWS): $(ANALYSIS_EXP2_MART_JSONL)
 # The comparison figures load Exp1 baseline data from the mart (via
 # exp1_cost_quality). Ticket 0583 split the former two-panel PDF into two
 # single-panel artifacts — coverage and cost — one output per rule.
-$(ANALYSIS_EXP2_ARM_COVERAGE_FIG): $(ANALYSIS_GEN)/tab_exp2_arms_runs_view.csv $(ANALYSIS_MEASUREMENTS) $(ANALYSIS_CONCORDANCE_CSV)
+$(ANALYSIS_EXP2_ARM_COVERAGE_FIG): $(ANALYSIS_GEN)/tab_exp2_arms_runs_view.csv $(ANALYSIS_MEASUREMENTS) $(ANALYSIS_CONCORDANCE_CSV) \
+		$(MATCHER_SRCS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_exp2_arms_comparison \
 	    --input $< \
 	    --panel coverage \
 	    --output $@
 
-$(ANALYSIS_EXP2_ARM_COST_FIG): $(ANALYSIS_GEN)/tab_exp2_arms_runs_view.csv $(ANALYSIS_MEASUREMENTS) $(ANALYSIS_CONCORDANCE_CSV)
+$(ANALYSIS_EXP2_ARM_COST_FIG): $(ANALYSIS_GEN)/tab_exp2_arms_runs_view.csv $(ANALYSIS_MEASUREMENTS) $(ANALYSIS_CONCORDANCE_CSV) \
+		$(MATCHER_SRCS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_exp2_arms_comparison \
 	    --input $< \
@@ -218,7 +227,8 @@ $(ANALYSIS_EXP2_BIB_TABLE_FR): $(ANALYSIS_GEN)/tab_exp2_bib_quality_view.csv
 # recognition-matrix rules).
 $(ANALYSIS_EXP2_COVERAGE_FIG): $(ANALYSIS_GEN)/tab_exp2_bib_quality_view.csv \
 		$(ANALYSIS_GEN)/tab_exp2_arms_runs_view.csv \
-		$(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp2_coverage_certainty.py
+		$(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp2_coverage_certainty.py \
+		$(MATCHER_SRCS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_exp2_coverage_certainty \
 	    --input $(ANALYSIS_GEN)/tab_exp2_bib_quality_view.csv \
@@ -228,7 +238,8 @@ $(ANALYSIS_EXP2_COVERAGE_FIG): $(ANALYSIS_GEN)/tab_exp2_bib_quality_view.csv \
 
 $(ANALYSIS_EXP2_COVERAGE_FIG_FR): $(ANALYSIS_GEN)/tab_exp2_bib_quality_view.csv \
 		$(ANALYSIS_GEN)/tab_exp2_arms_runs_view.csv \
-		$(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp2_coverage_certainty.py
+		$(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp2_coverage_certainty.py \
+		$(MATCHER_SRCS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_exp2_coverage_certainty \
 	    --input $(ANALYSIS_GEN)/tab_exp2_bib_quality_view.csv \
@@ -288,7 +299,8 @@ $(ANALYSIS_EXP1_SPIDER_CLAUDE_FR): $(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
 $(ANALYSIS_EXP1_QUALITY_HEATMAP): $(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
 		$(ANALYSIS_REPO_ROOT)/src/aedist/plot_quality_floor_heatmap_exp1.py \
 		$(ANALYSIS_REPO_ROOT)/src/aedist/plot_quality_spider_exp1.py \
-		$(ANALYSIS_REPO_ROOT)/src/aedist/plot_method_convergence.py
+		$(ANALYSIS_REPO_ROOT)/src/aedist/plot_method_convergence.py \
+		$(MATCHER_SRCS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_quality_floor_heatmap_exp1 \
 	    --input $(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
@@ -297,7 +309,8 @@ $(ANALYSIS_EXP1_QUALITY_HEATMAP): $(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
 # Reliability-vs-accuracy screen figure (ticket 0506): section-4 main figure.
 # X = good runs out of 5 (12-dim reference-free gate), Y = mean F1 over good runs.
 $(ANALYSIS_EXP1_RELIABILITY_FIG): $(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
-		$(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp1_reliability.py
+		$(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp1_reliability.py \
+		$(MATCHER_SRCS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_exp1_reliability \
 	    --input $(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
@@ -307,7 +320,8 @@ $(ANALYSIS_EXP1_RELIABILITY_FIG): $(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
 # One invocation, two outputs (grouped &: rule): committed CSV + LaTeX table.
 $(ANALYSIS_EXP1_RELIABILITY_SENS_CSV) $(ANALYSIS_EXP1_RELIABILITY_SENS_TEX) &: \
 		$(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
-		$(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp1_reliability.py
+		$(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp1_reliability.py \
+		$(MATCHER_SRCS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_exp1_reliability \
 	    --input $(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
@@ -355,7 +369,8 @@ $(ANALYSIS_FUSION_MVP_CSV) $(ANALYSIS_FUSION_MVP_MACROS) $(ANALYSIS_FUSION_MVP_F
 		$(ANALYSIS_REPO_ROOT)/src/aedist/plot_fusion_mvp.py \
 		$(ANALYSIS_REPO_ROOT)/src/aedist/exp1_recognition.py \
 		$(ANALYSIS_REPO_ROOT)/src/aedist/extract.py \
-		$(ANALYSIS_FUSION_MVP_REF)
+		$(ANALYSIS_FUSION_MVP_REF) \
+		$(MATCHER_SRCS)
 	@mkdir -p $(dir $(ANALYSIS_FUSION_MVP_CSV))
 	uv run python -m aedist.plot_fusion_mvp \
 	    --records-glob "$(ANALYSIS_EXPERIMENTS_DIR)/outputs/exp1_batch2/*.record.json" \
@@ -458,7 +473,8 @@ $(ANALYSIS_EXP2_2X2_FR_TEX): $(ANALYSIS_EXP2_CROSS_EVAL_CSV)
 # (which reads measurements.jsonl directly), NOT from another figure script's
 # cost_quality.csv — common cause, no P3-to-P3 side-output edge (ticket 0436).
 $(ANALYSIS_EXP2_COVERAGE_SPLIT) $(ANALYSIS_EXP2_COST_SPLIT) &: \
-		$(ANALYSIS_GEN)/tab_exp2_arms_runs_view.csv $(ANALYSIS_MEASUREMENTS)
+		$(ANALYSIS_GEN)/tab_exp2_arms_runs_view.csv $(ANALYSIS_MEASUREMENTS) \
+		$(MATCHER_SRCS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_exp2_arms_split \
 	    --input $(ANALYSIS_GEN)/tab_exp2_arms_runs_view.csv \
@@ -473,7 +489,8 @@ $(ANALYSIS_GROUNDING_LADDER_FIG): \
 		$(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
 		$(ANALYSIS_EXP2_CROSS_EVAL_CSV) \
 		$(ANALYSIS_REPO_ROOT)/src/aedist/plot_grounding_ladder.py \
-		$(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp2_arms_split.py
+		$(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp2_arms_split.py \
+		$(MATCHER_SRCS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_grounding_ladder \
 	    --exp1 $(ANALYSIS_EXP1_CROSS_EVAL_CSV) \
@@ -484,7 +501,8 @@ $(ANALYSIS_GROUNDING_LADDER_FIG): \
 # The baseline census summary is derived from measurements.jsonl directly inside
 # tabulate_macros (via aedist.exp1_census) — no census_bars.csv side-output from
 # a figure script feeding this table rule (ticket 0436).
-$(ANALYSIS_SLIDE_MACROS): $(ANALYSIS_MEASUREMENTS)
+$(ANALYSIS_SLIDE_MACROS): $(ANALYSIS_MEASUREMENTS) \
+		$(MATCHER_SRCS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.tabulate_macros --census --output $@
 
@@ -540,7 +558,8 @@ $(ANALYSIS_GEN)/tab_census.tex: $(ANALYSIS_MEASUREMENTS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.tabulate_census --output $@
 
-$(ANALYSIS_GEN)/macros.tex: $(ANALYSIS_MEASUREMENTS)
+$(ANALYSIS_GEN)/macros.tex: $(ANALYSIS_MEASUREMENTS) \
+		$(MATCHER_SRCS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.tabulate_macros --output $@
 
@@ -549,7 +568,8 @@ $(ANALYSIS_GEN)/macros.tex: $(ANALYSIS_MEASUREMENTS)
 # was harvested as a side-output of plot_method_convergence, invoked purely to
 # dump the macros while discarding its PDF to a sentinel path — a figure script
 # run only to produce a table. The sentinel-PDF invocation is now retired.
-$(ANALYSIS_GEN)/macros_census.tex: $(ANALYSIS_MEASUREMENTS)
+$(ANALYSIS_GEN)/macros_census.tex: $(ANALYSIS_MEASUREMENTS) \
+		$(MATCHER_SRCS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.tabulate_census_macros \
 	    --result-dir experiments/archive/outputs --output $@
@@ -562,7 +582,8 @@ $(ANALYSIS_GEN)/tab_comparaison.tex: $(ANALYSIS_MEASUREMENTS) $(ANALYSIS_VARIANC
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.tabulate_comparaison --output $@ --variance-json $(ANALYSIS_VARIANCE_JSON)
 
-$(ANALYSIS_GEN)/tab_reconciliation.tex: $(ANALYSIS_MEASUREMENTS) $(ANALYSIS_EXPERT_REF) $(ANALYSIS_GEM_REF)
+$(ANALYSIS_GEN)/tab_reconciliation.tex: $(ANALYSIS_MEASUREMENTS) $(ANALYSIS_EXPERT_REF) $(ANALYSIS_GEM_REF) \
+		$(MATCHER_SRCS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.tabulate_reconciliation --output $@ --expert-ref $(ANALYSIS_EXPERT_REF) --gem-ref $(ANALYSIS_GEM_REF)
 
@@ -574,12 +595,14 @@ $(ANALYSIS_GEN)/tab_variance.tex: $(ANALYSIS_VARIANCE_JSON)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.tabulate_variance --input $< --output $@
 
-$(ANALYSIS_VERIFICATION_TRADEOFF): $(wildcard $(ANALYSIS_VERIFICATION_DIR)/*-run*.csv) $(ANALYSIS_EXPERT_REF)
+$(ANALYSIS_VERIFICATION_TRADEOFF): $(wildcard $(ANALYSIS_VERIFICATION_DIR)/*-run*.csv) $(ANALYSIS_EXPERT_REF) \
+		$(MATCHER_SRCS)
 	uv run python -m aedist.tabulate_verification \
 	    --input $(ANALYSIS_VERIFICATION_DIR) --output $@ \
 	    --reference $(ANALYSIS_EXPERT_REF)
 
-$(ANALYSIS_GEN)/tab_verification.tex: $(ANALYSIS_VERIFICATION_TRADEOFF)
+$(ANALYSIS_GEN)/tab_verification.tex: $(ANALYSIS_VERIFICATION_TRADEOFF) \
+		$(MATCHER_SRCS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.tabulate_verification \
 	    --input $(ANALYSIS_VERIFICATION_DIR) --latex $@ \
@@ -598,7 +621,8 @@ $(ANALYSIS_GEN)/tab_decomposition_fix.tex: $(ANALYSIS_DECOMP_BEFORE) $(ANALYSIS_
 	    --before-dir $(ANALYSIS_DECOMP_FIX_DIR)/rag_per_fuel \
 	    --after-dir $(ANALYSIS_DECOMP_FIX_DIR)/rag_per_fuel_v2
 
-$(ANALYSIS_GEN)/tab_coherence.tex: $(ANALYSIS_RAG_CSVS) $(ANALYSIS_REPO_ROOT)/src/aedist/tabulate_coherence.py $(ANALYSIS_REPO_ROOT)/src/aedist/coherence.py
+$(ANALYSIS_GEN)/tab_coherence.tex: $(ANALYSIS_RAG_CSVS) $(ANALYSIS_REPO_ROOT)/src/aedist/tabulate_coherence.py $(ANALYSIS_REPO_ROOT)/src/aedist/coherence.py \
+		$(MATCHER_SRCS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.tabulate_coherence \
 	    --input $(ANALYSIS_EXPERIMENTS_DIR)/archive/outputs/rag_extract --output $@
@@ -617,7 +641,8 @@ $(ANALYSIS_GEN)/tab_source_grounding.tex: \
 		$(wildcard $(ANALYSIS_EXPERIMENTS_DIR)/archive/outputs/rag_cited/claude-opus-4.6-run*.csv) \
 		$(wildcard $(ANALYSIS_EXPERIMENTS_DIR)/archive/outputs/rag_per_fuel/deepseek-v3.2-run*.json) \
 		$(ANALYSIS_REPO_ROOT)/src/aedist/tabulate_source_grounding.py \
-		$(ANALYSIS_REPO_ROOT)/src/aedist/extract.py
+		$(ANALYSIS_REPO_ROOT)/src/aedist/extract.py \
+		$(MATCHER_SRCS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.tabulate_source_grounding
 
@@ -674,7 +699,8 @@ ANALYSIS_EXP3_FN_TRIAGE_TEX := $(ANALYSIS_GEN)/tab_exp3_fn_triage.tex
 
 $(ANALYSIS_EXP3_FN_TRIAGE_TEX): $(ANALYSIS_EXP3_FN_TRIAGE_WORKSHEET) \
 		$(ANALYSIS_REPO_ROOT)/src/aedist/tabulate_exp3_fn_triage.py \
-		$(ANALYSIS_REPO_ROOT)/src/aedist/extract.py
+		$(ANALYSIS_REPO_ROOT)/src/aedist/extract.py \
+		$(MATCHER_SRCS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.tabulate_exp3_fn_triage --mode summary \
 	    --input $(ANALYSIS_EXP3_FN_TRIAGE_WORKSHEET) \
@@ -695,7 +721,8 @@ ANALYSIS_AGG_SWEEP_TEX := $(ANALYSIS_GEN)/tab_aggregation_sweep.tex
 
 # Step 1: generate the sweep CSV from committed per-run CSVs.
 # Not a default dependency — run explicitly when exp1_batch2 data changes.
-$(ANALYSIS_AGG_SWEEP_CSV): $(ANALYSIS_REPO_ROOT)/src/aedist/sweep_aggregations.py
+$(ANALYSIS_AGG_SWEEP_CSV): $(ANALYSIS_REPO_ROOT)/src/aedist/sweep_aggregations.py \
+		$(MATCHER_SRCS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.sweep_aggregations --output $@
 
@@ -723,7 +750,8 @@ aggregation-sweep: $(ANALYSIS_AGG_SWEEP_TEX)
 # CSV; evaluate.py is a prerequisite because it owns the count derivation.
 $(ANALYSIS_REFERENCE_MACROS): $(ANALYSIS_EXPERT_REF) \
 		$(ANALYSIS_REPO_ROOT)/src/aedist/tabulate_reference_macros.py \
-		$(ANALYSIS_REPO_ROOT)/src/aedist/evaluate.py
+		$(ANALYSIS_REPO_ROOT)/src/aedist/evaluate.py \
+		$(MATCHER_SRCS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.tabulate_reference_macros \
 	    --reference $(ANALYSIS_EXPERT_REF) \
@@ -834,22 +862,26 @@ report-figures: $(RENDER_REPORT_FIGURES)
 # emitted by the table half (tabulate_). Both derive their rows from the shared
 # aedist.exp1_cost_quality library — no figure-script side-output another rule
 # consumes (ticket 0436).
-$(ANALYSIS_GEN)/fig_direct_cost_quality.pdf: $(ANALYSIS_MEASUREMENTS)
+$(ANALYSIS_GEN)/fig_direct_cost_quality.pdf: $(ANALYSIS_MEASUREMENTS) \
+		$(MATCHER_SRCS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_cost_quality \
 	    --figure $(ANALYSIS_GEN)/fig_direct_cost_quality.pdf
 
-$(ANALYSIS_GEN)/cost_quality.csv: $(ANALYSIS_MEASUREMENTS)
+$(ANALYSIS_GEN)/cost_quality.csv: $(ANALYSIS_MEASUREMENTS) \
+		$(MATCHER_SRCS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.tabulate_cost_quality \
 	    --output $(ANALYSIS_GEN)/cost_quality.csv
 
-$(ANALYSIS_GEN)/fig_method_convergence.pdf: $(ANALYSIS_MEASUREMENTS)
+$(ANALYSIS_GEN)/fig_method_convergence.pdf: $(ANALYSIS_MEASUREMENTS) \
+		$(MATCHER_SRCS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_method_convergence \
 	    --output $@ --core-only
 
-$(ANALYSIS_GEN)/fig_direct_p1_base.pdf $(ANALYSIS_GEN)/macros_p1_base.tex &: $(ANALYSIS_MEASUREMENTS) $(ANALYSIS_EXP1_BATCH2_RECORDS) $(ANALYSIS_CONCORDANCE_CSV)
+$(ANALYSIS_GEN)/fig_direct_p1_base.pdf $(ANALYSIS_GEN)/macros_p1_base.tex &: $(ANALYSIS_MEASUREMENTS) $(ANALYSIS_EXP1_BATCH2_RECORDS) $(ANALYSIS_CONCORDANCE_CSV) \
+		$(MATCHER_SRCS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_method_convergence \
 	    --output $(ANALYSIS_GEN)/fig_direct_p1_base.pdf --methods direct \
@@ -874,7 +906,8 @@ $(ANALYSIS_GEN)/fig_direct_p1_base.pdf $(ANALYSIS_GEN)/macros_p1_base.tex &: $(A
 # recognition from the records + reference via aedist.exp1_recognition (shared
 # library; the status table 0434 derives the same data independently — no
 # side-output). Emits a macros file for the caption's plant/run/FP counts.
-$(ANALYSIS_GEN)/fig_exp1_recognition_matrix.pdf $(ANALYSIS_GEN)/macros_exp1_matrix.tex &: $(ANALYSIS_EXP1_BATCH2_RECORDS) $(ANALYSIS_EXPERT_REF) $(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp1_matrix.py $(ANALYSIS_REPO_ROOT)/src/aedist/exp1_recognition.py $(ANALYSIS_REPO_ROOT)/src/aedist/plot_method_convergence.py
+$(ANALYSIS_GEN)/fig_exp1_recognition_matrix.pdf $(ANALYSIS_GEN)/macros_exp1_matrix.tex &: $(ANALYSIS_EXP1_BATCH2_RECORDS) $(ANALYSIS_EXPERT_REF) $(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp1_matrix.py $(ANALYSIS_REPO_ROOT)/src/aedist/exp1_recognition.py $(ANALYSIS_REPO_ROOT)/src/aedist/plot_method_convergence.py \
+		$(MATCHER_SRCS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_exp1_matrix \
 	    --records-glob "$(ANALYSIS_EXPERIMENTS_DIR)/outputs/exp1_batch2/*.record.json" \
@@ -887,7 +920,8 @@ $(ANALYSIS_GEN)/fig_exp1_recognition_matrix.pdf $(ANALYSIS_GEN)/macros_exp1_matr
 # No longer referenced by report.tex (the FR annex adopted the portrait
 # variant, ticket 0503); kept as a standalone exploration artifact like
 # the strong/top subsets below.
-$(ANALYSIS_GEN)/fig_exp1_recognition_matrix_fr.pdf: $(ANALYSIS_EXP1_BATCH2_RECORDS) $(ANALYSIS_EXPERT_REF) $(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp1_matrix.py $(ANALYSIS_REPO_ROOT)/src/aedist/exp1_recognition.py $(ANALYSIS_REPO_ROOT)/src/aedist/plot_method_convergence.py
+$(ANALYSIS_GEN)/fig_exp1_recognition_matrix_fr.pdf: $(ANALYSIS_EXP1_BATCH2_RECORDS) $(ANALYSIS_EXPERT_REF) $(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp1_matrix.py $(ANALYSIS_REPO_ROOT)/src/aedist/exp1_recognition.py $(ANALYSIS_REPO_ROOT)/src/aedist/plot_method_convergence.py \
+		$(MATCHER_SRCS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_exp1_matrix \
 	    --records-glob "$(ANALYSIS_EXPERIMENTS_DIR)/outputs/exp1_batch2/*.record.json" \
@@ -900,7 +934,8 @@ $(ANALYSIS_GEN)/fig_exp1_recognition_matrix_fr.pdf: $(ANALYSIS_EXP1_BATCH2_RECOR
 # weakest models (haiku, both gpt-oss, the two small qwen3.6); `top` keeps only
 # the strongest model of each architectural family. Exploration artifacts — not
 # yet referenced by the manuscript or report.
-$(ANALYSIS_GEN)/fig_exp1_recognition_matrix_strong.pdf: $(ANALYSIS_EXP1_BATCH2_RECORDS) $(ANALYSIS_EXPERT_REF) $(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp1_matrix.py $(ANALYSIS_REPO_ROOT)/src/aedist/exp1_recognition.py $(ANALYSIS_REPO_ROOT)/src/aedist/plot_method_convergence.py
+$(ANALYSIS_GEN)/fig_exp1_recognition_matrix_strong.pdf: $(ANALYSIS_EXP1_BATCH2_RECORDS) $(ANALYSIS_EXPERT_REF) $(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp1_matrix.py $(ANALYSIS_REPO_ROOT)/src/aedist/exp1_recognition.py $(ANALYSIS_REPO_ROOT)/src/aedist/plot_method_convergence.py \
+		$(MATCHER_SRCS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_exp1_matrix \
 	    --records-glob "$(ANALYSIS_EXPERIMENTS_DIR)/outputs/exp1_batch2/*.record.json" \
@@ -908,7 +943,8 @@ $(ANALYSIS_GEN)/fig_exp1_recognition_matrix_strong.pdf: $(ANALYSIS_EXP1_BATCH2_R
 	    --output $@ \
 	    --exclude-models claude-haiku-4.5 gpt-oss-120b gpt-oss-20b qwen3.6-flash qwen3.6-35b-a3b
 
-$(ANALYSIS_GEN)/fig_exp1_recognition_matrix_top.pdf: $(ANALYSIS_EXP1_BATCH2_RECORDS) $(ANALYSIS_EXPERT_REF) $(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp1_matrix.py $(ANALYSIS_REPO_ROOT)/src/aedist/exp1_recognition.py $(ANALYSIS_REPO_ROOT)/src/aedist/plot_method_convergence.py
+$(ANALYSIS_GEN)/fig_exp1_recognition_matrix_top.pdf: $(ANALYSIS_EXP1_BATCH2_RECORDS) $(ANALYSIS_EXPERT_REF) $(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp1_matrix.py $(ANALYSIS_REPO_ROOT)/src/aedist/exp1_recognition.py $(ANALYSIS_REPO_ROOT)/src/aedist/plot_method_convergence.py \
+		$(MATCHER_SRCS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_exp1_matrix \
 	    --records-glob "$(ANALYSIS_EXPERIMENTS_DIR)/outputs/exp1_batch2/*.record.json" \
@@ -924,7 +960,8 @@ $(ANALYSIS_GEN)/fig_exp1_recognition_matrix_top.pdf: $(ANALYSIS_EXP1_BATCH2_RECO
 # Exploration artifact — not yet placed in the manuscript; author orientation
 # decision deferred (ticket 0451 exit criterion). The script imports
 # _order_runs/_order_plants from plot_exp1_matrix, so both are prerequisites.
-$(ANALYSIS_GEN)/fig_exp1_recognition_matrix_portrait.pdf: $(ANALYSIS_EXP1_BATCH2_RECORDS) $(ANALYSIS_EXPERT_REF) $(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp1_matrix_portrait.py $(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp1_matrix.py $(ANALYSIS_REPO_ROOT)/src/aedist/exp1_recognition.py $(ANALYSIS_REPO_ROOT)/src/aedist/plot_method_convergence.py
+$(ANALYSIS_GEN)/fig_exp1_recognition_matrix_portrait.pdf: $(ANALYSIS_EXP1_BATCH2_RECORDS) $(ANALYSIS_EXPERT_REF) $(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp1_matrix_portrait.py $(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp1_matrix.py $(ANALYSIS_REPO_ROOT)/src/aedist/exp1_recognition.py $(ANALYSIS_REPO_ROOT)/src/aedist/plot_method_convergence.py \
+		$(MATCHER_SRCS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_exp1_matrix_portrait \
 	    --records-glob "$(ANALYSIS_EXPERIMENTS_DIR)/outputs/exp1_batch2/*.record.json" \
@@ -934,7 +971,8 @@ $(ANALYSIS_GEN)/fig_exp1_recognition_matrix_portrait.pdf: $(ANALYSIS_EXP1_BATCH2
 # French-label portrait variant for the report annex (ticket 0503): status
 # band labels in FR, page titles stay EN (matches the landscape `_fr`
 # precedent — only band/margin labels are localised).
-$(ANALYSIS_GEN)/fig_exp1_recognition_matrix_portrait_fr.pdf: $(ANALYSIS_EXP1_BATCH2_RECORDS) $(ANALYSIS_EXPERT_REF) $(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp1_matrix_portrait.py $(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp1_matrix.py $(ANALYSIS_REPO_ROOT)/src/aedist/exp1_recognition.py $(ANALYSIS_REPO_ROOT)/src/aedist/plot_method_convergence.py
+$(ANALYSIS_GEN)/fig_exp1_recognition_matrix_portrait_fr.pdf: $(ANALYSIS_EXP1_BATCH2_RECORDS) $(ANALYSIS_EXPERT_REF) $(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp1_matrix_portrait.py $(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp1_matrix.py $(ANALYSIS_REPO_ROOT)/src/aedist/exp1_recognition.py $(ANALYSIS_REPO_ROOT)/src/aedist/plot_method_convergence.py \
+		$(MATCHER_SRCS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_exp1_matrix_portrait \
 	    --records-glob "$(ANALYSIS_EXPERIMENTS_DIR)/outputs/exp1_batch2/*.record.json" \
@@ -950,7 +988,8 @@ $(ANALYSIS_GEN)/fig_exp1_recognition_matrix_portrait_fr.pdf: $(ANALYSIS_EXP1_BAT
 # the manuscript; author placement decision deferred.
 # The plot scripts (exp2_recognition.py + plot_exp2_matrix.py) are prerequisites
 # so a script edit re-triggers the build (mirrors the exp1 matrix rules).
-$(ANALYSIS_GEN)/fig_exp2_recognition_matrix_naive.pdf $(ANALYSIS_GEN)/macros_exp2_matrix_naive.tex &: $(ANALYSIS_EXP2_MART_JSONL) $(ANALYSIS_EXPERT_REF) $(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp2_matrix.py $(ANALYSIS_REPO_ROOT)/src/aedist/exp2_recognition.py $(ANALYSIS_REPO_ROOT)/src/aedist/extract.py $(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp1_matrix.py $(ANALYSIS_REPO_ROOT)/src/aedist/plot_method_convergence.py
+$(ANALYSIS_GEN)/fig_exp2_recognition_matrix_naive.pdf $(ANALYSIS_GEN)/macros_exp2_matrix_naive.tex &: $(ANALYSIS_EXP2_MART_JSONL) $(ANALYSIS_EXPERT_REF) $(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp2_matrix.py $(ANALYSIS_REPO_ROOT)/src/aedist/exp2_recognition.py $(ANALYSIS_REPO_ROOT)/src/aedist/extract.py $(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp1_matrix.py $(ANALYSIS_REPO_ROOT)/src/aedist/plot_method_convergence.py \
+		$(MATCHER_SRCS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_exp2_matrix \
 	    --mart-jsonl $(ANALYSIS_EXP2_MART_JSONL) \
@@ -959,7 +998,8 @@ $(ANALYSIS_GEN)/fig_exp2_recognition_matrix_naive.pdf $(ANALYSIS_GEN)/macros_exp
 	    --output $(ANALYSIS_GEN)/fig_exp2_recognition_matrix_naive.pdf \
 	    --output-macros $(ANALYSIS_GEN)/macros_exp2_matrix_naive.tex
 
-$(ANALYSIS_GEN)/fig_exp2_recognition_matrix_optimised.pdf $(ANALYSIS_GEN)/macros_exp2_matrix_optimised.tex &: $(ANALYSIS_EXP2_MART_JSONL) $(ANALYSIS_EXPERT_REF) $(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp2_matrix.py $(ANALYSIS_REPO_ROOT)/src/aedist/exp2_recognition.py $(ANALYSIS_REPO_ROOT)/src/aedist/extract.py $(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp1_matrix.py $(ANALYSIS_REPO_ROOT)/src/aedist/plot_method_convergence.py
+$(ANALYSIS_GEN)/fig_exp2_recognition_matrix_optimised.pdf $(ANALYSIS_GEN)/macros_exp2_matrix_optimised.tex &: $(ANALYSIS_EXP2_MART_JSONL) $(ANALYSIS_EXPERT_REF) $(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp2_matrix.py $(ANALYSIS_REPO_ROOT)/src/aedist/exp2_recognition.py $(ANALYSIS_REPO_ROOT)/src/aedist/extract.py $(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp1_matrix.py $(ANALYSIS_REPO_ROOT)/src/aedist/plot_method_convergence.py \
+		$(MATCHER_SRCS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_exp2_matrix \
 	    --mart-jsonl $(ANALYSIS_EXP2_MART_JSONL) \
@@ -968,7 +1008,8 @@ $(ANALYSIS_GEN)/fig_exp2_recognition_matrix_optimised.pdf $(ANALYSIS_GEN)/macros
 	    --output $(ANALYSIS_GEN)/fig_exp2_recognition_matrix_optimised.pdf \
 	    --output-macros $(ANALYSIS_GEN)/macros_exp2_matrix_optimised.tex
 
-$(ANALYSIS_GEN)/fig_exp2_recognition_matrix_arm3.pdf $(ANALYSIS_GEN)/macros_exp2_matrix_arm3.tex &: $(ANALYSIS_EXP2_MART_JSONL) $(ANALYSIS_EXPERT_REF) $(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp2_matrix.py $(ANALYSIS_REPO_ROOT)/src/aedist/exp2_recognition.py $(ANALYSIS_REPO_ROOT)/src/aedist/extract.py $(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp1_matrix.py $(ANALYSIS_REPO_ROOT)/src/aedist/plot_method_convergence.py
+$(ANALYSIS_GEN)/fig_exp2_recognition_matrix_arm3.pdf $(ANALYSIS_GEN)/macros_exp2_matrix_arm3.tex &: $(ANALYSIS_EXP2_MART_JSONL) $(ANALYSIS_EXPERT_REF) $(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp2_matrix.py $(ANALYSIS_REPO_ROOT)/src/aedist/exp2_recognition.py $(ANALYSIS_REPO_ROOT)/src/aedist/extract.py $(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp1_matrix.py $(ANALYSIS_REPO_ROOT)/src/aedist/plot_method_convergence.py \
+		$(MATCHER_SRCS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_exp2_matrix \
 	    --mart-jsonl $(ANALYSIS_EXP2_MART_JSONL) \
@@ -977,7 +1018,8 @@ $(ANALYSIS_GEN)/fig_exp2_recognition_matrix_arm3.pdf $(ANALYSIS_GEN)/macros_exp2
 	    --output $(ANALYSIS_GEN)/fig_exp2_recognition_matrix_arm3.pdf \
 	    --output-macros $(ANALYSIS_GEN)/macros_exp2_matrix_arm3.tex
 
-$(ANALYSIS_GEN)/fig_exp2_recognition_matrix_arm4.pdf $(ANALYSIS_GEN)/macros_exp2_matrix_arm4.tex &: $(ANALYSIS_EXP2_MART_JSONL) $(ANALYSIS_EXPERT_REF) $(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp2_matrix.py $(ANALYSIS_REPO_ROOT)/src/aedist/exp2_recognition.py $(ANALYSIS_REPO_ROOT)/src/aedist/extract.py $(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp1_matrix.py $(ANALYSIS_REPO_ROOT)/src/aedist/plot_method_convergence.py
+$(ANALYSIS_GEN)/fig_exp2_recognition_matrix_arm4.pdf $(ANALYSIS_GEN)/macros_exp2_matrix_arm4.tex &: $(ANALYSIS_EXP2_MART_JSONL) $(ANALYSIS_EXPERT_REF) $(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp2_matrix.py $(ANALYSIS_REPO_ROOT)/src/aedist/exp2_recognition.py $(ANALYSIS_REPO_ROOT)/src/aedist/extract.py $(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp1_matrix.py $(ANALYSIS_REPO_ROOT)/src/aedist/plot_method_convergence.py \
+		$(MATCHER_SRCS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_exp2_matrix \
 	    --mart-jsonl $(ANALYSIS_EXP2_MART_JSONL) \
@@ -996,7 +1038,8 @@ $(ANALYSIS_GEN)/fig_exp2_recognition_matrix_arm4.pdf $(ANALYSIS_GEN)/macros_exp2
 # Two detection columns (ticket 0628): Exp1 all-models (records glob) and Exp2
 # arm-3 single-shot-with-documents (mart + arm3_flat .md files). The arm-3
 # column reuses the existing mart records — no new pipeline.
-$(ANALYSIS_GEN)/tab_status_difficulty.tex $(ANALYSIS_GEN)/tab_status_difficulty_en.tex $(ANALYSIS_STATUS_DIFFICULTY_MACROS) &: $(ANALYSIS_EXP1_BATCH2_RECORDS) $(ANALYSIS_EXP2_MART_JSONL) $(wildcard $(ANALYSIS_DERIVED_DIR)/arm3_flat/*.md) $(ANALYSIS_EXPERT_REF) $(ANALYSIS_REPO_ROOT)/src/aedist/tabulate_status_difficulty.py $(ANALYSIS_REPO_ROOT)/src/aedist/exp1_recognition.py $(ANALYSIS_REPO_ROOT)/src/aedist/exp2_recognition.py $(ANALYSIS_REPO_ROOT)/src/aedist/extract.py
+$(ANALYSIS_GEN)/tab_status_difficulty.tex $(ANALYSIS_GEN)/tab_status_difficulty_en.tex $(ANALYSIS_STATUS_DIFFICULTY_MACROS) &: $(ANALYSIS_EXP1_BATCH2_RECORDS) $(ANALYSIS_EXP2_MART_JSONL) $(wildcard $(ANALYSIS_DERIVED_DIR)/arm3_flat/*.md) $(ANALYSIS_EXPERT_REF) $(ANALYSIS_REPO_ROOT)/src/aedist/tabulate_status_difficulty.py $(ANALYSIS_REPO_ROOT)/src/aedist/exp1_recognition.py $(ANALYSIS_REPO_ROOT)/src/aedist/exp2_recognition.py $(ANALYSIS_REPO_ROOT)/src/aedist/extract.py \
+		$(MATCHER_SRCS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.tabulate_status_difficulty \
 	    --records-glob "$(ANALYSIS_EXPERIMENTS_DIR)/outputs/exp1_batch2/*.record.json" \
@@ -1018,7 +1061,8 @@ $(ANALYSIS_GEN)/macros_source_concordance.tex $(ANALYSIS_CONCORDANCE_CSV) \
 		$(ANALYSIS_EXPERT_REF) $(ANALYSIS_GEM_REF) $(ANALYSIS_WIKI_COAL) $(ANALYSIS_WIKI_POWER) \
 		$(ANALYSIS_REPO_ROOT)/src/aedist/tabulate_source_concordance.py \
 		$(ANALYSIS_REPO_ROOT)/src/aedist/exp1_recognition.py \
-		$(ANALYSIS_REPO_ROOT)/src/aedist/reconcile.py
+		$(ANALYSIS_REPO_ROOT)/src/aedist/reconcile.py \
+		$(MATCHER_SRCS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.tabulate_source_concordance \
 	    --csv $(ANALYSIS_CONCORDANCE_CSV) \
@@ -1036,8 +1080,8 @@ $(ANALYSIS_GEN)/macros_phase_collisions.tex &: \
 		$(ANALYSIS_EXPERT_REF) \
 		$(ANALYSIS_REPO_ROOT)/src/aedist/analyze_matcher_phase_collisions.py \
 		$(ANALYSIS_REPO_ROOT)/src/aedist/evaluate.py \
-		$(ANALYSIS_REPO_ROOT)/src/aedist/matching/lp.py \
 		$(ANALYSIS_REPO_ROOT)/src/aedist/reconcile.py \
+		$(MATCHER_SRCS) \
 		$(ANALYSIS_DERIVED_DIR)/matching_sensitivity.csv
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.analyze_matcher_phase_collisions \
@@ -1054,7 +1098,8 @@ $(ANALYSIS_GEN)/macros_phase_collisions.tex &: \
 $(ANALYSIS_WIKI_BAR_CSV): $(ANALYSIS_EXPERT_REF) $(ANALYSIS_WIKI_COAL) $(ANALYSIS_WIKI_POWER) \
 		$(ANALYSIS_REPO_ROOT)/src/aedist/tabulate_wikipedia_recall_bar.py \
 		$(ANALYSIS_REPO_ROOT)/src/aedist/tabulate_source_concordance.py \
-		$(ANALYSIS_REPO_ROOT)/src/aedist/reconcile.py
+		$(ANALYSIS_REPO_ROOT)/src/aedist/reconcile.py \
+		$(MATCHER_SRCS)
 	uv run python -m aedist.tabulate_wikipedia_recall_bar --output $@
 
 # Long-tail recognition (tickets 0514, 0537). Two one-output rules:
@@ -1070,7 +1115,8 @@ $(ANALYSIS_LONGTAIL_CSV): $(ANALYSIS_EXPERT_REF) \
 		$(ANALYSIS_OSM_CSV) \
 		$(ANALYSIS_REPO_ROOT)/src/aedist/plot_longtail_recognition.py \
 		$(ANALYSIS_REPO_ROOT)/src/aedist/tabulate_source_concordance.py \
-		$(ANALYSIS_REPO_ROOT)/src/aedist/reconcile.py
+		$(ANALYSIS_REPO_ROOT)/src/aedist/reconcile.py \
+		$(MATCHER_SRCS)
 	uv run python -m aedist.plot_longtail_recognition --csv-only \
 	    --reference $(ANALYSIS_EXPERT_REF) --gem $(ANALYSIS_GEM_REF) \
 	    --osm "$(ANALYSIS_REPO_ROOT)/data/reference/OSM fetch/vn_power_plants.csv" \
@@ -1078,7 +1124,8 @@ $(ANALYSIS_LONGTAIL_CSV): $(ANALYSIS_EXPERT_REF) \
 
 $(ANALYSIS_GEN)/fig_longtail_recognition.pdf $(ANALYSIS_GEN)/macros_longtail.tex &: \
 		$(ANALYSIS_LONGTAIL_CSV) \
-		$(ANALYSIS_REPO_ROOT)/src/aedist/plot_longtail_recognition.py
+		$(ANALYSIS_REPO_ROOT)/src/aedist/plot_longtail_recognition.py \
+		$(MATCHER_SRCS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_longtail_recognition --from-csv \
 	    --csv $(ANALYSIS_LONGTAIL_CSV) \
@@ -1089,14 +1136,16 @@ $(ANALYSIS_GEN)/fig_longtail_recognition.pdf $(ANALYSIS_GEN)/macros_longtail.tex
 # QA — hover any cell to see the reference-vs-reply comparison table.  Output
 # is gitignored (nothing downstream consumes it); not in RENDER_CHART_FIGURES.
 # One output per rule (single HTML), DAG-wired to records + reference + scripts.
-$(ANALYSIS_GEN)/exp1_recognition_matrix_interactive.html: $(ANALYSIS_EXP1_BATCH2_RECORDS) $(ANALYSIS_EXPERT_REF) $(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp1_matrix_interactive.py $(ANALYSIS_REPO_ROOT)/src/aedist/exp1_recognition.py $(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp1_matrix.py $(ANALYSIS_REPO_ROOT)/src/aedist/plot_method_convergence.py
+$(ANALYSIS_GEN)/exp1_recognition_matrix_interactive.html: $(ANALYSIS_EXP1_BATCH2_RECORDS) $(ANALYSIS_EXPERT_REF) $(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp1_matrix_interactive.py $(ANALYSIS_REPO_ROOT)/src/aedist/exp1_recognition.py $(ANALYSIS_REPO_ROOT)/src/aedist/plot_exp1_matrix.py $(ANALYSIS_REPO_ROOT)/src/aedist/plot_method_convergence.py \
+		$(MATCHER_SRCS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_exp1_matrix_interactive \
 	    --records-glob "$(ANALYSIS_EXPERIMENTS_DIR)/outputs/exp1_batch2/*.record.json" \
 	    --reference $(ANALYSIS_EXPERT_REF) \
 	    --output $@
 
-$(ANALYSIS_GEN)/fig_regimes_scatter.pdf: $(ANALYSIS_MEASUREMENTS) $(ANALYSIS_EXPERIMENTS_DIR)/figures.toml
+$(ANALYSIS_GEN)/fig_regimes_scatter.pdf: $(ANALYSIS_MEASUREMENTS) $(ANALYSIS_EXPERIMENTS_DIR)/figures.toml \
+		$(MATCHER_SRCS)
 	@mkdir -p $(dir $@)
 	uv run python -m aedist.plot_regimes_scatter \
 	    --output $@
