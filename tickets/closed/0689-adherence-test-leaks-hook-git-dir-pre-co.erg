@@ -1,0 +1,25 @@
+%erg 0.1
+Title: Adherence test leaks hook GIT_DIR: pre-commit flips core.bare=true on the shared repo
+Created: 2026-11-09
+Author: claude
+Closed: fixed — GIT_* scrubbed in the test
+
+--- log ---
+2026-11-09T15:35Z claude created
+2026-11-09T15:35Z HDMX-coding-agent claude reproduced and fixed on branch fix-test-git-env-leak; evidence in PR
+2026-11-09T15:35Z HDMX-coding-agent closed — fixed — GIT_* scrubbed in the test
+
+--- body ---
+## Context
+`tests/test_makefile_delete_on_error.py::test_orphaned_tracked_makefile_still_detected`
+runs `git init` and `git add` in a tmp dir without scrubbing the environment.
+Inside the pre-commit hook (which runs `pytest -m adherence` and exports
+`GIT_DIR` / `GIT_INDEX_FILE`), those commands act on the real repository:
+`git init` sets `core.bare=true` in the shared `.git/config`, breaking the
+primary checkout and every worktree, and `git add` stages a stub `Makefile`
+into the commit being made. Observed on padme 2026-11-09 (primary flipped to
+bare at 15:33Z during parallel ticket work).
+
+## Exit criteria
+- [x] The test scrubs every `GIT_*` variable before touching git
+- [x] Reproduction under a simulated hook env (linked worktree GIT_DIR): old test flips core.bare and stages Makefile; fixed test does neither
