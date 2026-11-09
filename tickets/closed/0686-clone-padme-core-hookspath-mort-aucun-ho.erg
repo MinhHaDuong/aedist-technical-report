@@ -1,0 +1,31 @@
+%erg 0.1
+Title: Clone padme : core.hooksPath mort, aucun hook ne tourne
+Created: 2026-11-09
+Author: claude
+Closed: done — hooksPath already unset and erg hooks active, verified 2026-11-09
+
+--- log ---
+2026-11-09T12:32Z claude created
+2026-11-09T15:26Z HDMX-coding-agent claude verified on padme 2026-11-09T15:31Z: git config core.hooksPath empty (no origin); .git/hooks/pre-commit erg-managed (installed 14:13); probe commit of a claimless ticket refused by the hook (exit 1). Fixed upstream of this PR; closing on landing.
+2026-11-09T15:26Z HDMX-coding-agent closed — done — hooksPath already unset and erg hooks active, verified 2026-11-09
+
+--- body ---
+## Contexte
+
+Relevé le 2026-11-09 depuis padme (ticket padme 0110 ; tracker harness 1478) :
+le clone `/home/haduong/CNRS/papiers/actif/AEDIST-technical-report` sur l'hôte padme a `core.hooksPath = /home/haduong/aedist-technical-report/.git/hooks`,
+un répertoire disparu (vestige d'un déplacement du dépôt). Aucun hook git n'y
+tourne, et `erg install --hooks` écrirait à ce chemin mort.
+
+Le clone principal est aussi en retard sur son origin et porte des
+modifications non commitées (`tickets/.erg-assets`, déploiement mémoire v8
+inachevé selon le tracker 1478) : rien n'y a été touché d'ici.
+
+## Actions
+- Dans le clone, après avoir rangé les modifications en cours :
+  `git config --unset core.hooksPath` (ou le pointer vers `.git/hooks`),
+  puis `git pull` et `tickets/erg install --hooks`.
+
+## Critères de sortie
+- [x] `git config core.hooksPath` vide ou pointant vers un répertoire existant
+- [x] Hook pre-commit de erg actif (un commit d'un ticket sans claim est refusé)
