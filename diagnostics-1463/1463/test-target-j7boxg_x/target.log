@@ -1,0 +1,10 @@
+uv run pytest -m "not integration and not slow"
+Using CPython 3.11.15
+Creating virtual environment at: .venv
+  × Failed to download `pulp==3.3.1`
+  ╰─▶ Network connectivity is disabled, but the
+      requested data wasn't found in the cache for:
+      `https://files.pythonhosted.org/packages/9f/23/5a77fe2b50d962213338ae0fdd9832960186ebc423388fff1a56680e5114/pulp-3.3.1-py3-none-any.whl`
+
+hint: `pulp` (v3.3.1) was included because `aedist` (v0.2.0) depends on `pulp`
+make: *** [Makefile:57: test-fast] Error 1
