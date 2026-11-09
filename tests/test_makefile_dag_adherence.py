@@ -175,6 +175,82 @@ def test_script_prereqs_cover_import_closure():
     )
 
 
+# --- Matcher prerequisites (ticket 0554) -----------------------------------
+#
+# The closure check above stops at top-level modules: the ``aedist.matching``
+# subpackage is not a script, so a rule running a script that reaches the LP
+# matcher through reconcile.py was never asked to list it (the 0551 gap: a
+# matcher edit left recognition matrices, concordance, wiki bar stale).
+# Invariant: any render.mk rule whose executed or listed script transitively
+# imports ``aedist.matching`` lists ``$(MATCHER_SRCS)`` (or the matching/ files).
+
+MATCHING_IMPORT_RE = re.compile(
+    r"^\s*(?:from (?:aedist\.|\.)matching\b|import aedist\.matching\b)", re.M
+)
+MATCHER_VAR = "$(MATCHER_SRCS)"
+
+
+def matcher_importers(sources: dict[str, str]) -> set[str]:
+    """Top-level modules that import the aedist.matching subpackage directly."""
+    return {m for m, text in sources.items() if MATCHING_IMPORT_RE.search(text)}
+
+
+def matcher_prereq_violations(
+    makefile_text: str, sources: dict[str, str]
+) -> list[str]:
+    """Targets whose scripts reach aedist.matching but lack its sources."""
+    seeds = matcher_importers(sources)
+    violations = []
+    for target, prereqs, recipe in parse_rules(makefile_text):
+        scripts = set(EXECUTED_MODULE_RE.findall(recipe)) | listed_scripts(prereqs)
+        reached = set(scripts)
+        for mod in scripts:
+            reached |= import_closure(mod, sources)
+        if not reached & seeds:
+            continue
+        covered = MATCHER_VAR in prereqs or all(
+            f"matching/{f}.py" in prereqs for f in ("lp", "phased")
+        )
+        if not covered:
+            violations.append(target)
+    return violations
+
+
+def test_matcher_prereqs_cover_import_closure():
+    text = (REPO_ROOT / "experiments" / "render.mk").read_text()
+    violations = matcher_prereq_violations(text, _repo_sources())
+    assert not violations, (
+        "render.mk rules whose script transitively imports aedist.matching "
+        f"must list {MATCHER_VAR} (a matcher edit would leave them stale):\n"
+        + "\n".join(violations)
+    )
+
+
+def test_matcher_srcs_variable_covers_matching_package():
+    text = (REPO_ROOT / "experiments" / "render.mk").read_text()
+    m = re.search(r"^MATCHER_SRCS\s*:?=\s*(.*)$", text, re.M)
+    assert m, "render.mk must define MATCHER_SRCS"
+    assert "src/aedist/matching/*.py" in m.group(1)
+
+
+def test_matcher_check_catches_seeded_violation():
+    sources = {
+        "reconcile": "from .matching.lp import reconcile as reconcile_lp\n",
+        "evaluate": "from .reconcile import reconcile\n",
+        "plot_a": "from .evaluate import score\n",
+        "plot_b": "import csv\n",
+    }
+    mk = (
+        "a.pdf: $(R)/src/aedist/plot_a.py\n"
+        "\tuv run python -m aedist.plot_a\n"
+        "b.pdf: $(R)/src/aedist/plot_b.py\n"
+        "\tuv run python -m aedist.plot_b\n"
+    )
+    assert matcher_prereq_violations(mk, sources) == ["a.pdf"]
+    fixed = mk.replace("plot_a.py\n", "plot_a.py $(MATCHER_SRCS)\n", 1)
+    assert matcher_prereq_violations(fixed, sources) == []
+
+
 # --- MANUSCRIPT_ASSETS parity ------------------------------------------------
 
 GENERATED_BASENAME_RE = re.compile(r"generated/([\w.-]+\.[A-Za-z0-9]+)")
