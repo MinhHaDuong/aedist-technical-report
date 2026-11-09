@@ -1,0 +1,27 @@
+%erg 0.1
+Title: Manuscript prose states the pre-0550 Exp 2 state; coverage-certainty caption describes another figure
+Created: 2026-11-09
+Label: needs-human
+Author: claude
+
+--- log ---
+2026-11-09T16:41Z claude created
+
+--- body ---
+## Context
+Author's prose (queued by the 2026-11-09 TLC sprint; not for agents).
+The ticket-0550 refresh (4bf72429) recovered Anthropic naive run 4 and
+arm 3 runs 3-5; regenerated artifacts now reflect it (#1192, #1195), but
+hand-written passages still state the old state:
+- `report/report.tex:273` "Claude bras naïf 4/5"
+- `slides/manuscript/main.tex:720` "(4/5 usable, one zero-row run)"
+- `slides/manuscript/main.tex:2376-2378`: the fig:coverage-certainty
+  caption names Anthropic arm 1 run 4 as zero-row, and (since before
+  this sprint) describes another figure: "31 Exp2 runs", "inventory
+  rows enumerated", "filled diamonds / open circles", while the figure
+  shows four conditions as circle/square x filled/empty with x = assets
+  correctly identified.
+Linked decision: PR #1193 (tab_exp2_bib_quality numbers).
+
+## Exit criteria
+- [ ] The three passages agree with the regenerated artifacts, or the author records why not

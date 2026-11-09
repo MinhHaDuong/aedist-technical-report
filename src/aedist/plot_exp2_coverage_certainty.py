@@ -52,7 +52,7 @@ _AGENT_LABELS = {
     "anthropic": "Claude Opus 4.6",
     "openai": "GPT-5.5",
     "mistral": "Mistral Large",
-    "qwen": "Qwen3-Max",
+    "qwen": "Qwen3.7 Max",
 }
 
 _AGENT_COLORS = {agent: model_family_color(slug) for agent, slug in _AGENT_SLUG.items()}
