@@ -4,8 +4,10 @@ import csv
 from pathlib import Path
 
 import pytest
+from scipy.stats import spearmanr
 
 from aedist.screen_validation_within_model import (
+    _spearman,
     _stratified_kendall_tau,
     within_model_accuracy_gap,
 )
@@ -256,3 +258,43 @@ def test_stratified_tau_ignores_runs_with_no_f1():
     assert concordant == 1
     assert discordant == 0
     assert tau == pytest.approx(1.0)
+
+
+@pytest.mark.parametrize(
+    ("xs", "ys"),
+    [
+        ([1, 2, 2, 3, 3, 3], [0.1, 0.5, 0.2, 0.9, 0.4, 0.7]),
+        ([2, 2, 2, 5, 5, 8, 8], [0.05, 0.3, 0.3, 0.2, 0.9, 0.9, 0.6]),
+        ([1, 1, 2, 2], [0.1, 0.1, 0.9, 0.9]),
+    ],
+)
+def test_spearman_midrank_matches_scipy_on_ties(xs, ys):
+    """Tied values take the average of their ranks (ticket 0576), so the
+    estimator agrees with scipy.stats.spearmanr on tied data."""
+    expected = spearmanr(xs, ys).statistic
+    assert _spearman([float(x) for x in xs], ys) == pytest.approx(expected, abs=1e-12)
+
+
+def test_spearman_midrank_differs_from_ordinal_ranking():
+    """Pins the midrank behaviour: ordinal ranks would give 0.9429 here."""
+    rho = _spearman([1.0, 2.0, 2.0, 3.0, 4.0, 5.0], [1.0, 2.0, 3.0, 4.0, 5.0, 6.0])
+    assert rho == pytest.approx(spearmanr([1, 2, 2, 3, 4, 5], [1, 2, 3, 4, 5, 6]).statistic)
+    assert rho != pytest.approx(0.9428571428571428)
+
+
+def test_spearman_none_on_constant_input():
+    """A constant variable has no rank correlation (scipy returns nan)."""
+    assert _spearman([3.0, 3.0, 3.0], [0.1, 0.2, 0.3]) is None
+
+
+def test_constant_cap_model_stays_in_denominator_not_positive():
+    """A model whose cap_distinct is constant has undefined rho: it counts in
+    n_models_total (>= 2 scoreable runs) but not in n_models_positive_cap."""
+    rows = [
+        _make_run("flat", 1, cap_distinct=6, status_distinct=3, f1=0.2),
+        _make_run("flat", 2, cap_distinct=6, status_distinct=3, f1=0.4),
+        _make_run("up", 1, cap_distinct=3, status_distinct=3, f1=0.1),
+        _make_run("up", 2, cap_distinct=9, status_distinct=3, f1=0.5),
+    ]
+    stat = within_model_accuracy_gap(rows)
+    assert (stat.n_models_positive_cap, stat.n_models_total) == (1, 2)
