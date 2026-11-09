@@ -2,9 +2,12 @@
 Title: Fix tab_exp2_wiki_compliance.csv regeneration drift (parser/artifact mismatch)
 Created: 2026-06-12
 Author: HDMX-coding-agent
+Closed: CSV regenerated from master (corrected 0->148, documented); regression guard added
 
 --- log ---
 2026-06-12T19:55Z HDMX-coding-agent created
+2026-11-09T15:31Z HDMX-coding-agent Reproduced: regen differs in one cell, anthropic naive run4 n_cells_s1s2 0 -> 148. Cause: commit 4bf72429 (ticket 0550) refreshed arm1_flat; old anthropic_run04.md had the preamble sentence fused to the table header so the old parse found no header (0 cells); new flat file has 74 rows x 2 source columns = 148. Raw archive sota_exp2_naive_arm/anthropic_run04 holds the table. 148 is correct; CSV was not regenerated after the refresh. Macros and all banned counts unchanged; no manuscript number reads n_cells_s1s2. Fix: regenerate CSV; guard test_committed_csv_matches_regeneration (red on old CSV, green on new).
+2026-11-09T15:31Z HDMX-coding-agent closed — CSV regenerated from master (corrected 0->148, documented); regression guard added
 
 --- body ---
 ## Context
