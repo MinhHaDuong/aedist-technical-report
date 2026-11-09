@@ -2,9 +2,12 @@
 Title: Clone padme : core.hooksPath mort, aucun hook ne tourne
 Created: 2026-11-09
 Author: claude
+Closed: done — hooksPath already unset and erg hooks active, verified 2026-11-09
 
 --- log ---
 2026-11-09T12:32Z claude created
+2026-11-09T15:26Z HDMX-coding-agent claude verified on padme 2026-11-09T15:31Z: git config core.hooksPath empty (no origin); .git/hooks/pre-commit erg-managed (installed 14:13); probe commit of a claimless ticket refused by the hook (exit 1). Fixed upstream of this PR; closing on landing.
+2026-11-09T15:26Z HDMX-coding-agent closed — done — hooksPath already unset and erg hooks active, verified 2026-11-09
 
 --- body ---
 ## Contexte
@@ -24,5 +27,5 @@ inachevé selon le tracker 1478) : rien n'y a été touché d'ici.
   puis `git pull` et `tickets/erg install --hooks`.
 
 ## Critères de sortie
-- [ ] `git config core.hooksPath` vide ou pointant vers un répertoire existant
-- [ ] Hook pre-commit de erg actif (un commit d'un ticket sans claim est refusé)
+- [x] `git config core.hooksPath` vide ou pointant vers un répertoire existant
+- [x] Hook pre-commit de erg actif (un commit d'un ticket sans claim est refusé)
