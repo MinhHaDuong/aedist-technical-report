@@ -127,6 +127,31 @@ class TestCorpusPins:
         rows = audit_all(_NAIVE_DIR, _OPTIMISED_DIR)
         assert len(rows) == 40, f"Expected 40 rows (4 agents × 5 runs × 2 arms), got {len(rows)}"
 
+    def test_committed_csv_matches_regeneration(self):
+        """The committed CSV re-derives from the flat arm dirs (ticket 0573).
+
+        Guards the reproducibility contract: a refresh of the flat artifacts
+        (e.g. the fused-header salvage that took anthropic naive run4 from 0
+        to 148 source cells) must be followed by a regenerated CSV.
+        """
+        committed = Path("report/inputs/generated/tab_exp2_wiki_compliance.csv")
+        with committed.open(newline="") as fh:
+            expected = list(csv.DictReader(fh))
+        actual = [
+            {k: str(v) for k, v in r.items()}
+            for r in audit_all(_NAIVE_DIR, _OPTIMISED_DIR)
+        ]
+        assert actual == expected
+
+    def test_anthropic_naive_run04_cells_parsed(self):
+        """Run4's table sits behind a preamble sentence; it must still parse."""
+        rows = audit_all(_NAIVE_DIR, _OPTIMISED_DIR)
+        (r,) = [
+            r for r in rows
+            if r["agent"] == "anthropic" and r["arm"] == "naive" and r["run"] == 4
+        ]
+        assert r["n_cells_s1s2"] == 148
+
     def test_mistral_optimised_has_banned(self):
         rows = audit_all(_NAIVE_DIR, _OPTIMISED_DIR)
         mistral_opt = [
