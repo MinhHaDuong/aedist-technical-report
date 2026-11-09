@@ -20,8 +20,8 @@ elsewhere. Rulings of record live in [STATE.md](../../STATE.md),
   outward-facing.
 - **Code and data need their own persistent identifier.** A release sequence
   is not closed until code+data carry a DOI; cite the Zenodo *concept* DOI
-  10.5281/zenodo.20715179, not a version DOI (open reminder: ticket 0678,
-  blocked by the arXiv push 0665).
+  10.5281/zenodo.20715179, not a version DOI (citation tracked by ticket
+  0678).
 - **H1–H4 and the OSF preregistration** were set aside for the 2026-05-27
   conference and return with the journal paper; `docs/hypotheses.md` stays
   their source. Do not reshape tickets to fit H1–H4 sweeps.
@@ -36,9 +36,6 @@ elsewhere. Rulings of record live in [STATE.md](../../STATE.md),
   batching long-lived branches (2026-06-11).
 - **Handoffs live in STATE.md, MASTERPLAN.md and `Blocked-by:` edges**, never
   in a tracker ticket (0545 rejected, 2026-06-11).
-- **A reminder for a future event is an open ticket `Blocked-by` the
-  triggering ticket**; a note in a closed or `deferred` ticket never
-  resurfaces in `erg ready`.
 - **A human sign-off criterion is not waived** by STATE.md's standing merge
   authorization: prepare everything and ask.
 - **Supervised runs need no standing guards**: a guard is justified on
@@ -74,7 +71,6 @@ elsewhere. Rulings of record live in [STATE.md](../../STATE.md),
   `feedback_h3_empirical_not_impossibility.md` 45b7d54b,
   `project_talk_narrative_three_plus_case_study.md` bba52333,
   `feedback_merge_review_merge_cadence.md` 8004495b, `feedback_handoff_in_state_not_tickets.md` 0c0665e8,
-  `feedback_durable_reminder_is_blocked_open_ticket.md` 3d60235b (harness export only),
   `feedback_human_signoff_criterion_not_waivable.md` f2d9ad72,
   `feedback_supervised_runs_no_standing_guards.md` cf73e5f6,
   `feedback_light_review_for_mechanical_diffs.md` adee256f, `feedback_readme_no_autoscript.md` 1183714b,

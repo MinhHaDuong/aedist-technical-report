@@ -8,9 +8,9 @@ the same store. The ticket's template predates the deployed projects; its
 climate-finance-het as the reference, and padme's layout was followed.
 
 What was done:
-- Inventoried every source ([SOURCES.md](../../SOURCES.md)): 111 notes plus
+- Inventoried every source ([SOURCES.md](../../SOURCES.md)): 110 notes plus
   one in-repo untracked note consolidated into eight topics with
-  attribution; 64 tombstones, 5 stale, 11 harness-generic and 2
+  attribution; 64 tombstones, 6 stale or withdrawn, 11 harness-generic and 2
   other-project notes dropped; 5 notes left out for audience, since this
   repository is public and has no age-encryption mechanism.
 - Facts were checked against the tree before consolidation. Three notes had

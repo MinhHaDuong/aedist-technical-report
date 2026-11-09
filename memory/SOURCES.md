@@ -10,7 +10,7 @@ repository: **public** GitHub repository `MinhHaDuong/aedist-technical-report`
 | Source | Writer / consumer | Disposition |
 |---|---|---|
 | Claude Code native auto-memory for the primary checkout (197 notes + `MEMORY.md` index, 11 KB; notes last modified 2026-06-13 to 2026-09-29, index 2026-11-04) | Claude Code auto-memory; its index is loaded by sessions whose starting directory is the primary checkout | Kept unchanged and **still active**. Consolidated into `topics/` with attribution; per-note dispositions below. Not retired: the v8 index is read through AGENTS.md, and nothing shows that this path reaches the native auto-load consumer. |
-| Harness export of the same store (`projects/-home-haduong-CNRS-papiers-actif-AEDIST-technical-report/memory/` in the public harness repository, last commit 7ea247a5, 2026-09-28) | Tracked by the harness; read by no active helper of this project | Byte-identical to the native store (`git hash-object` per file, 2026-11-09) except its `MEMORY.md` (two extra lines) and one extra note, `feedback_durable_reminder_is_blocked_open_ticket.md`, consolidated. Cited for blob ids; harness content left untouched. |
+| Harness export of the same store (`projects/-home-haduong-CNRS-papiers-actif-AEDIST-technical-report/memory/` in the public harness repository, last commit 7ea247a5, 2026-09-28) | Tracked by the harness; read by no active helper of this project | Byte-identical to the native store (`git hash-object` per file, 2026-11-09) except its `MEMORY.md` (two extra lines) and one extra note, `feedback_durable_reminder_is_blocked_open_ticket.md`, a practice the author withdrew everywhere on 2026-11-01 (ticket 0684 removed it from the native store): not imported. Cited for blob ids; harness content left untouched. |
 | `.claude/projects/-home-haduong-aedist-technical-report/memory/project_statistical_power.md` in the primary checkout (1.5 KB, 2026-04-13, blob 93e797eb) | Git-ignored (`.gitignore`: `.claude/projects/`), untracked; consumer unknown, probably none since the checkout moved | Consolidated into [measurement](topics/measurement.md). Left in place, not moved. |
 | Native session directories of past worktrees of this project (15 slugs) | Claude Code session history | No `memory/` directory in any of them (2026-11-09). Transcripts (`*.jsonl`) are not memory sources: not read. |
 | `~/.codex/memories` | Codex | Absent (2026-11-09). |
@@ -23,9 +23,9 @@ repository: **public** GitHub repository `MinhHaDuong/aedist-technical-report`
 
 198 notes in the export (197 native + 1 export-only), plus the index.
 
-- **Consolidated, 111 notes**: each is named, with its export blob id, in
+- **Consolidated, 110 notes**: each is named, with its export blob id, in
   the Sources section of the topic that carries it. The in-repo note above
-  makes 112 consolidated sources. Facts were checked against the tree where
+  makes 111 consolidated sources. Facts were checked against the tree where
   load-bearing; superseded details are named in each topic's Sources (the
   preprint is now `main.tex`, the reference counts 177 plants, the erg
   binary path).
@@ -33,7 +33,9 @@ repository: **public** GitHub repository `MinhHaDuong/aedist-technical-report`
   `# DELETED` (63) or `# PROMOTED` (1, `reference_zotero.md`) header, with
   the reason recorded in the stub itself (2026-06-06 to 2026-09-16 prunes).
   Nothing to consolidate.
-- **Dropped, stale or superseded, 5 notes**:
+- **Dropped, stale, superseded or withdrawn, 6 notes**:
+  `feedback_durable_reminder_is_blocked_open_ticket.md` (export only;
+  withdrawn by the author, ticket 0684);
   `feedback_escalate_means_think_harder.md` (superseded by
   [AGENTS.md](../AGENTS.md) § Autonomous mode and the harness escalation
   protocol); `feedback_evaluate_all_overwrite.md` and
