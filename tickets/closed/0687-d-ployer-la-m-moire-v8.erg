@@ -1,0 +1,33 @@
+%erg 0.1
+Title: Déployer la mémoire v8
+Created: 2026-11-09
+Author: HDMX-coding-agent
+Closed: v8 memory deployed (memory/MEMORY.md, topics, journal, SOURCES.md, AGENTS.md § Project memory); DREAM.md answered by documented exception
+
+--- log ---
+2026-11-09T13:13Z HDMX-coding-agent created
+2026-11-09T13:25Z HDMX-coding-agent note memory/DREAM.md not created: documented exception per the 2026-11-09 note (no deployed project carries one; padme, sen-causal-reading, JETP-observer, climate-finance-het checked); recorded in memory/SOURCES.md § Exception
+2026-11-09T13:25Z HDMX-coding-agent note v8 memory deployed on branch t0687-memory-v8: 8 topics, MEMORY.md (26 lines), SOURCES.md, journal entry, AGENTS.md § Project memory; native auto-memory kept active and untouched
+2026-11-09T13:25Z HDMX-coding-agent closed — v8 memory deployed (memory/MEMORY.md, topics, journal, SOURCES.md, AGENTS.md § Project memory); DREAM.md answered by documented exception
+
+--- body ---
+## Contexte
+Adopter progressivement la convention de mémoire Markdown v8 dans ce projet, après l’évaluation et avec une revue propre au dépôt. Le pilote de référence et ses limites sont décrits dans la [convention et ses gabarits](https://github.com/MinhHaDuong/ImperialDragonHarness/blob/main/docs/memory-v8/README.md), le [plan de livraison](https://github.com/MinhHaDuong/ImperialDragonHarness/blob/main/docs/2026-09-11-memory-implementation-plan.md) et le [ticket parent 0913](https://github.com/MinhHaDuong/ImperialDragonHarness/blob/main/tickets/closed/0913-retire-the-dead-retention-machinery-and.erg).
+
+Commencer par vérifier si ce dépôt est un projet actif. Pour un projet dormant ou remplacé, établir une disposition sourcée et ne pas simuler une migration. Ne pas importer les souvenirs d’un autre projet.
+
+## Critères de sortie
+- [x] Inventorier les sources de mémoire et leurs consommateurs; consigner les correspondances, les dispositions et exceptions, la provenance, l’audience, les limites runtime et un rollback possible.
+  - Evidence: `memory/SOURCES.md` (ba8d83eb, corrected in c1e7de6b): sources and consumers table, per-note dispositions of all 198 export notes, audience, runtime limits, DREAM.md exception, rollback.
+- [x] Intégrer les instructions de lecture v8 dans les instructions existantes sans les remplacer; créer ou adapter `memory/MEMORY.md` avec des liens vers les sources réelles (100 lignes maximum), `memory/DREAM.md` avec sa révision de référence, et les répertoires v8 utiles.
+  - Evidence: `AGENTS.md` § Project memory and a `memory/` configuration row (a89c6c61), existing sections unchanged; `memory/MEMORY.md` 26 lines (`wc -l`); `memory/topics/` (8 pages, c6561322) and `memory/journal/2026/` (ba8d83eb).
+  - `memory/DREAM.md`: answered by documented exception, not created — the 2026-11-09 note records that no deployed project carries one (padme, sen-causal-reading, JETP-observer, climate-finance-het checked 2026-11-09); recorded in `memory/SOURCES.md` § Exception.
+- [x] Examiner l’audience avant reprise de chaque source. Garder toute donnée privée uniquement comme `.age` chiffré dans le dépôt; ne jamais y enregistrer de plaintext ni de clé. Préserver les sources et provenance, traiter les inconnues comme inconnues.
+  - Evidence: `memory/SOURCES.md` § Audience and § Per-note dispositions: public repository; 5 notes and two index lines left out for audience; no age mechanism pinned here, so nothing private kept, no `.age` file; topics attribute each fact to its note filename and export blob id; unknowns stated as unknown.
+- [x] Retirer une ancienne voie seulement après preuve de remplacement et de couverture de ses consommateurs. Ne pas introduire de TTL destructif, promotion automatique ou second écrivain d’index.
+  - Evidence: nothing retired — the native auto-memory and the harness export are untouched and still active (`memory/SOURCES.md` table and § Runtime limits); no timer, TTL, automatic promotion or second index writer added.
+- [x] Vérifier les liens, les scénarios d’échec et les contrôles adaptés au diff; déposer les preuves dans la PR du projet.
+  - Evidence: scripted link check of every relative link under `memory/` and the AGENTS.md section (45 links, 0 broken; positive control fired on a planted break); failure scenarios and a haiku loading probe with negative control in `memory/journal/2026/2026-11-09-memory-v8-adoption.md`; `make lint` passes; outputs in the PR body.
+
+## Notes (2026-11-09)
+Refiled by the harness session: the 2026-10-05 Codex fan-out opened a GitHub issue for this ticket but never committed it; the forge issue is withdrawn (the project does not use GitHub issues). The template is a month old: it names `docs/memory-v8/` (the harness design history is moving to `design/`) and asks for `memory/DREAM.md`, which no deployed project has. Take the deployed projects as the reference instead: JETP-observer, climate-finance-het, padme and sen-causal-reading carry `memory/MEMORY.md` with `memory/topics/` and `memory/journal/`. Harness ticket 1443 plans a later redesign; this deployment aligns the project with the current convention meanwhile.
