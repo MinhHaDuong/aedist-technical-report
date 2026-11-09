@@ -78,6 +78,7 @@ macro).
 **Cite closely-related projects unconditionally.** Work a reader of this paper would obviously know (e.g., PyPSA-VN, powerplantmatching for an AEDIST-style paper) must be cited even if not strictly required by the argument.
 
 The gap paragraph and the no-in-repo-documents bibliography rule are in harness `rules/doctype/article.md`.
+Local addition the harness does not state: the gap statement is its own paragraph, never sharing space with topical coverage.
 
 ## Figures are artifacts, not inline plots
 
