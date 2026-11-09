@@ -1,0 +1,26 @@
+%erg 0.1
+Title: Adopt design/: sort tracked docs/, ignore docs/
+Created: 2026-11-09
+Author: reviewer
+
+--- log ---
+2026-11-09T12:14Z reviewer created
+
+--- body ---
+## Context
+Author decision (2026-11-09): the design-history directory convention is renamed `conception/` -> `design/`. The harness does it first: harness ticket 1477, repo MinhHaDuong/ImperialDragonHarness, `tickets/1477-rename-conception-to-design-across-the-h.erg`. In addition, `docs/` is meant to be git-ignored staging for external documents, but a 2026-11-09 sweep found this project still tracks files under it.
+
+Tracked on 2026-11-09:
+- `docs/`: about 73 tracked files
+
+This repository (MinhHaDuong/aedist-technical-report) is checked out on padme as AEDIST-technical-report and on doudou as aedist and aedist-technical-report-git: one ticket covers all clones.
+
+Wait for harness 1477 to land before starting if this project relies on harness skills that cite `conception/`.
+
+## Actions
+- ALIGN: classify each tracked file under `docs/`: design history -> `design/`; real content (deliverables, reports, published material) -> keep, ideally under a named directory, decided by this project. Then add `docs/` to .gitignore once nothing tracked needs it.
+
+## Exit criteria
+- [ ] Every tracked file under `docs/` is classified in the PR (design history, kept content, or dropped) and moved accordingly
+- [ ] `docs/` is listed in .gitignore and `git ls-files docs` is empty
+- [ ] The project's own gate passes (`make check` or its equivalent)
