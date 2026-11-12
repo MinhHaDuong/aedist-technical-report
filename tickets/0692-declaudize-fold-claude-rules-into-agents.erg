@@ -1,0 +1,52 @@
+%erg 0.1
+Title: Declaudize: fold .claude/rules/ into AGENTS.md and retire Claude-only paths
+Created: 2026-11-12
+Author: claude
+
+--- log ---
+2026-11-12T08:37Z claude created
+
+--- body ---
+## Context
+Every runtime used on this repository (Claude Code, Codex, Pi) reads
+AGENTS.md natively; only Claude Code reads `.claude/rules/`. The three
+project rules there (`workflow.md`, always loaded; `writing.md`, scoped to
+`report/** publications/** slides/** docs/**`; `experiment-design.md`,
+scoped to `experiments/** src/** scripts/**`) are therefore invisible to
+Codex and Pi sessions, and nothing in AGENTS.md links to them.
+Siblings search-works-for-zotero and JETP-observer are retiring theirs the
+same way (2026-11-12 cross-repo audit).
+
+## Actions
+- Merge the three rule files into AGENTS.md. Keep the path scoping visible
+  (a section per scope, headed by the paths it governs). Merge, don't paste:
+  drop what AGENTS.md already says and generic guidance not specific to this
+  repo. Then delete `.claude/rules/`.
+- Update live references: AGENTS.md layout table (`.claude/rules/` row,
+  "TODO: replace with scoped hooks"), `memory/MEMORY.md:7`,
+  `memory/SOURCES.md:18`, `experiments/models.yaml:958`, and living docs
+  that cite `.claude/rules/writing.md` (`docs/editorial-brief.md`,
+  `docs/section3-proposal.md`). Point them at the AGENTS.md section.
+- Tidy the other claudisms in AGENTS.md: the line-3 note about the
+  `CLAUDE.md` fallback and the line-6 pointer to `~/.claude/rules/` (an
+  external, runtime-specific path; state the boundary without naming it).
+- Drop `CLAUDE.md` from the CI paths-ignore lists
+  (`.github/workflows/CI.yml:30`, `docs-build.yml:33`).
+
+## Out of scope
+- `.claude/rules-map.toml`: the global prose hook reads it at that path
+  (ticket 0677); moving it is a harness change, not a repo change.
+- `.claude/settings.json` and hooks.
+- README's `claude-code-cli` route: a model route, not agent context.
+- History stays as written: closed tickets, `memory/evidence/`, dated notes
+  under `docs/` (e.g. `docs/2026-06-03-list-fusion-litreview.md`,
+  `docs/related-work/06-cull-2026-06-15.md`).
+
+## Exit criteria
+- [ ] `.claude/rules/` no longer exists; `.claude/rules-map.toml` untouched.
+- [ ] Each old rule file maps to a named AGENTS.md section (list in the PR body),
+      with anything dropped named and justified.
+- [ ] `git grep -n '\.claude/rules/' -- ':!tickets' ':!memory/evidence' ':!docs/20*' ':!docs/related-work'`
+      returns nothing.
+- [ ] `git grep -n 'CLAUDE\.md' -- .github AGENTS.md` returns nothing.
+- [ ] `make check` passes.
